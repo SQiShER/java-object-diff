@@ -1,5 +1,14 @@
 *.class
 
+# IntelliJ IDEA #
+.idea
+*.ipr
+*.iml
+*.iws
+
+# Maven Generated Files #
+target
+
 # Package Files #
 *.jar
 *.war
