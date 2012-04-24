@@ -1,6 +1,10 @@
 # Java Object Diff
 
-An easy-to-use Framework to detect and handle differences between different versions of a given Java Object.
+An easy-to-use Framework to detect and handle differences between Java object.
+
+## Getting Started
+
+To learn how to use **java-object-diff**, please have a look at the short [starter guide](https://github.com/SQiShER/java-object-diff/wiki/Getting-Started).
 
 ## Use Cases
 
@@ -30,3 +34,4 @@ Although I use this Framework in a rather complex project of mine, I'm sure ther
 * Object comparison is very strict. Objects with different types cannot be compared, even when they share the same interface.
 * Arrays are treated poorly
 * The annotations should be applied to fields instead of methods. (Would make it easier to handle Arrays.)
+* Documentation, documentation, documentation...
