@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.*;
 public class DefaultNode implements Node
 {
 	private final Accessor accessor;
-	private final Map<String, Node> children = new LinkedHashMap<String, Node>(10);
+	private final Map<PropertyPath.Element, Node> children = new LinkedHashMap<PropertyPath.Element, Node>(10);
 
 	private State state = State.UNTOUCHED;
 	private Node parentNode;
@@ -102,31 +102,36 @@ public class DefaultNode implements Node
 	}
 
 	@SuppressWarnings({"UnusedDeclaration", "TypeMayBeWeakened"})
-	public void setChildren(final Collection<Node> differences)
+	public void setChildren(final Collection<Node> children)
 	{
-		children.clear();
-		for (final Node difference : differences)
+		this.children.clear();
+		for (final Node child : children)
 		{
-			addChild(difference);
+			addChild(child);
 		}
 	}
 
-	public Node getChild(final String name)
+	public Node getChild(final String propertyName)
 	{
-		return children.get(name);
+		return children.get(new NamedPropertyElement(propertyName));
 	}
 
-	public Node getChild(final PropertyPath path)
+	public Node getChild(final PropertyPath absolutePath)
 	{
-		final ChildVisitor visitor = new ChildVisitor(path);
+		final PropertyVisitor visitor = new PropertyVisitor(absolutePath);
 		visitChildren(visitor);
 		return visitor.getNode();
+	}
+
+	public Node getChild(final PropertyPath.Element pathElement)
+	{
+		return children.get(pathElement);
 	}
 
 	public void addChild(final Node child)
 	{
 		child.setParentNode(this);
-		children.put(child.getPropertyName(), child);
+		children.put(child.getPathElement(), child);
 	}
 
 	public final void visit(final Visitor visitor)
@@ -210,11 +215,6 @@ public class DefaultNode implements Node
 		this.state = state;
 	}
 
-	public String getPropertyName()
-	{
-		return accessor.getPropertyName();
-	}
-
 	public Node getParentNode()
 	{
 		return parentNode;
@@ -258,7 +258,7 @@ public class DefaultNode implements Node
 		accessor.set(target, value);
 	}
 
-	public void canonicalUnset(Object target, final Object value)
+	public void canonicalUnset(Object target)
 	{
 		if (parentNode != null)
 		{

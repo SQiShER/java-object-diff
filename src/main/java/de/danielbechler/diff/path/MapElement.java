@@ -1,5 +1,7 @@
 package de.danielbechler.diff.path;
 
+import de.danielbechler.util.*;
+
 /** @author Daniel Bechler */
 public final class MapElement extends PropertyPath.Element
 {
@@ -47,6 +49,6 @@ public final class MapElement extends PropertyPath.Element
 	@Override
 	public String asString()
 	{
-		return "key[" + key + "]";
+		return "key[" + Strings.toSingleLineString(key) + "]";
 	}
 }

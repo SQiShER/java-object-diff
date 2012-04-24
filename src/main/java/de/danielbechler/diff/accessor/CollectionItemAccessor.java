@@ -14,11 +14,6 @@ public final class CollectionItemAccessor extends AbstractAccessor
 		this.referenceItem = referenceItem;
 	}
 
-	public String getPropertyName()
-	{
-		return "[" + referenceItem + "]";
-	}
-
 	public PropertyPath.Element getPathElement()
 	{
 		return new CollectionElement(referenceItem);

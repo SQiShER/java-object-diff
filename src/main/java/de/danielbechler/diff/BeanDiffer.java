@@ -97,6 +97,10 @@ final class BeanDiffer extends AbstractDiffer
 				parentNode.setState(Node.State.CHANGED);
 				parentNode.addChild(child);
 			}
+			else if (getConfiguration().isReturnUnchangedNodes())
+			{
+				parentNode.addChild(child);
+			}
 		}
 	}
 

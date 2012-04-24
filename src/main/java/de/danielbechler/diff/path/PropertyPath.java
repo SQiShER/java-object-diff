@@ -41,10 +41,21 @@ public final class PropertyPath
 		}
 	}
 
-	@SuppressWarnings({"UnusedDeclaration"})
+	public static PropertyPath with(final String... propertyNames)
+	{
+		final PropertyPathBuilder builder = new PropertyPathBuilder();
+		builder.withRoot();
+		for (final String propertyName : propertyNames)
+		{
+			builder.withPropertyName(propertyName);
+		}
+		return builder.build();
+	}
+
 	public static PropertyPath with(final Element... elements)
 	{
 		final PropertyPathBuilder builder = new PropertyPathBuilder();
+		builder.withRoot();
 		for (final Element element : elements)
 		{
 			builder.withElement(element);

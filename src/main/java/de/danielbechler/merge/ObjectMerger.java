@@ -4,7 +4,11 @@ import de.danielbechler.diff.*;
 import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.visitor.*;
 
-/** @author Daniel Bechler */
+/**
+ * Careful: This class has not yet been tested very thoroughly and serves more as an example for your own implementations.
+ *
+ * @author Daniel Bechler
+ */
 public final class ObjectMerger
 {
 	private final ObjectDiffer objectDiffer;
@@ -31,7 +35,6 @@ public final class ObjectMerger
 	private static final class MergingDifferenceVisitor<T> implements Node.Visitor
 	{
 		private final T head;
-
 		private final T modified;
 
 		public MergingDifferenceVisitor(final T head, final T modified)
@@ -48,7 +51,7 @@ public final class ObjectMerger
 			}
 			else if (difference.getState() == Node.State.REMOVED)
 			{
-				difference.canonicalUnset(head, difference.canonicalGet(modified));
+				difference.canonicalUnset(head);
 			}
 			else if (difference.getState() == Node.State.REPLACED)
 			{

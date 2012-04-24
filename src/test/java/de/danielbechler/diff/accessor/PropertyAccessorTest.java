@@ -186,13 +186,7 @@ public class PropertyAccessorTest
 	public void testGetType() throws Exception
 	{
 		//noinspection unchecked
-		Assert.assertThat((Class<String>) accessor.getType(), IsEqual.equalTo(String.class));
-	}
-
-	@Test
-	public void testGetPropertyName() throws Exception
-	{
-		Assert.assertThat(accessor.getPropertyName(), IsEqual.equalTo("value"));
+		Assert.assertThat((Class<String>) accessor.getPropertyType(), IsEqual.equalTo(String.class));
 	}
 
 	@Test

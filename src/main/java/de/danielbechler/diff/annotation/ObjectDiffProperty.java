@@ -8,9 +8,9 @@ import java.lang.annotation.*;
 @ObjectDiffAnnotation
 public @interface ObjectDiffProperty
 {
-	public boolean ignore() default true;
+	public boolean ignore() default false;
 
-	public boolean equalsOnly() default true;
+	public boolean equalsOnly() default false;
 
 	public String[] categories() default {};
 }

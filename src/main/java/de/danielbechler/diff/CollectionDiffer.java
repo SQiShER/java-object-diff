@@ -60,6 +60,10 @@ final class CollectionDiffer extends AbstractDiffer
 				collectionNode.addChild(child);
 				collectionNode.setState(Node.State.CHANGED);
 			}
+			else if (getConfiguration().isReturnUnchangedNodes())
+			{
+				collectionNode.addChild(child);
+			}
 		}
 	}
 

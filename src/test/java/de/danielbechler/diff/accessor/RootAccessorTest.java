@@ -10,12 +10,6 @@ public class RootAccessorTest
 	private final Accessor accessor = new RootAccessor();
 
 	@Test
-	public void testGetPropertyName() throws Exception
-	{
-		Assert.assertThat(accessor.getPropertyName(), IsEqual.equalTo(""));
-	}
-
-	@Test
 	public void testGet() throws Exception
 	{
 		final Object root = new Object();
@@ -34,7 +28,6 @@ public class RootAccessorTest
 	public void testUnset() throws Exception
 	{
 		final Object original = new Object();
-		final Object replacement = new Object();
 		accessor.unset(original);
 	}
 

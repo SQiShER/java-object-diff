@@ -8,9 +8,27 @@ import java.util.*;
 /** @author Daniel Bechler */
 public class Configuration
 {
+	private Collection<String> ignoreCategories = new TreeSet<String>();
 	private Collection<PropertyPath> ignoreProperties = new LinkedHashSet<PropertyPath>(10);
 	private Collection<PropertyPath> equalsOnlyProperties = new LinkedHashSet<PropertyPath>(10);
 	private Collection<Class<?>> equalsOnlyTypes = new LinkedHashSet<Class<?>>(10);
+	private boolean returnUnchangedNodes = false;
+	private boolean returnIgnoredNodes = false;
+
+	public Collection<String> getIgnoreCategories()
+	{
+		return Collections.unmodifiableCollection(ignoreCategories);
+	}
+
+	public void setIgnoreCategories(final Collection<String> ignoreCategories)
+	{
+		this.ignoreCategories = ignoreCategories;
+	}
+
+	public void addIgnoreCategories(final String... category)
+	{
+		this.ignoreCategories.addAll(Arrays.asList(category));
+	}
 
 	public Collection<PropertyPath> getIgnoreProperties()
 	{
@@ -57,39 +75,41 @@ public class Configuration
 		this.equalsOnlyTypes.add(type);
 	}
 
-	public boolean isIgnored(final PropertyPath propertyPath)
-	{
-		return ignoreProperties.contains(propertyPath);
-	}
-
-	public boolean isEqualsOnly(final PropertyPath propertyPath, final Class<?> propertyType)
-	{
-		if (isEqualsOnlyPath(propertyPath))
-		{
-			return true;
-		}
-		else if (isEqualsOnlyType(propertyType))
-		{
-			return true;
-		}
-		return false;
-	}
-
 	public boolean isEqualsOnlyPath(final PropertyPath selectorPath)
 	{
 		return equalsOnlyProperties.contains(selectorPath);
 	}
 
-	public boolean isEqualsOnlyType(final Class<?> propertyType)
+	public boolean isEqualsOnlyType(final Class<?> type)
 	{
-		if (propertyType.getAnnotation(ObjectDiffEqualsOnlyType.class) != null)
+		if (type.getAnnotation(ObjectDiffEqualsOnlyType.class) != null)
 		{
 			return true;
 		}
-		else if (equalsOnlyTypes.contains(propertyType))
+		else if (equalsOnlyTypes.contains(type))
 		{
 			return true;
 		}
 		return false;
+	}
+
+	public boolean isReturnIgnoredNodes()
+	{
+		return returnIgnoredNodes;
+	}
+
+	public void setReturnIgnoredNodes(final boolean returnIgnoredNodes)
+	{
+		this.returnIgnoredNodes = returnIgnoredNodes;
+	}
+
+	public boolean isReturnUnchangedNodes()
+	{
+		return returnUnchangedNodes;
+	}
+
+	public void setReturnUnchangedNodes(final boolean returnUnchangedNodes)
+	{
+		this.returnUnchangedNodes = returnUnchangedNodes;
 	}
 }

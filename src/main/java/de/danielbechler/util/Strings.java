@@ -1,10 +1,13 @@
 package de.danielbechler.util;
 
 import java.util.*;
+import java.util.regex.*;
 
 /** @author Daniel Bechler */
 public class Strings
 {
+	private static final Pattern LINE_BREAK_PATTERN = Pattern.compile("\\s*\\n\\s*");
+
 	private Strings()
 	{
 	}
@@ -122,5 +125,16 @@ public class Strings
 			return "";
 		}
 		return join(delimiter, elements.toArray(new Object[elements.size()]));
+	}
+
+	public static String toSingleLineString(final Object object)
+	{
+		if (object != null)
+		{
+			final String s = object.toString().trim();
+			final Matcher matcher = LINE_BREAK_PATTERN.matcher(s);
+			return matcher.replaceAll(" \\\\ ");
+		}
+		return null;
 	}
 }

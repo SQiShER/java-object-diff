@@ -20,7 +20,7 @@ public abstract class AbstractFilteringVisitor implements Node.Visitor
 	{
 	}
 
-	public final void accept(final Node node, final Visit visit)
+	public void accept(final Node node, final Visit visit)
 	{
 		if (accept(node))
 		{

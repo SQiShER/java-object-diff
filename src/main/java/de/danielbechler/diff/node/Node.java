@@ -40,11 +40,11 @@ public interface Node extends CanonicalAccessor
 
 	boolean hasChanges();
 
-	boolean isMapDifference();
-
 	boolean isCollectionDifference();
 
 	CollectionNode toCollectionDifference();
+
+	boolean isMapDifference();
 
 	MapNode toMapDifference();
 
@@ -54,9 +54,11 @@ public interface Node extends CanonicalAccessor
 
 	Collection<Node> getChildren();
 
-	Node getChild(String name);
+	Node getChild(String propertyName);
 
-	Node getChild(PropertyPath path);
+	Node getChild(PropertyPath absolutePath);
+
+	Node getChild(PropertyPath.Element pathElement);
 
 	void addChild(Node difference);
 

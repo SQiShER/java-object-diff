@@ -24,12 +24,6 @@ public class MapEntryAccessorTest
 	}
 
 	@Test
-	public void testGetPropertyName() throws Exception
-	{
-		Assert.assertThat(accessor.getPropertyName(), IsEqual.equalTo("[1]"));
-	}
-
-	@Test
 	public void testToPathElement() throws Exception
 	{
 		Assert.assertThat(accessor.getPathElement(), Is.is(MapElement.class));

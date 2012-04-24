@@ -108,6 +108,15 @@ public class DelegatingObjectDifferTest
 	}
 
 	@Test
+	public void testIsIgnoredWithCategory() throws Exception
+	{
+		when(accessor.getCategories()).thenReturn(java.util.Collections.singleton("foo"));
+		assertThat(differ.isIgnored(Node.ROOT, Instances.of(accessor, "hello", "world")), is(false));
+		differ.getConfiguration().addIgnoreCategories("foo");
+		assertThat(differ.isIgnored(Node.ROOT, Instances.of(accessor, "hello", "world")), is(true));
+	}
+
+	@Test
 	public void testIsEqualsOnlyWithConfiguredPropertyPath() throws Exception
 	{
 		when(node.getPropertyPath()).thenReturn(new PropertyPathBuilder().withRoot().build());

@@ -2,6 +2,7 @@ package de.danielbechler.diff;
 
 import de.danielbechler.diff.node.*;
 import de.danielbechler.util.*;
+import de.danielbechler.util.Collections;
 
 import java.util.*;
 
@@ -58,7 +59,11 @@ final class DelegatingObjectDiffer implements ObjectDiffer
 		{
 			return true;
 		}
-		if (configuration.isIgnored(instances.getPropertyPath(parentNode)))
+		if (Collections.containsAny(instances.getSourceAccessor().getCategories(), configuration.getIgnoreCategories()))
+		{
+			return true;
+		}
+		if (configuration.getIgnoreProperties().contains(instances.getPropertyPath(parentNode)))
 		{
 			return true;
 		}

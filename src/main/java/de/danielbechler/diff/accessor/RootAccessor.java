@@ -9,11 +9,6 @@ public final class RootAccessor extends AbstractAccessor
 	{
 	}
 
-	public String getPropertyName()
-	{
-		return "";
-	}
-
 	public Object get(final Object target)
 	{
 		return target;

@@ -7,8 +7,6 @@ import java.util.*;
 /** @author Daniel Bechler */
 public interface PropertyDescriptor
 {
-	String getPropertyName();
-
 	PropertyPath.Element getPathElement();
 
 	Set<String> getCategories();

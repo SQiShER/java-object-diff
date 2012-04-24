@@ -66,16 +66,18 @@ final class MapDiffer extends AbstractDiffer
 		}
 	}
 
-	private boolean handleEntries(final Object key, final Instances instances, final MapNode parent)
+	private void handleEntries(final Object key, final Instances instances, final MapNode parent)
 	{
 		final Node node = compareEntry(key, instances, parent);
 		if (node.hasChanges())
 		{
 			parent.setState(Node.State.CHANGED);
 			parent.addChild(node);
-			return true;
 		}
-		return false;
+		else if (getConfiguration().isReturnUnchangedNodes())
+		{
+			parent.addChild(node);
+		}
 	}
 
 	private Node compareEntry(final Object key, Instances instances, final MapNode parent)

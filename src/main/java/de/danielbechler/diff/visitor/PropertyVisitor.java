@@ -5,30 +5,32 @@ import de.danielbechler.diff.path.*;
 import de.danielbechler.util.*;
 
 /** @author Daniel Bechler */
-public class ChildVisitor implements Node.Visitor
+public class PropertyVisitor implements Node.Visitor
 {
-	private final PropertyPath path;
+	private final PropertyPath propertyPath;
 
 	private Node node;
 
-	public ChildVisitor(final PropertyPath propertyPath)
+	public PropertyVisitor(final PropertyPath propertyPath)
 	{
 		Assert.notNull(propertyPath, "propertyPath");
-		this.path = propertyPath;
+		this.propertyPath = propertyPath;
 	}
 
 	public void accept(final Node difference, final Visit visit)
 	{
 		final PropertyPath differencePath = difference.getPropertyPath();
-		if (!path.isParentOf(differencePath))
+		if (propertyPath.isParentOf(differencePath))
+		{
+			if (propertyPath.equals(differencePath))
+			{
+				this.node = difference;
+				visit.stop();
+			}
+		}
+		else
 		{
 			visit.dontGoDeeper();
-			return;
-		}
-		if (path.equals(differencePath))
-		{
-			this.node = difference;
-			visit.stop();
 		}
 	}
 

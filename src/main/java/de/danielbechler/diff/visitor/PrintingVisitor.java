@@ -1,23 +1,24 @@
 package de.danielbechler.diff.visitor;
 
 import de.danielbechler.diff.node.*;
+import de.danielbechler.util.*;
 
 /** @author Daniel Bechler */
 @SuppressWarnings({"MethodMayBeStatic"})
 public class PrintingVisitor implements Node.Visitor
 {
+	private final Object working;
 	private final Object base;
-	private final Object modified;
 
-	public PrintingVisitor(final Object base, final Object modified)
+	public PrintingVisitor(final Object working, final Object base)
 	{
 		this.base = base;
-		this.modified = modified;
+		this.working = working;
 	}
 
 	public void accept(final Node difference, final Visit visit)
 	{
-		final String text = differenceToString(difference, base, modified);
+		final String text = differenceToString(difference, base, working);
 		print(text);
 	}
 
@@ -31,7 +32,7 @@ public class PrintingVisitor implements Node.Visitor
 		return String.format("%s (%s). Before: %s; After: %s",
 							 difference.getPropertyPath(),
 							 difference.getState(),
-							 difference.canonicalGet(base),
-							 difference.canonicalGet(modified));
+							 Strings.toSingleLineString(difference.canonicalGet(base)),
+							 Strings.toSingleLineString(difference.canonicalGet(modified)));
 	}
 }

@@ -22,11 +22,6 @@ public final class MapEntryAccessor extends AbstractAccessor
 		this.index = index;
 	}
 
-	public String getPropertyName()
-	{
-		return "[" + Integer.toString(index) + "]";
-	}
-
 	public PropertyPath.Element getPathElement()
 	{
 		return new MapElement(getReferenceKey());

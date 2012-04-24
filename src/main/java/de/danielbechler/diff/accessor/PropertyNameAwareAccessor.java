@@ -1,7 +1,7 @@
 package de.danielbechler.diff.accessor;
 
 /** @author Daniel Bechler */
-public interface TypeAwareAccessor
+public interface PropertyNameAwareAccessor
 {
-	Class<?> getPropertyType();
+	String getPropertyName();
 }

@@ -9,12 +9,12 @@ import java.lang.reflect.*;
 import java.util.*;
 
 /** @author Daniel Bechler */
-public final class PropertyAccessor extends AbstractAccessor implements TypeAwareAccessor
+public final class PropertyAccessor extends AbstractAccessor implements TypeAwareAccessor, PropertyNameAwareAccessor
 {
 	private static final Logger logger = LoggerFactory.getLogger(PropertyAccessor.class);
 
 	private final String propertyName;
-	private final Class<?> type;
+	private final Class<?> propertyType;
 	private final Method readMethod;
 	private final Method writeMethod;
 
@@ -25,7 +25,7 @@ public final class PropertyAccessor extends AbstractAccessor implements TypeAwar
 		this.propertyName = propertyName;
 		this.readMethod = makeAccessible(readMethod);
 		this.writeMethod = makeAccessible(writeMethod);
-		this.type = this.readMethod.getReturnType();
+		this.propertyType = this.readMethod.getReturnType();
 	}
 
 	private static Method makeAccessible(final Method method)
@@ -73,7 +73,7 @@ public final class PropertyAccessor extends AbstractAccessor implements TypeAwar
 
 			final PropertyWriteException ex = new PropertyWriteException(e);
 			ex.setPropertyName(propertyName);
-			ex.setTargetType(getType());
+			ex.setTargetType(getPropertyType());
 			throw ex;
 		}
 	}
@@ -159,9 +159,9 @@ public final class PropertyAccessor extends AbstractAccessor implements TypeAwar
 		set(target, null);
 	}
 
-	public Class<?> getType()
+	public Class<?> getPropertyType()
 	{
-		return this.type;
+		return this.propertyType;
 	}
 
 	public String getPropertyName()
