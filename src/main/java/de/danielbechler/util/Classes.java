@@ -6,9 +6,13 @@ import java.net.*;
 import java.util.*;
 
 /** @author Daniel Bechler */
-public class Classes
+public final class Classes
 {
 	private static final Logger logger = LoggerFactory.getLogger(Classes.class);
+
+	private Classes()
+	{
+	}
 
 	public static boolean isSimpleType(final Class<?> clazz)
 	{
@@ -48,15 +52,16 @@ public class Classes
 		return null;
 	}
 
-	private static Class<?> typeOf(final Object... values)
+	public static Set<Class<?>> typesOf(final Object... values)
 	{
+		final Set<Class<?>> types = new HashSet<Class<?>>(values.length);
 		for (final Object value : values)
 		{
 			if (value != null)
 			{
-				return value.getClass();
+				types.add(value.getClass());
 			}
 		}
-		return null;
+		return types;
 	}
 }

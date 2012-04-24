@@ -1,340 +1,165 @@
 package de.danielbechler.diff;
 
+import de.danielbechler.diff.accessor.*;
+import de.danielbechler.diff.introspect.*;
 import de.danielbechler.diff.mock.*;
 import de.danielbechler.diff.node.*;
-import de.danielbechler.diff.path.*;
-import de.danielbechler.diff.visitor.*;
-import org.hamcrest.core.*;
 import org.junit.*;
+import org.mockito.*;
+
+import java.util.*;
 
 import static org.hamcrest.core.Is.*;
-import static org.hamcrest.core.IsEqual.*;
-import static org.hamcrest.core.IsNull.*;
 import static org.hamcrest.core.IsSame.*;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /** @author Daniel Bechler */
 public class BeanDifferTest
 {
-	private ObjectDiffer objectDiffer;
+	@Mock
+	private ObjectDiffer delegate;
+	@Mock
+	private Introspector introspector;
+	@Mock
+	private Accessor accessor;
+	@Mock
+	private Node node;
+	private BeanDiffer differ;
 
 	@Before
 	public void setUp()
 	{
-		objectDiffer = new BeanDiffer();
-	}
-
-	@After
-	public void tearDown()
-	{
-		objectDiffer = null;
+		MockitoAnnotations.initMocks(this);
+		differ = new BeanDiffer();
+		differ.setDelegate(delegate);
+		differ.setIntrospector(introspector);
 	}
 
 	@Test
-	public void testRootLevelString()
+	public void testCompareWithDifferentStrings() throws Exception
 	{
-		final String working = "bar";
-		final String base = "foo";
-		final DiffNode<String> node = objectDiffer.compare(working, base);
-		assertThat(node.isRoot(), is(true));
-		assertThat(node.getType(), is(DifferenceType.CHANGED));
+		when(delegate.isEqualsOnly(any(Node.class), any(Instances.class))).thenReturn(true);
+		final Node node = differ.compare("foo", "bar");
+		assertThat(node.hasChanges(), is(true));
 		assertThat(node.hasChildren(), is(false));
-		assertThat(node.getAccessor().get(working), is(sameInstance(working)));
-		assertThat(node.getAccessor().get(base), is(sameInstance(base)));
+		assertThat(node.getState(), is(Node.State.CHANGED));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testCompareWithDifferentTypes()
+	{
+		differ.compare("foo", 1337);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testCompareWithoutWorkingInstance()
+	{
+		when(delegate.isEqualsOnly(any(Node.class), any(Instances.class))).thenReturn(true);
+		differ.compare(null, "foo");
 	}
 
 	@Test
-	public void testRootLevelStringAdd()
+	public void testCompareWithoutAnyInstances()
 	{
-		final DiffNode<String> node = objectDiffer.compare("foo", null);
-		assertThat(node.isRoot(), is(true));
-		assertThat(node.hasChildren(), is(false));
-		assertThat(node.getType(), is(DifferenceType.ADDED));
-		assertThat(node.getAccessor().get("foo"), is(sameInstance("foo")));
-		assertThat(node.getAccessor().get(null), is(nullValue()));
+		final Node node = differ.compare(Node.ROOT, Instances.of(new RootAccessor(), null, null));
+		assertThat(node.getState(), is(Node.State.UNTOUCHED));
+	}
+
+	@Test
+	public void testCompareWithIgnoredProperty()
+	{
+		when(delegate.isIgnored(any(Node.class), any(Instances.class))).thenReturn(true);
+		assertThat(differ.compare("foo", "bar").getState(), is(Node.State.IGNORED));
+	}
+
+	@Test
+	public void testCompareWithAddedInstance()
+	{
+		final Node node = differ.compare(Node.ROOT, Instances.of(new RootAccessor(), "foo", null));
+		assertThat(node.getState(), is(Node.State.ADDED));
+	}
+
+	@Test
+	public void testCompareWithRemovedInstance()
+	{
+		final Node node = differ.compare(Node.ROOT, Instances.of(new RootAccessor(), null, "foo"));
+		assertThat(node.getState(), is(Node.State.REMOVED));
+	}
+
+	@Test
+	public void testCompareWithSameInstance()
+	{
+		final Node node = differ.compare(Node.ROOT, Instances.of(new RootAccessor(), "foo", "foo"));
+		assertThat(node.getState(), is(Node.State.UNTOUCHED));
+	}
+
+	@Test
+	public void testCompareWithEqualsOnlyTypes()
+	{
+		when(delegate.isEqualsOnly(any(Node.class), any(Instances.class))).thenReturn(true);
+
+		final ObjectWithHashCodeAndEquals working = new ObjectWithHashCodeAndEquals("foo");
+		final ObjectWithHashCodeAndEquals base = new ObjectWithHashCodeAndEquals("foo");
+		final Node node = differ.compare(Node.ROOT, Instances.of(new RootAccessor(), working, base));
+
+		assertThat(node.getState(), is(Node.State.UNTOUCHED));
+	}
+
+	@Test
+	public void testCompareWithUnequalEqualsOnlyTypes()
+	{
+		when(delegate.isEqualsOnly(any(Node.class), any(Instances.class))).thenReturn(true);
+
+		final ObjectWithHashCodeAndEquals working = new ObjectWithHashCodeAndEquals("foo");
+		final ObjectWithHashCodeAndEquals base = new ObjectWithHashCodeAndEquals("bar");
+		final Node node = differ.compare(Node.ROOT, Instances.of(new RootAccessor(), working, base));
+
+		assertThat(node.getState(), is(Node.State.CHANGED));
 	}
 
 //	@Test
-//	public void testSimpleMapItemAdd()
+//	public void testCompareWithEqualsOnlyPath()
 //	{
-//		final ObjectWithMap base = new ObjectWithMap(getMap());
-//		final ObjectWithMap working = new ObjectWithMap(getMap());
-//		working.getMap().put("foo", "bar");
-//		final DiffNode<ObjectWithMap> node = objectDiffer.compare(working, base);
-//		assertThat(node.hasChildren(), is(true));
-//		final Collection<DiffNode<?>> children = node.getChildren();
+//		when(delegate.isEqualsOnlyPath(any(PropertyPath.class))).thenReturn(true);
+//
+//		final ObjectWithHashCodeAndEquals working = new ObjectWithHashCodeAndEquals("foo", "1");
+//		final ObjectWithHashCodeAndEquals base = new ObjectWithHashCodeAndEquals("bar", "1");
+//		final Node node = differ.compare(working, base);
+//
+//		verify(delegate, atLeastOnce()).isEqualsOnlyPath(any(PropertyPath.class));
+//		assertThat(node.getState(), is(Node.State.CHANGED));
 //	}
 
-	@SuppressWarnings({"unchecked"})
 	@Test
-	public void testPrimitiveAdd()
+	public void testCompareWithComplexType()
 	{
-		final TestObject base = new TestObject();
-		final TestObject modified = new TestObject();
-		modified.setNumber(23);
-		final DiffNode<Integer> difference = (DiffNode<Integer>) new BeanDiffer()
-				.compare(modified, base)
-				.getChild(PropertyPathBuilder.pathOf("number"));
-		assertThat(difference.getType(), is(equalTo(DifferenceType.ADDED)));
-	}
+		when(introspector.introspect(any(Class.class))).thenReturn(Arrays.<Accessor>asList(accessor));
+		when(delegate.compare(any(Node.class), any(Instances.class))).thenReturn(node);
+		when(node.hasChanges()).thenReturn(true);
 
-	@SuppressWarnings({"unchecked"})
-	@Test
-	public void testPrimitiveRemove()
-	{
-		final TestObject base = new TestObject();
-		base.setNumber(23);
-		final TestObject modified = new TestObject();
-		final DiffNode<Integer> difference = (DiffNode<Integer>) new BeanDiffer()
-				.compare(modified, base)
-				.getChild(PropertyPathBuilder.pathOf("number"));
-		assertThat(difference.getType(), is(equalTo(DifferenceType.REMOVED)));
-	}
-
-	@SuppressWarnings({"unchecked"})
-	@Test
-	public void testPrimitiveChange()
-	{
-		final TestObject base = new TestObject();
-		base.setNumber(23);
-		final TestObject modified = new TestObject();
-		modified.setNumber(42);
-		final DiffNode<Integer> difference = (DiffNode<Integer>) new BeanDiffer()
-				.compare(modified, base)
-				.getChild(PropertyPathBuilder.pathOf("number"));
-		assertThat(difference.getType(), Is.is(equalTo(DifferenceType.CHANGED)));
-	}
-
-	@SuppressWarnings({"unchecked"})
-	@Test
-	public void testObjectAdd()
-	{
-		final TestObject base = new TestObject();
-		final TestObject modified = new TestObject();
-		modified.setText("foo");
-		final DiffNode<Integer> difference = (DiffNode<Integer>) new BeanDiffer()
-				.compare(modified, base)
-				.getChild(PropertyPathBuilder.pathOf("text"));
-		assertThat(difference.getType(), Is.is(equalTo(DifferenceType.ADDED)));
-	}
-
-	@SuppressWarnings({"unchecked"})
-	@Test
-	public void testObjectChange()
-	{
-		final TestObject base = new TestObject();
-		base.setText("foo");
-		final TestObject modified = new TestObject();
-		modified.setText("bar");
-		final DiffNode<Integer> difference = (DiffNode<Integer>) new BeanDiffer()
-				.compare(modified, base)
-				.getChild(PropertyPathBuilder.pathOf("text"));
-		assertThat(difference.getType(), Is.is(equalTo(DifferenceType.CHANGED)));
-	}
-
-	@SuppressWarnings({"unchecked"})
-	@Test
-	public void testObjectRemove()
-	{
-		final TestObject base = new TestObject();
-		base.setText("foo");
-		final TestObject modified = new TestObject();
-		final DiffNode<Integer> difference = (DiffNode<Integer>) new BeanDiffer()
-				.compare(modified, base)
-				.getChild(PropertyPathBuilder.pathOf("text"));
-		assertThat(difference.getType(), Is.is(equalTo(DifferenceType.REMOVED)));
-	}
-
-	@SuppressWarnings({"unchecked"})
-	@Test
-	public void testCollectionItemAdd()
-	{
-		final TestObject base = new TestObject();
-		final TestObject modified = new TestObject();
-		final NestableCollectionSafeObject item = new NestableCollectionSafeObject("foo");
-		item.setValue("meh");
-		modified.getCollection().add(item);
-		final PropertyPath path = new PropertyPathBuilder()
-				.root()
-				.propertyName("collection")
-				.collectionItem(new NestableCollectionSafeObject("foo"))
-				.toPropertyPath();
-		final DiffNode<NestableCollectionSafeObject> difference = (DiffNode<NestableCollectionSafeObject>) new BeanDiffer()
-				.compare(modified, base)
-				.getChild(path);
-		assertThat(difference.getType(), Is.is(equalTo(DifferenceType.ADDED)));
-	}
-
-	@SuppressWarnings({"unchecked"})
-	@Test
-	public void testCollectionItemRemove()
-	{
-		final TestObject base = new TestObject();
-		final NestableCollectionSafeObject item = new NestableCollectionSafeObject("foo");
-		item.setValue("meh");
-		base.getCollection().add(item);
-		final TestObject modified = new TestObject();
-		final PropertyPath path = new PropertyPathBuilder()
-				.root()
-				.propertyName("collection")
-				.collectionItem(new NestableCollectionSafeObject("foo"))
-				.toPropertyPath();
-		final DiffNode<NestableCollectionSafeObject> difference = (DiffNode<NestableCollectionSafeObject>) new BeanDiffer()
-				.compare(modified, base)
-				.getChild(path);
-		assertThat(difference.getType(), Is.is(equalTo(DifferenceType.REMOVED)));
-	}
-
-	@SuppressWarnings({"unchecked"})
-	@Test
-	public void testCollectionItemChange()
-	{
-		final TestObject base = new TestObject();
-		final NestableCollectionSafeObject item1 = new NestableCollectionSafeObject("item");
-		item1.setValue("foo");
-		base.getCollection().add(item1);
-
-		final TestObject modified = new TestObject();
-		final NestableCollectionSafeObject item2 = new NestableCollectionSafeObject("item");
-		item2.setValue("bar");
-		modified.getCollection().add(item2);
-
-		final PropertyPath path = new PropertyPathBuilder()
-				.root()
-				.propertyName("collection")
-				.collectionItem(new NestableCollectionSafeObject("item"))
-				.toPropertyPath();
-		final DiffNode<NestableCollectionSafeObject> difference = (DiffNode<NestableCollectionSafeObject>) new BeanDiffer()
-				.compare(modified, base)
-				.getChild(path);
-		assertThat(difference.getType(), Is.is(equalTo(DifferenceType.CHANGED)));
-	}
-
-	@SuppressWarnings({"unchecked"})
-	@Test
-	public void testIgnore()
-	{
-		final TestObject base = new TestObject();
-		final TestObject modified = new TestObject();
-		final NestableCollectionSafeObject item = new NestableCollectionSafeObject("foo");
-		item.setValue("meh");
-		modified.getCollection().add(item);
-		final PropertyPath ignorePath = new PropertyPathBuilder()
-				.root()
-				.propertyName("collection")
-				.collectionItem(new NestableCollectionSafeObject("foo"))
-				.toPropertyPath();
-		final BeanDiffer objectDiffer = new BeanDiffer();
-		objectDiffer.addIgnoreProperty(ignorePath);
-		final DiffNode<?> rootDifference = objectDiffer.compare(modified, base);
-		final DiffNode<?> collectionDifference = rootDifference.getChild("collection");
-		final DiffNode<?> itemDifference = rootDifference.getChild(ignorePath);
-		assertThat(collectionDifference, nullValue());
-		assertThat(itemDifference, nullValue());
+		final Node node = differ.compare(new Object(), new Object());
+		assertThat(node.getState(), is(Node.State.CHANGED));
 	}
 
 	@Test
-	public void testMapItemAdd()
+	public void testStupidStuffToGetOneHundredPercentCodeCoverage1()
 	{
-		final TestObject base = new TestObject();
-		final TestObject modified = new TestObject();
-		modified.getMap().put("test", new NestableCollectionSafeObject("test"));
-		final PropertyPath path = new PropertyPathBuilder()
-				.root()
-				.propertyName("map")
-				.mapKey("test")
-				.toPropertyPath();
-		final DiffNode<?> difference = new BeanDiffer().compare(modified, base).getChild(path);
-		assertThat(difference.getType(), is(DifferenceType.ADDED));
+		final Configuration configuration = new Configuration();
+		when(delegate.getConfiguration()).thenReturn(configuration);
+		assertThat(differ.getConfiguration(), sameInstance(configuration));
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void testConstructionWithoutObjectDiffer()
+	{
+		new BeanDiffer(null);
+	}
+
+	/** Just for the sake of 100% code coverage */
 	@Test
-	public void testMapItemRemove()
+	public void testConstructionWithObjectDiffer()
 	{
-		final TestObject base = new TestObject();
-		base.getMap().put("test", new NestableCollectionSafeObject("test"));
-		final TestObject modified = new TestObject();
-		final PropertyPath path = new PropertyPathBuilder()
-				.root()
-				.propertyName("map")
-				.mapKey("test")
-				.toPropertyPath();
-		final DiffNode<?> difference = new BeanDiffer().compare(modified, base).getChild(path);
-		assertThat(difference.getType(), is(DifferenceType.REMOVED));
+		new BeanDiffer(delegate);
 	}
-
-	@Test
-	public void testMapItemChange()
-	{
-		final TestObject base = new TestObject();
-		base.getMap().put("test", new NestableCollectionSafeObject("test"));
-		final TestObject modified = new TestObject();
-		final NestableCollectionSafeObject item = new NestableCollectionSafeObject("test");
-		item.setValue("foo");
-		modified.getMap().put("test", item);
-		final PropertyPath path = new PropertyPathBuilder()
-				.root()
-				.propertyName("map")
-				.mapKey("test")
-				.toPropertyPath();
-		final DiffNode<TestObject> compare = new BeanDiffer().compare(modified, base);
-		final DiffNode<?> difference = compare.getChild(path);
-		assertThat(difference.getType(), is(DifferenceType.CHANGED));
-	}
-
-	@Test
-	public void testNullBase()
-	{
-		final DiffNode<TestObject> difference = new BeanDiffer().compare(new TestObject(), null);
-		assertThat(difference.getType(), is(DifferenceType.ADDED));
-	}
-
-	@Test
-	public void testEqualsOnlyAnnotation()
-	{
-		final EqualsOnlyItemContainer itemContainer1 = new EqualsOnlyItemContainer();
-		final EqualsOnlyItemContainer itemContainer2 = new EqualsOnlyItemContainer();
-		final EqualsOnlyItem item1 = new EqualsOnlyItem("foo");
-		itemContainer1.setItem(item1);
-		final EqualsOnlyItem item2 = new EqualsOnlyItem("bar");
-		itemContainer2.setItem(item2);
-		final ObjectDiffer objectDiffer = new BeanDiffer();
-		final DiffNode<EqualsOnlyItemContainer> difference = objectDiffer.compare(itemContainer1, itemContainer2);
-		final DiffNode<?> child = difference.getChild(PropertyPathBuilder.pathOf("item"));
-
-		// set new item
-		child.getCanonicalAccessor().set(itemContainer1, item2);
-
-		assertFalse("Node shouldn't have children", child.hasChildren());
-		assertThat("Node should be considered changed", child.getType(), Is.is(equalTo(DifferenceType.CHANGED)));
-		assertThat("Item should have been replaced", itemContainer1.getItem(), equalTo(item2));
-	}
-
-	@Test
-	public void testWithTwoNestingLevels()
-	{
-
-	}
-
-	@Test
-	public void testWithThreeNestingLevels()
-	{
-		final NestableCollectionSafeObject
-				modified = new NestableCollectionSafeObject("1").setItem(new NestableCollectionSafeObject("2").setItem(new NestableCollectionSafeObject("3").setItem(new NestableCollectionSafeObject("4"))));
-		final NestableCollectionSafeObject
-				base = new NestableCollectionSafeObject("1").setItem(new NestableCollectionSafeObject("2").setItem(new NestableCollectionSafeObject("3")));
-
-		final ObjectDiffer objectDiffer = new BeanDiffer();
-		final DiffNode<NestableCollectionSafeObject> node = objectDiffer.compare(modified, base);
-		node.visit(new PrintingVisitor(base, modified));
-	}
-
-//	@Test
-//	public void testExperiment()
-//	{
-//		final TestObject base = new TestObject();
-//		final TestObject modified = new TestObject();
-//		modified.getExperiment().put("test", Arrays.asList(new Item("foo")));
-//		final IDifference<TestObject> difference = new ObjectDiffer().compare(modified, base);
-//	}
 }

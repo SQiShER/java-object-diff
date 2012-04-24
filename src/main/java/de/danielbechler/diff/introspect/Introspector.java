@@ -5,5 +5,5 @@ import de.danielbechler.diff.accessor.*;
 /** @author Daniel Bechler */
 public interface Introspector
 {
-	Iterable<Accessor<?>> introspect(Class<?> type);
+	Iterable<Accessor> introspect(Class<?> type);
 }

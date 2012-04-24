@@ -1,7 +1,7 @@
 package de.danielbechler.diff.path;
 
 /** @author Daniel Bechler */
-public final class RootElement implements PropertyPath.Element
+public final class RootElement extends PropertyPath.Element
 {
 	private static final RootElement instance = new RootElement();
 
@@ -14,35 +14,29 @@ public final class RootElement implements PropertyPath.Element
 		return instance;
 	}
 
-//	@Override
-//	public boolean matches(final IDifference<?> difference)
-//	{
-//		return difference != null && difference.getAccessor().getPropertySelector() instanceof RootPropertySelector;
-//	}
-
 	@Override
-	public String toString()
+	public boolean equals(final PropertyPath.Element element)
 	{
-		return "root";
+		if (this == element)
+		{
+			return true;
+		}
+		if (getClass().equals(element.getClass()))
+		{
+			return true;
+		}
+		return false;
 	}
 
 	@Override
-	public int hashCode()
+	public int calculateHashCode()
 	{
 		return 0;
 	}
 
 	@Override
-	public boolean equals(final Object o)
+	public String asString()
 	{
-		if (this == o)
-		{
-			return true;
-		}
-		if (getClass().equals(o.getClass()))
-		{
-			return true;
-		}
-		return false;
+		return "root";
 	}
 }

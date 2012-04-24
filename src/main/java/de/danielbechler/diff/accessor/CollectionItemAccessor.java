@@ -5,43 +5,33 @@ import de.danielbechler.diff.path.*;
 import java.util.*;
 
 /** @author Daniel Bechler */
-@SuppressWarnings({"unchecked"})
-public final class CollectionItemAccessor<T> extends AbstractAccessor<T>
+public final class CollectionItemAccessor extends AbstractAccessor
 {
-	private final T referenceItem;
+	private final Object referenceItem;
 
-	public CollectionItemAccessor(final T referenceItem)
+	public CollectionItemAccessor(final Object referenceItem)
 	{
 		this.referenceItem = referenceItem;
 	}
 
-	@Override
 	public String getPropertyName()
 	{
 		return "[" + referenceItem + "]";
 	}
 
-	@Override
-	public PropertyPath.Element toPathElement()
+	public PropertyPath.Element getPathElement()
 	{
-		return new CollectionElement<T>(referenceItem);
+		return new CollectionElement(referenceItem);
 	}
 
-	@Override
-	public PropertyPath getPath()
-	{
-		return new PropertyPath(toPathElement());
-	}
-
-	@Override
 	public void set(final Object target, final Object value)
 	{
-		final Collection targetCollection = objectAsCollection(target);
+		final Collection<Object> targetCollection = objectAsCollection(target);
 		if (targetCollection == null)
 		{
 			return;
 		}
-		final T previous = get(target);
+		final Object previous = get(target);
 		if (previous != null)
 		{
 			targetCollection.remove(previous);
@@ -49,8 +39,7 @@ public final class CollectionItemAccessor<T> extends AbstractAccessor<T>
 		targetCollection.add(value);
 	}
 
-	@Override
-	public T get(final Object target)
+	public Object get(final Object target)
 	{
 		final Collection targetCollection = objectAsCollection(target);
 		if (targetCollection == null)
@@ -61,60 +50,32 @@ public final class CollectionItemAccessor<T> extends AbstractAccessor<T>
 		{
 			if (item.equals(referenceItem))
 			{
-				return (T) item;
+				return item;
 			}
 		}
 		return null;
 	}
 
-	private static Collection<?> objectAsCollection(final Object object)
+	private static Collection<Object> objectAsCollection(final Object object)
 	{
 		if (object == null)
 		{
 			return null;
 		}
-		else if (!(object instanceof Collection))
+		else if (object instanceof Collection)
 		{
-			throw new IllegalArgumentException(object.getClass().toString());
+			//noinspection unchecked
+			return (Collection<Object>) object;
 		}
-		return (Collection) object;
+		throw new IllegalArgumentException(object.getClass().toString());
 	}
 
-	@Override
-	public void unset(final Object target, final Object value)
+	public void unset(final Object target)
 	{
 		final Collection targetCollection = objectAsCollection(target);
 		if (targetCollection != null)
 		{
 			targetCollection.remove(referenceItem);
 		}
-	}
-
-	@Override
-	public boolean equals(final Object o)
-	{
-		if (this == o)
-		{
-			return true;
-		}
-		if (o == null || getClass() != o.getClass())
-		{
-			return false;
-		}
-
-		final CollectionItemAccessor that = (CollectionItemAccessor) o;
-
-		if (!referenceItem.equals(that.referenceItem))
-		{
-			return false;
-		}
-
-		return true;
-	}
-
-	@Override
-	public int hashCode()
-	{
-		return referenceItem.hashCode();
 	}
 }

@@ -3,20 +3,20 @@ package de.danielbechler.diff.mock;
 import de.danielbechler.util.*;
 
 /** @author Daniel Bechler */
-public final class NestableCollectionSafeObject
+public class ObjectWithHashCodeAndEquals
 {
 	private final String key;
 
 	private String value;
-	private NestableCollectionSafeObject item;
+	private ObjectWithHashCodeAndEquals item;
 
-	public NestableCollectionSafeObject(final String key)
+	public ObjectWithHashCodeAndEquals(final String key)
 	{
 		Assert.hasText(key, "key");
 		this.key = key;
 	}
 
-	public NestableCollectionSafeObject(final String key, final String value)
+	public ObjectWithHashCodeAndEquals(final String key, final String value)
 	{
 		this(key);
 		this.value = value;
@@ -37,12 +37,12 @@ public final class NestableCollectionSafeObject
 		this.value = value;
 	}
 
-	public NestableCollectionSafeObject getItem()
+	public ObjectWithHashCodeAndEquals getItem()
 	{
 		return item;
 	}
 
-	public NestableCollectionSafeObject setItem(final NestableCollectionSafeObject item)
+	public ObjectWithHashCodeAndEquals setItem(final ObjectWithHashCodeAndEquals item)
 	{
 		this.item = item;
 		return this;
@@ -60,7 +60,7 @@ public final class NestableCollectionSafeObject
 			return false;
 		}
 
-		final NestableCollectionSafeObject item = (NestableCollectionSafeObject) o;
+		final ObjectWithHashCodeAndEquals item = (ObjectWithHashCodeAndEquals) o;
 
 		if (!key.equals(item.key))
 		{
@@ -74,5 +74,11 @@ public final class NestableCollectionSafeObject
 	public int hashCode()
 	{
 		return key.hashCode();
+	}
+
+	@Override
+	public String toString()
+	{
+		return key + ":" + value;
 	}
 }

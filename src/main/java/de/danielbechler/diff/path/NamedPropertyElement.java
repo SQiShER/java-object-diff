@@ -3,7 +3,7 @@ package de.danielbechler.diff.path;
 import de.danielbechler.util.*;
 
 /** @author Daniel Bechler */
-public final class NamedPropertyElement implements PropertyPath.Element
+public final class NamedPropertyElement extends PropertyPath.Element
 {
 	private final String propertyName;
 
@@ -13,30 +13,24 @@ public final class NamedPropertyElement implements PropertyPath.Element
 		this.propertyName = propertyName;
 	}
 
-//	@Override
-//	public boolean matches(final IDifference<?> difference)
-//	{
-//		return difference != null && difference.getAccessor().getPropertySelector().equals(this);
-//	}
-
 	public String getPropertyName()
 	{
 		return propertyName;
 	}
 
 	@Override
-	public boolean equals(final Object o)
+	public boolean equals(final PropertyPath.Element element)
 	{
-		if (this == o)
+		if (this == element)
 		{
 			return true;
 		}
-		if (!(o instanceof NamedPropertyElement))
+		if (!(element instanceof NamedPropertyElement))
 		{
 			return false;
 		}
 
-		final NamedPropertyElement that = (NamedPropertyElement) o;
+		final NamedPropertyElement that = (NamedPropertyElement) element;
 
 		if (!propertyName.equals(that.propertyName))
 		{
@@ -47,13 +41,13 @@ public final class NamedPropertyElement implements PropertyPath.Element
 	}
 
 	@Override
-	public int hashCode()
+	public int calculateHashCode()
 	{
 		return propertyName.hashCode();
 	}
 
 	@Override
-	public String toString()
+	public String asString()
 	{
 		return propertyName;
 	}

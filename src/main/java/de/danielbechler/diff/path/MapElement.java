@@ -1,39 +1,34 @@
 package de.danielbechler.diff.path;
 
 /** @author Daniel Bechler */
-public final class MapElement<K> implements PropertyPath.Element
+public final class MapElement extends PropertyPath.Element
 {
-	private final K key;
+	private final Object key;
 
-	public MapElement(final K key)
+	public MapElement(final Object key)
 	{
 		this.key = key;
 	}
 
-//	@Override
-//	public boolean matches(final IDifference<?> difference)
-//	{
-//		return difference != null && difference.getAccessor().getPropertySelector().equals(this);
-//	}
-
-	public K getKey()
+	@SuppressWarnings({"UnusedDeclaration"})
+	public Object getKey()
 	{
 		return key;
 	}
 
 	@Override
-	public boolean equals(final Object o)
+	public boolean equals(final PropertyPath.Element element)
 	{
-		if (this == o)
+		if (this == element)
 		{
 			return true;
 		}
-		if (!(o instanceof MapElement))
+		if (!(element instanceof MapElement))
 		{
 			return false;
 		}
 
-		final MapElement that = (MapElement) o;
+		final MapElement that = (MapElement) element;
 
 		if (key != null ? !key.equals(that.key) : that.key != null)
 		{
@@ -44,13 +39,13 @@ public final class MapElement<K> implements PropertyPath.Element
 	}
 
 	@Override
-	public int hashCode()
+	public int calculateHashCode()
 	{
 		return key != null ? key.hashCode() : 0;
 	}
 
 	@Override
-	public String toString()
+	public String asString()
 	{
 		return "key[" + key + "]";
 	}

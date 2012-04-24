@@ -5,7 +5,7 @@ import de.danielbechler.diff.path.*;
 import de.danielbechler.util.*;
 
 /** @author Daniel Bechler */
-public abstract class AbstractPropertySelectorPathVisitor implements DiffNode.Visitor
+public abstract class AbstractPropertySelectorPathVisitor implements Node.Visitor
 {
 	private final PropertyPathBuilder selectorPathBuilder;
 
@@ -23,12 +23,12 @@ public abstract class AbstractPropertySelectorPathVisitor implements DiffNode.Vi
 		this.selectorPathBuilder = null;
 	}
 
-	public final void accept(final DiffNode<?> difference, final Visit visit)
+	public final void accept(final Node difference, final Visit visit)
 	{
 		if (selectorPath == null)
 		{
 			configureSelectorPath(selectorPathBuilder);
-			selectorPath = selectorPathBuilder.toPropertyPath();
+			selectorPath = selectorPathBuilder.build();
 		}
 		if (difference.matches(selectorPath))
 		{
@@ -42,7 +42,7 @@ public abstract class AbstractPropertySelectorPathVisitor implements DiffNode.Vi
 	}
 
 	/** Action performed when the property has been found. */
-	protected abstract void action(DiffNode<?> match);
+	protected abstract void action(Node match);
 
 	public PropertyPath getSelectorPath()
 	{

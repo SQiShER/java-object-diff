@@ -7,18 +7,12 @@ import org.junit.*;
 /** @author Daniel Bechler */
 public class RootAccessorTest
 {
-	private final Accessor<Object> accessor = new RootAccessor<Object>();
+	private final Accessor accessor = new RootAccessor();
 
 	@Test
 	public void testGetPropertyName() throws Exception
 	{
 		Assert.assertThat(accessor.getPropertyName(), IsEqual.equalTo(""));
-	}
-
-	@Test
-	public void testGetPath() throws Exception
-	{
-		Assert.assertThat(accessor.getPath(), IsEqual.equalTo(new PropertyPath(RootElement.getInstance())));
 	}
 
 	@Test
@@ -41,12 +35,12 @@ public class RootAccessorTest
 	{
 		final Object original = new Object();
 		final Object replacement = new Object();
-		accessor.unset(original, replacement);
+		accessor.unset(original);
 	}
 
 	@Test
 	public void testToPathElement() throws Exception
 	{
-		Assert.assertThat(accessor.toPathElement(), Is.is(RootElement.class));
+		Assert.assertThat(accessor.getPathElement(), Is.is(RootElement.class));
 	}
 }

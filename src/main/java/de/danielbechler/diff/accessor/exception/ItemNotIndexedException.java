@@ -1,4 +1,4 @@
-package de.danielbechler.diff.accessor;
+package de.danielbechler.diff.accessor.exception;
 
 /** @author Daniel Bechler */
 public final class ItemNotIndexedException extends RuntimeException

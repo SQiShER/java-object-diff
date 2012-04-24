@@ -1,12 +1,13 @@
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.accessor.*;
 import de.danielbechler.diff.node.*;
 
 /** @author Daniel Bechler */
-public interface ObjectDiffer
+public interface ObjectDiffer extends Differ, Configurable
 {
-	<T> DiffNode<T> compare(T modifiedInstance, T baseInstance);
+	Node compare(Object working, Object base);
 
-	DiffNode compare(Object modifiedInstance, Object baseInstance, Object defaultInstance, Accessor accessor);
+	boolean isIgnored(Node parentNode, final Instances instances);
+
+	boolean isEqualsOnly(Node parentNode, Instances instances);
 }

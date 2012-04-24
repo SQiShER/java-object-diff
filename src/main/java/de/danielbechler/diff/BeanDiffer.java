@@ -3,172 +3,111 @@ package de.danielbechler.diff;
 import de.danielbechler.diff.accessor.*;
 import de.danielbechler.diff.introspect.*;
 import de.danielbechler.diff.node.*;
-import de.danielbechler.diff.path.*;
 import de.danielbechler.util.*;
 
-import java.util.*;
-
 /** @author Daniel Bechler */
-public final class BeanDiffer extends AbstractObjectDiffer implements ObjectDiffer
+final class BeanDiffer extends AbstractDiffer
 {
-	private final Introspector introspector = new StandardIntrospector();
+	private Introspector introspector = new StandardIntrospector();
 
-	@SuppressWarnings({"unchecked"})
-	public <T> DiffNode<T> compare(final T modifiedInstance, final T baseInstance)
+	BeanDiffer()
 	{
-		Assert.notNull(modifiedInstance, "Missing argument [modifiedInstance]");
-//		Assert.notNull(baseInstance, "Missing argument [baseInstance]");
-		if (baseInstance != null && !modifiedInstance.getClass().equals(baseInstance.getClass()))
+		setDelegate(new DelegatingObjectDiffer(this, null, null));
+	}
+
+	BeanDiffer(final ObjectDiffer delegate)
+	{
+		super(delegate);
+	}
+
+	Node compare(final Object working, final Object base)
+	{
+		// Root call requires an existing working instance
+		Assert.notNull(working, "working");
+
+		// Comparison of different types is not (yet) supported
+		Assert.equalTypesOrNull(working, base);
+
+		return compare(Node.ROOT, Instances.of(new RootAccessor(), working, base));
+	}
+
+	public Node compare(final Node parentNode, final Instances instances)
+	{
+		final Node node = new DefaultNode(parentNode, instances.getSourceAccessor());
+
+		if (getDelegate().isIgnored(node, instances))
 		{
-			throw new IllegalArgumentException("Comparison of different types is not (yet) supported. " +
-													   "Modified was:" + modifiedInstance.getClass() + "; " +
-													   "Base was: " + baseInstance.getClass());
+			node.setState(Node.State.IGNORED);
+			return node;
 		}
-		final Accessor<T> accessor = new RootAccessor<T>();
-		final T defaultInstance = (T) Classes.freshInstanceOf(modifiedInstance.getClass());
-		return compare(modifiedInstance, baseInstance, defaultInstance, accessor);
-	}
 
-	public DiffNode compare(final Instances instances, final Accessor accessor)
-	{
-		return null;
-	}
-
-	public DiffNode compare(final Object modifiedInstance,
-							final Object baseInstance,
-							final Object defaultInstance,
-							final Accessor accessor)
-	{
-		final Accessor childAccessor;
-		if (accessor instanceof ChainingAccessor)
+		if (instances.getType() == null)
 		{
-			childAccessor = ((ChainingAccessor) accessor).getDetachedChildAccessor();
+			node.setState(Node.State.UNTOUCHED);
+			return node;
+		}
+
+		return compareBean(parentNode, instances);
+	}
+
+	private Node compareBean(final Node parentNode, final Instances instances)
+	{
+		final Node difference = new DefaultNode(parentNode, instances.getSourceAccessor());
+		if (instances.hasBeenAdded())
+		{
+			difference.setState(Node.State.ADDED);
+		}
+		else if (instances.hasBeenRemoved())
+		{
+			difference.setState(Node.State.REMOVED);
+		}
+		else if (instances.areSame())
+		{
+			difference.setState(Node.State.UNTOUCHED);
 		}
 		else
 		{
-			childAccessor = accessor;
-		}
-		final Object baseValue = childAccessor.get(baseInstance);
-		final Object modifiedValue = childAccessor.get(modifiedInstance);
-		final Object defaultValue = childAccessor.get(defaultInstance);
-		final PropertyPath selectorPath = accessor.getPath();
-		if (isIgnoreProperty(accessor))
-		{
-			final DiffNode difference = new DefaultNode(childAccessor);
-			difference.setType(DifferenceType.UNTOUCHED);
-			return difference;
-		}
-		final Class<?> propertyType = safeTypeOf(childAccessor, baseValue, modifiedValue, defaultValue);
-		if (Collection.class.isAssignableFrom(propertyType))
-		{
-			final Collection modifiedCollection = (Collection) modifiedValue;
-			final Collection baseCollection = (Collection) baseValue;
-			final Collection defaultCollection = (Collection) defaultValue;
-			return new CollectionDiffer(this).compare(modifiedCollection, baseCollection, defaultCollection, accessor);
-		}
-		else if (Map.class.isAssignableFrom(propertyType))
-		{
-			return new MapDiffer(this).compare(
-					modifiedValue != null ? Map.class.cast(modifiedValue) : null,
-					baseValue != null ? Map.class.cast(baseValue) : null,
-					defaultValue != null ? Map.class.cast(defaultValue) : null,
-					accessor
-			);
-		}
-		else if (propertyType.isArray())
-		{
-			// TODO
-		}
-		final DiffNode difference = new DefaultNode(childAccessor);
-		difference.setType(DifferenceType.UNTOUCHED);
-		if (hasBeenAdded(defaultValue, baseValue, modifiedValue))
-		{
-			difference.setType(DifferenceType.ADDED);
-		}
-		else if (hasBeenRemoved(defaultValue, baseValue, modifiedValue))
-		{
-			difference.setType(DifferenceType.REMOVED);
-		}
-		else if (modifiedValue == baseValue) // both null or both same instance
-		{
-			return difference;
-		}
-		else
-		{
-			if (Classes.isSimpleType(propertyType) || isEqualsOnlyPath(selectorPath) || isEqualsOnlyType(propertyType))
+			if (getDelegate().isEqualsOnly(parentNode, instances))
 			{
-				if (!Objects.isEqual(baseValue, modifiedValue))
-				{
-					difference.setType(DifferenceType.CHANGED);
-				}
+				compareWithEquals(difference, instances);
 			}
 			else
 			{
-				for (final Accessor<?> typeAccessor : introspect(propertyType))
-				{
-					final Accessor<Object> chain = new ChainedAccessor(accessor, typeAccessor);
-					final DiffNode<Object> node = compare(modifiedValue, baseValue, defaultValue, chain);
-					if (node.isDifferent())
-					{
-						difference.addChild(node);
-					}
-				}
-				if (difference.hasChildren())
-				{
-					difference.setType(DifferenceType.CHANGED);
-				}
+				compareProperties(difference, instances);
 			}
 		}
 		return difference;
 	}
 
-	private static Class<?> safeTypeOf(final Accessor<?> accessor,
-									   final Object baseValue,
-									   final Object modifiedValue,
-									   final Object defaultValue)
+	private static void compareWithEquals(final Node parentNode, final Instances instances)
 	{
-		if (accessor instanceof PropertyAccessor)
+		if (!instances.areEqual())
 		{
-			return ((PropertyAccessor) accessor).getType();
+			parentNode.setState(Node.State.CHANGED);
 		}
-		return typeOf(baseValue, modifiedValue, defaultValue);
 	}
 
-	@SuppressWarnings({"unchecked"})
-	private static <T> Class<T> typeOf(final T... values)
+	private void compareProperties(final Node parentNode, final Instances instances)
 	{
-		for (final T value : values)
+		for (final Accessor accessor : introspect(instances.getType()))
 		{
-			if (value != null)
+			final Node child = getDelegate().compare(parentNode, instances.access(accessor));
+			if (child.hasChanges())
 			{
-				return (Class<T>) value.getClass();
+				parentNode.setState(Node.State.CHANGED);
+				parentNode.addChild(child);
 			}
 		}
-		return (Class<T>) Object.class;
-//		throw new RuntimeException("Couldn't extract object type");
 	}
 
-	private static boolean hasBeenRemoved(final Object defaultValue, final Object baseValue, final Object updatedValue)
-	{
-		if (baseValue != null && updatedValue == null && !Classes.isSimpleType(baseValue.getClass()))
-		{
-			return true;
-		}
-		return Objects.isEqual(defaultValue, updatedValue) && !Objects.isEqual(baseValue, updatedValue);
-	}
-
-	private static boolean hasBeenAdded(final Object defaultValue, final Object baseValue, final Object updatedValue)
-	{
-		// Not sure if the commented part is needed. Tests succeed without it... but not everything is tested yet.
-		if (baseValue == null && updatedValue != null) // && !Classes.isSimpleType(updatedValue.getClass()))
-		{
-			return true;
-		}
-		return Objects.isEqual(defaultValue, baseValue) && !Objects.isEqual(baseValue, updatedValue);
-	}
-
-	private Iterable<Accessor<?>> introspect(final Class<?> type)
+	private Iterable<Accessor> introspect(final Class<?> type)
 	{
 		return introspector.introspect(type);
+	}
+
+	void setIntrospector(final Introspector introspector)
+	{
+		Assert.notNull(introspector, "introspector");
+		this.introspector = introspector;
 	}
 }

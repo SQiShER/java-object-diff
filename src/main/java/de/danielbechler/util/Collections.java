@@ -9,6 +9,16 @@ public class Collections
 	{
 	}
 
+	public static <T> Set<T> setOf(final T... c)
+	{
+		return setOf(Arrays.asList(c));
+	}
+
+	public static <T> Set<T> setOf(final Collection<T> c)
+	{
+		return new LinkedHashSet<T>(c);
+	}
+
 	public static boolean isEmpty(final Collection<?> c)
 	{
 		return c == null || c.isEmpty();

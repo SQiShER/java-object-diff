@@ -1,5 +1,6 @@
 package de.danielbechler.diff.accessor;
 
+import de.danielbechler.diff.accessor.exception.*;
 import de.danielbechler.diff.path.*;
 import de.danielbechler.util.*;
 import org.slf4j.*;
@@ -8,13 +9,12 @@ import java.lang.reflect.*;
 import java.util.*;
 
 /** @author Daniel Bechler */
-@SuppressWarnings({"unchecked"})
-public final class PropertyAccessor<T> extends AbstractAccessor<T>
+public final class PropertyAccessor extends AbstractAccessor implements TypeAwareAccessor
 {
 	private static final Logger logger = LoggerFactory.getLogger(PropertyAccessor.class);
 
 	private final String propertyName;
-	private final Class<T> type;
+	private final Class<?> type;
 	private final Method readMethod;
 	private final Method writeMethod;
 
@@ -25,7 +25,7 @@ public final class PropertyAccessor<T> extends AbstractAccessor<T>
 		this.propertyName = propertyName;
 		this.readMethod = makeAccessible(readMethod);
 		this.writeMethod = makeAccessible(writeMethod);
-		this.type = (Class<T>) this.readMethod.getReturnType();
+		this.type = this.readMethod.getReturnType();
 	}
 
 	private static Method makeAccessible(final Method method)
@@ -82,20 +82,22 @@ public final class PropertyAccessor<T> extends AbstractAccessor<T>
 	{
 		if (Collection.class.isAssignableFrom(readMethod.getReturnType()))
 		{
-			tryToReplaceCollectionContent((Collection) get(target), (Collection) value);
+			//noinspection unchecked
+			tryToReplaceCollectionContent((Collection<Object>) get(target), (Collection<Object>) value);
 			return;
 		}
 
 		if (Map.class.isAssignableFrom(readMethod.getReturnType()))
 		{
-			tryToReplaceMapContent((Map) get(target), (Map) value);
+			//noinspection unchecked
+			tryToReplaceMapContent((Map<Object, Object>) get(target), (Map<Object, Object>) value);
 			return;
 		}
 
 		logFailedSet(value);
 	}
 
-	private static boolean tryToReplaceCollectionContent(final Collection target, final Collection value)
+	private static boolean tryToReplaceCollectionContent(final Collection<Object> target, final Collection<Object> value)
 	{
 		if (target == null)
 		{
@@ -114,7 +116,7 @@ public final class PropertyAccessor<T> extends AbstractAccessor<T>
 		}
 	}
 
-	private static boolean tryToReplaceMapContent(final Map target, final Map value)
+	private static boolean tryToReplaceMapContent(final Map<Object, Object> target, final Map<Object, Object> value)
 	{
 		if (target == null)
 		{
@@ -133,7 +135,7 @@ public final class PropertyAccessor<T> extends AbstractAccessor<T>
 		}
 	}
 
-	public T get(final Object target)
+	public Object get(final Object target)
 	{
 		if (target == null)
 		{
@@ -141,7 +143,7 @@ public final class PropertyAccessor<T> extends AbstractAccessor<T>
 		}
 		try
 		{
-			return (T) readMethod.invoke(target);
+			return readMethod.invoke(target);
 		}
 		catch (Exception e)
 		{
@@ -152,12 +154,12 @@ public final class PropertyAccessor<T> extends AbstractAccessor<T>
 		}
 	}
 
-	public void unset(final Object target, final Object value)
+	public void unset(final Object target)
 	{
-		set(target, value);
+		set(target, null);
 	}
 
-	public Class<T> getType()
+	public Class<?> getType()
 	{
 		return this.type;
 	}
@@ -167,13 +169,8 @@ public final class PropertyAccessor<T> extends AbstractAccessor<T>
 		return this.propertyName;
 	}
 
-	public PropertyPath.Element toPathElement()
+	public PropertyPath.Element getPathElement()
 	{
 		return new NamedPropertyElement(this.propertyName);
-	}
-
-	public PropertyPath getPath()
-	{
-		return new PropertyPath(toPathElement());
 	}
 }

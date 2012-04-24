@@ -5,13 +5,13 @@ import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.visitor.*;
 
 /** @author Daniel Bechler */
-public final class ObjectMerger<T>
+public final class ObjectMerger
 {
 	private final ObjectDiffer objectDiffer;
 
 	public ObjectMerger()
 	{
-		this(new BeanDiffer());
+		this.objectDiffer = ObjectDifferFactory.getInstance();
 	}
 
 	public ObjectMerger(final ObjectDiffer objectDiffer)
@@ -19,20 +19,16 @@ public final class ObjectMerger<T>
 		this.objectDiffer = objectDiffer;
 	}
 
-	public T merge(final T modified, final T base, final T head)
+	@SuppressWarnings({"unchecked"})
+	public <T> T merge(final T modified, final T base, final T head)
 	{
-		final DiffNode.Visitor visitor = new MergingDifferenceVisitor<T>(head, modified);
-		final DiffNode<T> difference = objectDiffer.compare(modified, base);
+		final Node.Visitor visitor = new MergingDifferenceVisitor<T>(head, modified);
+		final Node difference = objectDiffer.compare(modified, base);
 		difference.visit(visitor);
 		return head;
 	}
 
-	public ObjectDiffer getObjectDiffer()
-	{
-		return objectDiffer;
-	}
-
-	private static final class MergingDifferenceVisitor<T> implements DiffNode.Visitor
+	private static final class MergingDifferenceVisitor<T> implements Node.Visitor
 	{
 		private final T head;
 
@@ -44,25 +40,25 @@ public final class ObjectMerger<T>
 			this.modified = modified;
 		}
 
-		public void accept(final DiffNode<?> difference, final Visit visit)
+		public void accept(final Node difference, final Visit visit)
 		{
-			if (difference.getType() == DifferenceType.ADDED)
+			if (difference.getState() == Node.State.ADDED)
 			{
-				difference.getCanonicalAccessor().set(head, difference.getCanonicalAccessor().get(modified));
+				difference.canonicalSet(head, difference.canonicalGet(modified));
 			}
-			else if (difference.getType() == DifferenceType.REMOVED)
+			else if (difference.getState() == Node.State.REMOVED)
 			{
-				difference.getCanonicalAccessor().unset(head, difference.getCanonicalAccessor().get(modified));
+				difference.canonicalUnset(head, difference.canonicalGet(modified));
 			}
-			else if (difference.getType() == DifferenceType.REPLACED)
+			else if (difference.getState() == Node.State.REPLACED)
 			{
-				difference.getCanonicalAccessor().set(head, difference.getCanonicalAccessor().get(modified));
+				difference.canonicalSet(head, difference.canonicalGet(modified));
 			}
-			else if (difference.getType() == DifferenceType.UNTOUCHED)
+			else if (difference.getState() == Node.State.UNTOUCHED)
 			{
 				// not touched - nothing to do
 			}
-			else if (difference.getType() == DifferenceType.CHANGED)
+			else if (difference.getState() == Node.State.CHANGED)
 			{
 				if (difference.hasChildren())
 				{
@@ -71,7 +67,7 @@ public final class ObjectMerger<T>
 				}
 				else
 				{
-					difference.getCanonicalAccessor().set(head, difference.getCanonicalAccessor().get(modified));
+					difference.canonicalSet(head, difference.canonicalGet(modified));
 				}
 			}
 		}

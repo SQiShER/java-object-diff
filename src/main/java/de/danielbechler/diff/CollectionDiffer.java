@@ -7,130 +7,86 @@ import de.danielbechler.util.Collections;
 import java.util.*;
 
 /** @author Daniel Bechler */
-@SuppressWarnings({"unchecked"})
-public final class CollectionDiffer extends AbstractObjectDiffer
+final class CollectionDiffer extends AbstractDiffer
 {
-	private final ObjectDiffer parentDiffer;
-
-	public CollectionDiffer(final BeanDiffer parentDiffer)
+	public CollectionDiffer()
 	{
-		super(parentDiffer);
-		this.parentDiffer = parentDiffer;
+		setDelegate(new DelegatingObjectDiffer(null, null, this));
 	}
 
-	public <T> CollectionNode<T> compare(final Collection<T> workingCollection,
-										 final Collection<T> baseCollection,
-										 final Collection<T> defaultCollection,
-										 final Accessor<Collection<T>> accessor)
+	public CollectionDiffer(final ObjectDiffer delegate)
 	{
-		if (workingCollection != null && baseCollection == null)
+		super(delegate);
+	}
+
+	public CollectionNode compare(final Collection<?> working, final Collection<?> base)
+	{
+		return compare(Node.ROOT, Instances.of(new RootAccessor(), working, base));
+	}
+
+	public CollectionNode compare(final Node parentNode, final Instances instances)
+	{
+		final CollectionNode node = new CollectionNode(parentNode, instances.getSourceAccessor());
+		if (instances.getWorking() != null && instances.getBase() == null)
 		{
-			final CollectionNode<T> difference = new CollectionNode<T>(accessor);
-			difference.setType(DifferenceType.ADDED);
-			for (final T item : workingCollection)
-			{
-				addDifferenceForAddedItem(difference, accessor, workingCollection, item);
-			}
-			return difference;
+			handleItems(node, instances, instances.getWorking(Collection.class));
+			node.setState(Node.State.ADDED);
 		}
-		else if (workingCollection == null && baseCollection != null)
+		else if (instances.getWorking() == null && instances.getBase() != null)
 		{
-			final CollectionNode<T> difference = new CollectionNode<T>(accessor);
-			difference.setType(DifferenceType.REMOVED);
-			for (final T item : baseCollection)
-			{
-				addDifferenceForRemovedItem(difference, accessor, baseCollection, item);
-			}
-			return difference;
+			handleItems(node, instances, instances.getBase(Collection.class));
+			node.setState(Node.State.REMOVED);
 		}
-		else if (workingCollection == null) // both null
+		else if (instances.areSame())
 		{
-			final CollectionNode<T> difference = new CollectionNode<T>(accessor);
-			difference.setType(DifferenceType.UNTOUCHED);
-			return difference;
+			node.setState(Node.State.UNTOUCHED);
 		}
 		else
 		{
-			return handleItemDifferences(workingCollection, baseCollection, defaultCollection, accessor);
+			handleItems(node, instances, findAddedItems(instances));
+			handleItems(node, instances, findRemovedItems(instances));
+			handleItems(node, instances, findKnownItems(instances));
+		}
+		return node;
+	}
+
+	private void handleItems(final CollectionNode collectionNode, final Instances instances, final Iterable<?> items)
+	{
+		for (final Object item : items)
+		{
+			final Node child = compareItem(collectionNode, instances, item);
+			if (child.hasChanges())
+			{
+				collectionNode.addChild(child);
+				collectionNode.setState(Node.State.CHANGED);
+			}
 		}
 	}
 
-	private <T> boolean addDifferenceForRemovedItem(final CollectionNode<T> difference,
-													final Accessor<Collection<T>> accessor,
-													final Collection<T> collection,
-													final T item)
+	private Node compareItem(final CollectionNode collectionNode, final Instances instances, final Object item)
 	{
-//		difference.indexItem(item);
-		final Accessor<T> itemAccessor = difference.accessorForItem(item);
-		final Accessor<T> chainedAccessor = new ChainedAccessor(accessor, itemAccessor);
-		final DiffNode compare = parentDiffer.compare(null, collection, null, chainedAccessor);
-		if (compare != null && compare.getType() != DifferenceType.UNTOUCHED)
-		{
-			difference.addChild(compare);
-			return true;
-		}
-		return false;
+		final Accessor accessor = collectionNode.accessorForItem(item);
+		return getDelegate().compare(collectionNode, instances.access(accessor));
 	}
 
-	private <T> boolean addDifferenceForAddedItem(final CollectionNode<T> difference,
-												  final Accessor<Collection<T>> accessor,
-												  final Collection<T> collection,
-												  final T item)
+	private static Collection<?> findAddedItems(final Instances instances)
 	{
-//		difference.indexItem(item);
-		final Accessor<T> itemAccessor = difference.accessorForItem(item);
-		final Accessor<T> chainedAccessor = new ChainedAccessor(accessor, itemAccessor);
-		final DiffNode compare = parentDiffer.compare(collection, null, null, chainedAccessor);
-		if (compare != null && compare.getType() != DifferenceType.UNTOUCHED)
-		{
-			difference.addChild(compare);
-			return true;
-		}
-		return false;
+		//noinspection unchecked
+		return Collections.filteredCopyOf(instances.getWorking(Collection.class), instances.getBase(Collection.class));
 	}
 
-	private <T> CollectionNode<T> handleItemDifferences(final Collection<T> workingCollection,
-														final Collection<T> baseCollection,
-														final Collection<T> defaultCollection,
-														final Accessor<Collection<T>> accessor)
+	private static Collection<?> findRemovedItems(final Instances instances)
 	{
-		final CollectionNode<T> difference = new CollectionNode<T>(accessor);
-		difference.setType(DifferenceType.UNTOUCHED);
-		final Collection<? extends T> added = Collections.filteredCopyOf(workingCollection, baseCollection);
-		for (final T item : added)
-		{
-			if (addDifferenceForAddedItem(difference, accessor, workingCollection, item))
-			{
-				difference.setType(DifferenceType.CHANGED);
-			}
-		}
-		final Collection<? extends T> removed = Collections.filteredCopyOf(baseCollection, workingCollection);
-		for (final T item : removed)
-		{
-			if (addDifferenceForRemovedItem(difference, accessor, baseCollection, item))
-			{
-				difference.setType(DifferenceType.CHANGED);
-			}
-		}
-		final Collection<T> changed = new ArrayList<T>(workingCollection);
-		changed.removeAll(added);
-		changed.removeAll(removed);
-		for (final T item : changed)
-		{
-//			difference.indexItem(item);
-			final Accessor<T> itemAccessor = difference.accessorForItem(item);
-			final Accessor<T> chainedAccessor = new ChainedAccessor(accessor, itemAccessor);
-			final DiffNode itemDifference = parentDiffer.compare(
-					workingCollection,
-					baseCollection,
-					defaultCollection,
-					chainedAccessor);
-			if (itemDifference.getType() != DifferenceType.UNTOUCHED)
-			{
-				difference.addChild(itemDifference);
-				difference.setType(DifferenceType.CHANGED);
-			}
-		}
-		return difference;
+		//noinspection unchecked
+		return Collections.filteredCopyOf(instances.getBase(Collection.class), instances.getWorking(Collection.class));
+	}
+
+	private static Iterable<?> findKnownItems(final Instances instances)
+	{
+		@SuppressWarnings({"unchecked"})
+		final Collection<?> changed = new ArrayList<Object>(instances.getWorking(Collection.class));
+		changed.removeAll(findAddedItems(instances));
+		changed.removeAll(findRemovedItems(instances));
+		return changed;
 	}
 }

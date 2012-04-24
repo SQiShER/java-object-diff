@@ -3,54 +3,30 @@ package de.danielbechler.diff.node;
 import de.danielbechler.diff.accessor.*;
 import de.danielbechler.diff.path.*;
 import de.danielbechler.diff.visitor.*;
+import de.danielbechler.util.*;
 
 import java.util.*;
 import java.util.concurrent.atomic.*;
 
 /** @author Daniel Bechler */
-public class DefaultNode<T> implements DiffNode<T>
+public class DefaultNode implements Node
 {
-	private final Accessor<?> accessor;
-	private final Map<String, DiffNode<?>> children = new LinkedHashMap<String, DiffNode<?>>(10);
+	private final Accessor accessor;
+	private final Map<String, Node> children = new LinkedHashMap<String, Node>(10);
 
-	private DifferenceType type = DifferenceType.UNTOUCHED;
-	private DiffNode<?> parent;
+	private State state = State.UNTOUCHED;
+	private Node parentNode;
 
-	public DefaultNode(final Accessor<?> accessor)
+	public DefaultNode(final Node parentNode, final Accessor accessor)
 	{
+		Assert.notNull(accessor, "accessor");
+		this.parentNode = parentNode;
 		this.accessor = accessor;
 	}
 
-	public DifferenceType getType()
+	public State getState()
 	{
-		return this.type;
-	}
-
-	@SuppressWarnings({"unchecked"})
-	public Accessor<T> getAccessor()
-	{
-		return (Accessor<T>) this.accessor;
-	}
-
-	public Accessor<T> getCanonicalAccessor()
-	{
-		if (hasParent())
-		{
-			final Accessor<?> parentAccessor = getParent().getCanonicalAccessor();
-//			final Accessor<T> childAccessor = getAccessor();
-			final Accessor<T> childAccessor = unchain(getAccessor());
-			return new ChainedAccessor<T>(parentAccessor, childAccessor);
-		}
-		return getAccessor();
-	}
-
-	private Accessor<T> unchain(final Accessor<T> accessor)
-	{
-		if (accessor instanceof ChainingAccessor)
-		{
-			return unchain(((ChainingAccessor<T>) accessor).getDetachedChildAccessor());
-		}
-		return accessor;
+		return this.state;
 	}
 
 	public boolean matches(final PropertyPath path)
@@ -58,18 +34,18 @@ public class DefaultNode<T> implements DiffNode<T>
 		return path.matches(getPropertyPath());
 	}
 
-	public boolean isDifferent()
+	public boolean hasChanges()
 	{
-		if (type != DifferenceType.UNTOUCHED)
+		if (state != State.UNTOUCHED && state != State.IGNORED)
 		{
 			return true;
 		}
 		final AtomicBoolean result = new AtomicBoolean(false);
 		visitChildren(new Visitor()
 		{
-			public void accept(final DiffNode<?> difference, final Visit visit)
+			public void accept(final Node difference, final Visit visit)
 			{
-				if (difference.getType() != DifferenceType.UNTOUCHED)
+				if (difference.getState() != State.UNTOUCHED)
 				{
 					result.set(true);
 					visit.stop();
@@ -79,19 +55,20 @@ public class DefaultNode<T> implements DiffNode<T>
 		return result.get();
 	}
 
-	public PropertyPath getPropertyPath()
+	public final PropertyPath getPropertyPath()
 	{
-		final PropertyPath.Element pathElement = getAccessor().toPathElement();
-		if (hasParent())
+		final PropertyPathBuilder builder = new PropertyPathBuilder();
+		if (parentNode != null)
 		{
-			return new PropertyPath(parent.getPropertyPath(), pathElement);
+			builder.withPropertyPath(parentNode.getPropertyPath());
 		}
-		return new PropertyPath(pathElement);
+		builder.withElement(accessor.getPathElement());
+		return builder.build();
 	}
 
-	private boolean hasParent()
+	public PropertyPath.Element getPathElement()
 	{
-		return parent != null;
+		return accessor.getPathElement();
 	}
 
 	public boolean isCollectionDifference()
@@ -99,7 +76,7 @@ public class DefaultNode<T> implements DiffNode<T>
 		return false;
 	}
 
-	public CollectionNode<?> toCollectionDifference()
+	public CollectionNode toCollectionDifference()
 	{
 		throw new UnsupportedOperationException();
 	}
@@ -109,7 +86,7 @@ public class DefaultNode<T> implements DiffNode<T>
 		return false;
 	}
 
-	public MapNode<?, ?> toMapDifference()
+	public MapNode toMapDifference()
 	{
 		throw new UnsupportedOperationException();
 	}
@@ -119,36 +96,37 @@ public class DefaultNode<T> implements DiffNode<T>
 		return !children.isEmpty();
 	}
 
-	public Collection<DiffNode<?>> getChildren()
+	public Collection<Node> getChildren()
 	{
 		return children.values();
 	}
 
-	public void setChildren(final Collection<DiffNode<?>> differences)
+	@SuppressWarnings({"UnusedDeclaration", "TypeMayBeWeakened"})
+	public void setChildren(final Collection<Node> differences)
 	{
 		children.clear();
-		for (final DiffNode<?> difference : differences)
+		for (final Node difference : differences)
 		{
 			addChild(difference);
 		}
 	}
 
-	public DiffNode<?> getChild(final String name)
+	public Node getChild(final String name)
 	{
 		return children.get(name);
 	}
 
-	public DiffNode<?> getChild(final PropertyPath path)
+	public Node getChild(final PropertyPath path)
 	{
 		final ChildVisitor visitor = new ChildVisitor(path);
 		visitChildren(visitor);
-		return visitor.getDifference();
+		return visitor.getNode();
 	}
 
-	public void addChild(final DiffNode<?> difference)
+	public void addChild(final Node child)
 	{
-		difference.setParent(this);
-		children.put(difference.getPropertyName(), difference);
+		child.setParentNode(this);
+		children.put(child.getPropertyName(), child);
 	}
 
 	public final void visit(final Visitor visitor)
@@ -185,7 +163,7 @@ public class DefaultNode<T> implements DiffNode<T>
 
 	public final void visitChildren(final Visitor visitor)
 	{
-		for (final DiffNode<?> child : getChildren())
+		for (final Node child : getChildren())
 		{
 			try
 			{
@@ -198,19 +176,38 @@ public class DefaultNode<T> implements DiffNode<T>
 		}
 	}
 
-	public boolean isRoot()
+	public final boolean isRootNode()
 	{
-		return parent == null;
+		return parentNode == null;
 	}
 
-	public Set<String> getCategories()
+	public final boolean isEqualsOnly()
 	{
-		return getCanonicalAccessor().getCategories();
+		return accessor.isEqualsOnly();
 	}
 
-	public void setType(final DifferenceType type)
+	public final boolean isIgnored()
 	{
-		this.type = type;
+		return accessor.isIgnored();
+	}
+
+	public final Set<String> getCategories()
+	{
+		final Set<String> set = new TreeSet<String>();
+		if (parentNode != null)
+		{
+			set.addAll(parentNode.getCategories());
+		}
+		if (accessor.getCategories() != null)
+		{
+			set.addAll(accessor.getCategories());
+		}
+		return set;
+	}
+
+	public final void setState(final State state)
+	{
+		this.state = state;
 	}
 
 	public String getPropertyName()
@@ -218,56 +215,55 @@ public class DefaultNode<T> implements DiffNode<T>
 		return accessor.getPropertyName();
 	}
 
-	public DiffNode<?> getParent()
+	public Node getParentNode()
 	{
-		return parent;
+		return parentNode;
 	}
 
-	public void setParent(final DiffNode<?> parent)
+	public void setParentNode(final Node parentNode)
 	{
-		this.parent = parent;
+		this.parentNode = parentNode;
 	}
 
-	@Override
-	public boolean equals(final Object o)
+	public Object get(final Object target)
 	{
-		if (this == o)
+		return accessor.get(target);
+	}
+
+	public void set(final Object target, final Object value)
+	{
+		accessor.set(target, value);
+	}
+
+	public void unset(final Object target)
+	{
+		accessor.unset(target);
+	}
+
+	public Object canonicalGet(Object target)
+	{
+		if (parentNode != null)
 		{
-			return true;
+			target = parentNode.canonicalGet(target);
 		}
-		if (!(o instanceof DefaultNode))
-		{
-			return false;
-		}
-
-		final DiffNode that = (DiffNode) o;
-
-		if (!getCanonicalAccessor().equals(that.getCanonicalAccessor()))
-		{
-			return false;
-		}
-
-		return true;
+		return accessor.get(target);
 	}
 
-	@Override
-	public int hashCode()
+	public void canonicalSet(Object target, final Object value)
 	{
-		return getCanonicalAccessor().hashCode();
+		if (parentNode != null)
+		{
+			target = parentNode.canonicalGet(target);
+		}
+		accessor.set(target, value);
 	}
 
-//	@Override
-//	public String toString()
-//	{
-//		final ToStringBuilder stringBuilder = new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE);
-//		stringBuilder.append("type", getType());
-////		stringBuilder.append("propertyPath", getPropertyPath());
-//		stringBuilder.append("propertyName", getPropertyName());
-//		if (hasChildren())
-//		{
-//			stringBuilder.append("children", getChildren());
-//		}
-//		return stringBuilder.toString();
-//	}
-
+	public void canonicalUnset(Object target, final Object value)
+	{
+		if (parentNode != null)
+		{
+			target = parentNode.canonicalGet(target);
+		}
+		accessor.unset(target);
+	}
 }

@@ -5,35 +5,34 @@ import de.danielbechler.diff.node.*;
 import java.util.*;
 
 /** @author Daniel Bechler */
-public abstract class AbstractFilteringVisitor implements DiffNode.Visitor
+public abstract class AbstractFilteringVisitor implements Node.Visitor
 {
-	private final Collection<DiffNode<?>> matches = new ArrayList<DiffNode<?>>(30);
+	private final Collection<Node> matches = new ArrayList<Node>(30);
 
-	protected abstract boolean accept(final DiffNode<?> difference);
+	protected abstract boolean accept(final Node node);
 
-	protected void onAccept(final DiffNode<?> difference, final Visit visit)
+	protected void onAccept(final Node node, final Visit visit)
 	{
-		matches.add(difference);
+		matches.add(node);
 	}
 
-	protected void onDismiss(final DiffNode<?> difference, final Visit visit)
+	protected void onDismiss(final Node node, final Visit visit)
 	{
 	}
 
-	@Override
-	public final void accept(final DiffNode<?> difference, final Visit visit)
+	public final void accept(final Node node, final Visit visit)
 	{
-		if (accept(difference))
+		if (accept(node))
 		{
-			onAccept(difference, visit);
+			onAccept(node, visit);
 		}
 		else
 		{
-			onDismiss(difference, visit);
+			onDismiss(node, visit);
 		}
 	}
 
-	public Collection<DiffNode<?>> getMatches()
+	public Collection<Node> getMatches()
 	{
 		return matches;
 	}

@@ -7,125 +7,102 @@ import de.danielbechler.util.Collections;
 import java.util.*;
 
 /** @author Daniel Bechler */
-public class MapDiffer extends AbstractObjectDiffer
+final class MapDiffer extends AbstractDiffer
 {
-	private final ObjectDiffer delegate;
-
 	public MapDiffer()
 	{
-		this(new BeanDiffer());
+		setDelegate(new DelegatingObjectDiffer(null, this, null));
 	}
 
-	public MapDiffer(final BeanDiffer delegate)
+	public MapDiffer(final ObjectDiffer delegate)
 	{
 		super(delegate);
-		this.delegate = delegate;
 	}
 
-	public <K, V> MapNode<K, V> compare(final Map<K, V> modifiedMap, final Map<K, V> baseMap)
+	public MapNode compare(final Map<?, ?> modified, final Map<?, ?> base)
 	{
-		return compare(new Instances<Map<K, V>>(modifiedMap, baseMap, null), new RootAccessor<Map<K, V>>());
+		return compare(Node.ROOT, Instances.of(new RootAccessor(), modified, base));
 	}
 
-	public <K, V> MapNode<K, V> compare(final Instances<Map<K, V>> instances, final Accessor<Map<K, V>> accessor)
+	public MapNode compare(final Node parentNode, final Instances instances)
 	{
-		final MapNode<K, V> node = new MapNode<K, V>(accessor);
+		final MapNode node = new MapNode(parentNode, instances.getSourceAccessor());
 
 		indexAll(instances, node);
 
-		if (instances.isAdded())
+		if (instances.getWorking() != null && instances.getBase() == null)
 		{
-			addChildNodesIfTouched(instances, node, instances.getWorking().keySet());
-			node.setType(DifferenceType.ADDED);
+			handleEntries(instances, node, instances.getWorking(Map.class).keySet());
+			node.setState(Node.State.ADDED);
 		}
-		else if (instances.isRemoved())
+		else if (instances.getWorking() == null && instances.getBase() != null)
 		{
-			addChildNodesIfTouched(instances, node, instances.getBase().keySet());
-			node.setType(DifferenceType.REMOVED);
+			handleEntries(instances, node, instances.getBase(Map.class).keySet());
+			node.setState(Node.State.REMOVED);
 		}
-		else if (instances.isNull())
+		else if (instances.areSame())
 		{
-			node.setType(DifferenceType.UNTOUCHED);
+			node.setState(Node.State.UNTOUCHED);
 		}
 		else
 		{
-			addChildNodesIfTouched(instances, node, findAddedKeys(instances));
-			addChildNodesIfTouched(instances, node, findRemovedKeys(instances));
-			addChildNodesIfTouched(instances, node, findKnownKeys(instances));
+			handleEntries(instances, node, findAddedKeys(instances));
+			handleEntries(instances, node, findRemovedKeys(instances));
+			handleEntries(instances, node, findKnownKeys(instances));
 		}
 		return node;
 	}
 
-	@Deprecated
-	public <K, V> MapNode<K, V> compare(final Map<K, V> modifiedMap,
-										final Map<K, V> baseMap,
-										final Map<K, V> defaultMap,
-										final Accessor<Map<K, V>> accessor)
+	private static void indexAll(final Instances instances, final MapNode node)
 	{
-		return compare(new Instances<Map<K, V>>(modifiedMap, baseMap, defaultMap), accessor);
+		node.indexKeys(instances.getWorking(Map.class), instances.getBase(Map.class), instances.getFresh(Map.class));
 	}
 
-	@SuppressWarnings({"unchecked"})
-	private static <K, V> void indexAll(final Instances<Map<K, V>> instances, final MapNode<K, V> node)
+	private void handleEntries(final Instances instances, final MapNode parent, final Iterable<?> keys)
 	{
-		node.indexKeys(instances.getWorking(), instances.getBase(), instances.getFresh());
-	}
-
-	private <K, V> Collection<? extends K> addChildNodesIfTouched(final Instances<Map<K, V>> instances,
-																  final MapNode<K, V> parent,
-																  final Collection<? extends K> keys)
-	{
-		final Collection<K> addedKeys = new LinkedHashSet<K>(keys.size());
-		for (final K key : keys)
+		for (final Object key : keys)
 		{
-			if (addChildNodeIfTouched(key, instances, parent))
-			{
-				addedKeys.add(key);
-			}
+			handleEntries(key, instances, parent);
 		}
-		return addedKeys;
 	}
 
-	private <K, V> boolean addChildNodeIfTouched(final K key,
-												 final Instances<Map<K, V>> instances,
-												 final MapNode<K, V> parent)
+	private boolean handleEntries(final Object key, final Instances instances, final MapNode parent)
 	{
-		final DiffNode<?> node = compareEntry(key, instances, parent);
-		if (node.getType() != DifferenceType.UNTOUCHED)
+		final Node node = compareEntry(key, instances, parent);
+		if (node.hasChanges())
 		{
-			parent.setType(DifferenceType.CHANGED);
+			parent.setState(Node.State.CHANGED);
 			parent.addChild(node);
 			return true;
 		}
 		return false;
 	}
 
-	private <K, V> DiffNode<?> compareEntry(final K key, final Instances<Map<K, V>> instances, final MapNode<K, V> parent)
+	private Node compareEntry(final Object key, Instances instances, final MapNode parent)
 	{
-		final Map<K, V> working = instances.getWorking();
-		final Map<K, V> base = instances.getBase();
-		final Map<K, V> fresh = instances.getFresh();
-		final Accessor<V> accessor = parent.accessorForKey(key);
-		return delegate.compare(working, base, fresh, accessor);
+		final Accessor accessor = parent.accessorForKey(key);
+		instances = instances.access(accessor);
+		return getDelegate().compare(parent, instances);
 	}
 
-	private static <K, V> Collection<? extends K> findAddedKeys(final Instances<Map<K, V>> instances)
+	private static Collection<?> findAddedKeys(final Instances instances)
 	{
-		final Set<K> source = instances.getWorking().keySet();
-		final Set<K> filter = instances.getBase().keySet();
+		final Set<?> source = instances.getWorking(Map.class).keySet();
+		final Set<?> filter = instances.getBase(Map.class).keySet();
 		return Collections.filteredCopyOf(source, filter);
 	}
 
-	private static <K, V> Collection<? extends K> findRemovedKeys(final Instances<Map<K, V>> instances)
+	private static Collection<?> findRemovedKeys(final Instances instances)
 	{
-		final Set<K> source = instances.getBase().keySet();
-		final Set<K> filter = instances.getWorking().keySet();
+		final Set<?> source = instances.getBase(Map.class).keySet();
+		final Set<?> filter = instances.getWorking(Map.class).keySet();
 		return Collections.filteredCopyOf(source, filter);
 	}
 
-	private static <K, V> Collection<K> findKnownKeys(final Instances<Map<K, V>> instances)
+	private static Iterable<?> findKnownKeys(final Instances instances)
 	{
-		final Collection<K> changed = new LinkedHashSet<K>(instances.getWorking().keySet());
+		final Set<?> keys = instances.getWorking(Map.class).keySet();
+		final Collection<?> changed = Collections.setOf(keys);
 		changed.removeAll(findAddedKeys(instances));
 		changed.removeAll(findRemovedKeys(instances));
 		return changed;

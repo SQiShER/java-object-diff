@@ -1,4 +1,4 @@
-package de.danielbechler.diff.accessor;
+package de.danielbechler.diff.accessor.exception;
 
 /** @author Daniel Bechler */
 public class PropertyReadException extends PropertyException
@@ -13,6 +13,6 @@ public class PropertyReadException extends PropertyException
 	@Override
 	public String getMessage()
 	{
-		return "Failed to invoke read method. ";
+		return "Failed to invoke read method. " + super.getMessage();
 	}
 }

@@ -5,21 +5,21 @@ import de.danielbechler.diff.path.*;
 import de.danielbechler.util.*;
 
 /** @author Daniel Bechler */
-public class ChildVisitor implements DiffNode.Visitor
+public class ChildVisitor implements Node.Visitor
 {
 	private final PropertyPath path;
 
-	private DiffNode<?> difference;
+	private Node node;
 
-	public ChildVisitor(final PropertyPath path)
+	public ChildVisitor(final PropertyPath propertyPath)
 	{
-		Assert.notNull(path, "path");
-		this.path = path;
+		Assert.notNull(propertyPath, "propertyPath");
+		this.path = propertyPath;
 	}
 
-	public void accept(final DiffNode<?> difference, final Visit visit)
+	public void accept(final Node difference, final Visit visit)
 	{
-		final PropertyPath differencePath = difference.getCanonicalAccessor().getPath();
+		final PropertyPath differencePath = difference.getPropertyPath();
 		if (!path.isParentOf(differencePath))
 		{
 			visit.dontGoDeeper();
@@ -27,13 +27,13 @@ public class ChildVisitor implements DiffNode.Visitor
 		}
 		if (path.equals(differencePath))
 		{
-			this.difference = difference;
+			this.node = difference;
 			visit.stop();
 		}
 	}
 
-	public DiffNode<?> getDifference()
+	public Node getNode()
 	{
-		return difference;
+		return node;
 	}
 }

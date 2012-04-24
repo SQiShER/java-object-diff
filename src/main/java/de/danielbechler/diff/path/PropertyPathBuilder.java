@@ -1,16 +1,29 @@
 package de.danielbechler.diff.path;
 
 import java.util.*;
-import java.util.regex.*;
 
 /** @author Daniel Bechler */
-public class PropertyPathBuilder
+@SuppressWarnings({"UnusedDeclaration"})
+public final class PropertyPathBuilder
 {
-	private static final Pattern DOT_PATTERN = Pattern.compile("\\.");
+	private final List<PropertyPath.Element> elements = new LinkedList<PropertyPath.Element>();
 
-	private final List<PropertyPath.Element> elements = new ArrayList<PropertyPath.Element>(10);
+	public PropertyPathBuilder withPropertyPath(final PropertyPath propertyPath)
+	{
+		if (propertyPath != null)
+		{
+			elements.addAll(propertyPath.getElements());
+		}
+		return this;
+	}
 
-	public PropertyPathBuilder propertyName(final String... names)
+	public PropertyPathBuilder withElement(final PropertyPath.Element element)
+	{
+		elements.add(element);
+		return this;
+	}
+
+	public PropertyPathBuilder withPropertyName(final String... names)
 	{
 		for (final String name : names)
 		{
@@ -19,45 +32,26 @@ public class PropertyPathBuilder
 		return this;
 	}
 
-	public <T> PropertyPathBuilder collectionItem(final T item)
+	public <T> PropertyPathBuilder withCollectionItem(final T item)
 	{
-		elements.add(new CollectionElement<T>(item));
+		elements.add(new CollectionElement(item));
 		return this;
 	}
 
-	public <K> PropertyPathBuilder mapKey(final K key)
+	public <K> PropertyPathBuilder withMapKey(final K key)
 	{
-		elements.add(new MapElement<K>(key));
+		elements.add(new MapElement(key));
 		return this;
 	}
 
-	public PropertyPathBuilder root()
+	public PropertyPathBuilder withRoot()
 	{
-		elements.add(RootElement.getInstance());
+		elements.add(0, RootElement.getInstance());
 		return this;
 	}
 
-	public PropertyPath toPropertyPath()
+	public PropertyPath build()
 	{
 		return new PropertyPath(elements);
-	}
-
-	/**
-	 * Builds an absolute selector path from the given property names. Property names containing dots (e.g. "foo.bar") will be
-	 * split into multiple property path elements.
-	 *
-	 * @param propertyNames
-	 *
-	 * @return
-	 */
-	public static PropertyPath pathOf(final String... propertyNames)
-	{
-		final PropertyPathBuilder builder = new PropertyPathBuilder();
-		builder.root();
-		for (final String propertyName : propertyNames)
-		{
-			builder.propertyName(DOT_PATTERN.split(propertyName));
-		}
-		return builder.toPropertyPath();
 	}
 }

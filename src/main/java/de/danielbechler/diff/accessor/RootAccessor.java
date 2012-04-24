@@ -3,8 +3,7 @@ package de.danielbechler.diff.accessor;
 import de.danielbechler.diff.path.*;
 
 /** @author Daniel Bechler */
-@SuppressWarnings({"unchecked"})
-public final class RootAccessor<T> extends AbstractAccessor<T>
+public final class RootAccessor extends AbstractAccessor
 {
 	public RootAccessor()
 	{
@@ -15,14 +14,9 @@ public final class RootAccessor<T> extends AbstractAccessor<T>
 		return "";
 	}
 
-	public PropertyPath getPath()
+	public Object get(final Object target)
 	{
-		return new PropertyPath(toPathElement());
-	}
-
-	public T get(final Object target)
-	{
-		return (T) target;
+		return target;
 	}
 
 	public void set(final Object target, final Object value)
@@ -30,12 +24,12 @@ public final class RootAccessor<T> extends AbstractAccessor<T>
 		throw new UnsupportedOperationException();
 	}
 
-	public void unset(final Object target, final Object value)
+	public void unset(final Object target)
 	{
 		throw new UnsupportedOperationException();
 	}
 
-	public PropertyPath.Element toPathElement()
+	public PropertyPath.Element getPathElement()
 	{
 		return RootElement.getInstance();
 	}

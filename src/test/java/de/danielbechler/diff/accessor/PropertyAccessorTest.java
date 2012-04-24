@@ -1,5 +1,6 @@
 package de.danielbechler.diff.accessor;
 
+import de.danielbechler.diff.accessor.exception.*;
 import de.danielbechler.diff.mock.*;
 import de.danielbechler.diff.path.*;
 import org.hamcrest.core.*;
@@ -11,20 +12,20 @@ import java.util.*;
 /** @author Daniel Bechler */
 public class PropertyAccessorTest
 {
-	private PropertyAccessor<String> accessor;
+	private PropertyAccessor accessor;
 
 	@Before
 	public void setUp() throws Exception
 	{
-		final Method readMethod = NestableCollectionSafeObject.class.getMethod("getValue");
-		final Method writeMethod = NestableCollectionSafeObject.class.getMethod("setValue", String.class);
-		accessor = new PropertyAccessor<String>("value", readMethod, writeMethod);
+		final Method readMethod = ObjectWithHashCodeAndEquals.class.getMethod("getValue");
+		final Method writeMethod = ObjectWithHashCodeAndEquals.class.getMethod("setValue", String.class);
+		accessor = new PropertyAccessor("value", readMethod, writeMethod);
 	}
 
 	@Test
 	public void testSet() throws Exception
 	{
-		final NestableCollectionSafeObject item = new NestableCollectionSafeObject("foo");
+		final ObjectWithHashCodeAndEquals item = new ObjectWithHashCodeAndEquals("foo");
 		Assert.assertThat(item.getValue(), IsNull.nullValue());
 		accessor.set(item, "bar");
 		Assert.assertThat(item.getValue(), IsEqual.equalTo("bar"));
@@ -36,15 +37,15 @@ public class PropertyAccessorTest
 		final ObjectWithStringAndUnsupportedWriteMethod target = new ObjectWithStringAndUnsupportedWriteMethod("foo");
 		final Method readMethod = target.getClass().getMethod("getValue");
 		final Method writeMethod = target.getClass().getMethod("setValue", String.class);
-		accessor = new PropertyAccessor<String>("value", readMethod, writeMethod);
+		accessor = new PropertyAccessor("value", readMethod, writeMethod);
 		accessor.set(target, "bar");
 	}
 
 	@Test
 	public void testSetWithoutSetter() throws Exception
 	{
-		final NestableCollectionSafeObject item = new NestableCollectionSafeObject("foo");
-		accessor = new PropertyAccessor<String>("value", NestableCollectionSafeObject.class.getMethod("getValue"), null);
+		final ObjectWithHashCodeAndEquals item = new ObjectWithHashCodeAndEquals("foo");
+		accessor = new PropertyAccessor("value", ObjectWithHashCodeAndEquals.class.getMethod("getValue"), null);
 		accessor.set(item, "bar");
 		Assert.assertThat(item.getValue(), IsNull.nullValue());
 	}
@@ -101,7 +102,7 @@ public class PropertyAccessorTest
 		{
 			writeMethod = ObjectWithMap.class.getMethod("setMap", Map.class);
 		}
-		accessor = new PropertyAccessor<String>("map", readMethod, writeMethod);
+		accessor = new PropertyAccessor("map", readMethod, writeMethod);
 		return objectWithMap;
 	}
 
@@ -120,7 +121,7 @@ public class PropertyAccessorTest
 		{
 			writeMethod = object.getClass().getMethod("setCollection", Collection.class);
 		}
-		accessor = new PropertyAccessor<String>("collection", readMethod, writeMethod);
+		accessor = new PropertyAccessor("collection", readMethod, writeMethod);
 		return object;
 	}
 
@@ -153,9 +154,9 @@ public class PropertyAccessorTest
 	@Test
 	public void testGet() throws Exception
 	{
-		final NestableCollectionSafeObject item = new NestableCollectionSafeObject("foo");
+		final ObjectWithHashCodeAndEquals item = new ObjectWithHashCodeAndEquals("foo");
 		item.setValue("bar");
-		Assert.assertThat(accessor.get(item), IsEqual.equalTo("bar"));
+		Assert.assertThat((String) accessor.get(item), IsEqual.equalTo("bar"));
 	}
 
 	@Test
@@ -168,23 +169,24 @@ public class PropertyAccessorTest
 	public void testGetWithInvocationException() throws NoSuchMethodException
 	{
 		final Method readMethod = ObjectWithString.class.getMethod("getValue");
-		accessor = new PropertyAccessor<String>("value", readMethod, null);
+		accessor = new PropertyAccessor("value", readMethod, null);
 		accessor.get(new ObjectWithMap());
 	}
 
 	@Test
 	public void testUnset() throws Exception
 	{
-		final NestableCollectionSafeObject item = new NestableCollectionSafeObject("foo");
+		final ObjectWithHashCodeAndEquals item = new ObjectWithHashCodeAndEquals("foo");
 		item.setValue("bar");
-		accessor.unset(item, null);
+		accessor.unset(item);
 		Assert.assertThat(item.getValue(), IsNull.nullValue());
 	}
 
 	@Test
 	public void testGetType() throws Exception
 	{
-		Assert.assertThat(accessor.getType(), IsEqual.equalTo(String.class));
+		//noinspection unchecked
+		Assert.assertThat((Class<String>) accessor.getType(), IsEqual.equalTo(String.class));
 	}
 
 	@Test
@@ -196,12 +198,6 @@ public class PropertyAccessorTest
 	@Test
 	public void testToPathElement() throws Exception
 	{
-		Assert.assertThat((NamedPropertyElement) accessor.toPathElement(), IsEqual.equalTo(new NamedPropertyElement("value")));
-	}
-
-	@Test
-	public void testGetPath() throws Exception
-	{
-		Assert.assertThat(accessor.getPath(), IsEqual.equalTo(new PropertyPath(new NamedPropertyElement("value"))));
+		Assert.assertThat((NamedPropertyElement) accessor.getPathElement(), IsEqual.equalTo(new NamedPropertyElement("value")));
 	}
 }

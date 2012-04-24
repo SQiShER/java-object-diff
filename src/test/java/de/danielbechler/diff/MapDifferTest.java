@@ -13,12 +13,12 @@ import static org.junit.Assert.*;
 /** @author Daniel Bechler */
 public class MapDifferTest
 {
-	private MapDiffer mapDiffer;
+	private MapDiffer differ;
 
 	@Before
 	public void setUp()
 	{
-		mapDiffer = new MapDiffer();
+		differ = new MapDiffer();
 	}
 
 	@Test
@@ -28,18 +28,18 @@ public class MapDifferTest
 		final Map<String, String> working = new TreeMap<String, String>();
 		working.put("foo", "bar");
 
-		final MapNode<String, String> node = mapDiffer.compare(working, base);
+		final MapNode node = differ.compare(working, base);
 		assertThat(node.isMapDifference(), is(true));
 		assertThat(node.hasChildren(), is(true));
-		assertThat(node.getType(), is(DifferenceType.CHANGED));
+		assertThat(node.getState(), is(Node.State.CHANGED));
 
-		final Collection<DiffNode<?>> children = node.getChildren();
+		final Collection<Node> children = node.getChildren();
 		assertThat(children.size(), is(1));
 
-		final DiffNode<?> child = children.iterator().next();
-		assertThat((String) child.getAccessor().get(working), equalTo("bar"));
-		assertThat(child.getAccessor().get(base), nullValue());
-		assertThat(child.getType(), is(DifferenceType.ADDED));
+		final Node child = children.iterator().next();
+		assertThat((String) child.get(working), equalTo("bar"));
+		assertThat(child.get(base), nullValue());
+		assertThat(child.getState(), is(Node.State.ADDED));
 	}
 
 	@Test
@@ -49,14 +49,14 @@ public class MapDifferTest
 		final Map<String, String> working = new TreeMap<String, String>();
 		working.put("foo", "bar");
 
-		final MapNode<String, String> node = mapDiffer.compare(working, base);
-		assertThat(node.getType(), is(DifferenceType.ADDED));
+		final MapNode node = differ.compare(working, base);
+		assertThat(node.getState(), is(Node.State.ADDED));
 
-		final Collection<DiffNode<?>> children = node.getChildren();
+		final Collection<Node> children = node.getChildren();
 		assertThat(children.size(), is(1));
 
-		final DiffNode<?> child = children.iterator().next();
-		assertThat(child.getType(), is(DifferenceType.ADDED));
+		final Node child = children.iterator().next();
+		assertThat(child.getState(), is(Node.State.ADDED));
 	}
 
 	@Test
@@ -67,8 +67,8 @@ public class MapDifferTest
 		final Map<String, String> working = new TreeMap<String, String>();
 		working.put("foo", "bar");
 
-		final MapNode<String, String> node = mapDiffer.compare(working, base);
-		assertThat(node.getType(), is(DifferenceType.UNTOUCHED));
+		final MapNode node = differ.compare(working, base);
+		assertThat(node.getState(), is(Node.State.UNTOUCHED));
 		assertThat(node.hasChildren(), is(false));
 	}
 
@@ -79,21 +79,34 @@ public class MapDifferTest
 		base.put("foo", "bar");
 		final Map<String, String> working = null;
 
-		final MapNode<String, String> node = mapDiffer.compare(working, base);
-		assertThat(node.getType(), is(DifferenceType.REMOVED));
+		final MapNode node = differ.compare(working, base);
+		assertThat(node.getState(), is(Node.State.REMOVED));
 
-		final Collection<DiffNode<?>> children = node.getChildren();
+		final Collection<Node> children = node.getChildren();
 		assertThat(children.size(), is(1));
 
-		final DiffNode<?> child = children.iterator().next();
-		assertThat(child.getType(), is(DifferenceType.REMOVED));
+		final Node child = children.iterator().next();
+		assertThat(child.getState(), is(Node.State.REMOVED));
 	}
 
 	@Test
 	public void testWithoutMapInBaseAndWorking()
 	{
-		final MapNode<Object, Object> node = mapDiffer.compare((Map) null, null);
-		assertThat(node.getType(), is(DifferenceType.UNTOUCHED));
+		final MapNode node = differ.compare((Map<?, ?>) null, null);
+		assertThat(node.getState(), is(Node.State.UNTOUCHED));
 		assertThat(node.hasChildren(), is(false));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testConstructionWithoutDelegator()
+	{
+		new MapDiffer(null);
+	}
+
+	@Test
+	public void testConstructionWithDelegator()
+	{
+		// just for the coverage
+		new MapDiffer(new DelegatingObjectDiffer());
 	}
 }

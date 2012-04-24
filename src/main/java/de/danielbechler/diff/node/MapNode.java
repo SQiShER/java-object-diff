@@ -1,20 +1,21 @@
 package de.danielbechler.diff.node;
 
 import de.danielbechler.diff.accessor.*;
+import de.danielbechler.diff.accessor.exception.*;
 
 import java.util.*;
 
 /** @author Daniel Bechler */
-public class MapNode<K, V> extends DefaultNode<Map<K, V>>
+public class MapNode extends DefaultNode
 {
-	private final List<K> referenceKeys = new LinkedList<K>();
+	private final List<Object> referenceKeys = new LinkedList<Object>();
 
-	public MapNode(final Accessor<?> accessor)
+	public MapNode(final Node parentNode, final Accessor accessor)
 	{
-		super(accessor);
+		super(parentNode, accessor);
 	}
 
-	public final int indexKey(final K key)
+	public final int indexKey(final Object key)
 	{
 		if (!isIndexed(key))
 		{
@@ -23,48 +24,42 @@ public class MapNode<K, V> extends DefaultNode<Map<K, V>>
 		return indexOf(key);
 	}
 
-	public final void indexKeys(final Map<K, V> map)
+	public final void indexKeys(final Map<?, ?> map)
 	{
 		if (map != null)
 		{
-			for (final K key : map.keySet())
+			for (final Object key : map.keySet())
 			{
 				indexKey(key);
 			}
 		}
 	}
 
-	public final void indexKeys(final Map<K, V> map, final Map<K, V>... additionalMaps)
+	public final void indexKeys(final Map<?, ?> map, final Map<?, ?>... additionalMaps)
 	{
 		indexKeys(map);
-		for (final Map<K, V> additionalMap : additionalMaps)
+		for (final Map<?, ?> additionalMap : additionalMaps)
 		{
 			indexKeys(additionalMap);
 		}
 	}
 
 	@SuppressWarnings({"unchecked"})
-	public Accessor<V> accessorForKey(final K key)
+	public Accessor accessorForKey(final Object key)
 	{
 		if (!isIndexed(key))
 		{
 			throw new ItemNotIndexedException(key);
 		}
-		final Accessor<V> accessor = new MapEntryAccessor<K, V>(referenceKeys, indexOf(key));
-		final Accessor<Map<K, V>> parentAccessor = getAccessor();
-		if (parentAccessor != null)
-		{
-			return new ChainedAccessor<V>(parentAccessor, accessor);
-		}
-		return accessor;
+		return new MapEntryAccessor(referenceKeys, indexOf(key));
 	}
 
-	private boolean isIndexed(final K key)
+	private boolean isIndexed(final Object key)
 	{
 		return referenceKeys.contains(key);
 	}
 
-	private int indexOf(final K key)
+	private int indexOf(final Object key)
 	{
 		return referenceKeys.indexOf(key);
 	}
@@ -76,7 +71,7 @@ public class MapNode<K, V> extends DefaultNode<Map<K, V>>
 	}
 
 	@Override
-	public final MapNode<?, ?> toMapDifference()
+	public final MapNode toMapDifference()
 	{
 		return this;
 	}

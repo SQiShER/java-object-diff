@@ -6,20 +6,19 @@ import de.danielbechler.util.*;
 import java.util.*;
 
 /** @author Daniel Bechler */
-@SuppressWarnings({"unchecked"})
-public final class MapEntryAccessor<K, V> extends AbstractAccessor<V>
+public final class MapEntryAccessor extends AbstractAccessor
 {
-	private final List<K> referenceKeys;
+	private final List<?> referenceKeys;
 	private final int index;
 
-	public MapEntryAccessor(final List<K> referenceKeys, final int index)
+	public MapEntryAccessor(final List<?> referenceKeys, final int index)
 	{
-		Assert.notNull(referenceKeys, "Missing argument [referenceKeys]");
-		this.referenceKeys = referenceKeys;
+		Assert.notNull(referenceKeys, "referenceKeys");
 		if (index < 0 || index > referenceKeys.size() - 1)
 		{
-			throw new IllegalArgumentException("Index not found in given Collection");
+			throw new IndexOutOfBoundsException("Index " + index + " is not within the valid range of the given List");
 		}
+		this.referenceKeys = referenceKeys;
 		this.index = index;
 	}
 
@@ -28,56 +27,52 @@ public final class MapEntryAccessor<K, V> extends AbstractAccessor<V>
 		return "[" + Integer.toString(index) + "]";
 	}
 
-	public PropertyPath.Element toPathElement()
+	public PropertyPath.Element getPathElement()
 	{
 		return new MapElement(getReferenceKey());
 	}
 
-	public PropertyPath getPath()
-	{
-		return new PropertyPath(toPathElement());
-	}
-
 	public void set(final Object target, final Object value)
 	{
-		final Map targetMap = objectToMap(target);
+		final Map<Object, Object> targetMap = objectToMap(target);
 		if (targetMap != null)
 		{
 			targetMap.put(getReferenceKey(), value);
 		}
 	}
 
-	public V get(final Object target)
+	public Object get(final Object target)
 	{
-		final Map targetMap = objectToMap(target);
+		final Map<?, ?> targetMap = objectToMap(target);
 		if (targetMap != null)
 		{
-			return (V) targetMap.get(getReferenceKey());
+			return targetMap.get(getReferenceKey());
 		}
 		return null;
 	}
 
-	private static Map objectToMap(final Object object)
+	private static Map<Object, Object> objectToMap(final Object object)
 	{
 		if (object == null)
 		{
 			return null;
 		}
-		if (!(object instanceof Map))
+		if (object instanceof Map)
 		{
-			throw new IllegalArgumentException(object.getClass().toString());
+			//noinspection unchecked
+			return (Map<Object, Object>) object;
 		}
-		return (Map) object;
+		throw new IllegalArgumentException(object.getClass().toString());
 	}
 
-	private K getReferenceKey()
+	private Object getReferenceKey()
 	{
 		return referenceKeys.get(index);
 	}
 
-	public void unset(final Object target, final Object value)
+	public void unset(final Object target)
 	{
-		final Map targetMap = objectToMap(target);
+		final Map<?, ?> targetMap = objectToMap(target);
 		if (targetMap != null)
 		{
 			targetMap.remove(getReferenceKey());

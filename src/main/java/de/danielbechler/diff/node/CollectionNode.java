@@ -2,41 +2,39 @@ package de.danielbechler.diff.node;
 
 import de.danielbechler.diff.accessor.*;
 import de.danielbechler.diff.visitor.*;
-import de.danielbechler.util.*;
 
 import java.util.*;
 
 /** @author Daniel Bechler */
-public final class CollectionNode<T> extends DefaultNode<Collection<T>>
+public final class CollectionNode extends DefaultNode
 {
-	public CollectionNode(final Accessor<?> accessor)
+	public CollectionNode(final Node parent, final Accessor accessor)
 	{
-		super(accessor);
+		super(parent, accessor);
 	}
 
-	@SuppressWarnings({"unchecked"})
-	public Accessor<T> accessorForItem(final T item)
+	public Accessor accessorForItem(final Object item)
 	{
-		return new CollectionItemAccessor<T>(item);
+		return new CollectionItemAccessor(item);
 	}
 
-	public Collection<DiffNode<?>> getAdditions()
+	public Collection<Node> getAdditions()
 	{
-		final AbstractFilteringVisitor visitor = new TypeFilteringVisitor(DifferenceType.ADDED);
+		final AbstractFilteringVisitor visitor = new StateFilteringVisitor(State.ADDED);
 		visitChildren(visitor);
 		return visitor.getMatches();
 	}
 
-	public Collection<DiffNode<?>> getRemovals()
+	public Collection<Node> getRemovals()
 	{
-		final AbstractFilteringVisitor visitor = new TypeFilteringVisitor(DifferenceType.REMOVED);
+		final AbstractFilteringVisitor visitor = new StateFilteringVisitor(State.REMOVED);
 		visitChildren(visitor);
 		return visitor.getMatches();
 	}
 
-	public Collection<DiffNode<?>> getChanges()
+	public Collection<Node> getChanges()
 	{
-		final AbstractFilteringVisitor visitor = new TypeFilteringVisitor(DifferenceType.CHANGED);
+		final AbstractFilteringVisitor visitor = new StateFilteringVisitor(State.CHANGED);
 		visitChildren(visitor);
 		return visitor.getMatches();
 	}
@@ -48,39 +46,9 @@ public final class CollectionNode<T> extends DefaultNode<Collection<T>>
 	}
 
 	@Override
-	public CollectionNode<?> toCollectionDifference()
+	public CollectionNode toCollectionDifference()
 	{
 		return this;
 	}
 
-	private static class TypeFilteringVisitor extends AbstractFilteringVisitor
-	{
-		private final DifferenceType differenceType;
-
-		public TypeFilteringVisitor(final DifferenceType differenceType)
-		{
-			Assert.notNull(differenceType, "differenceType");
-			this.differenceType = differenceType;
-		}
-
-		@Override
-		protected boolean accept(final DiffNode<?> difference)
-		{
-			return difference.getType() == differenceType;
-		}
-
-		@Override
-		protected void onAccept(final DiffNode<?> difference, final Visit visit)
-		{
-			super.onAccept(difference, visit);
-			visit.dontGoDeeper();
-		}
-
-		@Override
-		protected void onDismiss(final DiffNode<?> difference, final Visit visit)
-		{
-			super.onDismiss(difference, visit);
-			visit.dontGoDeeper();
-		}
-	}
 }

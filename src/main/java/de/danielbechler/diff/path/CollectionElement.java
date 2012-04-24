@@ -1,33 +1,34 @@
 package de.danielbechler.diff.path;
 
 /** @author Daniel Bechler */
-public final class CollectionElement<T> implements PropertyPath.Element
+public final class CollectionElement extends PropertyPath.Element
 {
-	private final T item;
+	private final Object item;
 
-	public CollectionElement(final T item)
+	public CollectionElement(final Object item)
 	{
 		this.item = item;
 	}
 
-	public T getItem()
+	@SuppressWarnings({"UnusedDeclaration"})
+	public Object getItem()
 	{
 		return item;
 	}
 
 	@Override
-	public boolean equals(final Object o)
+	public boolean equals(final PropertyPath.Element element)
 	{
-		if (this == o)
+		if (this == element)
 		{
 			return true;
 		}
-		if (!(o instanceof CollectionElement))
+		if (!(element instanceof CollectionElement))
 		{
 			return false;
 		}
 
-		final CollectionElement that = (CollectionElement) o;
+		final CollectionElement that = (CollectionElement) element;
 
 		if (item != null ? !item.equals(that.item) : that.item != null)
 		{
@@ -38,13 +39,13 @@ public final class CollectionElement<T> implements PropertyPath.Element
 	}
 
 	@Override
-	public int hashCode()
+	public int calculateHashCode()
 	{
 		return item != null ? item.hashCode() : 0;
 	}
 
 	@Override
-	public String toString()
+	public String asString()
 	{
 		return "item[" + item + "]";
 	}

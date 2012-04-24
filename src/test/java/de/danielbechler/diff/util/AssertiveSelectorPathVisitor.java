@@ -8,25 +8,19 @@ import de.danielbechler.util.*;
 import static org.junit.Assert.*;
 
 /** @author Daniel Bechler */
-@Deprecated
+@SuppressWarnings({"UnusedDeclaration"})
 public abstract class AssertiveSelectorPathVisitor extends AbstractPropertySelectorPathVisitor
 {
 	private static final Object SKIP = new Object();
 
 	private final Object base;
-
 	private final Object modified;
 
 	private String propertyName;
-
 	private Object baseValue = SKIP;
-
 	private Object modifiedValue = SKIP;
-
-	private DifferenceType differenceType;
-
+	private Node.State differenceType;
 	private boolean found;
-
 	private boolean configured;
 
 	public AssertiveSelectorPathVisitor(final Object base, final Object modified)
@@ -38,7 +32,7 @@ public abstract class AssertiveSelectorPathVisitor extends AbstractPropertySelec
 	}
 
 	@Override
-	protected void action(final DiffNode<?> match)
+	protected void action(final Node match)
 	{
 		if (!configured)
 		{
@@ -51,15 +45,15 @@ public abstract class AssertiveSelectorPathVisitor extends AbstractPropertySelec
 		}
 		if (differenceType != null)
 		{
-			assertEquals("DifferenceType", differenceType, match.getType());
+			assertEquals("DifferenceType", differenceType, match.getState());
 		}
 		if (baseValue != SKIP)
 		{
-			assertEquals("Base Value", baseValue, match.getAccessor().get(base));
+			assertEquals("Base Value", baseValue, match.get(base));
 		}
 		if (modifiedValue != SKIP)
 		{
-			assertEquals("Modified Value", modifiedValue, match.getAccessor().get(modified));
+			assertEquals("Modified Value", modifiedValue, match.get(modified));
 		}
 		assertEquals(getSelectorPath(), match.getPropertyPath());
 		found = true;
@@ -81,7 +75,7 @@ public abstract class AssertiveSelectorPathVisitor extends AbstractPropertySelec
 		return this;
 	}
 
-	protected AssertiveSelectorPathVisitor expectedDifferenceType(final DifferenceType differenceType)
+	protected AssertiveSelectorPathVisitor expectedDifferenceType(final Node.State differenceType)
 	{
 		this.differenceType = differenceType;
 		return this;

@@ -9,22 +9,17 @@ public class Assert
 	{
 	}
 
-	public static void sameTypesOrNull(final Object... objects)
+	public static void equalTypesOrNull(final Object... objects)
 	{
+		final Collection<Class<?>> types = Classes.typesOf(objects);
 		Class<?> previousType = null;
-		for (final Object object : objects)
+		for (final Class<?> type : types)
 		{
-			if (object != null)
+			if (previousType != null && !type.equals(previousType))
 			{
-				if (previousType == null)
-				{
-					previousType = object.getClass();
-				}
-				else if (!object.getClass().equals(previousType))
-				{
-					throw new IllegalArgumentException("The given objects should be either null or of the same type ('" + previousType + "')");
-				}
+				throw new IllegalArgumentException("The given objects should be either null or of the same type ('" + previousType + "') = " + types);
 			}
+			previousType = type;
 		}
 	}
 

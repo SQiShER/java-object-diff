@@ -9,18 +9,18 @@ import java.util.*;
 /** @author Daniel Bechler */
 public class MapEntryAccessorTest
 {
-	private MapEntryAccessor<String, String> accessor;
+	private MapEntryAccessor accessor;
 
 	@Before
 	public void setUp()
 	{
-		accessor = new MapEntryAccessor<String, String>(Arrays.asList("a", "b", "c"), 1);
+		accessor = new MapEntryAccessor(Arrays.asList("a", "b", "c"), 1);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = IndexOutOfBoundsException.class)
 	public void testConstructionWithInvalidIndex()
 	{
-		new MapEntryAccessor<String, String>(Arrays.asList("foo"), 5);
+		new MapEntryAccessor(Arrays.asList("foo"), 5);
 	}
 
 	@Test
@@ -32,13 +32,7 @@ public class MapEntryAccessorTest
 	@Test
 	public void testToPathElement() throws Exception
 	{
-		Assert.assertThat(accessor.toPathElement(), Is.is(MapElement.class));
-	}
-
-	@Test
-	public void testGetPath() throws Exception
-	{
-		Assert.assertThat(accessor.getPath(), IsEqual.equalTo(new PropertyPath(new MapElement<String>("b"))));
+		Assert.assertThat(accessor.getPathElement(), Is.is(MapElement.class));
 	}
 
 	@Test
@@ -58,7 +52,7 @@ public class MapEntryAccessorTest
 	{
 		final Map<String, String> map = new TreeMap<String, String>();
 		map.put("b", "foo");
-		Assert.assertThat(accessor.get(map), IsEqual.equalTo("foo"));
+		Assert.assertThat((String) accessor.get(map), IsEqual.equalTo("foo"));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -78,7 +72,7 @@ public class MapEntryAccessorTest
 	{
 		final Map<String, String> map = new TreeMap<String, String>();
 		map.put("b", "foo");
-		accessor.unset(map, "b");
+		accessor.unset(map);
 		Assert.assertTrue(map.isEmpty());
 	}
 }
