@@ -1,3 +1,22 @@
+/*
+ * Copyright 2012 Daniel Bechler
+ *
+ * This file is part of java-object-diff.
+ *
+ * java-object-diff is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * java-object-diff is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with java-object-diff.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package de.danielbechler.diff.integration;
 
 import de.danielbechler.diff.*;
@@ -13,7 +32,7 @@ import static org.junit.Assert.*;
 public class PhoneBookTest
 {
 	@Test
-	public void test()
+	public void testContactMiddleNameChanges()
 	{
 		final PhoneBook phoneBook = new PhoneBook("Breaking Bad");
 
@@ -49,7 +68,7 @@ public class PhoneBookTest
 		assertThat(middleNameNode.canonicalGet(phoneBook), IsNull.nullValue());
 		assertThat((String) middleNameNode.canonicalGet(modifiedPhoneBook), IsEqual.equalTo("Bruce"));
 
-		final Node whiteNode = contactsNode.getChild(new CollectionElement(jessePinkman));
+		final Node whiteNode = contactsNode.getChild(new CollectionElement(walterWhite));
 		assertThat(whiteNode.hasChanges(), is(true));
 
 		final Node whiteMiddleNameNode = whiteNode.getChild("middleName");
