@@ -37,7 +37,7 @@ import static org.mockito.Mockito.*;
 public class BeanDifferTest
 {
 	@Mock
-	private ObjectDiffer delegate;
+	private DelegatingObjectDiffer delegate;
 	@Mock
 	private Introspector introspector;
 	@Mock
@@ -154,7 +154,7 @@ public class BeanDifferTest
 	public void testCompareWithComplexType()
 	{
 		when(introspector.introspect(any(Class.class))).thenReturn(Arrays.<Accessor>asList(accessor));
-		when(delegate.compare(any(Node.class), any(Instances.class))).thenReturn(node);
+		when(delegate.delegate(any(Node.class), any(Instances.class))).thenReturn(node);
 		when(node.hasChanges()).thenReturn(true);
 
 		final Node node = differ.compare(new Object(), new Object());

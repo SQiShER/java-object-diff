@@ -126,6 +126,6 @@ public class MapDifferTest
 	public void testConstructionWithDelegator()
 	{
 		// just for the coverage
-		new MapDiffer(new DelegatingObjectDiffer());
+		new MapDiffer(new DelegatingObjectDifferImpl());
 	}
 }

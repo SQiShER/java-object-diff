@@ -22,11 +22,17 @@ package de.danielbechler.diff;
 import de.danielbechler.diff.node.*;
 
 /** @author Daniel Bechler */
-public interface ObjectDiffer extends Differ, Configurable
+public interface ObjectDiffer extends Configurable
 {
+	/**
+	 * Recursively inspects the given objects and returns a node representing their differences. Both objects have be have the
+	 * same type.
+	 *
+	 * @param working This object will be treated as the successor of the <code>base</code> object.
+	 * @param base	This object will be treated as the predecessor of the <code>working</code> object.
+	 * @param <T>     The type of the objects to compare.
+	 *
+	 * @return A node representing the differences between the given objects.
+	 */
 	<T> Node compare(T working, T base);
-
-	boolean isIgnored(Node parentNode, final Instances instances);
-
-	boolean isEqualsOnly(Node parentNode, Instances instances);
 }

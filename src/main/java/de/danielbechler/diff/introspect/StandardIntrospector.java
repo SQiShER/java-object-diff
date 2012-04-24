@@ -30,7 +30,11 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.*;
 import java.util.*;
 
-/** @author Daniel Bechler */
+/**
+ * Resolves the accessors of a given type by using the standard Java {@link Introspector}.
+ *
+ * @author Daniel Bechler
+ */
 public class StandardIntrospector implements de.danielbechler.diff.introspect.Introspector
 {
 	public Iterable<Accessor> introspect(final Class<?> type)

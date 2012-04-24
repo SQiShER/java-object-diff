@@ -24,17 +24,21 @@ import de.danielbechler.diff.introspect.*;
 import de.danielbechler.diff.node.*;
 import de.danielbechler.util.*;
 
-/** @author Daniel Bechler */
+/**
+ * Used to find differences between objects that were not handled by one of the other (specialized) {@link Differ Differs}.
+ *
+ * @author Daniel Bechler
+ */
 final class BeanDiffer extends AbstractDiffer
 {
 	private Introspector introspector = new StandardIntrospector();
 
 	BeanDiffer()
 	{
-		setDelegate(new DelegatingObjectDiffer(this, null, null));
+		setDelegate(new DelegatingObjectDifferImpl(this, null, null));
 	}
 
-	BeanDiffer(final ObjectDiffer delegate)
+	BeanDiffer(final DelegatingObjectDiffer delegate)
 	{
 		super(delegate);
 	}
@@ -110,7 +114,7 @@ final class BeanDiffer extends AbstractDiffer
 	{
 		for (final Accessor accessor : introspect(instances.getType()))
 		{
-			final Node child = getDelegate().compare(parentNode, instances.access(accessor));
+			final Node child = getDelegate().delegate(parentNode, instances.access(accessor));
 			if (child.hasChanges())
 			{
 				parentNode.setState(Node.State.CHANGED);

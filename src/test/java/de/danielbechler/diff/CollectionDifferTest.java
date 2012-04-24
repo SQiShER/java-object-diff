@@ -49,7 +49,7 @@ public class CollectionDifferTest
 	@Test
 	public void testConstructionWithDelegate()
 	{
-		new CollectionDiffer(ObjectDifferFactory.getInstance());
+		new CollectionDiffer(new DelegatingObjectDifferImpl());
 	}
 
 	@Test

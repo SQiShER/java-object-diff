@@ -47,19 +47,19 @@ public class DelegatingObjectDifferTest
 	@Mock
 	private Node node;
 
-	private DelegatingObjectDiffer differ;
+	private DelegatingObjectDifferImpl differ;
 
 	@Before
 	public void setUp() throws Exception
 	{
 		MockitoAnnotations.initMocks(this);
-		differ = new DelegatingObjectDiffer(beanDiffer, mapDiffer, collectionDiffer);
+		differ = new DelegatingObjectDifferImpl(beanDiffer, mapDiffer, collectionDiffer);
 	}
 
 	@Test
 	public void testConstructionWithDefaultConstructor() throws Exception
 	{
-		differ = new DelegatingObjectDiffer();
+		differ = new DelegatingObjectDifferImpl();
 		assertThat(differ.getBeanDiffer(), IsNull.notNullValue());
 		assertThat(differ.getMapDiffer(), IsNull.notNullValue());
 		assertThat(differ.getCollectionDiffer(), IsNull.notNullValue());
@@ -68,7 +68,7 @@ public class DelegatingObjectDifferTest
 	@Test
 	public void testCompareWithCollection() throws Exception
 	{
-		differ.compare(Node.ROOT, Instances.of(new RootAccessor(), new LinkedList<String>(), new LinkedList<String>()));
+		differ.delegate(Node.ROOT, Instances.of(new RootAccessor(), new LinkedList<String>(), new LinkedList<String>()));
 		Mockito.verify(collectionDiffer, Mockito.times(1)).compare(any(Node.class), any(Instances.class));
 		Mockito.verify(mapDiffer, Mockito.never()).compare(any(Node.class), any(Instances.class));
 		Mockito.verify(beanDiffer, Mockito.never()).compare(any(Node.class), any(Instances.class));
@@ -77,7 +77,7 @@ public class DelegatingObjectDifferTest
 	@Test
 	public void testCompareWithMap() throws Exception
 	{
-		differ.compare(Node.ROOT, Instances.of(new TreeMap<String, String>(), new TreeMap<String, String>()));
+		differ.delegate(Node.ROOT, Instances.of(new TreeMap<String, String>(), new TreeMap<String, String>()));
 		Mockito.verify(collectionDiffer, Mockito.never()).compare(any(Node.class), any(Instances.class));
 		Mockito.verify(mapDiffer, Mockito.times(1)).compare(any(Node.class), any(Instances.class));
 		Mockito.verify(beanDiffer, Mockito.never()).compare(any(Node.class), any(Instances.class));
@@ -86,7 +86,7 @@ public class DelegatingObjectDifferTest
 	@Test
 	public void testCompareWithSimpleType() throws Exception
 	{
-		differ.compare(Node.ROOT, Instances.of("", ""));
+		differ.delegate(Node.ROOT, Instances.of("", ""));
 		Mockito.verify(collectionDiffer, Mockito.never()).compare(any(Node.class), any(Instances.class));
 		Mockito.verify(mapDiffer, Mockito.never()).compare(any(Node.class), any(Instances.class));
 		Mockito.verify(beanDiffer, Mockito.times(1)).compare(any(Node.class), any(Instances.class));

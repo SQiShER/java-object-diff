@@ -36,14 +36,14 @@ public class PropertyVisitor implements Node.Visitor
 		this.propertyPath = propertyPath;
 	}
 
-	public void accept(final Node difference, final Visit visit)
+	public void accept(final Node node, final Visit visit)
 	{
-		final PropertyPath differencePath = difference.getPropertyPath();
+		final PropertyPath differencePath = node.getPropertyPath();
 		if (propertyPath.isParentOf(differencePath))
 		{
 			if (propertyPath.equals(differencePath))
 			{
-				this.node = difference;
+				this.node = node;
 				visit.stop();
 			}
 		}

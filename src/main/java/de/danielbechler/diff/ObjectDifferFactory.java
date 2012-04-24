@@ -19,7 +19,11 @@
 
 package de.danielbechler.diff;
 
-/** @author Daniel Bechler */
+/**
+ * Creates new {@link ObjectDiffer} instances.
+ *
+ * @author Daniel Bechler
+ */
 @SuppressWarnings({"UtilityClassWithoutPrivateConstructor"})
 public final class ObjectDifferFactory
 {
@@ -28,14 +32,26 @@ public final class ObjectDifferFactory
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * Returns a new {@link ObjectDiffer} instance.
+	 *
+	 * @return A new {@link ObjectDiffer} instance.
+	 */
 	public static ObjectDiffer getInstance()
 	{
-		return new DelegatingObjectDiffer();
+		return new DelegatingObjectDifferImpl();
 	}
 
+	/**
+	 * Returns a new {@link ObjectDiffer} instance and passes it the given {@link Configuration}
+	 *
+	 * @param configuration The configuration for the {@link ObjectDiffer}.
+	 *
+	 * @return A new {@link ObjectDiffer} instance.
+	 */
 	public static ObjectDiffer getInstance(final Configuration configuration)
 	{
-		final DelegatingObjectDiffer objectDiffer = new DelegatingObjectDiffer();
+		final DelegatingObjectDifferImpl objectDiffer = new DelegatingObjectDifferImpl();
 		objectDiffer.setConfiguration(configuration);
 		return objectDiffer;
 	}

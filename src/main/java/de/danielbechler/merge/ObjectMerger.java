@@ -62,34 +62,34 @@ public final class ObjectMerger
 			this.modified = modified;
 		}
 
-		public void accept(final Node difference, final Visit visit)
+		public void accept(final Node node, final Visit visit)
 		{
-			if (difference.getState() == Node.State.ADDED)
+			if (node.getState() == Node.State.ADDED)
 			{
-				difference.canonicalSet(head, difference.canonicalGet(modified));
+				node.canonicalSet(head, node.canonicalGet(modified));
 			}
-			else if (difference.getState() == Node.State.REMOVED)
+			else if (node.getState() == Node.State.REMOVED)
 			{
-				difference.canonicalUnset(head);
+				node.canonicalUnset(head);
 			}
-			else if (difference.getState() == Node.State.REPLACED)
+			else if (node.getState() == Node.State.REPLACED)
 			{
-				difference.canonicalSet(head, difference.canonicalGet(modified));
+				node.canonicalSet(head, node.canonicalGet(modified));
 			}
-			else if (difference.getState() == Node.State.UNTOUCHED)
+			else if (node.getState() == Node.State.UNTOUCHED)
 			{
 				// not touched - nothing to do
 			}
-			else if (difference.getState() == Node.State.CHANGED)
+			else if (node.getState() == Node.State.CHANGED)
 			{
-				if (difference.hasChildren())
+				if (node.hasChildren())
 				{
-					difference.visitChildren(this);
+					node.visitChildren(this);
 					visit.dontGoDeeper();
 				}
 				else
 				{
-					difference.canonicalSet(head, difference.canonicalGet(modified));
+					node.canonicalSet(head, node.canonicalGet(modified));
 				}
 			}
 		}

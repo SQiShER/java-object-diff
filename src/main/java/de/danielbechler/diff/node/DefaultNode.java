@@ -62,9 +62,9 @@ public class DefaultNode implements Node
 		final AtomicBoolean result = new AtomicBoolean(false);
 		visitChildren(new Visitor()
 		{
-			public void accept(final Node difference, final Visit visit)
+			public void accept(final Node node, final Visit visit)
 			{
-				if (difference.getState() != State.UNTOUCHED)
+				if (node.getState() != State.UNTOUCHED)
 				{
 					result.set(true);
 					visit.stop();
@@ -147,10 +147,10 @@ public class DefaultNode implements Node
 		return children.get(pathElement);
 	}
 
-	public void addChild(final Node child)
+	public void addChild(final Node node)
 	{
-		child.setParentNode(this);
-		children.put(child.getPathElement(), child);
+		node.setParentNode(this);
+		children.put(node.getPathElement(), node);
 	}
 
 	public final void visit(final Visitor visitor)
@@ -231,6 +231,7 @@ public class DefaultNode implements Node
 
 	public final void setState(final State state)
 	{
+		Assert.notNull(state, "state");
 		this.state = state;
 	}
 

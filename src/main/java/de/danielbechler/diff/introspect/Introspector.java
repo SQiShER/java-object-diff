@@ -21,8 +21,19 @@ package de.danielbechler.diff.introspect;
 
 import de.danielbechler.diff.accessor.*;
 
-/** @author Daniel Bechler */
+/**
+ * Resolves the accessors of a given type.
+ *
+ * @author Daniel Bechler
+ */
 public interface Introspector
 {
+	/**
+	 * Resolves the accessors of the given type.
+	 *
+	 * @param type The type to introspect.
+	 *
+	 * @return All valid accessors.
+	 */
 	Iterable<Accessor> introspect(Class<?> type);
 }

@@ -25,15 +25,19 @@ import de.danielbechler.util.Collections;
 
 import java.util.*;
 
-/** @author Daniel Bechler */
+/**
+ * Used to find differences between {@link Collection Collections}.
+ *
+ * @author Daniel Bechler
+ */
 final class CollectionDiffer extends AbstractDiffer
 {
 	public CollectionDiffer()
 	{
-		setDelegate(new DelegatingObjectDiffer(null, null, this));
+		setDelegate(new DelegatingObjectDifferImpl(null, null, this));
 	}
 
-	public CollectionDiffer(final ObjectDiffer delegate)
+	public CollectionDiffer(final DelegatingObjectDiffer delegate)
 	{
 		super(delegate);
 	}
@@ -89,7 +93,7 @@ final class CollectionDiffer extends AbstractDiffer
 	private Node compareItem(final CollectionNode collectionNode, final Instances instances, final Object item)
 	{
 		final Accessor accessor = collectionNode.accessorForItem(item);
-		return getDelegate().compare(collectionNode, instances.access(accessor));
+		return getDelegate().delegate(collectionNode, instances.access(accessor));
 	}
 
 	private static Collection<?> findAddedItems(final Instances instances)

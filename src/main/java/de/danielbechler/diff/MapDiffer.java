@@ -25,15 +25,19 @@ import de.danielbechler.util.Collections;
 
 import java.util.*;
 
-/** @author Daniel Bechler */
+/**
+ * Used to find differences between {@link Map Maps}
+ *
+ * @author Daniel Bechler
+ */
 final class MapDiffer extends AbstractDiffer
 {
 	public MapDiffer()
 	{
-		setDelegate(new DelegatingObjectDiffer(null, this, null));
+		setDelegate(new DelegatingObjectDifferImpl(null, this, null));
 	}
 
-	public MapDiffer(final ObjectDiffer delegate)
+	public MapDiffer(final DelegatingObjectDiffer delegate)
 	{
 		super(delegate);
 	}
@@ -103,7 +107,7 @@ final class MapDiffer extends AbstractDiffer
 	{
 		final Accessor accessor = parent.accessorForKey(key);
 		instances = instances.access(accessor);
-		return getDelegate().compare(parent, instances);
+		return getDelegate().delegate(parent, instances);
 	}
 
 	private static Collection<?> findAddedKeys(final Instances instances)
