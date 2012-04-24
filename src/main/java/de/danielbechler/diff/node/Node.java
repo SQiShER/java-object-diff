@@ -13,7 +13,7 @@ public interface Node extends CanonicalAccessor
 
 	public static interface Visitor
 	{
-		void accept(Node difference, final Visit visit);
+		void accept(Node difference, Visit visit);
 	}
 
 	public enum State

@@ -1,5 +1,7 @@
 package de.danielbechler.diff.integration;
 
+import de.danielbechler.util.*;
+
 import java.util.*;
 
 /** @author Daniel Bechler */
@@ -68,7 +70,19 @@ public class PhoneBook
 		sb.append("-------------").append('\n');
 		for (final Contact contact : contacts)
 		{
-			sb.append(contact.toString()).append('\n');
+			final String name = Strings.join(" ",
+											 contact.getFirstName(),
+											 contact.getMiddleName(),
+											 contact.getLastName());
+			sb.append(name).append(":\n");
+			for (final Map.Entry<String, PhoneNumber> entry : contact.getPhoneNumbers().entrySet())
+			{
+				sb.append("  ")
+						.append(entry.getKey())
+						.append(": ")
+						.append(entry.getValue())
+						.append('\n');
+			}
 		}
 		return sb.toString();
 	}

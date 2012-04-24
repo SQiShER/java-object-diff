@@ -32,7 +32,7 @@ final class DelegatingObjectDiffer implements ObjectDiffer
 		this.collectionDiffer = collectionDiffer != null ? collectionDiffer : new CollectionDiffer(this);
 	}
 
-	public Node compare(final Object working, final Object base)
+	public <T> Node compare(final T working, final T base)
 	{
 		return compare(Node.ROOT, Instances.of(working, base));
 	}

@@ -76,4 +76,15 @@
 		</dependency>
 	</dependencies>
 
+	<distributionManagement>
+		<repository>
+			<id>github</id>
+			<url>file:///Users/dbechler/Developer/Personal/mvn-repos/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>github</id>
+			<url>file:///Users/dbechler/Developer/Personal/mvn-repos/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+
 </project>

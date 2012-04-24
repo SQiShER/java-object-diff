@@ -116,12 +116,16 @@ public final class PropertyPath
 		while (iterator.hasNext())
 		{
 			final Element selector = iterator.next();
-			if (!(selector instanceof RootElement))
+			if (selector instanceof RootElement)
+			{
+				sb.append('/');
+			}
+			else
 			{
 				sb.append(selector);
 				if (iterator.hasNext())
 				{
-					sb.append('.');
+					sb.append('/');
 				}
 			}
 		}

@@ -10,7 +10,7 @@ import static org.hamcrest.core.Is.*;
 import static org.junit.Assert.*;
 
 /** @author Daniel Bechler */
-public class PhoneBookIntegrationTest
+public class PhoneBookTest
 {
 	@Test
 	public void test()
@@ -27,8 +27,8 @@ public class PhoneBookIntegrationTest
 		phoneBook.addContact(jessePinkman);
 
 		final PhoneBook modifiedPhoneBook = PhoneBook.from(phoneBook);
-		final Contact contact = modifiedPhoneBook.getContact("Jesse", "Pinkman");
-		contact.setMiddleName("Bruce");
+		modifiedPhoneBook.getContact("Jesse", "Pinkman").setMiddleName("Bruce");
+		modifiedPhoneBook.getContact("Walter", "White").setMiddleName("Hartwell");
 
 		final ObjectDiffer objectDiffer = ObjectDifferFactory.getInstance();
 		final Node node = objectDiffer.compare(modifiedPhoneBook, phoneBook);
@@ -48,5 +48,13 @@ public class PhoneBookIntegrationTest
 		assertThat(middleNameNode.hasChanges(), is(true));
 		assertThat(middleNameNode.canonicalGet(phoneBook), IsNull.nullValue());
 		assertThat((String) middleNameNode.canonicalGet(modifiedPhoneBook), IsEqual.equalTo("Bruce"));
+
+		final Node whiteNode = contactsNode.getChild(new CollectionElement(jessePinkman));
+		assertThat(whiteNode.hasChanges(), is(true));
+
+		final Node whiteMiddleNameNode = whiteNode.getChild("middleName");
+		assertThat(whiteMiddleNameNode.hasChanges(), is(true));
+		assertThat(whiteMiddleNameNode.canonicalGet(phoneBook), IsNull.nullValue());
+		assertThat((String) whiteMiddleNameNode.canonicalGet(modifiedPhoneBook), IsEqual.equalTo("Hartwell"));
 	}
 }

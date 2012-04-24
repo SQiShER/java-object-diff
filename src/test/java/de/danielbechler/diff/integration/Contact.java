@@ -102,17 +102,6 @@ public class Contact
 	@Override
 	public String toString()
 	{
-		final StringBuilder builder = new StringBuilder()
-				.append(Strings.join(" ", firstName, middleName, lastName))
-				.append(":\n");
-		for (final Map.Entry<String, PhoneNumber> entry : phoneNumbers.entrySet())
-		{
-			builder.append("  ")
-					.append(entry.getKey())
-					.append(": ")
-					.append(entry.getValue())
-					.append('\n');
-		}
-		return builder.toString();
+		return new StringBuilder().append(Strings.join(" ", firstName, lastName)).toString();
 	}
 }
