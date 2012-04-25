@@ -302,14 +302,22 @@ public class DefaultNode implements Node
 	{
 		final StringBuilder sb = new StringBuilder();
 		sb.append(getPropertyPath());
-		sb.append(" = { State[").append(getState().toString()).append("]");
+		sb.append(" = { ").append(getState().toString().toLowerCase());
 		if (getPropertyType() != null)
 		{
-			sb.append(", Type[").append(getPropertyType().getCanonicalName()).append("]");
+			sb.append(", type is ").append(getPropertyType().getCanonicalName());
 		}
 		if (hasChildren())
 		{
-			sb.append(", Children[").append(getChildren().size()).append("]");
+			sb.append(", ").append(getChildren().size()).append(" children");
+		}
+		else
+		{
+			sb.append(", no children");
+		}
+		if (!getCategories().isEmpty())
+		{
+			sb.append(", categorized as ").append(getCategories());
 		}
 		sb.append(" }");
 		return sb.toString();
