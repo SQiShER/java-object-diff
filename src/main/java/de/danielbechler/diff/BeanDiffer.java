@@ -57,7 +57,7 @@ final class BeanDiffer extends AbstractDiffer
 	public Node compare(final Node parentNode, final Instances instances)
 	{
 		final Node node = new DefaultNode(parentNode, instances.getSourceAccessor());
-		if (getDelegate().isIgnored(node, instances))
+		if (getDelegate().isIgnored(node))
 		{
 			node.setState(Node.State.IGNORED);
 		}
@@ -74,38 +74,38 @@ final class BeanDiffer extends AbstractDiffer
 
 	private Node compareBean(final Node parentNode, final Instances instances)
 	{
-		final Node difference = new DefaultNode(parentNode, instances.getSourceAccessor());
+		final Node node = new DefaultNode(parentNode, instances.getSourceAccessor());
 		if (instances.hasBeenAdded())
 		{
-			difference.setState(Node.State.ADDED);
+			node.setState(Node.State.ADDED);
 		}
 		else if (instances.hasBeenRemoved())
 		{
-			difference.setState(Node.State.REMOVED);
+			node.setState(Node.State.REMOVED);
 		}
 		else if (instances.areSame())
 		{
-			difference.setState(Node.State.UNTOUCHED);
+			node.setState(Node.State.UNTOUCHED);
 		}
 		else
 		{
-			if (getDelegate().isEqualsOnly(parentNode, instances))
+			if (getDelegate().isEqualsOnly(node))
 			{
-				compareWithEquals(difference, instances);
+				compareWithEquals(node, instances);
 			}
 			else
 			{
-				compareProperties(difference, instances);
+				compareProperties(node, instances);
 			}
 		}
-		return difference;
+		return node;
 	}
 
-	private static void compareWithEquals(final Node parentNode, final Instances instances)
+	private static void compareWithEquals(final Node node, final Instances instances)
 	{
 		if (!instances.areEqual())
 		{
-			parentNode.setState(Node.State.CHANGED);
+			node.setState(Node.State.CHANGED);
 		}
 	}
 
@@ -119,7 +119,7 @@ final class BeanDiffer extends AbstractDiffer
 				parentNode.setState(Node.State.CHANGED);
 				parentNode.addChild(child);
 			}
-			else if (getConfiguration().isReturnUnchangedNodes())
+			else if (getConfiguration().isReturnable(child))
 			{
 				parentNode.addChild(child);
 			}

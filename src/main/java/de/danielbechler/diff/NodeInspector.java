@@ -22,12 +22,15 @@ package de.danielbechler.diff;
 import de.danielbechler.diff.node.*;
 
 /** @author Daniel Bechler */
-public interface DelegatingObjectDiffer extends ObjectDiffer, NodeInspector
+public interface NodeInspector
 {
-	/**
-	 * Delegates the call to an appropriate {@link Differ}.
-	 *
-	 * @return A node representing the difference between the given {@link Instances}.
-	 */
-	Node delegate(Node parentNode, Instances instances);
+	boolean isIgnored(Node node);
+
+	boolean isIncluded(Node node);
+
+	boolean isExcluded(Node node);
+
+	boolean isEqualsOnly(Node node);
+
+	boolean isReturnable(Node node);
 }

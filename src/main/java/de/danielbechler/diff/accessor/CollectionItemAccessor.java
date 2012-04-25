@@ -24,7 +24,7 @@ import de.danielbechler.diff.path.*;
 import java.util.*;
 
 /** @author Daniel Bechler */
-public final class CollectionItemAccessor extends AbstractAccessor
+public final class CollectionItemAccessor extends AbstractAccessor implements TypeAwareAccessor
 {
 	private final Object referenceItem;
 
@@ -68,6 +68,12 @@ public final class CollectionItemAccessor extends AbstractAccessor
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public Class<?> getPropertyType()
+	{
+		return referenceItem != null ? referenceItem.getClass() : null;
 	}
 
 	private static Collection<Object> objectAsCollection(final Object object)

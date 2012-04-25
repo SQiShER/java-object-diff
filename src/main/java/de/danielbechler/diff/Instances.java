@@ -64,6 +64,7 @@ class Instances
 		this.fresh = fresh;
 	}
 
+	/** @return The {@link Accessor} that has been used to get to these instances. */
 	public Accessor getSourceAccessor()
 	{
 		return sourceAccessor;

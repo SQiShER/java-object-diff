@@ -53,12 +53,13 @@ public class BeanDifferTest
 		differ = new BeanDiffer();
 		differ.setDelegate(delegate);
 		differ.setIntrospector(introspector);
+
 	}
 
 	@Test
 	public void testCompareWithDifferentStrings() throws Exception
 	{
-		when(delegate.isEqualsOnly(any(Node.class), any(Instances.class))).thenReturn(true);
+		when(delegate.isEqualsOnly(any(Node.class))).thenReturn(true);
 		final Node node = differ.compare("foo", "bar");
 		assertThat(node.hasChanges(), is(true));
 		assertThat(node.hasChildren(), is(false));
@@ -74,7 +75,7 @@ public class BeanDifferTest
 	@Test(expected = IllegalArgumentException.class)
 	public void testCompareWithoutWorkingInstance()
 	{
-		when(delegate.isEqualsOnly(any(Node.class), any(Instances.class))).thenReturn(true);
+		when(delegate.isEqualsOnly(any(Node.class))).thenReturn(true);
 		differ.compare(null, "foo");
 	}
 
@@ -88,7 +89,7 @@ public class BeanDifferTest
 	@Test
 	public void testCompareWithIgnoredProperty()
 	{
-		when(delegate.isIgnored(any(Node.class), any(Instances.class))).thenReturn(true);
+		when(delegate.isIgnored(any(Node.class))).thenReturn(true);
 		assertThat(differ.compare("foo", "bar").getState(), is(Node.State.IGNORED));
 	}
 
@@ -116,7 +117,7 @@ public class BeanDifferTest
 	@Test
 	public void testCompareWithEqualsOnlyTypes()
 	{
-		when(delegate.isEqualsOnly(any(Node.class), any(Instances.class))).thenReturn(true);
+		when(delegate.isEqualsOnly(any(Node.class))).thenReturn(true);
 
 		final ObjectWithHashCodeAndEquals working = new ObjectWithHashCodeAndEquals("foo");
 		final ObjectWithHashCodeAndEquals base = new ObjectWithHashCodeAndEquals("foo");
@@ -128,7 +129,7 @@ public class BeanDifferTest
 	@Test
 	public void testCompareWithUnequalEqualsOnlyTypes()
 	{
-		when(delegate.isEqualsOnly(any(Node.class), any(Instances.class))).thenReturn(true);
+		when(delegate.isEqualsOnly(any(Node.class))).thenReturn(true);
 
 		final ObjectWithHashCodeAndEquals working = new ObjectWithHashCodeAndEquals("foo");
 		final ObjectWithHashCodeAndEquals base = new ObjectWithHashCodeAndEquals("bar");

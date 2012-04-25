@@ -20,115 +20,167 @@
 package de.danielbechler.diff;
 
 import de.danielbechler.diff.annotation.*;
+import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.path.*;
+import de.danielbechler.util.*;
 
 import java.util.*;
 
 /** @author Daniel Bechler */
-public class Configuration
+public class Configuration implements NodeInspector
 {
-	private Collection<String> ignoreCategories = new TreeSet<String>();
-	private Collection<PropertyPath> ignoreProperties = new LinkedHashSet<PropertyPath>(10);
-	private Collection<PropertyPath> equalsOnlyProperties = new LinkedHashSet<PropertyPath>(10);
-	private Collection<Class<?>> equalsOnlyTypes = new LinkedHashSet<Class<?>>(10);
+	private final Collection<String> includedCategories = new TreeSet<String>();
+	private final Collection<String> excludedCategories = new TreeSet<String>();
+	private final Collection<PropertyPath> includedProperties = new HashSet<PropertyPath>(10);
+	private final Collection<PropertyPath> excludedProperties = new HashSet<PropertyPath>(10);
+	private final Collection<PropertyPath> equalsOnlyProperties = new LinkedHashSet<PropertyPath>(10);
+	private final Collection<Class<?>> equalsOnlyTypes = new LinkedHashSet<Class<?>>(10);
 	private boolean returnUnchangedNodes = false;
 	private boolean returnIgnoredNodes = false;
 
-	public Collection<String> getIgnoreCategories()
+	public Configuration withCategory(final String category)
 	{
-		return Collections.unmodifiableCollection(ignoreCategories);
+		this.includedCategories.addAll(Arrays.asList(category));
+		return this;
 	}
 
-	public void setIgnoreCategories(final Collection<String> ignoreCategories)
+	public Configuration withoutCategory(final String... category)
 	{
-		this.ignoreCategories = ignoreCategories;
+		this.excludedCategories.addAll(Arrays.asList(category));
+		return this;
 	}
 
-	public void addIgnoreCategories(final String... category)
+	public Configuration withPropertyPath(final PropertyPath propertyPath)
 	{
-		this.ignoreCategories.addAll(Arrays.asList(category));
+		this.includedProperties.add(propertyPath);
+		return this;
 	}
 
-	public Collection<PropertyPath> getIgnoreProperties()
+	public Configuration withoutProperty(final PropertyPath propertyPath)
 	{
-		return Collections.unmodifiableCollection(ignoreProperties);
+		this.excludedProperties.add(propertyPath);
+		return this;
 	}
 
-	public void setIgnoreProperties(final Collection<PropertyPath> ignoreProperties)
-	{
-		this.ignoreProperties = ignoreProperties;
-	}
-
-	public void addIgnoreProperty(final PropertyPath propertyPath)
-	{
-		this.ignoreProperties.add(propertyPath);
-	}
-
-	public Collection<PropertyPath> getEqualsOnlyProperties()
-	{
-		return Collections.unmodifiableCollection(equalsOnlyProperties);
-	}
-
-	public void setEqualsOnlyProperties(final Collection<PropertyPath> equalsOnlyProperties)
-	{
-		this.equalsOnlyProperties = equalsOnlyProperties;
-	}
-
-	public void addEqualsOnlyProperty(final PropertyPath propertyPath)
-	{
-		this.equalsOnlyProperties.add(propertyPath);
-	}
-
-	public Collection<Class<?>> getEqualsOnlyTypes()
-	{
-		return Collections.unmodifiableCollection(equalsOnlyTypes);
-	}
-
-	public void setEqualsOnlyTypes(final Collection<Class<?>> equalsOnlyTypes)
-	{
-		this.equalsOnlyTypes = equalsOnlyTypes;
-	}
-
-	public void addEqualsOnlyType(final Class<?> type)
+	public Configuration withEqualsOnlyType(final Class<?> type)
 	{
 		this.equalsOnlyTypes.add(type);
+		return this;
 	}
 
-	public boolean isEqualsOnlyPath(final PropertyPath selectorPath)
+	public Configuration withEqualsOnlyProperty(final PropertyPath propertyPath)
 	{
-		return equalsOnlyProperties.contains(selectorPath);
+		this.equalsOnlyProperties.add(propertyPath);
+		return this;
 	}
 
-	public boolean isEqualsOnlyType(final Class<?> type)
+	public Configuration withIgnoredNodes()
 	{
-		if (type.getAnnotation(ObjectDiffEqualsOnlyType.class) != null)
+		this.returnIgnoredNodes = true;
+		return this;
+	}
+
+	public Configuration withoutIgnoredNodes()
+	{
+		this.returnIgnoredNodes = false;
+		return this;
+	}
+
+	public Configuration withUntouchedNodes()
+	{
+		this.returnUnchangedNodes = true;
+		return this;
+	}
+
+	public Configuration withoutUntouchedNodes()
+	{
+		this.returnUnchangedNodes = false;
+		return this;
+	}
+
+	@Override
+	public boolean isIgnored(final Node node)
+	{
+		return node.isIgnored() || !isIncluded(node) || isExcluded(node);
+	}
+
+	@Override
+	public boolean isIncluded(final Node node)
+	{
+		if (node.isRootNode())
 		{
 			return true;
 		}
-		else if (equalsOnlyTypes.contains(type))
+		if (includedCategories.isEmpty() && includedProperties.isEmpty())
+		{
+			return true;
+		}
+		else if (de.danielbechler.util.Collections.containsAny(node.getCategories(), includedCategories))
+		{
+			return true;
+		}
+		else if (includedProperties.contains(node.getPropertyPath()))
 		{
 			return true;
 		}
 		return false;
 	}
 
-	public boolean isReturnIgnoredNodes()
+	@Override
+	public boolean isExcluded(final Node node)
 	{
-		return returnIgnoredNodes;
+		if (excludedProperties.contains(node.getPropertyPath()))
+		{
+			return true;
+		}
+		if (de.danielbechler.util.Collections.containsAny(node.getCategories(), excludedCategories))
+		{
+			return true;
+		}
+		return false;
 	}
 
-	public void setReturnIgnoredNodes(final boolean returnIgnoredNodes)
+	@Override
+	public boolean isEqualsOnly(final Node node)
 	{
-		this.returnIgnoredNodes = returnIgnoredNodes;
+		final Class<?> propertyType = node.getPropertyType();
+		if (propertyType != null)
+		{
+			if (propertyType.getAnnotation(ObjectDiffEqualsOnlyType.class) != null)
+			{
+				return true;
+			}
+			if (equalsOnlyTypes.contains(propertyType))
+			{
+				return true;
+			}
+			if (Classes.isSimpleType(propertyType))
+			{
+				return true;
+			}
+		}
+		if (node.isEqualsOnly())
+		{
+			return true;
+		}
+		if (equalsOnlyProperties.contains(node.getPropertyPath()))
+		{
+			return true;
+		}
+		return false;
 	}
 
-	public boolean isReturnUnchangedNodes()
+	@Override
+	public boolean isReturnable(final Node node)
 	{
-		return returnUnchangedNodes;
-	}
-
-	public void setReturnUnchangedNodes(final boolean returnUnchangedNodes)
-	{
-		this.returnUnchangedNodes = returnUnchangedNodes;
+		if (node.getState() == Node.State.UNTOUCHED)
+		{
+			return returnUnchangedNodes;
+		}
+		else if (node.getState() == Node.State.IGNORED)
+		{
+			return returnIgnoredNodes;
+		}
+		return true;
 	}
 }

@@ -51,7 +51,7 @@ final class MapDiffer extends AbstractDiffer
 	{
 		final MapNode node = new MapNode(parentNode, instances.getSourceAccessor());
 
-		if (getDelegate().isIgnored(parentNode, instances))
+		if (getConfiguration().isIgnored(node))
 		{
 			node.setState(Node.State.IGNORED);
 			return node;
@@ -103,7 +103,7 @@ final class MapDiffer extends AbstractDiffer
 			parent.setState(Node.State.CHANGED);
 			parent.addChild(node);
 		}
-		else if (getConfiguration().isReturnUnchangedNodes())
+		else if (getConfiguration().isReturnable(node))
 		{
 			parent.addChild(node);
 		}

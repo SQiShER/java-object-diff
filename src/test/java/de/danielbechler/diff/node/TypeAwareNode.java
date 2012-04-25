@@ -17,10 +17,11 @@
  * along with java-object-diff.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.danielbechler.diff.accessor;
+package de.danielbechler.diff.node;
+
+import de.danielbechler.diff.accessor.*;
 
 /** @author Daniel Bechler */
-public interface PropertyNameAwareAccessor
+public interface TypeAwareNode extends Node, TypeAwareAccessor
 {
-	String getPropertyName();
 }

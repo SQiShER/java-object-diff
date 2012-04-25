@@ -29,7 +29,6 @@ import org.mockito.*;
 
 import java.util.*;
 
-import static org.hamcrest.core.Is.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -102,78 +101,6 @@ public class DelegatingObjectDifferTest
 	}
 
 	@Test
-	public void testIsIgnoredWithAccessorFlag() throws Exception
-	{
-		when(accessor.isIgnored()).thenReturn(true);
-		assertThat(differ.isIgnored(null, Instances.of(accessor, "foo", "foo", "")), is(true));
-	}
-
-	@Test
-	public void testIsIgnoredWithConfiguredPropertyPath() throws Exception
-	{
-		when(node.getPropertyPath()).thenReturn(new PropertyPathBuilder().withRoot().build());
-		when(accessor.getPathElement()).thenReturn(new NamedPropertyElement("value"));
-		differ.getConfiguration().addIgnoreProperty(new PropertyPathBuilder()
-															.withRoot()
-															.withPropertyName("value")
-															.build());
-		assertThat(differ.isIgnored(node, Instances.of(accessor, "foo", "foo")), is(true));
-	}
-
-	@Test
-	public void testIsIgnoredWithPropertyThatShouldNotBeIgnored() throws Exception
-	{
-		assertThat(differ.isIgnored(node, Instances.of(accessor, "foo", "foo")), is(false));
-	}
-
-	@Test
-	public void testIsIgnoredWithCategory() throws Exception
-	{
-		when(accessor.getCategories()).thenReturn(java.util.Collections.singleton("foo"));
-		assertThat(differ.isIgnored(Node.ROOT, Instances.of(accessor, "hello", "world")), is(false));
-		differ.getConfiguration().addIgnoreCategories("foo");
-		assertThat(differ.isIgnored(Node.ROOT, Instances.of(accessor, "hello", "world")), is(true));
-	}
-
-	@Test
-	public void testIsEqualsOnlyWithConfiguredPropertyPath() throws Exception
-	{
-		when(node.getPropertyPath()).thenReturn(new PropertyPathBuilder().withRoot().build());
-		when(accessor.getPathElement()).thenReturn(new NamedPropertyElement("value"));
-		differ.getConfiguration().addEqualsOnlyProperty(new PropertyPathBuilder()
-																.withRoot()
-																.withPropertyName("value")
-																.build());
-		assertThat(differ.isEqualsOnly(node, Instances.of(accessor, "foo", "foo")), is(true));
-	}
-
-	@Test
-	public void testIsEqualsOnlyWithConfiguredPropertyType() throws Exception
-	{
-		differ.getConfiguration().addEqualsOnlyType(ObjectWithString.class);
-		assertThat(differ.isEqualsOnly(Node.ROOT, Instances.of(new ObjectWithString(), new ObjectWithString())), is(true));
-	}
-
-	@Test
-	public void testIsEqualsOnlyWithSimpleType() throws Exception
-	{
-		assertThat(differ.isEqualsOnly(Node.ROOT, Instances.of("", "")), is(true));
-	}
-
-	@Test
-	public void testIsEqualsOnlyWithAccessorFlag() throws Exception
-	{
-		when(accessor.isEqualsOnly()).thenReturn(true);
-		assertThat(differ.isEqualsOnly(Node.ROOT, Instances.of(accessor, "foo", "foo")), is(true));
-	}
-
-	@Test
-	public void testEqualsOnlyWithTypeThatShouldNotBeComparedUsingEquals() throws Exception
-	{
-		assertThat(differ.isEqualsOnly(Node.ROOT, Instances.of(new ObjectWithString(), new ObjectWithString())), is(false));
-	}
-
-	@Test
 	public void testGetConfiguration() throws Exception
 	{
 		assertThat(differ.getConfiguration(), IsNull.notNullValue());
@@ -206,7 +133,7 @@ public class DelegatingObjectDifferTest
 		working.getCollection().add("foo");
 		final ObjectWithCollection base = new ObjectWithCollection();
 		final ObjectDiffer objectDiffer = new DelegatingObjectDifferImpl();
-		objectDiffer.getConfiguration().addIgnoreProperty(PropertyPath.with("collection"));
+		objectDiffer.getConfiguration().withoutProperty(PropertyPath.with("collection"));
 		final Node node = objectDiffer.compare(working, base);
 		Assert.assertThat(node.hasChanges(), Is.is(false));
 		Assert.assertThat(node.hasChildren(), Is.is(false));

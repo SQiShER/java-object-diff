@@ -110,6 +110,16 @@ public class DefaultNode implements Node
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
+	public Class<?> getPropertyType()
+	{
+		if (accessor instanceof TypeAwareAccessor)
+		{
+			return ((TypeAwareAccessor) accessor).getPropertyType();
+		}
+		return null;
+	}
+
 	public boolean hasChildren()
 	{
 		return !children.isEmpty();

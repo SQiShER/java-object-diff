@@ -50,7 +50,7 @@ final class CollectionDiffer extends AbstractDiffer
 	public CollectionNode compare(final Node parentNode, final Instances instances)
 	{
 		final CollectionNode node = new CollectionNode(parentNode, instances.getSourceAccessor());
-		if (getDelegate().isIgnored(parentNode, instances))
+		if (getDelegate().isIgnored(node))
 		{
 			node.setState(Node.State.IGNORED);
 		}
@@ -87,7 +87,7 @@ final class CollectionDiffer extends AbstractDiffer
 				collectionNode.addChild(child);
 				collectionNode.setState(Node.State.CHANGED);
 			}
-			else if (getConfiguration().isReturnUnchangedNodes())
+			else if (getConfiguration().isReturnable(child))
 			{
 				collectionNode.addChild(child);
 			}

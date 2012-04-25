@@ -28,7 +28,7 @@ import java.lang.reflect.*;
 import java.util.*;
 
 /** @author Daniel Bechler */
-public final class PropertyAccessor extends AbstractAccessor implements TypeAwareAccessor, PropertyNameAwareAccessor
+public final class PropertyAccessor extends AbstractAccessor implements TypeAwareAccessor
 {
 	private static final Logger logger = LoggerFactory.getLogger(PropertyAccessor.class);
 

@@ -21,7 +21,6 @@ package de.danielbechler.diff;
 
 import de.danielbechler.diff.node.*;
 import de.danielbechler.util.*;
-import de.danielbechler.util.Collections;
 
 import java.util.*;
 
@@ -82,42 +81,32 @@ final class DelegatingObjectDifferImpl implements DelegatingObjectDiffer
 		}
 	}
 
-	public boolean isIgnored(final Node parentNode, final Instances instances)
+	public boolean isIgnored(final Node node)
 	{
-		if (instances.getSourceAccessor().isIgnored())
-		{
-			return true;
-		}
-		if (Collections.containsAny(instances.getSourceAccessor().getCategories(), configuration.getIgnoreCategories()))
-		{
-			return true;
-		}
-		if (configuration.getIgnoreProperties().contains(instances.getPropertyPath(parentNode)))
-		{
-			return true;
-		}
-		return false;
+		return configuration.isIgnored(node);
 	}
 
-	public boolean isEqualsOnly(final Node parentNode, final Instances instances)
+	@Override
+	public boolean isIncluded(final Node node)
 	{
-		if (instances.getSourceAccessor().isEqualsOnly())
-		{
-			return true;
-		}
-		if (configuration.isEqualsOnlyPath(instances.getPropertyPath(parentNode)))
-		{
-			return true;
-		}
-		if (configuration.isEqualsOnlyType(instances.getType()))
-		{
-			return true;
-		}
-		if (Classes.isSimpleType(instances.getType()))
-		{
-			return true;
-		}
-		return false;
+		return configuration.isIncluded(node);
+	}
+
+	@Override
+	public boolean isExcluded(final Node node)
+	{
+		return configuration.isExcluded(node);
+	}
+
+	public boolean isEqualsOnly(final Node node)
+	{
+		return configuration.isEqualsOnly(node);
+	}
+
+	@Override
+	public boolean isReturnable(final Node node)
+	{
+		return configuration.isReturnable(node);
 	}
 
 	public Configuration getConfiguration()

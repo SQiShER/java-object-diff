@@ -95,6 +95,9 @@ public interface Node extends CanonicalAccessor
 
 	MapNode toMapDifference();
 
+	/** @return Returns the type of the property represented by this node, or null if unavailable. */
+	Class<?> getPropertyType();
+
 	/** @return The absolute property path from the object root up to this node. */
 	PropertyPath getPropertyPath();
 
