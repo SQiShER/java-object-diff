@@ -50,7 +50,11 @@ final class CollectionDiffer extends AbstractDiffer
 	public CollectionNode compare(final Node parentNode, final Instances instances)
 	{
 		final CollectionNode node = new CollectionNode(parentNode, instances.getSourceAccessor());
-		if (instances.getWorking() != null && instances.getBase() == null)
+		if (getDelegate().isIgnored(parentNode, instances))
+		{
+			node.setState(Node.State.IGNORED);
+		}
+		else if (instances.getWorking() != null && instances.getBase() == null)
 		{
 			handleItems(node, instances, instances.getWorking(Collection.class));
 			node.setState(Node.State.ADDED);

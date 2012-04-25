@@ -17,15 +17,18 @@
  * along with java-object-diff.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.danielbechler.diff.annotation;
-
-import java.lang.annotation.*;
+package de.danielbechler.diff.mock;
 
 /** @author Daniel Bechler */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@Inherited
-@ObjectDiffAnnotation
-public @interface ObjectDiffEqualsOnlyType
+@SuppressWarnings({"UnusedDeclaration"})
+public class ObjectWithInheritedPropertyAnnotation extends ObjectWithAnnotatedProperty
 {
+	public ObjectWithInheritedPropertyAnnotation()
+	{
+	}
+
+	public ObjectWithInheritedPropertyAnnotation(final String value)
+	{
+		super(value);
+	}
 }

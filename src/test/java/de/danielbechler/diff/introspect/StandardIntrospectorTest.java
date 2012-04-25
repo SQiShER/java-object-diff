@@ -88,6 +88,16 @@ public class StandardIntrospectorTest
 		}
 	}
 
+	@Test
+	public void testIntrospectWithInheritedPropertyAnnotations()
+	{
+		final Iterable<Accessor> accessors =
+				introspector.introspect(ObjectWithInheritedPropertyAnnotation.class);
+		final Accessor accessor = accessors.iterator().next();
+		Assert.assertThat((NamedPropertyElement) accessor.getPathElement(), IsEqual.equalTo(new NamedPropertyElement("value")));
+		Assert.assertThat(accessor.isIgnored(), Is.is(true));
+	}
+
 	@Test(expected = IllegalArgumentException.class)
 	public void testIntrospectWithNullType() throws Exception
 	{

@@ -17,15 +17,19 @@
  * along with java-object-diff.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.danielbechler.diff.annotation;
+package de.danielbechler.diff.mock;
 
-import java.lang.annotation.*;
+import de.danielbechler.diff.annotation.*;
+
+import java.util.*;
 
 /** @author Daniel Bechler */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@Inherited
-@ObjectDiffAnnotation
-public @interface ObjectDiffEqualsOnlyType
+public class ObjectWithIgnoredMap extends ObjectWithMap
 {
+	@ObjectDiffProperty(ignore = true)
+	@Override
+	public Map<String, String> getMap()
+	{
+		return super.getMap();
+	}
 }

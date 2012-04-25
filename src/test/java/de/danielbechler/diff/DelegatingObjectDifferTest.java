@@ -186,4 +186,29 @@ public class DelegatingObjectDifferTest
 		differ.setConfiguration(configuration);
 		assertThat(differ.getConfiguration(), IsSame.sameInstance(configuration));
 	}
+
+	@Test
+	public void testCompareWithIgnoredMapProperty()
+	{
+		final ObjectWithIgnoredMap working = new ObjectWithIgnoredMap();
+		working.getMap().put("foo", "bar");
+		final ObjectWithIgnoredMap base = new ObjectWithIgnoredMap();
+		final ObjectDiffer objectDiffer = new DelegatingObjectDifferImpl();
+		final Node node = objectDiffer.compare(working, base);
+		Assert.assertThat(node.hasChanges(), Is.is(false));
+		Assert.assertThat(node.hasChildren(), Is.is(false));
+	}
+
+	@Test
+	public void testCompareWithIgnoredCollectionProperty()
+	{
+		final ObjectWithCollection working = new ObjectWithCollection();
+		working.getCollection().add("foo");
+		final ObjectWithCollection base = new ObjectWithCollection();
+		final ObjectDiffer objectDiffer = new DelegatingObjectDifferImpl();
+		objectDiffer.getConfiguration().addIgnoreProperty(PropertyPath.with("collection"));
+		final Node node = objectDiffer.compare(working, base);
+		Assert.assertThat(node.hasChanges(), Is.is(false));
+		Assert.assertThat(node.hasChildren(), Is.is(false));
+	}
 }

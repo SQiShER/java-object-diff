@@ -17,15 +17,33 @@
  * along with java-object-diff.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.danielbechler.diff.annotation;
+package de.danielbechler.diff.mock;
 
-import java.lang.annotation.*;
+import de.danielbechler.diff.annotation.*;
 
 /** @author Daniel Bechler */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@Inherited
-@ObjectDiffAnnotation
-public @interface ObjectDiffEqualsOnlyType
+public abstract class ObjectWithAnnotatedProperty
 {
+	private String value;
+
+	public ObjectWithAnnotatedProperty()
+	{
+	}
+
+	public ObjectWithAnnotatedProperty(final String value)
+	{
+		this.value = value;
+	}
+
+	@ObjectDiffProperty(ignore = true)
+	public String getValue()
+	{
+		return value;
+	}
+
+	public void setValue(final String value)
+	{
+		this.value = value;
+	}
+
 }

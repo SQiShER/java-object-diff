@@ -57,20 +57,19 @@ final class BeanDiffer extends AbstractDiffer
 	public Node compare(final Node parentNode, final Instances instances)
 	{
 		final Node node = new DefaultNode(parentNode, instances.getSourceAccessor());
-
 		if (getDelegate().isIgnored(node, instances))
 		{
 			node.setState(Node.State.IGNORED);
-			return node;
 		}
-
-		if (instances.getType() == null)
+		else if (instances.getType() == null)
 		{
 			node.setState(Node.State.UNTOUCHED);
-			return node;
 		}
-
-		return compareBean(parentNode, instances);
+		else
+		{
+			return compareBean(parentNode, instances);
+		}
+		return node;
 	}
 
 	private Node compareBean(final Node parentNode, final Instances instances)

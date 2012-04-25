@@ -51,6 +51,12 @@ final class MapDiffer extends AbstractDiffer
 	{
 		final MapNode node = new MapNode(parentNode, instances.getSourceAccessor());
 
+		if (getDelegate().isIgnored(parentNode, instances))
+		{
+			node.setState(Node.State.IGNORED);
+			return node;
+		}
+
 		indexAll(instances, node);
 
 		if (instances.getWorking() != null && instances.getBase() == null)

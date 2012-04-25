@@ -24,6 +24,7 @@ import java.lang.annotation.*;
 /** @author Daniel Bechler */
 @Target({ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
+@Inherited
 public @interface ObjectDiffAnnotation
 {
 }
