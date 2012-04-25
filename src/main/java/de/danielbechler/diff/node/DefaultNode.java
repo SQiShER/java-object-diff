@@ -307,7 +307,11 @@ public class DefaultNode implements Node
 		{
 			sb.append(", type is ").append(getPropertyType().getCanonicalName());
 		}
-		if (hasChildren())
+		if (getChildren().size() == 1)
+		{
+			sb.append(", ").append(getChildren().size()).append(" child");
+		}
+		else if (getChildren().size() > 1)
 		{
 			sb.append(", ").append(getChildren().size()).append(" children");
 		}

@@ -2,22 +2,50 @@ package de.danielbechler.diff.visitor;
 
 import de.danielbechler.diff.node.*;
 
+import java.lang.Override;
 import java.lang.String;
 import java.lang.StringBuilder;
-import java.lang.Override;
 
 /** @author Daniel Bechler */
 public class ToStringPrintingVisitor implements Node.Visitor
 {
+	private int depth;
+
+	public ToStringPrintingVisitor()
+	{
+	}
+
+	public ToStringPrintingVisitor(final int depth)
+	{
+		this.depth = depth;
+	}
+
+	public int getDepth()
+	{
+		return depth;
+	}
+
+	public void setDepth(final int depth)
+	{
+		this.depth = depth;
+	}
+
 	@Override
 	public void accept(final Node node, final Visit visit)
 	{
-		System.out.println(toIndentedString(node));
+		if (depth > 0 && calculateDepth(node) <= depth)
+		{
+			System.out.println(toIndentedString(node));
+		}
+		else
+		{
+			visit.dontGoDeeper();
+		}
 	}
 
 	private static String toIndentedString(final Node node)
 	{
-		final int level = calculateLevel(node);
+		final int level = calculateDepth(node);
 		final StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < level; i++)
 		{
@@ -27,7 +55,7 @@ public class ToStringPrintingVisitor implements Node.Visitor
 		return sb.toString();
 	}
 
-	private static int calculateLevel(final Node node)
+	private static int calculateDepth(final Node node)
 	{
 		int count = 0;
 		Node parentNode = node.getParentNode();
