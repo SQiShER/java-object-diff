@@ -296,4 +296,22 @@ public class DefaultNode implements Node
 		}
 		accessor.unset(target);
 	}
+
+	@Override
+	public String toString()
+	{
+		final StringBuilder sb = new StringBuilder();
+		sb.append(getPropertyPath());
+		sb.append(" = { State[").append(getState().toString()).append("]");
+		if (getPropertyType() != null)
+		{
+			sb.append(", Type[").append(getPropertyType().getCanonicalName()).append("]");
+		}
+		if (hasChildren())
+		{
+			sb.append(", Children[").append(getChildren().size()).append("]");
+		}
+		sb.append(" }");
+		return sb.toString();
+	}
 }
