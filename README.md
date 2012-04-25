@@ -1,6 +1,6 @@
 # Java Object Diff
 
-An easy-to-use Framework to detect and handle differences between Java object.
+An easy-to-use Framework to detect and handle differences between Java objects.
 
 ## Getting Started
 
