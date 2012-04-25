@@ -52,13 +52,16 @@ public class ToStringPrintingVisitor implements Node.Visitor
 	@Override
 	public void accept(final Node node, final Visit visit)
 	{
-		if (depth > 0 && calculateDepth(node) <= depth)
+		if (depth > 0)
 		{
-			System.out.println(toIndentedString(node));
-		}
-		else
-		{
-			visit.dontGoDeeper();
+			if (calculateDepth(node) <= depth)
+			{
+				System.out.println(toIndentedString(node));
+			}
+			else
+			{
+				visit.dontGoDeeper();
+			}
 		}
 	}
 
