@@ -43,8 +43,8 @@
 
 	<scm>
 		<url>https://github.com/SQiShER/java-object-diff</url>
-		<connection>scm:git:git|ssh://git@github.com/SQiShER/java-object-diff.git</connection>
-		<developerConnection>scm:git:git|ssh://git@github.com/SQiShER/java-object-diff.git</developerConnection>
+		<connection>scm:git:ssh://git@github.com/SQiShER/java-object-diff.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/SQiShER/java-object-diff.git</developerConnection>
 	</scm>
 
 	<issueManagement>
