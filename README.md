@@ -19,11 +19,10 @@ Even though none one of the above solutions comes out-of-the-box, this framework
 
 ## Feature List
 
-* Generates a graph of your object, allowing you to build powerful visitors to suit your needs.
-* Works with every kind of object, so no need to change a thing.
-* Can be configured entirely from the outside. No annotations needed. (Although they exist and make it more convenient.)
-* Properties can be grouped into categories, to easily compare specific groups of properties.
-* No dependencies except for SLF4J.
+* Generates a graph of your object, allowing you to build powerful visitors to extract and modify exactly what you want.
+* Works with every kind of object, even those you can't modify.
+* Can be configured entirely from the outside. No annotations needed. (Although they exist and make it much more convenient.)
+* Properties can be grouped into categories, to easily compare or merge specific groups of properties.
 
 ## Note
 
@@ -33,13 +32,13 @@ objects, to see if it works for you.
 
 ## Ways to Improve
 
-* Performance optimization was not the biggest concern so far, so there is still some room for improvement.
+* Performence has not been a hight priority so far, so there is still some room for improvement.
 * Object comparison is very strict. Objects with different types cannot be compared, even when they share the same interface.
-* The annotations should be applied to fields instead of methods. (Would make it easier to handle Arrays.)
+* It should be possible to apply the annotations to fields and not only to methods, to allow for some advanced merging techniques.
 * It would be great to integrate a text-based diff algorithm for regular Strings.
 * Documentation, documentation, documentation...
 
 ## Known Issues and
 
-* Arrays are treated poorly (Actually not at all. Yet.)
-* Objects serving as map keys should be compared as well. Currently their only purpose is to identify map values.
+* Array handling is not implemented properly yet.
+* Map keys are currently not compared via introspection and only used to identify map values.
