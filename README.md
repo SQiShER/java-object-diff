@@ -8,7 +8,7 @@ To learn how to use **Java Object Diff**, please have a look at the short [start
 
 ## Use Cases
 
-**Java Object Diff** is currently used to…
+**Java Object Diff** is currently used to...
 
 * Generate Facebook-like activity streams
 * Visualize the differences between two object versions
@@ -32,11 +32,12 @@ objects, to see if it works for you.
 
 ## Ways to Improve
 
-* Performence has not been a hight priority so far, so there is still some room for improvement.
+* Performance has not been a hight priority so far, so there is still some room for improvement.
 * Object comparison is very strict. Objects with different types cannot be compared, even when they share the same interface.
 * It should be possible to apply the annotations to fields and not only to methods, to allow for some advanced merging techniques.
 * It would be great to integrate a text-based diff algorithm for regular Strings.
-* Documentation, documentation, documentation...
+* Some out-out-of-the-box Mergers would be nice (e.g. `LeftToRightMerger`, `NonConflictingMerger`, etc.)
+* Could use more documentation and tests.
 
 ## Known Issues and
 
