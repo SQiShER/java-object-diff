@@ -4,7 +4,7 @@ An easy-to-use Framework to find and handle differences between Java objects.
 
 ## Getting Started
 
-To learn how to use **Java Object Diff**, please have a look at the short [starter guide](https://github.com/SQiShER/java-object-diff/wiki/Getting-Started).
+To learn how to use **Java Object Diff**, please have a look at the [Starter Guide](https://github.com/SQiShER/java-object-diff/wiki/Getting-Started).
 
 ## Features
 
@@ -12,8 +12,8 @@ To learn how to use **Java Object Diff**, please have a look at the short [start
 * Visitor-support allows you to extract and modify exactly what you want.
 * Designed to work with any kind of object out-of-the-box.
 * Properties can be categorized, to easily compare or merge specific subsets. (This is very useful for databases like [MongoDB](http://www.mongodb.org/) that support [atomic property operations](http://www.mongodb.org/display/DOCS/Atomic+Operations).)
-* Comparison can be improved and customized via Annotations or configuration API.
-* No Annotations needed. (However, they exist for your convenience.)
+* Comparison can be improved and customized via annotations and/or configuration API.
+* No annotations needed. (However, they exist for your convenience.)
 * No runtime dependencies except for [SLF4J](http://www.slf4j.org/).
 
 ## Use Cases
