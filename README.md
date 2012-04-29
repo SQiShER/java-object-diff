@@ -8,7 +8,7 @@ To learn how to use **Java Object Diff**, please have a look at the short [start
 
 ## Features
 
-* Generates a graph of your object, in which each node provides information about the changes and accessors to read and write the value on any instance of the given object.
+* Generates a graph of your object, in which each node provides information about the changes and accessors to read and write the value on any instance of the given type.
 * Visitor-support allows you to extract and modify exactly what you want.
 * Designed to work with any kind of object out-of-the-box.
 * Properties can be categorized, to easily compare or merge specific subsets. (This is very useful for databases like [MongoDB](http://www.mongodb.org/) that support [atomic property operations](http://www.mongodb.org/display/DOCS/Atomic+Operations).)
