@@ -19,7 +19,7 @@ package de.danielbechler.diff.mock;
 import de.danielbechler.diff.annotation.*;
 
 /** @author Daniel Bechler */
-public abstract class ObjectWithAnnotatedProperty
+public class ObjectWithAnnotatedProperty
 {
 	private String value;
 
