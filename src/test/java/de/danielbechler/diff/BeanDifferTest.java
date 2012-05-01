@@ -17,9 +17,11 @@
 package de.danielbechler.diff;
 
 import de.danielbechler.diff.accessor.*;
+import de.danielbechler.diff.annotation.*;
 import de.danielbechler.diff.introspect.*;
 import de.danielbechler.diff.mock.*;
 import de.danielbechler.diff.node.*;
+import org.hamcrest.core.*;
 import org.junit.*;
 import org.mockito.*;
 
@@ -50,7 +52,6 @@ public class BeanDifferTest
 		differ = new BeanDiffer();
 		differ.setDelegate(delegate);
 		differ.setIntrospector(introspector);
-
 	}
 
 	@Test
@@ -178,5 +179,32 @@ public class BeanDifferTest
 	public void testConstructionWithObjectDiffer()
 	{
 		new BeanDiffer(delegate);
+	}
+
+	@Test
+	public void testThatIgnoredPropertiesAreNeverAccessed()
+	{
+		final ObjectWithAccessTrackingIgnoredProperty working = new ObjectWithAccessTrackingIgnoredProperty();
+		final ObjectWithAccessTrackingIgnoredProperty base = new ObjectWithAccessTrackingIgnoredProperty();
+		new BeanDiffer().compare(working, base);
+		Assert.assertThat(working.accessed, Is.is(false));
+		Assert.assertThat(base.accessed, Is.is(false));
+	}
+
+	@SuppressWarnings({"MethodMayBeStatic", "UnusedDeclaration"})
+	private static class ObjectWithAccessTrackingIgnoredProperty
+	{
+		private boolean accessed = false;
+
+		@ObjectDiffProperty(ignore = true)
+		public void getValue()
+		{
+			accessed = true;
+		}
+
+		public void setValue()
+		{
+			accessed = true;
+		}
 	}
 }
