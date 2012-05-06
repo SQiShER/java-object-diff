@@ -40,7 +40,7 @@ public final class RootAccessor extends AbstractAccessor
 		throw new UnsupportedOperationException();
 	}
 
-	public PropertyPath.Element getPathElement()
+	public Element getPathElement()
 	{
 		return RootElement.getInstance();
 	}

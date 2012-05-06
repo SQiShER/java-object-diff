@@ -21,42 +21,6 @@ import java.util.*;
 /** @author Daniel Bechler */
 public final class PropertyPath
 {
-	/** Enforces a proper implementation of hashCode(), equals() and toString(). */
-	public abstract static class Element
-	{
-		public abstract boolean equals(final Element element);
-
-		public abstract int calculateHashCode();
-
-		public abstract String asString();
-
-		@Override
-		public final boolean equals(final Object obj)
-		{
-			if (obj == null)
-			{
-				return false;
-			}
-			if (obj instanceof Element)
-			{
-				return equals((Element) obj);
-			}
-			return false;
-		}
-
-		@Override
-		public final int hashCode()
-		{
-			return calculateHashCode();
-		}
-
-		@Override
-		public final String toString()
-		{
-			return asString();
-		}
-	}
-
 	public static PropertyPath with(final String... propertyNames)
 	{
 		final PropertyPathBuilder builder = new PropertyPathBuilder();
@@ -81,21 +45,21 @@ public final class PropertyPath
 
 	private final List<Element> elements;
 
-	public PropertyPath(final Element... selectors)
+	public PropertyPath(final Element... elements)
 	{
-		this(Arrays.asList(selectors));
+		this(Arrays.asList(elements));
 	}
 
-	public PropertyPath(final Collection<Element> selectors)
+	public PropertyPath(final Collection<Element> elements)
 	{
-		elements = new ArrayList<Element>(selectors);
+		this.elements = new ArrayList<Element>(elements);
 	}
 
-	public PropertyPath(final PropertyPath parentSelectorPath, final Element selector)
+	public PropertyPath(final PropertyPath parentPath, final Element element)
 	{
-		elements = new ArrayList<Element>(parentSelectorPath.getElements().size() + 1);
-		elements.addAll(parentSelectorPath.elements);
-		elements.add(selector);
+		elements = new ArrayList<Element>(parentPath.getElements().size() + 1);
+		elements.addAll(parentPath.elements);
+		elements.add(element);
 	}
 
 	public List<Element> getElements()
@@ -103,15 +67,15 @@ public final class PropertyPath
 		return elements;
 	}
 
-	public boolean matches(final PropertyPath path)
+	public boolean matches(final PropertyPath propertyPath)
 	{
-		return path.equals(this);
+		return propertyPath.equals(this);
 	}
 
-	public boolean isParentOf(final PropertyPath selectorPath)
+	public boolean isParentOf(final PropertyPath propertyPath)
 	{
 		final Iterator<Element> iterator1 = elements.iterator();
-		final Iterator<Element> iterator2 = selectorPath.getElements().iterator();
+		final Iterator<Element> iterator2 = propertyPath.getElements().iterator();
 		while (iterator1.hasNext() && iterator2.hasNext())
 		{
 			final Element next1 = iterator1.next();
@@ -132,17 +96,10 @@ public final class PropertyPath
 		while (iterator.hasNext())
 		{
 			final Element selector = iterator.next();
-			if (selector instanceof RootElement)
+			sb.append(selector);
+			if (iterator.hasNext())
 			{
-				sb.append('/');
-			}
-			else
-			{
-				sb.append(selector);
-				if (iterator.hasNext())
-				{
-					sb.append('/');
-				}
+				sb.append('.');
 			}
 		}
 		return sb.toString();

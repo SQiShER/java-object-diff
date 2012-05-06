@@ -129,7 +129,7 @@ public interface Node extends CanonicalAccessor
 	 *
 	 * @return The requested child node or <code>null</code>.
 	 */
-	Node getChild(PropertyPath.Element pathElement);
+	Node getChild(Element pathElement);
 
 	/**
 	 * Adds a child to this node and sets this node as its parent node.

@@ -185,7 +185,7 @@ public final class PropertyAccessor extends AbstractAccessor implements TypeAwar
 		return this.propertyName;
 	}
 
-	public PropertyPath.Element getPathElement()
+	public Element getPathElement()
 	{
 		return new NamedPropertyElement(this.propertyName);
 	}

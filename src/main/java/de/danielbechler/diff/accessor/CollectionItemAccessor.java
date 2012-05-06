@@ -30,7 +30,7 @@ public final class CollectionItemAccessor extends AbstractAccessor implements Ty
 		this.referenceItem = referenceItem;
 	}
 
-	public PropertyPath.Element getPathElement()
+	public Element getPathElement()
 	{
 		return new CollectionElement(referenceItem);
 	}

@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.*;
 public class DefaultNode implements Node
 {
 	private final Accessor accessor;
-	private final Map<PropertyPath.Element, Node> children = new LinkedHashMap<PropertyPath.Element, Node>(10);
+	private final Map<Element, Node> children = new LinkedHashMap<Element, Node>(10);
 
 	private State state = State.UNTOUCHED;
 	private Node parentNode;
@@ -82,7 +82,7 @@ public class DefaultNode implements Node
 		return builder.build();
 	}
 
-	public PropertyPath.Element getPathElement()
+	public Element getPathElement()
 	{
 		return accessor.getPathElement();
 	}
@@ -149,7 +149,7 @@ public class DefaultNode implements Node
 		return visitor.getNode();
 	}
 
-	public Node getChild(final PropertyPath.Element pathElement)
+	public Node getChild(final Element pathElement)
 	{
 		return children.get(pathElement);
 	}

@@ -38,7 +38,7 @@ public final class MapEntryAccessor extends AbstractAccessor
 		this.index = index;
 	}
 
-	public PropertyPath.Element getPathElement()
+	public Element getPathElement()
 	{
 		return new MapElement(getReferenceKey());
 	}

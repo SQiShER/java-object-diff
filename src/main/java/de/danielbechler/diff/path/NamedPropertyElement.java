@@ -19,7 +19,7 @@ package de.danielbechler.diff.path;
 import de.danielbechler.util.*;
 
 /** @author Daniel Bechler */
-public final class NamedPropertyElement extends PropertyPath.Element
+public final class NamedPropertyElement extends Element
 {
 	private final String propertyName;
 
@@ -29,24 +29,19 @@ public final class NamedPropertyElement extends PropertyPath.Element
 		this.propertyName = propertyName;
 	}
 
-	public String getPropertyName()
-	{
-		return propertyName;
-	}
-
 	@Override
-	public boolean equals(final PropertyPath.Element element)
+	public boolean equals(final Object o)
 	{
-		if (this == element)
+		if (this == o)
 		{
 			return true;
 		}
-		if (!(element instanceof NamedPropertyElement))
+		if (o == null || getClass() != o.getClass())
 		{
 			return false;
 		}
 
-		final NamedPropertyElement that = (NamedPropertyElement) element;
+		final NamedPropertyElement that = (NamedPropertyElement) o;
 
 		if (!propertyName.equals(that.propertyName))
 		{
@@ -57,13 +52,13 @@ public final class NamedPropertyElement extends PropertyPath.Element
 	}
 
 	@Override
-	public int calculateHashCode()
+	public int hashCode()
 	{
 		return propertyName.hashCode();
 	}
 
 	@Override
-	public String asString()
+	public String toString()
 	{
 		return propertyName;
 	}

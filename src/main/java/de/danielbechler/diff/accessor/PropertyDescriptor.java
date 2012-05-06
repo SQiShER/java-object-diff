@@ -23,7 +23,7 @@ import java.util.*;
 /** @author Daniel Bechler */
 public interface PropertyDescriptor
 {
-	PropertyPath.Element getPathElement();
+	Element getPathElement();
 
 	Set<String> getCategories();
 

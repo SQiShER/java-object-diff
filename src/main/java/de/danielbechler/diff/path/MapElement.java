@@ -19,7 +19,7 @@ package de.danielbechler.diff.path;
 import de.danielbechler.util.*;
 
 /** @author Daniel Bechler */
-public final class MapElement extends PropertyPath.Element
+public final class MapElement extends Element
 {
 	private final Object key;
 
@@ -35,18 +35,18 @@ public final class MapElement extends PropertyPath.Element
 	}
 
 	@Override
-	public boolean equals(final PropertyPath.Element element)
+	public boolean equals(final Object o)
 	{
-		if (this == element)
+		if (this == o)
 		{
 			return true;
 		}
-		if (!(element instanceof MapElement))
+		if (o == null || getClass() != o.getClass())
 		{
 			return false;
 		}
 
-		final MapElement that = (MapElement) element;
+		final MapElement that = (MapElement) o;
 
 		if (key != null ? !key.equals(that.key) : that.key != null)
 		{
@@ -57,14 +57,14 @@ public final class MapElement extends PropertyPath.Element
 	}
 
 	@Override
-	public int calculateHashCode()
+	public int hashCode()
 	{
 		return key != null ? key.hashCode() : 0;
 	}
 
 	@Override
-	public String asString()
+	public String toString()
 	{
-		return "key[" + Strings.toSingleLineString(key) + "]";
+		return "{" + Strings.toSingleLineString(key) + "}";
 	}
 }

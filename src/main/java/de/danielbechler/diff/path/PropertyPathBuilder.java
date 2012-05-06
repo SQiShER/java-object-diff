@@ -22,7 +22,7 @@ import java.util.*;
 @SuppressWarnings({"UnusedDeclaration"})
 public final class PropertyPathBuilder
 {
-	private final List<PropertyPath.Element> elements = new LinkedList<PropertyPath.Element>();
+	private final List<Element> elements = new LinkedList<Element>();
 
 	public PropertyPathBuilder withPropertyPath(final PropertyPath propertyPath)
 	{
@@ -33,7 +33,7 @@ public final class PropertyPathBuilder
 		return this;
 	}
 
-	public PropertyPathBuilder withElement(final PropertyPath.Element element)
+	public PropertyPathBuilder withElement(final Element element)
 	{
 		elements.add(element);
 		return this;
