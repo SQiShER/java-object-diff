@@ -1,0 +1,116 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Java Object Diff by SQiShER</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/main.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+
+      <header>
+        <h1>Java Object Diff</h1>
+        <p>Framework to diff and merge Java objects</p>
+      </header>
+
+      <div id="banner">
+        <span id="logo"></span>
+
+        <a href="https://github.com/SQiShER/java-object-diff" class="button fork"><strong>View On GitHub</strong></a>
+        <div class="downloads">
+          <span>Downloads:</span>
+          <ul>
+            <li><a href="https://github.com/SQiShER/java-object-diff/zipball/master" class="button">ZIP</a></li>
+            <li><a href="https://github.com/SQiShER/java-object-diff/tarball/master" class="button">TAR</a></li>
+          </ul>
+        </div>
+      </div><!-- end banner -->
+
+    <div class="wrapper">
+      <nav>
+        <ul></ul>
+      </nav>
+      <section>
+        <h2>Introduction</h2>
+
+<p>Sometimes you need to figure out, how one version of an object differs from another one. One of the simplest solutions that'll cross your mind is most certainly to use reflection to scan the object for fields or getters and use them to compare the values of the different object instances. In many cases this is a perfectly valid strategy and the way to go. After all, we want to keep things simple, don't we?</p>
+
+<p>However, there are some cases that can increase the complexity dramatically. What if you need to find differences in collections or maps? What if you have to deal with nested objects that also need to be compared on a per-property basis? Or even worse: what if you need to merge such objects?</p>
+
+<p>You suddenly realize that you need to scan the objects recursively, figure out which collection items have been added, removed or changed; find a way to return your results in a way that allows you to easily access the information you are looking for and provide accessors to apply changes.</p>
+
+<p>While all this isn't exactly rocket science, it is complex enough to add quite a lot of extra code to your project. Code that needs to be tested and maintained. Since the best code is the code you didn't write, this library aims to help you with all things related to diffing and merging of Java objects by providing a robust foundation and a simple, yet powerful API.</p>
+
+<p>This library will hide all the complexities of deep object comparison behind one line of code:</p>
+
+<pre><code>Node root = ObjectDifferFactory.getInstance().compare(working, base)
+</code></pre>
+
+<p>This generates a tree structure of the given object type and lets you traverse its nodes via visitors. Each node represents  one property (or collection item) of the underlying object and tells you exactly if and how the value differs from the base version. It also  provides accessors to read, write and remove the value from or to any given instance. This way, all you need to worry about is <strong>how to treat</strong> changes and <strong>not how to find</strong> them.</p>
+
+<p>This library has been battle-tested in a rather big project of mine, where I use it to generate <strong>activity streams</strong>, resolve database <strong>update conflics</strong>, display <strong>change logs</strong> and limit the scope of entity updates to only a <strong>subset of properties</strong>, based on the context or user permissions. It didn't let me down so far and I hope that it can help you too!</p>
+
+<h2>Getting Started</h2>
+
+<p>To learn how to use <strong>Java Object Diff</strong>, please have a look at the <a href="https://github.com/SQiShER/java-object-diff/wiki/Getting-Started">Starter Guide</a>.</p>
+
+<h2>Features</h2>
+
+<ul>
+<li>Generates a graph of your object, in which each node provides information about the changes and accessors to read and write the value on any instance of the given type.</li>
+<li>Visitor-support allows you to extract and modify exactly what you want.</li>
+<li>Designed to work with any kind of object out-of-the-box.</li>
+<li>Makes dealing with Collections and Maps very easy.</li>
+<li>Properties can be categorized, to easily compare or merge specific subsets. (This is particulary useful for databases like <a href="http://www.mongodb.org/">MongoDB</a> that support <a href="http://www.mongodb.org/display/DOCS/Atomic+Operations">atomic property operations</a>.)</li>
+<li>Comparison can be improved and customized via annotations and/or configuration API.</li>
+<li>No annotations needed. (However, they exist for your convenience.)</li>
+<li>No runtime dependencies except for <a href="http://www.slf4j.org/">SLF4J</a>.</li>
+</ul><h2>Use Cases</h2>
+
+<p><strong>Java Object Diff</strong> is currently used (but not limited) to...</p>
+
+<ul>
+<li>Generate Facebook-like activity streams</li>
+<li>Visualize the differences between object versions</li>
+<li>Automatically resolve conflicts on conflicting database updates</li>
+<li>Detect and persist only properties that were actually changed</li>
+</ul><h2>How to Improve</h2>
+
+<ul>
+<li>Performance has not been a hight priority so far, so there is still some room for improvement.</li>
+<li>Object comparison is very strict. Objects with different types cannot be compared, even when they share the same interface.</li>
+<li>It should be possible to apply the annotations to fields and not only to methods, to allow for some advanced merging techniques.</li>
+<li>It would be great to integrate a text-based diff algorithm for regular strings.</li>
+<li>Some out-out-of-the-box Mergers would be nice (e.g. <code>LeftToRightMerger</code>, <code>NonConflictingMerger</code>, etc.)</li>
+<li>Needs more documentation and could use some more tests.</li>
+</ul><h2>Known Issues and Limitations</h2>
+
+<p>Please refer to the <a href="https://github.com/SQiShER/java-object-diff/issues?state=open">Issue Tracker</a> for a list of currently known limitations.</p>
+      </section>
+      <footer>
+        <p>Project maintained by <a href="https://github.com/SQiShER">SQiShER</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-170506-5");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
