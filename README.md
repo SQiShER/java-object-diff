@@ -26,7 +26,7 @@ To learn how to use **Java Object Diff**, please have a look at the [Starter Gui
 * Visitor-support allows you to extract and modify exactly what you want.
 * Designed to work with any kind of object out-of-the-box.
 * Makes dealing with Collections and Maps very easy.
-* Properties can be categorized, to easily compare or merge specific subsets. (This is very useful for databases like [MongoDB](http://www.mongodb.org/) that support [atomic property operations](http://www.mongodb.org/display/DOCS/Atomic+Operations).)
+* Properties can be categorized, to easily compare or merge specific subsets. (This is particulary useful for databases like [MongoDB](http://www.mongodb.org/) that support [atomic property operations](http://www.mongodb.org/display/DOCS/Atomic+Operations).)
 * Comparison can be improved and customized via annotations and/or configuration API.
 * No annotations needed. (However, they exist for your convenience.)
 * No runtime dependencies except for [SLF4J](http://www.slf4j.org/).
