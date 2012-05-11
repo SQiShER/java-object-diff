@@ -10,7 +10,7 @@ While all this isn't exactly rocket science, it is complex enough to add quite a
 
 This library will hide all the complexities of deep object comparison behind one line of code:
 
-	Node root = ObjectDifferFactory.getInstance().compare(workingObject, baseObject)
+	Node root = ObjectDifferFactory.getInstance().compare(workingObject, baseObject);
 
 This generates a tree structure of the given object type and lets you traverse its nodes via visitors. Each node represents  one property (or collection item) of the underlying object and tells you exactly if and how the value differs from the base version. It also  provides accessors to read, write and remove the value from or to any given instance. This way, all you need to worry about is **how to treat** changes and **not how to find** them.
 
