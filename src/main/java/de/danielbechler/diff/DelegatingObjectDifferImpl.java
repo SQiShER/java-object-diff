@@ -22,8 +22,8 @@ import de.danielbechler.util.*;
 import java.util.*;
 
 /**
- * This is the entry point for all comparisons. It determines the type of the given objects and passes them to the
- * appropriate {@link Differ}.
+ * This is the entry point for all comparisons. It determines the type of the given objects and passes them to
+ * the appropriate {@link Differ}.
  *
  * @author Daniel Bechler
  */

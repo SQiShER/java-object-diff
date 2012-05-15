@@ -125,4 +125,21 @@ public class MapDifferTest
 		// just for the coverage
 		new MapDiffer(new DelegatingObjectDifferImpl());
 	}
+
+	/**
+	 * Ensures that the map can handle null values in both, the base and the working version, in which case no
+	 * type can be detected.
+	 */
+	@Test
+	public void testWithAllNullMapItem()
+	{
+		final Map<String, String> working = new HashMap<String, String>(1);
+		working.put("foo", null);
+
+		final Map<String, String> base = new HashMap<String, String>(1);
+		base.put("foo", null);
+
+		final MapNode node = differ.compare(working, base);
+		assertThat(node.getState(), is(Node.State.UNTOUCHED));
+	}
 }

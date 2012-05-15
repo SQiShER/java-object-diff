@@ -32,7 +32,10 @@ class Instances
 	private final Object base;
 	private final Object fresh;
 
-	public static <T> Instances of(final Accessor sourceAccessor, final T working, final T base, final T fresh)
+	public static <T> Instances of(final Accessor sourceAccessor,
+								   final T working,
+								   final T base,
+								   final T fresh)
 	{
 		return new Instances(sourceAccessor, working, base, fresh);
 	}
@@ -155,7 +158,7 @@ class Instances
 			return Collections.firstElementOf(types);
 		}
 		throw new IllegalStateException("Detected instances of different types " + types + ". " +
-												"Instances must either be null or have the exact same type.");
+				"Instances must either be null or have the exact same type.");
 		// NOTE It would be nice to be able to define a least common denominator like Map or Collection to allow mixed types
 	}
 
