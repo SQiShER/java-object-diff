@@ -29,6 +29,11 @@ public final class NamedPropertyElement extends Element
 		this.propertyName = propertyName;
 	}
 
+	public String getPropertyName()
+	{
+		return propertyName;
+	}
+
 	@Override
 	public boolean equals(final Object o)
 	{
