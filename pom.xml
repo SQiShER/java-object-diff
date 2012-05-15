@@ -82,6 +82,16 @@
 					<scmCommentPrefix/>
 				</configuration>
 			</plugin>
+			<plugin>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.maven.wagon</groupId>
+						<artifactId>wagon-ssh</artifactId>
+						<version>2.0</version>
+					</dependency>
+				</dependencies>
+			</plugin>
 		</plugins>
 		<pluginManagement>
 			<plugins>
@@ -135,12 +145,12 @@
 
 	<distributionManagement>
 		<repository>
-			<id>github</id>
-			<url>file:///Users/dbechler/Developer/Personal/mvn-repos/releases</url>
+			<id>maven.danielbechler.de</id>
+			<url>sftp://maven.danielbechler.de/kunden/danielbechler.de/maven/repositories/releases</url>
 		</repository>
 		<snapshotRepository>
-			<id>github</id>
-			<url>file:///Users/dbechler/Developer/Personal/mvn-repos/snapshots</url>
+			<id>maven.danielbechler.de</id>
+			<url>sftp://maven.danielbechler.de/kunden/danielbechler.de/maven/repositories/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
 
