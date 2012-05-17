@@ -30,7 +30,7 @@ public final class PropertyAccessor extends AbstractAccessor implements TypeAwar
 	private static final Logger logger = LoggerFactory.getLogger(PropertyAccessor.class);
 
 	private final String propertyName;
-	private final Class<?> propertyType;
+	private final Class<?> type;
 	private final Method readMethod;
 	private final Method writeMethod;
 
@@ -41,7 +41,7 @@ public final class PropertyAccessor extends AbstractAccessor implements TypeAwar
 		this.propertyName = propertyName;
 		this.readMethod = makeAccessible(readMethod);
 		this.writeMethod = makeAccessible(writeMethod);
-		this.propertyType = this.readMethod.getReturnType();
+		this.type = this.readMethod.getReturnType();
 	}
 
 	private static Method makeAccessible(final Method method)
@@ -89,7 +89,7 @@ public final class PropertyAccessor extends AbstractAccessor implements TypeAwar
 
 			final PropertyWriteException ex = new PropertyWriteException(e);
 			ex.setPropertyName(propertyName);
-			ex.setTargetType(getPropertyType());
+			ex.setTargetType(getType());
 			throw ex;
 		}
 	}
@@ -175,9 +175,9 @@ public final class PropertyAccessor extends AbstractAccessor implements TypeAwar
 		set(target, null);
 	}
 
-	public Class<?> getPropertyType()
+	public Class<?> getType()
 	{
-		return this.propertyType;
+		return this.type;
 	}
 
 	public String getPropertyName()

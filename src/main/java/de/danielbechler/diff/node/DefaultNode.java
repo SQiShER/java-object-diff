@@ -116,18 +116,18 @@ public class DefaultNode implements Node
 	}
 
 	@Override
-	public Class<?> getValueType()
+	public Class<?> getType()
 	{
 		if (accessor instanceof TypeAwareAccessor)
 		{
-			return ((TypeAwareAccessor) accessor).getPropertyType();
+			return ((TypeAwareAccessor) accessor).getType();
 		}
 		return valueType;
 	}
 
-	public void setValueType(final Class<?> valueType)
+	public void setType(final Class<?> aClass)
 	{
-		this.valueType = valueType;
+		this.valueType = aClass;
 	}
 
 	public boolean hasChildren()
@@ -174,7 +174,7 @@ public class DefaultNode implements Node
 			throw new IllegalArgumentException("Detected attempt to add root node as child. " +
 					"This is not allowed and must be a mistake.");
 		}
-		else if (node.getParentNode() != this)
+		else if (node.getParentNode() != null && node.getParentNode() != this)
 		{
 			throw new IllegalArgumentException("Detected attempt to add child node that is already the " +
 					"child of another node. Adding nodes multiple times is not allowed, since it could " +
@@ -341,9 +341,9 @@ public class DefaultNode implements Node
 		final StringBuilder sb = new StringBuilder();
 		sb.append(getPropertyPath());
 		sb.append(" = { ").append(getState().toString().toLowerCase());
-		if (getValueType() != null)
+		if (getType() != null)
 		{
-			sb.append(", type is ").append(getValueType().getCanonicalName());
+			sb.append(", type is ").append(getType().getCanonicalName());
 		}
 		if (getChildren().size() == 1)
 		{

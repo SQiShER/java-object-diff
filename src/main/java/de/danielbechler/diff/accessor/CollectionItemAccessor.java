@@ -68,7 +68,7 @@ public final class CollectionItemAccessor extends AbstractAccessor implements Ty
 	}
 
 	@Override
-	public Class<?> getPropertyType()
+	public Class<?> getType()
 	{
 		return referenceItem != null ? referenceItem.getClass() : null;
 	}

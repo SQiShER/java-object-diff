@@ -146,7 +146,7 @@ class Instances
 	{
 		if (sourceAccessor instanceof TypeAwareAccessor)
 		{
-			return ((TypeAwareAccessor) sourceAccessor).getPropertyType();
+			return ((TypeAwareAccessor) sourceAccessor).getType();
 		}
 		final Set<Class<?>> types = Classes.typesOf(working, base, fresh);
 		if (types.isEmpty())

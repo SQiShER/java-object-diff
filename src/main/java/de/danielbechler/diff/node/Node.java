@@ -94,15 +94,15 @@ public interface Node extends CanonicalAccessor
 	MapNode toMapDifference();
 
 	/** @return Returns the type of the property represented by this node, or null if unavailable. */
-	Class<?> getValueType();
+	Class<?> getType();
 
 	/**
-	 * Allows for explicit type definition. However, if the accessor is TypeAware, {@link #getValueType()} will
+	 * Allows for explicit type definition. However, if the accessor is TypeAware, {@link #getType()} will
 	 * always return the type returned by the accessor.
 	 *
-	 * @param propertyType The type of the value represented by this node.
+	 * @param aClass The type of the value represented by this node.
 	 */
-	void setValueType(Class<?> propertyType);
+	void setType(Class<?> aClass);
 
 	/** @return The absolute property path from the object root up to this node. */
 	PropertyPath getPropertyPath();

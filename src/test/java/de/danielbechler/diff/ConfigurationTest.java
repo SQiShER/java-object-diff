@@ -109,7 +109,7 @@ public class ConfigurationTest
 	public void testIsEqualsOnlyWithConfiguredPropertyType() throws Exception
 	{
 		final Class aClass = ObjectWithString.class;
-		when(node.getPropertyType()).thenReturn(aClass);
+		when(node.getType()).thenReturn(aClass);
 		configuration.withEqualsOnlyType(aClass);
 		assertThat(configuration.isEqualsOnly(node), is(true));
 	}
@@ -119,7 +119,7 @@ public class ConfigurationTest
 	public void testIsEqualsOnlyWithSimpleType() throws Exception
 	{
 		final Class aClass = String.class;
-		when(node.getPropertyType()).thenReturn(aClass);
+		when(node.getType()).thenReturn(aClass);
 		assertThat(configuration.isEqualsOnly(node), is(true));
 	}
 
@@ -135,7 +135,7 @@ public class ConfigurationTest
 	public void testEqualsOnlyWithTypeThatShouldNotBeComparedUsingEquals() throws Exception
 	{
 		final Class aClass = ObjectWithCollection.class;
-		when(node.getPropertyType()).thenReturn(aClass);
+		when(node.getType()).thenReturn(aClass);
 		assertThat(configuration.isEqualsOnly(node), is(false));
 	}
 }
