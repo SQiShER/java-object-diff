@@ -81,7 +81,8 @@ final class MapDiffer extends AbstractDiffer
 
 	private static void indexAll(final Instances instances, final MapNode node)
 	{
-		node.indexKeys(instances.getWorking(Map.class), instances.getBase(Map.class),
+		node.indexKeys(instances.getWorking(Map.class),
+				instances.getBase(Map.class),
 				instances.getFresh(Map.class));
 	}
 
@@ -114,7 +115,7 @@ final class MapDiffer extends AbstractDiffer
 		if (instances.areSame())
 		{
 			// if the instances are the same, there is no need to delegate
-			return parent;
+			return new DefaultNode(parent, accessor);
 		}
 		return getDelegate().delegate(parent, instances);
 	}

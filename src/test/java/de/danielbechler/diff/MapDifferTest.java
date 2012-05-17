@@ -17,6 +17,8 @@
 package de.danielbechler.diff;
 
 import de.danielbechler.diff.node.*;
+import de.danielbechler.diff.path.*;
+import org.hamcrest.core.*;
 import org.junit.*;
 
 import java.util.*;
@@ -141,5 +143,28 @@ public class MapDifferTest
 
 		final MapNode node = differ.compare(working, base);
 		assertThat(node.getState(), is(Node.State.UNTOUCHED));
+	}
+
+	@Test
+	public void testWithSameEntries()
+	{
+		final Map<String, String> modified = new LinkedHashMap<String, String>(1);
+		modified.put("foo", "bar");
+		final Map<String, String> base = new LinkedHashMap<String, String>(modified);
+		modified.put("ping", "pong");
+
+		final MapNode node = differ.compare(modified, base);
+
+		final Collection<Node> children = node.getChildren();
+		assertThat("There can only be one child", children.size(), is(1));
+
+		final Node fooNode = node.getChild(new MapElement("foo"));
+		assertThat("A node for map entry 'foo' should not exist", fooNode, IsNull.nullValue());
+
+		// this part is needed to reproduce a special error case where the parent node got added as its own
+		// child and caused an infinite loop. this wouldn't happen if the parent node didn't have any changes
+		final Node pingNode = node.getChild(new MapElement("ping"));
+		assertThat(pingNode, IsNull.notNullValue());
+		assertThat(pingNode.getState(), is(Node.State.ADDED));
 	}
 }
