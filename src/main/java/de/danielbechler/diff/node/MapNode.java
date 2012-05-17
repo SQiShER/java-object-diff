@@ -26,9 +26,9 @@ public class MapNode extends DefaultNode
 {
 	private final List<Object> referenceKeys = new LinkedList<Object>();
 
-	public MapNode(final Node parentNode, final Accessor accessor)
+	public MapNode(final Node parentNode, final Accessor accessor, final Class<?> valueType)
 	{
-		super(parentNode, accessor);
+		super(parentNode, accessor, valueType);
 	}
 
 	public final int indexKey(final Object key)

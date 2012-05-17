@@ -140,7 +140,7 @@ public class Configuration implements NodeInspector
 	@Override
 	public boolean isEqualsOnly(final Node node)
 	{
-		final Class<?> propertyType = node.getPropertyType();
+		final Class<?> propertyType = node.getValueType();
 		if (propertyType != null)
 		{
 			if (propertyType.getAnnotation(ObjectDiffEqualsOnlyType.class) != null)

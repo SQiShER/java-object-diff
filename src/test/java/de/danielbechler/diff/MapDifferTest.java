@@ -167,4 +167,21 @@ public class MapDifferTest
 		assertThat(pingNode, IsNull.notNullValue());
 		assertThat(pingNode.getState(), is(Node.State.ADDED));
 	}
+
+	@Test
+	public void testWithChangedEntry()
+	{
+		final Map<String, String> working = new LinkedHashMap<String, String>(1);
+		working.put("foo", "bar");
+
+		final Map<String, String> base = new LinkedHashMap<String, String>(1);
+		base.put("foo", "woot");
+
+		final MapNode node = differ.compare(working, base);
+		assertThat("Node should have exactly one child", node.getChildren().size(), is(1));
+		assertThat("Child node should have changed", node.getChildren()
+														 .iterator()
+														 .next()
+														 .getState(), is(Node.State.CHANGED));
+	}
 }

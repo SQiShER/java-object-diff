@@ -32,12 +32,20 @@ public class DefaultNode implements Node
 
 	private State state = State.UNTOUCHED;
 	private Node parentNode;
+	private Class<?> valueType;
 
-	public DefaultNode(final Node parentNode, final Accessor accessor)
+	/**
+	 *
+	 * @param parentNode
+	 * @param accessor
+	 * @param valueType
+	 */
+	public DefaultNode(final Node parentNode, final Accessor accessor, final Class<?> valueType)
 	{
 		Assert.notNull(accessor, "accessor");
 		this.parentNode = parentNode;
 		this.accessor = accessor;
+		this.valueType = valueType;
 	}
 
 	public State getState()
@@ -108,13 +116,18 @@ public class DefaultNode implements Node
 	}
 
 	@Override
-	public Class<?> getPropertyType()
+	public Class<?> getValueType()
 	{
 		if (accessor instanceof TypeAwareAccessor)
 		{
 			return ((TypeAwareAccessor) accessor).getPropertyType();
 		}
-		return null;
+		return valueType;
+	}
+
+	public void setValueType(final Class<?> valueType)
+	{
+		this.valueType = valueType;
 	}
 
 	public boolean hasChildren()
@@ -328,9 +341,9 @@ public class DefaultNode implements Node
 		final StringBuilder sb = new StringBuilder();
 		sb.append(getPropertyPath());
 		sb.append(" = { ").append(getState().toString().toLowerCase());
-		if (getPropertyType() != null)
+		if (getValueType() != null)
 		{
-			sb.append(", type is ").append(getPropertyType().getCanonicalName());
+			sb.append(", type is ").append(getValueType().getCanonicalName());
 		}
 		if (getChildren().size() == 1)
 		{

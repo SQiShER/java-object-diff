@@ -23,10 +23,11 @@ import de.danielbechler.diff.visitor.*;
 import java.util.*;
 
 /**
- * Represents a part of an object. It could be the object itself, one of its properties, an item in a collection or a map
- * entry. A node may one parent node and any number of children. It also provides methods to read and write the property
- * represented by this node on any object of the same type as the original object. Last but not least, a node knows how the
- * associated property has changed compared to the base object.
+ * Represents a part of an object. It could be the object itself, one of its properties, an item in a
+ * collection or a map entry. A node may one parent node and any number of children. It also provides methods
+ * to read and write the property represented by this node on any object of the same type as the original
+ * object. Last but not least, a node knows how the associated property has changed compared to the base
+ * object.
  *
  * @author Daniel Bechler
  */
@@ -93,7 +94,15 @@ public interface Node extends CanonicalAccessor
 	MapNode toMapDifference();
 
 	/** @return Returns the type of the property represented by this node, or null if unavailable. */
-	Class<?> getPropertyType();
+	Class<?> getValueType();
+
+	/**
+	 * Allows for explicit type definition. However, if the accessor is TypeAware, {@link #getValueType()} will
+	 * always return the type returned by the accessor.
+	 *
+	 * @param propertyType The type of the value represented by this node.
+	 */
+	void setValueType(Class<?> propertyType);
 
 	/** @return The absolute property path from the object root up to this node. */
 	PropertyPath getPropertyPath();

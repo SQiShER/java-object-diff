@@ -53,7 +53,7 @@ final class BeanDiffer extends AbstractDiffer
 
 	public Node compare(final Node parentNode, final Instances instances)
 	{
-		final Node node = new DefaultNode(parentNode, instances.getSourceAccessor());
+		final Node node = new DefaultNode(parentNode, instances.getSourceAccessor(), instances.getType());
 		if (getDelegate().isIgnored(node))
 		{
 			node.setState(Node.State.IGNORED);
@@ -71,7 +71,7 @@ final class BeanDiffer extends AbstractDiffer
 
 	private Node compareBean(final Node parentNode, final Instances instances)
 	{
-		final Node node = new DefaultNode(parentNode, instances.getSourceAccessor());
+		final Node node = new DefaultNode(parentNode, instances.getSourceAccessor(), instances.getType());
 		if (instances.hasBeenAdded())
 		{
 			node.setState(Node.State.ADDED);
@@ -110,7 +110,7 @@ final class BeanDiffer extends AbstractDiffer
 	{
 		for (final Accessor accessor : introspect(instances.getType()))
 		{
-			final Node node = new DefaultNode(parentNode, accessor);
+			final Node node = new DefaultNode(parentNode, accessor, instances.getType());
 			if (getDelegate().isIgnored(node))
 			{
 				if (getDelegate().isReturnable(node))
