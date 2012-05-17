@@ -156,6 +156,34 @@ public class DefaultNode implements Node
 
 	public void addChild(final Node node)
 	{
+		if (node.isRootNode())
+		{
+			throw new IllegalArgumentException("Detected attempt to add root node as child. " +
+					"This is not allowed and must be a mistake.");
+		}
+		else if (node.getParentNode() != this)
+		{
+			throw new IllegalArgumentException("Detected attempt to add child node that is already the " +
+					"child of another node. Adding nodes multiple times is not allowed, since it could " +
+					"cause infinite loops.");
+		}
+		else if (node == this)
+		{
+			throw new IllegalArgumentException("Detected attempt to add a node to itself. " +
+					"This would cause inifite loops and must never happen.");
+		}
+		else
+		{
+			final Collection<Node> children = node.getChildren();
+			for (final Node child : children)
+			{
+				if (child == this)
+				{
+					throw new IllegalArgumentException("Detected attempt to add node to itself. " +
+							"This would cause inifite loops and must never happen.");
+				}
+			}
+		}
 		node.setParentNode(this);
 		children.put(node.getPathElement(), node);
 	}
