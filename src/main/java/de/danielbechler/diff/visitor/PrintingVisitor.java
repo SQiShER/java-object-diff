@@ -49,10 +49,10 @@ public class PrintingVisitor implements Node.Visitor
 	protected String differenceToString(final Node difference, final Object base, final Object modified)
 	{
 		return String.format("Property at path '%s' %s",
-							 difference.getPropertyPath(),
-							 translateState(difference.getState(),
-											difference.canonicalGet(base),
-											difference.canonicalGet(modified)));
+				difference.getPropertyPath(),
+				translateState(difference.getState(),
+						difference.canonicalGet(base),
+						difference.canonicalGet(modified)));
 	}
 
 	private String translateState(final Node.State state, final Object base, final Object modified)
@@ -63,7 +63,8 @@ public class PrintingVisitor implements Node.Visitor
 		}
 		else if (state == Node.State.CHANGED)
 		{
-			return String.format("has changed from [ %s ] to [ %s ]", Strings.toSingleLineString(base), Strings.toSingleLineString(modified));
+			return String.format("has changed from [ %s ] to [ %s ]", Strings.toSingleLineString(base), Strings
+					.toSingleLineString(modified));
 		}
 		else if (state == Node.State.ADDED)
 		{
@@ -72,10 +73,6 @@ public class PrintingVisitor implements Node.Visitor
 		else if (state == Node.State.REMOVED)
 		{
 			return String.format("with value [ %s ] has been removed", Strings.toSingleLineString(base));
-		}
-		else if (state == Node.State.REPLACED)
-		{
-			return String.format("with value [ %s ] has been replaced by [ %s ]", Strings.toSingleLineString(base), Strings.toSingleLineString(modified));
 		}
 		else if (state == Node.State.UNTOUCHED)
 		{

@@ -24,10 +24,10 @@ import java.util.*;
 
 /**
  * Represents a part of an object. It could be the object itself, one of its properties, an item in a
- * collection or a map entry. A node may one parent node and any number of children. It also provides methods
- * to read and write the property represented by this node on any object of the same type as the original
- * object. Last but not least, a node knows how the associated property has changed compared to the base
- * object.
+ * collection or a map entry. A node may have one parent node and any number of children. It also provides
+ * methods to read and write the property represented by this node on any object of the same type as the
+ * original object. Last but not least, a node knows how the associated property has changed compared to the
+ * base object.
  *
  * @author Daniel Bechler
  */
@@ -53,8 +53,6 @@ public interface Node extends CanonicalAccessor
 
 		/** The value has been removed from the working object. */
 		REMOVED,
-
-		@Deprecated REPLACED,
 
 		/** The value is identical between working and base */
 		UNTOUCHED,
@@ -85,6 +83,21 @@ public interface Node extends CanonicalAccessor
 
 	boolean hasChanges();
 
+	/** Convenience method for <code>{@link #getState()} == {@link State#ADDED}</code> */
+	boolean isAdded();
+
+	/** Convenience method for <code>{@link #getState()} == {@link State#CHANGED}</code> */
+	boolean isChanged();
+
+	/** Convenience method for <code>{@link #getState()} == {@link State#REMOVED}</code> */
+	boolean isRemoved();
+
+	/** Convenience method for <code>{@link #getState()} == {@link State#UNTOUCHED}</code> */
+	boolean isUntouched();
+
+	/** Convenience method for <code>{@link #getState()} == {@link State#IGNORED}</code> */
+	boolean isIgnored();
+
 	boolean isCollectionDifference();
 
 	CollectionNode toCollectionDifference();
@@ -97,8 +110,8 @@ public interface Node extends CanonicalAccessor
 	Class<?> getType();
 
 	/**
-	 * Allows for explicit type definition. However, if the accessor is TypeAware, {@link #getType()} will
-	 * always return the type returned by the accessor.
+	 * Allows for explicit type definition. However, if the accessor is TypeAware, {@link #getType()} will always
+	 * return the type returned by the accessor.
 	 *
 	 * @param aClass The type of the value represented by this node.
 	 */

@@ -35,7 +35,6 @@ public class DefaultNode implements Node
 	private Class<?> valueType;
 
 	/**
-	 *
 	 * @param parentNode
 	 * @param accessor
 	 * @param valueType
@@ -60,7 +59,7 @@ public class DefaultNode implements Node
 
 	public boolean hasChanges()
 	{
-		if (state != State.UNTOUCHED && state != State.IGNORED)
+		if (!isUntouched() && !isIgnored())
 		{
 			return true;
 		}
@@ -69,7 +68,7 @@ public class DefaultNode implements Node
 		{
 			public void accept(final Node node, final Visit visit)
 			{
-				if (node.getState() != State.UNTOUCHED)
+				if (!node.isUntouched())
 				{
 					result.set(true);
 					visit.stop();
@@ -77,6 +76,30 @@ public class DefaultNode implements Node
 			}
 		});
 		return result.get();
+	}
+
+	@Override
+	public final boolean isAdded()
+	{
+		return state == State.ADDED;
+	}
+
+	@Override
+	public final boolean isChanged()
+	{
+		return state == State.CHANGED;
+	}
+
+	@Override
+	public final boolean isRemoved()
+	{
+		return state == State.REMOVED;
+	}
+
+	@Override
+	public final boolean isUntouched()
+	{
+		return state == State.UNTOUCHED;
 	}
 
 	public final PropertyPath getPropertyPath()
@@ -260,7 +283,7 @@ public class DefaultNode implements Node
 
 	public final boolean isIgnored()
 	{
-		return accessor.isIgnored();
+		return state == State.IGNORED || accessor.isIgnored();
 	}
 
 	public final Set<String> getCategories()

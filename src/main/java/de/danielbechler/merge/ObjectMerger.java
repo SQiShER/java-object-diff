@@ -21,7 +21,8 @@ import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.visitor.*;
 
 /**
- * Careful: This class has not yet been tested very thoroughly and serves more as an example for your own implementations.
+ * Careful: This class has not yet been tested very thoroughly and serves more as an example for your own
+ * implementations.
  *
  * @author Daniel Bechler
  */
@@ -68,10 +69,6 @@ public final class ObjectMerger
 			else if (node.getState() == Node.State.REMOVED)
 			{
 				node.canonicalUnset(head);
-			}
-			else if (node.getState() == Node.State.REPLACED)
-			{
-				node.canonicalSet(head, node.canonicalGet(modified));
 			}
 			else if (node.getState() == Node.State.UNTOUCHED)
 			{
