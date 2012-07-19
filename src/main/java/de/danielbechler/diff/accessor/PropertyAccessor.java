@@ -19,6 +19,7 @@ package de.danielbechler.diff.accessor;
 import de.danielbechler.diff.accessor.exception.*;
 import de.danielbechler.diff.path.*;
 import de.danielbechler.util.*;
+
 import org.slf4j.*;
 
 import java.lang.reflect.*;
@@ -188,5 +189,14 @@ public final class PropertyAccessor extends AbstractAccessor implements TypeAwar
 	public Element getPathElement()
 	{
 		return new NamedPropertyElement(this.propertyName);
+	}
+	
+	@Override
+	public Object getComparisonObject() {
+		if(Classes.isSimpleType(getType())) {
+			// ignore, because no comparison on the level of user-defined objects
+			return null;
+		}
+		return getPropertyName();
 	}
 }

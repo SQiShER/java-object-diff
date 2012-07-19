@@ -16,6 +16,9 @@
 
 package de.danielbechler.diff;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import de.danielbechler.diff.accessor.*;
 import de.danielbechler.diff.introspect.*;
 import de.danielbechler.diff.node.*;
@@ -29,6 +32,7 @@ import de.danielbechler.util.*;
 final class BeanDiffer extends AbstractDiffer
 {
 	private Introspector introspector = new StandardIntrospector();
+	private Set<InstanceOutline> visitedInstances = new HashSet<InstanceOutline>();
 
 	BeanDiffer()
 	{
@@ -64,6 +68,8 @@ final class BeanDiffer extends AbstractDiffer
 		}
 		else
 		{
+			if(checkAlreadyVisited(instances))
+				return node;
 			return compareBean(parentNode, instances);
 		}
 		return node;
@@ -142,5 +148,19 @@ final class BeanDiffer extends AbstractDiffer
 	{
 		Assert.notNull(introspector, "introspector");
 		this.introspector = introspector;
+	}
+	
+	private boolean checkAlreadyVisited(Instances instances) 
+	{
+		InstanceOutline outline = InstanceOutline.from(instances);
+		if(outline != null) {
+			if(visitedInstances.contains(outline)) {
+				// if line below is commented in test case bidirectionalGraphStackOverflow creates a stack overflow
+				// visitedInstances.remove(outline);
+				return true;
+			}
+			visitedInstances.add(outline);
+		}	
+		return false;
 	}
 }
