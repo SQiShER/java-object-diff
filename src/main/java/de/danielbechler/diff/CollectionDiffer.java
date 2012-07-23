@@ -27,7 +27,7 @@ import java.util.*;
  *
  * @author Daniel Bechler
  */
-final class CollectionDiffer extends AbstractDiffer
+final class CollectionDiffer extends AbstractDiffer<CollectionNode>
 {
 	public CollectionDiffer()
 	{
@@ -44,7 +44,8 @@ final class CollectionDiffer extends AbstractDiffer
 		return compare(Node.ROOT, Instances.of(new RootAccessor(), working, base));
 	}
 
-	public CollectionNode compare(final Node parentNode, final Instances instances)
+	@Override
+	protected CollectionNode internalCompare(final Node parentNode, final Instances instances)
 	{
 		final CollectionNode node = new CollectionNode(parentNode, instances.getSourceAccessor(), instances.getType());
 		if (getDelegate().isIgnored(node))
@@ -74,7 +75,15 @@ final class CollectionDiffer extends AbstractDiffer
 		return node;
 	}
 
-	private void handleItems(final CollectionNode collectionNode, final Instances instances, final Iterable<?> items)
+	@Override
+	protected CollectionNode newNode(final Node parentNode, final Instances instances)
+	{
+		return new CollectionNode(parentNode, instances.getSourceAccessor(), instances.getType());
+	}
+
+	private void handleItems(final CollectionNode collectionNode,
+							 final Instances instances,
+							 final Iterable<?> items)
 	{
 		for (final Object item : items)
 		{
@@ -91,7 +100,9 @@ final class CollectionDiffer extends AbstractDiffer
 		}
 	}
 
-	private Node compareItem(final CollectionNode collectionNode, final Instances instances, final Object item)
+	private Node compareItem(final CollectionNode collectionNode,
+							 final Instances instances,
+							 final Object item)
 	{
 		final Accessor accessor = collectionNode.accessorForItem(item);
 		return getDelegate().delegate(collectionNode, instances.access(accessor));

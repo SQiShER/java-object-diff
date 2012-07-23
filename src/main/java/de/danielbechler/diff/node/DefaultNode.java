@@ -59,7 +59,7 @@ public class DefaultNode implements Node
 
 	public boolean hasChanges()
 	{
-		if (!isUntouched() && !isIgnored())
+		if (isAdded() || isChanged() || isRemoved())
 		{
 			return true;
 		}
@@ -68,7 +68,7 @@ public class DefaultNode implements Node
 		{
 			public void accept(final Node node, final Visit visit)
 			{
-				if (!node.isUntouched())
+				if (node.hasChanges())
 				{
 					result.set(true);
 					visit.stop();
@@ -100,6 +100,12 @@ public class DefaultNode implements Node
 	public final boolean isUntouched()
 	{
 		return state == State.UNTOUCHED;
+	}
+
+	@Override
+	public boolean isCircular()
+	{
+		return state == State.CIRCULAR;
 	}
 
 	public final PropertyPath getPropertyPath()
@@ -387,10 +393,5 @@ public class DefaultNode implements Node
 		sb.append(" }");
 		return sb.toString();
 	}
-	
-	@Override
-	public Object getComparisonObject() {
-		// not needed here, but has to be implemented, because of the Accessor interface
-		throw new UnsupportedOperationException();
-	}
+
 }

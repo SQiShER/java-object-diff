@@ -190,13 +190,5 @@ public final class PropertyAccessor extends AbstractAccessor implements TypeAwar
 	{
 		return new NamedPropertyElement(this.propertyName);
 	}
-	
-	@Override
-	public Object getComparisonObject() {
-		if(Classes.isSimpleType(getType())) {
-			// ignore, because no comparison on the level of user-defined objects
-			return null;
-		}
-		return getPropertyName();
-	}
+
 }

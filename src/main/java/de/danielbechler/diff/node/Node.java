@@ -57,6 +57,9 @@ public interface Node extends CanonicalAccessor
 		/** The value is identical between working and base */
 		UNTOUCHED,
 
+		/** Special state to mark circular references */
+		CIRCULAR,
+
 		/** The value has not been looked at and has been ignored. */
 		IGNORED
 	}
@@ -97,6 +100,9 @@ public interface Node extends CanonicalAccessor
 
 	/** Convenience method for <code>{@link #getState()} == {@link State#IGNORED}</code> */
 	boolean isIgnored();
+
+	/** Convenience method for <code>{@link #getState()} == {@link State#CIRCULAR}</code> */
+	boolean isCircular();
 
 	boolean isCollectionDifference();
 

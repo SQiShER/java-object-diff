@@ -16,23 +16,20 @@
 
 package de.danielbechler.diff;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import de.danielbechler.diff.accessor.*;
 import de.danielbechler.diff.introspect.*;
 import de.danielbechler.diff.node.*;
 import de.danielbechler.util.*;
 
 /**
- * Used to find differences between objects that were not handled by one of the other (specialized) {@link Differ Differs}.
+ * Used to find differences between objects that were not handled by one of the other (specialized) {@link
+ * Differ Differs}.
  *
  * @author Daniel Bechler
  */
-final class BeanDiffer extends AbstractDiffer
+final class BeanDiffer extends AbstractDiffer<Node>
 {
 	private Introspector introspector = new StandardIntrospector();
-	private Set<InstanceOutline> visitedInstances = new HashSet<InstanceOutline>();
 
 	BeanDiffer()
 	{
@@ -55,9 +52,10 @@ final class BeanDiffer extends AbstractDiffer
 		return compare(Node.ROOT, Instances.of(new RootAccessor(), working, base));
 	}
 
-	public Node compare(final Node parentNode, final Instances instances)
+	@Override
+	protected Node internalCompare(final Node parentNode, final Instances instances)
 	{
-		final Node node = new DefaultNode(parentNode, instances.getSourceAccessor(), instances.getType());
+		final Node node = newNode(parentNode, instances);
 		if (getDelegate().isIgnored(node))
 		{
 			node.setState(Node.State.IGNORED);
@@ -68,16 +66,20 @@ final class BeanDiffer extends AbstractDiffer
 		}
 		else
 		{
-			if(checkAlreadyVisited(instances))
-				return node;
 			return compareBean(parentNode, instances);
 		}
 		return node;
 	}
 
+	@Override
+	protected Node newNode(final Node parentNode, final Instances instances)
+	{
+		return new DefaultNode(parentNode, instances.getSourceAccessor(), instances.getType());
+	}
+
 	private Node compareBean(final Node parentNode, final Instances instances)
 	{
-		final Node node = new DefaultNode(parentNode, instances.getSourceAccessor(), instances.getType());
+		final Node node = newNode(parentNode, instances);
 		if (instances.hasBeenAdded())
 		{
 			node.setState(Node.State.ADDED);
@@ -148,19 +150,5 @@ final class BeanDiffer extends AbstractDiffer
 	{
 		Assert.notNull(introspector, "introspector");
 		this.introspector = introspector;
-	}
-	
-	private boolean checkAlreadyVisited(Instances instances) 
-	{
-		InstanceOutline outline = InstanceOutline.from(instances);
-		if(outline != null) {
-			if(visitedInstances.contains(outline)) {
-				// if line below is commented in test case bidirectionalGraphStackOverflow creates a stack overflow
-				// visitedInstances.remove(outline);
-				return true;
-			}
-			visitedInstances.add(outline);
-		}	
-		return false;
 	}
 }

@@ -16,11 +16,19 @@
 
 package de.danielbechler.diff;
 
+import de.danielbechler.diff.node.*;
 import de.danielbechler.util.*;
 
 /** @author Daniel Bechler */
-abstract class AbstractDiffer implements Differ, Configurable
+abstract class AbstractDiffer<T extends Node> implements Differ<T>, Configurable
 {
+	static final ThreadLocal<CircularReferenceDetector> CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL;
+
+	static
+	{
+		CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL = new CircularReferenceDetectorThreadLocal();
+	}
+
 	private DelegatingObjectDiffer delegate;
 
 	protected AbstractDiffer()
@@ -32,6 +40,41 @@ abstract class AbstractDiffer implements Differ, Configurable
 		Assert.notNull(delegate, "delegate");
 		this.delegate = delegate;
 	}
+
+	@Override
+	public final T compare(final Node parentNode, final Instances instances)
+	{
+		final Object working = instances.getWorking();
+		final CircularReferenceDetector circularReferenceDetector = CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL.get();
+		final boolean destroyOnReturn = circularReferenceDetector.isNew();
+		T node;
+		try
+		{
+			circularReferenceDetector.push(working);
+			try
+			{
+				node = internalCompare(parentNode, instances);
+			}
+			finally
+			{
+				circularReferenceDetector.remove(working);
+			}
+		}
+		catch (CircularReferenceDetector.CircularReferenceException e)
+		{
+			node = newNode(parentNode, instances);
+			node.setState(Node.State.CIRCULAR);
+		}
+		if (destroyOnReturn)
+		{
+			CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL.remove();
+		}
+		return node;
+	}
+
+	protected abstract T internalCompare(Node parentNode, Instances instances);
+
+	protected abstract T newNode(Node parentNode, Instances instances);
 
 	public final DelegatingObjectDiffer getDelegate()
 	{
@@ -47,5 +90,14 @@ abstract class AbstractDiffer implements Differ, Configurable
 	public final Configuration getConfiguration()
 	{
 		return delegate.getConfiguration();
+	}
+
+	private static final class CircularReferenceDetectorThreadLocal extends ThreadLocal<CircularReferenceDetector>
+	{
+		@Override
+		protected CircularReferenceDetector initialValue()
+		{
+			return new CircularReferenceDetector();
+		}
 	}
 }

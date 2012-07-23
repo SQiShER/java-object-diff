@@ -95,9 +95,5 @@ public final class CollectionItemAccessor extends AbstractAccessor implements Ty
 			targetCollection.remove(referenceItem);
 		}
 	}
-	
-	@Override
-	public Object getComparisonObject() {
-		return referenceItem;
-	}
+
 }
