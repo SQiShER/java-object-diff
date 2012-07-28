@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package de.danielbechler.diff.graph;
+package de.danielbechler.diff.integration.graph;
 
 import de.danielbechler.diff.*;
 import de.danielbechler.diff.mock.*;
 import de.danielbechler.diff.node.*;
 import org.junit.*;
+
+import static de.danielbechler.diff.node.NodeAssertions.*;
 
 /** @author Daniel Bechler */
 public class CircularReferenceIntegrationTest
@@ -38,8 +40,6 @@ public class CircularReferenceIntegrationTest
 		baseB.setReference(baseA);
 
 		final Node root = ObjectDifferFactory.getInstance().compare(workingA, baseA);
-		NodeAssert.assertThat(root)
-				  .hasChild("reference", "reference")
-				  .withState(Node.State.CIRCULAR);
+		assertThat(root).child("reference", "reference").hasState(Node.State.CIRCULAR);
 	}
 }

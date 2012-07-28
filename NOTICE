@@ -21,3 +21,4 @@ This project includes:
   Mockito - MIT License
   JUnit - BSD License
   Hamcrest - BSD License
+  Fest Assertions = Apache 2.0 License
