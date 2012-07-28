@@ -93,14 +93,28 @@ public final class PropertyPath
 	{
 		final StringBuilder sb = new StringBuilder();
 		final Iterator<Element> iterator = elements.iterator();
+		Element previousElement = null;
 		while (iterator.hasNext())
 		{
-			final Element selector = iterator.next();
-			sb.append(selector);
-			if (iterator.hasNext())
+			final Element element = iterator.next();
+			if (element instanceof RootElement)
 			{
-				sb.append('.');
+				sb.append("/");
 			}
+			else if (element instanceof CollectionElement || element instanceof MapElement)
+			{
+				sb.append(element);
+			}
+			else if (previousElement instanceof RootElement)
+			{
+				sb.append(element);
+			}
+			else
+			{
+				sb.append('/');
+				sb.append(element);
+			}
+			previousElement = element;
 		}
 		return sb.toString();
 	}
