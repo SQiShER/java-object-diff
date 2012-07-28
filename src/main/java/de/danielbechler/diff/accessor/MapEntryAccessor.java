@@ -89,4 +89,9 @@ public final class MapEntryAccessor extends AbstractAccessor
 			targetMap.remove(getReferenceKey());
 		}
 	}
+	
+	@Override
+	public Object getComparisonObject() {
+		return getReferenceKey();
+	}
 }

@@ -169,4 +169,11 @@ class Instances
 				.withElement(sourceAccessor.getPathElement())
 				.build();
 	}
+
+	public Object getComparisonObject() 
+	{
+		if(sourceAccessor == null)
+			return null;		
+		return sourceAccessor.getComparisonObject();		
+	}
 }

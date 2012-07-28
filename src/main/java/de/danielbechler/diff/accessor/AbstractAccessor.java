@@ -54,4 +54,9 @@ public abstract class AbstractAccessor implements Accessor
 	{
 		this.ignored = ignored;
 	}
+	
+	public Object getComparisonObject() {
+		// answer the default, redefine in subclass as appropriate
+		return null;
+	}
 }

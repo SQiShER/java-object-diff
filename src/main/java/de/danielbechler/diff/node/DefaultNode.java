@@ -387,4 +387,10 @@ public class DefaultNode implements Node
 		sb.append(" }");
 		return sb.toString();
 	}
+	
+	@Override
+	public Object getComparisonObject() {
+		// not needed here, but has to be implemented, because of the Accessor interface
+		throw new UnsupportedOperationException();
+	}
 }
