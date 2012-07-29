@@ -17,25 +17,26 @@
 package de.danielbechler.diff.node;
 
 import de.danielbechler.diff.path.*;
+import de.danielbechler.diff.visitor.*;
 import org.fest.assertions.api.*;
 import org.fest.assertions.core.*;
 
 /** @author Daniel Bechler */
-public class NodeAssertions
+public final class NodeAssertions
 {
 	public static Syntax.SelectNode assertThat(final Node node)
 	{
-		return new NodeAssertLanguage(node);
+		return new NodeAssertionLanguage(node);
 	}
 
-	public static final class NodeAssertLanguage implements Syntax.SelectNode, Syntax.AssertNode
+	public static final class NodeAssertionLanguage implements Syntax.SelectNode, Syntax.AssertNode
 	{
 		private final Node rootNode;
 
 		private Node selectedNode;
 		private PropertyPath propertyPath;
 
-		private NodeAssertLanguage(final Node rootNode)
+		private NodeAssertionLanguage(final Node rootNode)
 		{
 			this.rootNode = rootNode;
 		}
@@ -51,13 +52,9 @@ public class NodeAssertions
 		@Override
 		public Syntax.AssertNode child(final PropertyPath propertyPath)
 		{
-			if (rootNode == null)
+			if (rootNode != null)
 			{
-				this.selectedNode = null;
-			}
-			else
-			{
-				this.selectedNode = this.rootNode.getChild(propertyPath);
+				selectedNode = rootNode.getChild(propertyPath);
 			}
 			this.propertyPath = propertyPath;
 			return this;
@@ -78,18 +75,14 @@ public class NodeAssertions
 		@Override
 		public Syntax.AssertNode doesExist()
 		{
-			Assertions.assertThat(selectedNode)
-					  .describedAs("Expected a child at path " + propertyPath + ", but it's missing.")
-					  .isNotNull();
+			Assertions.assertThat(rootNode).has(childAt(propertyPath));
 			return this;
 		}
 
 		@Override
 		public Syntax.AssertNode doesNotExist()
 		{
-			Assertions.assertThat(selectedNode)
-					  .describedAs("Expected no child at path " + propertyPath + ", but found " + selectedNode)
-					  .isNull();
+			Assertions.assertThat(rootNode).has(noChildAt(propertyPath));
 			return this;
 		}
 
@@ -97,7 +90,7 @@ public class NodeAssertions
 		public Syntax.AssertNode hasState(final Node.State state)
 		{
 			doesExist();
-			Assertions.assertThat(selectedNode.getState()).isEqualTo(state);
+			Assertions.assertThat(selectedNode).has(state(state));
 			return this;
 		}
 
@@ -115,6 +108,60 @@ public class NodeAssertions
 			doesExist();
 			Assertions.assertThat(selectedNode).has(exactChildCountOf(count));
 			return this;
+		}
+
+		private static Condition<Node> childAt(final PropertyPath propertyPath)
+		{
+			return new Condition<Node>("child at path " + propertyPath)
+			{
+				@Override
+				public boolean matches(final Node value)
+				{
+					if (value == null)
+					{
+						return false;
+					}
+					else
+					{
+						final PropertyVisitor visitor = new PropertyVisitor(propertyPath);
+						value.visit(visitor);
+						return visitor.getNode() != null;
+					}
+				}
+			};
+		}
+
+		private static Condition<Node> state(final Node.State state)
+		{
+			return new Condition<Node>()
+			{
+				@Override
+				public boolean matches(final Node value)
+				{
+					return value != null && value.getState() == state;
+				}
+			};
+		}
+
+		private static Condition<Node> noChildAt(final PropertyPath propertyPath)
+		{
+			return new Condition<Node>("no child at path " + propertyPath)
+			{
+				@Override
+				public boolean matches(final Node value)
+				{
+					if (value == null)
+					{
+						return true;
+					}
+					else
+					{
+						final PropertyVisitor visitor = new PropertyVisitor(propertyPath);
+						value.visit(visitor);
+						return visitor.getNode() == null;
+					}
+				}
+			};
 		}
 
 		private static Condition<Node> atLeastOneChild()
@@ -140,7 +187,14 @@ public class NodeAssertions
 				@Override
 				public boolean matches(final Node value)
 				{
-					return value.getChildren().size() == count;
+					if (count == 0)
+					{
+						return value == null || value.getChildren().isEmpty();
+					}
+					else
+					{
+						return value != null && value.getChildren().size() == count;
+					}
 				}
 			};
 		}
