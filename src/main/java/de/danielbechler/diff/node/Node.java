@@ -164,7 +164,7 @@ public interface Node extends CanonicalAccessor
 	 *
 	 * @param node The node to add.
 	 */
-	void addChild(Node node);
+	boolean addChild(Node node);
 
 	/**
 	 * Visit this and all child nodes.

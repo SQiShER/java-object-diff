@@ -34,17 +34,22 @@ public class DefaultNode implements Node
 	private Node parentNode;
 	private Class<?> valueType;
 
-	/**
-	 * @param parentNode
-	 * @param accessor
-	 * @param valueType
-	 */
 	public DefaultNode(final Node parentNode, final Accessor accessor, final Class<?> valueType)
 	{
 		Assert.notNull(accessor, "accessor");
-		this.parentNode = parentNode;
 		this.accessor = accessor;
 		this.valueType = valueType;
+		setParentNode(parentNode);
+	}
+
+	public DefaultNode(final Accessor accessor, final Class<?> valueType)
+	{
+		this(Node.ROOT, accessor, valueType);
+	}
+
+	public DefaultNode(final Class<?> valueType)
+	{
+		this(Node.ROOT, RootAccessor.getInstance(), valueType);
 	}
 
 	public State getState()
@@ -110,13 +115,21 @@ public class DefaultNode implements Node
 
 	public final PropertyPath getPropertyPath()
 	{
-		final PropertyPathBuilder builder = new PropertyPathBuilder();
 		if (parentNode != null)
 		{
-			builder.withPropertyPath(parentNode.getPropertyPath());
+			return PropertyPath.createBuilder()
+							   .withPropertyPath(parentNode.getPropertyPath())
+							   .withElement(accessor.getPathElement())
+							   .build();
 		}
-		builder.withElement(accessor.getPathElement());
-		return builder.build();
+		else if (accessor instanceof RootAccessor)
+		{
+			return PropertyPath.createBuilder().withRoot().build();
+		}
+		else
+		{
+			return PropertyPath.createBuilder().withRoot().withElement(accessor.getPathElement()).build();
+		}
 	}
 
 	public Element getPathElement()
@@ -196,12 +209,17 @@ public class DefaultNode implements Node
 		return children.get(pathElement);
 	}
 
-	public void addChild(final Node node)
+	public boolean addChild(final Node node)
 	{
 		if (node.isRootNode())
 		{
 			throw new IllegalArgumentException("Detected attempt to add root node as child. " +
 					"This is not allowed and must be a mistake.");
+		}
+		else if (node == this)
+		{
+			throw new IllegalArgumentException("Detected attempt to add a node to itself. " +
+					"This would cause inifite loops and must never happen.");
 		}
 		else if (node.getParentNode() != null && node.getParentNode() != this)
 		{
@@ -209,25 +227,19 @@ public class DefaultNode implements Node
 					"child of another node. Adding nodes multiple times is not allowed, since it could " +
 					"cause infinite loops.");
 		}
-		else if (node == this)
+		final Element pathElement = node.getPathElement();
+		if (node.getParentNode() == null)
 		{
-			throw new IllegalArgumentException("Detected attempt to add a node to itself. " +
-					"This would cause inifite loops and must never happen.");
+			node.setParentNode(this);
+			children.put(pathElement, node);
+			return true;
 		}
-		else
+		else if (node.getParentNode() == this)
 		{
-			final Collection<Node> children = node.getChildren();
-			for (final Node child : children)
-			{
-				if (child == this)
-				{
-					throw new IllegalArgumentException("Detected attempt to add node to itself. " +
-							"This would cause inifite loops and must never happen.");
-				}
-			}
+			children.put(pathElement, node);
+			return true;
 		}
-		node.setParentNode(this);
-		children.put(node.getPathElement(), node);
+		throw new IllegalStateException("Detected attempt to replace the parent node of node at path '" + getPropertyPath() + "'");
 	}
 
 	public final void visit(final Visitor visitor)
@@ -279,7 +291,7 @@ public class DefaultNode implements Node
 
 	public final boolean isRootNode()
 	{
-		return parentNode == null;
+		return accessor instanceof RootAccessor;
 	}
 
 	public final boolean isEqualsOnly()
@@ -317,8 +329,12 @@ public class DefaultNode implements Node
 		return parentNode;
 	}
 
-	public void setParentNode(final Node parentNode)
+	public final void setParentNode(final Node parentNode)
 	{
+		if (this.parentNode != null && this.parentNode != parentNode)
+		{
+			throw new IllegalStateException("The parent of a node cannot be changed, once it's set.");
+		}
 		this.parentNode = parentNode;
 	}
 

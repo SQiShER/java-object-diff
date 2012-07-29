@@ -44,7 +44,7 @@ public class NodeAssertions
 		public Syntax.AssertNode node()
 		{
 			this.selectedNode = rootNode;
-			this.propertyPath = new PropertyPathBuilder().withRoot().build();
+			this.propertyPath = PropertyPath.createBuilder().withRoot().build();
 			return this;
 		}
 
@@ -64,15 +64,15 @@ public class NodeAssertions
 		}
 
 		@Override
-		public Syntax.AssertNode child(final PropertyPathBuilder propertyPathBuilder)
+		public Syntax.AssertNode child(final PropertyPath.AppendableBuilder propertyPathBuilder)
 		{
 			return child(propertyPathBuilder.build());
 		}
 
 		@Override
-		public Syntax.AssertNode child(final String... propertyNames)
+		public Syntax.AssertNode child(final String propertyName, final String... propertyNames)
 		{
-			return child(PropertyPath.with(propertyNames));
+			return child(PropertyPath.buildWith(propertyName, propertyNames));
 		}
 
 		@Override
@@ -105,6 +105,7 @@ public class NodeAssertions
 		public Syntax.AssertNode hasChildren()
 		{
 			doesExist();
+			Assertions.assertThat(selectedNode).has(atLeastOneChild());
 			return this;
 		}
 
@@ -114,6 +115,18 @@ public class NodeAssertions
 			doesExist();
 			Assertions.assertThat(selectedNode).has(exactChildCountOf(count));
 			return this;
+		}
+
+		private static Condition<Node> atLeastOneChild()
+		{
+			return new Condition<Node>("at least one child")
+			{
+				@Override
+				public boolean matches(final Node value)
+				{
+					return value.hasChildren();
+				}
+			};
 		}
 
 		private static Condition<Node> exactChildCountOf(final int count)
@@ -151,9 +164,9 @@ public class NodeAssertions
 
 			AssertNode child(PropertyPath propertyPath);
 
-			AssertNode child(PropertyPathBuilder propertyPathBuilder);
+			AssertNode child(PropertyPath.AppendableBuilder propertyPathBuilder);
 
-			AssertNode child(String... propertyPathElements);
+			AssertNode child(String propertyName, String... propertyPathElements);
 		}
 
 		public interface AssertNode

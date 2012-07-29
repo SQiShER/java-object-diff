@@ -20,7 +20,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
  */
 public class GraphIntegrationTest
 {
-	private static final boolean PRINT_ENABLED = false;
+	private static final boolean PRINT_ENABLED = true;
 
 	@Test
 	public void basicNode()
@@ -75,15 +75,15 @@ public class GraphIntegrationTest
 
 		assertThat(root).node().hasChildren(1);
 		assertThat(root).child("children").hasChildren(2);
-		assertThat(root).child(new PropertyPathBuilder()
-				.withRoot()
-				.withPropertyName("children")
-				.withCollectionItem(a))
+		assertThat(root).child(PropertyPath.createBuilder()
+										   .withRoot()
+										   .withPropertyName("children")
+										   .withCollectionItem(a))
 				.hasState(Node.State.CHANGED);
-		assertThat(root).child(new PropertyPathBuilder()
-				.withRoot()
-				.withPropertyName("children")
-				.withCollectionItem(b))
+		assertThat(root).child(PropertyPath.createBuilder()
+										   .withRoot()
+										   .withPropertyName("children")
+										   .withCollectionItem(b))
 				.hasState(Node.State.CHANGED);
 	}
 
@@ -112,48 +112,48 @@ public class GraphIntegrationTest
 
 		final Node root = compareAndPrint(modified, base);
 
-		assertThat(root).child(new PropertyPathBuilder()
-				.withRoot()
-				.withPropertyName("children")
-				.withCollectionItem(b)
-				.withPropertyName("directReference")
-				.withPropertyName("map")
-				.withMapKey("node-x")).hasState(Node.State.REMOVED);
+		assertThat(root).child(PropertyPath.createBuilder()
+										   .withRoot()
+										   .withPropertyName("children")
+										   .withCollectionItem(b)
+										   .withPropertyName("directReference")
+										   .withPropertyName("map")
+										   .withMapKey("node-x")).hasState(Node.State.REMOVED);
 
-		assertThat(root).child(new PropertyPathBuilder()
-				.withRoot()
-				.withPropertyName("children")
-				.withCollectionItem(b)
-				.withPropertyName("directReference")
-				.withPropertyName("value")).hasState(Node.State.CHANGED);
+		assertThat(root).child(PropertyPath.createBuilder()
+										   .withRoot()
+										   .withPropertyName("children")
+										   .withCollectionItem(b)
+										   .withPropertyName("directReference")
+										   .withPropertyName("value")).hasState(Node.State.CHANGED);
 
-		assertThat(root).child(new PropertyPathBuilder()
-				.withRoot()
-				.withPropertyName("children")
-				.withCollectionItem(b)
-				.withPropertyName("map")
-				.withMapKey("node-a")
-				.withPropertyName("map")
-				.withMapKey("node-x")).hasState(Node.State.REMOVED);
+		assertThat(root).child(PropertyPath.createBuilder()
+										   .withRoot()
+										   .withPropertyName("children")
+										   .withCollectionItem(b)
+										   .withPropertyName("map")
+										   .withMapKey("node-a")
+										   .withPropertyName("map")
+										   .withMapKey("node-x")).hasState(Node.State.REMOVED);
 
-		assertThat(root).child(new PropertyPathBuilder()
-				.withRoot()
-				.withPropertyName("children")
-				.withCollectionItem(b)
-				.withPropertyName("map")
-				.withMapKey("node-a")
-				.withPropertyName("value")).hasState(Node.State.CHANGED);
+		assertThat(root).child(PropertyPath.createBuilder()
+										   .withRoot()
+										   .withPropertyName("children")
+										   .withCollectionItem(b)
+										   .withPropertyName("map")
+										   .withMapKey("node-a")
+										   .withPropertyName("value")).hasState(Node.State.CHANGED);
 
-		assertThat(root).child(new PropertyPathBuilder()
-				.withRoot()
-				.withPropertyName("children")
-				.withCollectionItem(b)
-				.withPropertyName("value")).hasState(Node.State.CHANGED);
+		assertThat(root).child(PropertyPath.createBuilder()
+										   .withRoot()
+										   .withPropertyName("children")
+										   .withCollectionItem(b)
+										   .withPropertyName("value")).hasState(Node.State.CHANGED);
 
-		assertThat(root).child(new PropertyPathBuilder()
-				.withRoot()
-				.withPropertyName("map")
-				.withMapKey("a")).hasState(Node.State.CHANGED);
+		assertThat(root).child(PropertyPath.createBuilder()
+										   .withRoot()
+										   .withPropertyName("map")
+										   .withMapKey("a")).hasState(Node.State.CHANGED);
 	}
 
 	@Test
@@ -241,17 +241,17 @@ public class GraphIntegrationTest
 
 		final Node root = compareAndPrint(modified, base);
 
-		NodeAssertions.assertThat(root).child(new PropertyPathBuilder()
-				.withRoot()
-				.withPropertyName("children")
-				.withCollectionItem(a))
+		NodeAssertions.assertThat(root).child(PropertyPath.createBuilder()
+														  .withRoot()
+														  .withPropertyName("children")
+														  .withCollectionItem(a))
 					  .hasState(Node.State.CHANGED)
 					  .hasChildren(1);
 
-		NodeAssertions.assertThat(root).child(new PropertyPathBuilder()
-				.withRoot()
-				.withPropertyName("children")
-				.withCollectionItem(b))
+		NodeAssertions.assertThat(root).child(PropertyPath.createBuilder()
+														  .withRoot()
+														  .withPropertyName("children")
+														  .withCollectionItem(b))
 					  .hasState(Node.State.CHANGED)
 					  .hasChildren(1);
 	}
@@ -268,11 +268,12 @@ public class GraphIntegrationTest
 
 		final Node root = compareAndPrint(modified, base);
 
-		NodeAssertions.assertThat(root).child(new PropertyPathBuilder()
-				.withRoot()
-				.withPropertyName("children")
-				.withCollectionItem(modifiedA)
-				.withPropertyName("value")).hasState(Node.State.CHANGED);
+		NodeAssertions.assertThat(root).child(PropertyPath.createBuilder()
+														  .withRoot()
+														  .withPropertyName("children")
+														  .withCollectionItem(modifiedA)
+														  .withPropertyName("value"))
+					  .hasState(Node.State.CHANGED);
 	}
 
 	@Test
@@ -287,7 +288,7 @@ public class GraphIntegrationTest
 
 		final Node root = compareAndPrint(modified, base);
 
-		NodeAssertions.assertThat(root).node().hasState(Node.State.UNTOUCHED);
+		assertThat(root).node().hasState(Node.State.UNTOUCHED);
 	}
 
 	@Test
@@ -307,11 +308,11 @@ public class GraphIntegrationTest
 
 		final Node root = compareAndPrint(modified, base);
 
-		assertThat(root).child(new PropertyPathBuilder()
-				.withRoot()
-				.withPropertyName("children")
-				.withCollectionItem(b)
-				.withPropertyName("value"))
+		assertThat(root).child(PropertyPath.createBuilder()
+										   .withRoot()
+										   .withPropertyName("children")
+										   .withCollectionItem(b)
+										   .withPropertyName("value"))
 				.hasState(CHANGED);
 	}
 
@@ -357,102 +358,102 @@ public class GraphIntegrationTest
 		final Node root = compareAndPrint(modified, base);
 
 		NodeAssertions.assertThat(root)
-					  .child(new PropertyPathBuilder()
-							  .withRoot()
-							  .withPropertyName("children")
-							  .withCollectionItem(a)
-							  .withPropertyName("children")
-							  .withCollectionItem(aa)
-							  .withPropertyName("children")
-							  .withCollectionItem(ba)
-							  .withPropertyName("children")
-							  .withCollectionItem(baa))
+					  .child(PropertyPath.createBuilder()
+										 .withRoot()
+										 .withPropertyName("children")
+										 .withCollectionItem(a)
+										 .withPropertyName("children")
+										 .withCollectionItem(aa)
+										 .withPropertyName("children")
+										 .withCollectionItem(ba)
+										 .withPropertyName("children")
+										 .withCollectionItem(baa))
 					  .hasState(Node.State.CHANGED);
 
 		NodeAssertions.assertThat(root)
-					  .child(new PropertyPathBuilder()
-							  .withRoot()
-							  .withPropertyName("children")
-							  .withCollectionItem(a)
-							  .withPropertyName("children")
-							  .withCollectionItem(aa)
-							  .withPropertyName("children")
-							  .withCollectionItem(ba)
-							  .withPropertyName("value"))
+					  .child(PropertyPath.createBuilder()
+										 .withRoot()
+										 .withPropertyName("children")
+										 .withCollectionItem(a)
+										 .withPropertyName("children")
+										 .withCollectionItem(aa)
+										 .withPropertyName("children")
+										 .withCollectionItem(ba)
+										 .withPropertyName("value"))
 					  .hasState(Node.State.CHANGED);
 
 		NodeAssertions.assertThat(root)
-					  .child(new PropertyPathBuilder()
-							  .withRoot()
-							  .withPropertyName("children")
-							  .withCollectionItem(a)
-							  .withPropertyName("directReference")
-							  .withPropertyName("children")
-							  .withCollectionItem(ba)
-							  .withPropertyName("children")
-							  .withCollectionItem(baa)
-							  .withPropertyName("value"))
+					  .child(PropertyPath.createBuilder()
+										 .withRoot()
+										 .withPropertyName("children")
+										 .withCollectionItem(a)
+										 .withPropertyName("directReference")
+										 .withPropertyName("children")
+										 .withCollectionItem(ba)
+										 .withPropertyName("children")
+										 .withCollectionItem(baa)
+										 .withPropertyName("value"))
 					  .hasState(Node.State.CHANGED);
 
 		NodeAssertions.assertThat(root)
-					  .child(new PropertyPathBuilder()
-							  .withRoot()
-							  .withPropertyName("children")
-							  .withCollectionItem(a)
-							  .withPropertyName("directReference")
-							  .withPropertyName("children")
-							  .withCollectionItem(ba)
-							  .withPropertyName("value"))
+					  .child(PropertyPath.createBuilder()
+										 .withRoot()
+										 .withPropertyName("children")
+										 .withCollectionItem(a)
+										 .withPropertyName("directReference")
+										 .withPropertyName("children")
+										 .withCollectionItem(ba)
+										 .withPropertyName("value"))
 					  .hasState(Node.State.CHANGED);
 
 		NodeAssertions.assertThat(root)
-					  .child(new PropertyPathBuilder()
-							  .withRoot()
-							  .withPropertyName("children")
-							  .withCollectionItem(b)
-							  .withPropertyName("children")
-							  .withCollectionItem(ba)
-							  .withPropertyName("children")
-							  .withCollectionItem(baa)
-							  .withPropertyName("value"))
+					  .child(PropertyPath.createBuilder()
+										 .withRoot()
+										 .withPropertyName("children")
+										 .withCollectionItem(b)
+										 .withPropertyName("children")
+										 .withCollectionItem(ba)
+										 .withPropertyName("children")
+										 .withCollectionItem(baa)
+										 .withPropertyName("value"))
 					  .hasState(Node.State.CHANGED);
 
 		NodeAssertions.assertThat(root)
-					  .child(new PropertyPathBuilder()
-							  .withRoot()
-							  .withPropertyName("children")
-							  .withCollectionItem(b)
-							  .withPropertyName("children")
-							  .withCollectionItem(ba)
-							  .withPropertyName("value"))
+					  .child(PropertyPath.createBuilder()
+										 .withRoot()
+										 .withPropertyName("children")
+										 .withCollectionItem(b)
+										 .withPropertyName("children")
+										 .withCollectionItem(ba)
+										 .withPropertyName("value"))
 					  .hasState(Node.State.CHANGED);
 
 		NodeAssertions.assertThat(root)
-					  .child(new PropertyPathBuilder()
-							  .withRoot()
-							  .withPropertyName("children")
-							  .withCollectionItem(b)
-							  .withPropertyName("directReference")
-							  .withPropertyName("children")
-							  .withCollectionItem(aa)
-							  .withPropertyName("children")
-							  .withCollectionItem(ba)
-							  .withPropertyName("children")
-							  .withCollectionItem(baa)
-							  .withPropertyName("value"))
+					  .child(PropertyPath.createBuilder()
+										 .withRoot()
+										 .withPropertyName("children")
+										 .withCollectionItem(b)
+										 .withPropertyName("directReference")
+										 .withPropertyName("children")
+										 .withCollectionItem(aa)
+										 .withPropertyName("children")
+										 .withCollectionItem(ba)
+										 .withPropertyName("children")
+										 .withCollectionItem(baa)
+										 .withPropertyName("value"))
 					  .hasState(Node.State.CHANGED);
 
 		NodeAssertions.assertThat(root)
-					  .child(new PropertyPathBuilder()
-							  .withRoot()
-							  .withPropertyName("children")
-							  .withCollectionItem(b)
-							  .withPropertyName("directReference")
-							  .withPropertyName("children")
-							  .withCollectionItem(aa)
-							  .withPropertyName("children")
-							  .withCollectionItem(ba)
-							  .withPropertyName("value"))
+					  .child(PropertyPath.createBuilder()
+										 .withRoot()
+										 .withPropertyName("children")
+										 .withCollectionItem(b)
+										 .withPropertyName("directReference")
+										 .withPropertyName("children")
+										 .withCollectionItem(aa)
+										 .withPropertyName("children")
+										 .withCollectionItem(ba)
+										 .withPropertyName("value"))
 					  .hasState(Node.State.CHANGED);
 	}
 
