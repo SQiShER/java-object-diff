@@ -23,6 +23,7 @@ import java.lang.String;
 import java.lang.StringBuilder;
 
 /** @author Daniel Bechler */
+// TODO The name of this class is confusing. Should be renamed in a future version
 public class ToStringPrintingVisitor implements Node.Visitor
 {
 	private int depth;

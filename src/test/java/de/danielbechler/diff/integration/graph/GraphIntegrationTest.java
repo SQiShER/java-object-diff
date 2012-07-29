@@ -20,7 +20,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
  */
 public class GraphIntegrationTest
 {
-	private static final boolean PRINT_ENABLED = true;
+	private static final boolean PRINT_ENABLED = false;
 
 	@Test
 	public void basicNode()

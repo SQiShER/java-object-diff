@@ -83,6 +83,10 @@ public class PrintingVisitor implements Node.Visitor
 		{
 			return "has not changed";
 		}
+		else if (state == Node.State.CIRCULAR)
+		{
+			return "has already been processed at another position. (Circular reference!)";
+		}
 		return '(' + state.name() + ')';
 	}
 }
