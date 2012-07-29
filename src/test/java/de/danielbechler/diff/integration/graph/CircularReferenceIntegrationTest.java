@@ -19,6 +19,7 @@ package de.danielbechler.diff.integration.graph;
 import de.danielbechler.diff.*;
 import de.danielbechler.diff.mock.*;
 import de.danielbechler.diff.node.*;
+import de.danielbechler.diff.visitor.*;
 import org.junit.*;
 
 import static de.danielbechler.diff.node.NodeAssertions.*;
@@ -41,5 +42,29 @@ public class CircularReferenceIntegrationTest
 
 		final Node root = ObjectDifferFactory.getInstance().compare(workingA, baseA);
 		assertThat(root).child("reference", "reference").hasState(Node.State.CIRCULAR);
+	}
+
+	@Test
+	public void testCircularReferenceShouldBeAddedWhenEnabledInConfiguration()
+	{
+		final ObjectWithCircularReference workingA = new ObjectWithCircularReference("a");
+		final ObjectWithCircularReference workingB = new ObjectWithCircularReference("b");
+		final ObjectWithCircularReference workingC = new ObjectWithCircularReference("c");
+		workingA.setReference(workingB);
+		workingB.setReference(workingC);
+		workingC.setReference(workingA);
+
+		final ObjectWithCircularReference baseA = new ObjectWithCircularReference("a");
+		final ObjectWithCircularReference baseB = new ObjectWithCircularReference("b");
+		final ObjectWithCircularReference baseC = new ObjectWithCircularReference("d");
+		baseA.setReference(baseB);
+		baseB.setReference(baseC);
+		baseC.setReference(baseA);
+
+		final ObjectDiffer objectDiffer = ObjectDifferFactory.getInstance();
+//		objectDiffer.getConfiguration().withoutCircularNodes();
+		final Node root = objectDiffer.compare(workingA, baseA);
+		root.visit(new PrintingVisitor(workingA, baseA));
+		assertThat(root).child("reference", "reference", "reference").hasState(Node.State.CIRCULAR);
 	}
 }

@@ -142,4 +142,14 @@ public class DefaultNodeTest
 		final Node node = new DefaultNode(parentNode, accessor, Object.class);
 		node.addChild(node);
 	}
+
+	@Test
+	public void testAddChild_establishes_parent_child_relationship() throws Exception
+	{
+		final Node node1 = new DefaultNode(List.class);
+		final Node node2 = new DefaultNode(new CollectionItemAccessor("foo"), String.class);
+		node1.addChild(node2);
+		assertThat(node1.getChildren()).containsOnly(node2);
+		assertThat(node2.getParentNode()).isSameAs(node1);
+	}
 }

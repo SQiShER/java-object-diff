@@ -31,7 +31,6 @@ import java.util.*;
  *
  * @author Daniel Bechler
  */
-@SuppressWarnings({"UnusedDeclaration"})
 public interface Node extends CanonicalAccessor
 {
 	public static final Node ROOT = null;
@@ -142,13 +141,13 @@ public interface Node extends CanonicalAccessor
 	Node getChild(String propertyName);
 
 	/**
-	 * Retrieve a child that matches the given absolute path.
+	 * Retrieve a child that matches the given absolute path, starting from the current node.
 	 *
-	 * @param absolutePath The path from the object root to the requested child node.
+	 * @param path The path from the object root to the requested child node.
 	 *
 	 * @return The requested child node or <code>null</code>.
 	 */
-	Node getChild(PropertyPath absolutePath);
+	Node getChild(PropertyPath path);
 
 	/**
 	 * Retrieve a child that matches the given path element relative to this node.

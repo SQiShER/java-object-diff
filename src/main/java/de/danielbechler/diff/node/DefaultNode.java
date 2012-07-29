@@ -182,24 +182,14 @@ public class DefaultNode implements Node
 		return children.values();
 	}
 
-	@SuppressWarnings({"UnusedDeclaration", "TypeMayBeWeakened"})
-	public void setChildren(final Collection<Node> children)
-	{
-		this.children.clear();
-		for (final Node child : children)
-		{
-			addChild(child);
-		}
-	}
-
 	public Node getChild(final String propertyName)
 	{
 		return children.get(new NamedPropertyElement(propertyName));
 	}
 
-	public Node getChild(final PropertyPath absolutePath)
+	public Node getChild(final PropertyPath path)
 	{
-		final PropertyVisitor visitor = new PropertyVisitor(absolutePath);
+		final PropertyVisitor visitor = new PropertyVisitor(path);
 		visitChildren(visitor);
 		return visitor.getNode();
 	}
