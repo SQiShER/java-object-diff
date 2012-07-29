@@ -19,7 +19,7 @@ package de.danielbechler.diff;
 import de.danielbechler.diff.node.*;
 
 /** @author Daniel Bechler */
-public interface Differ
+interface Differ<T extends Node>
 {
-	Node compare(Node parentNode, Instances instances);
+	T compare(Node parentNode, Instances instances);
 }

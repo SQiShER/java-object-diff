@@ -21,6 +21,13 @@ import de.danielbechler.diff.path.*;
 /** @author Daniel Bechler */
 public final class RootAccessor extends AbstractAccessor
 {
+	private static final RootAccessor instance = new RootAccessor();
+
+	public static RootAccessor getInstance()
+	{
+		return instance;
+	}
+
 	public RootAccessor()
 	{
 	}

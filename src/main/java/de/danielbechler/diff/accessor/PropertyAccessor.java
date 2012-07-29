@@ -19,6 +19,7 @@ package de.danielbechler.diff.accessor;
 import de.danielbechler.diff.accessor.exception.*;
 import de.danielbechler.diff.path.*;
 import de.danielbechler.util.*;
+
 import org.slf4j.*;
 
 import java.lang.reflect.*;
@@ -189,4 +190,5 @@ public final class PropertyAccessor extends AbstractAccessor implements TypeAwar
 	{
 		return new NamedPropertyElement(this.propertyName);
 	}
+
 }

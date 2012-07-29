@@ -74,7 +74,7 @@ public class ConfigurationTest
 	@Test
 	public void testIsIgnoredWithConfiguredPropertyPath() throws Exception
 	{
-		final PropertyPath propertyPath = PropertyPath.with("value");
+		final PropertyPath propertyPath = PropertyPath.buildWith("value");
 		when(node.getPropertyPath()).thenReturn(propertyPath);
 		configuration.withoutProperty(propertyPath);
 		assertThat(configuration.isIgnored(node), is(true));
@@ -98,7 +98,7 @@ public class ConfigurationTest
 	@Test
 	public void testIsEqualsOnlyWithConfiguredPropertyPath() throws Exception
 	{
-		final PropertyPath propertyPath = PropertyPath.with("value");
+		final PropertyPath propertyPath = PropertyPath.buildWith("value");
 		when(node.getPropertyPath()).thenReturn(propertyPath);
 		configuration.withEqualsOnlyProperty(propertyPath);
 		assertThat(configuration.isEqualsOnly(node), is(true));

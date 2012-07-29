@@ -27,7 +27,7 @@ import java.util.*;
  *
  * @author Daniel Bechler
  */
-final class MapDiffer extends AbstractDiffer
+final class MapDiffer extends AbstractDiffer<MapNode>
 {
 	public MapDiffer()
 	{
@@ -44,7 +44,8 @@ final class MapDiffer extends AbstractDiffer
 		return compare(Node.ROOT, Instances.of(new RootAccessor(), modified, base));
 	}
 
-	public MapNode compare(final Node parentNode, final Instances instances)
+	@Override
+	protected MapNode internalCompare(final Node parentNode, final Instances instances)
 	{
 		final MapNode node = new MapNode(parentNode, instances.getSourceAccessor(), instances.getType());
 
@@ -77,6 +78,12 @@ final class MapDiffer extends AbstractDiffer
 			handleEntries(instances, node, findKnownKeys(instances));
 		}
 		return node;
+	}
+
+	@Override
+	protected MapNode newNode(final Node parentNode, final Instances instances)
+	{
+		return new MapNode(parentNode, instances.getSourceAccessor(), instances.getType());
 	}
 
 	private static void indexAll(final Instances instances, final MapNode node)

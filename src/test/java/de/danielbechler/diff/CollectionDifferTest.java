@@ -86,7 +86,10 @@ public class CollectionDifferTest
 
 		assertThat(node.hasChanges(), is(true));
 
-		final Node child = node.getChild(new PropertyPathBuilder().withRoot().withCollectionItem("foo").build());
+		final Node child = node.getChild(PropertyPath.createBuilder()
+													 .withRoot()
+													 .withCollectionItem("foo")
+													 .build());
 		assertThat(child.getState(), is(Node.State.ADDED));
 	}
 
@@ -100,7 +103,10 @@ public class CollectionDifferTest
 
 		assertThat(node.hasChanges(), is(true));
 
-		final Node child = node.getChild(new PropertyPathBuilder().withRoot().withCollectionItem("foo").build());
+		final Node child = node.getChild(PropertyPath.createBuilder()
+													 .withRoot()
+													 .withCollectionItem("foo")
+													 .build());
 		assertThat(child.getState(), is(Node.State.REMOVED));
 	}
 
@@ -114,10 +120,10 @@ public class CollectionDifferTest
 
 		assertThat(node.hasChanges(), is(true));
 
-		final PropertyPath propertyPath = new PropertyPathBuilder()
-				.withRoot()
-				.withCollectionItem(new ObjectWithHashCodeAndEquals("foo"))
-				.build();
+		final PropertyPath propertyPath = PropertyPath.createBuilder()
+													  .withRoot()
+													  .withCollectionItem(new ObjectWithHashCodeAndEquals("foo"))
+													  .build();
 		final Node child = node.getChild(propertyPath);
 		assertThat(child.getState(), is(Node.State.CHANGED));
 	}

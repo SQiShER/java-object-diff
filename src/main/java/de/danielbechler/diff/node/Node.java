@@ -31,7 +31,6 @@ import java.util.*;
  *
  * @author Daniel Bechler
  */
-@SuppressWarnings({"UnusedDeclaration"})
 public interface Node extends CanonicalAccessor
 {
 	public static final Node ROOT = null;
@@ -56,6 +55,9 @@ public interface Node extends CanonicalAccessor
 
 		/** The value is identical between working and base */
 		UNTOUCHED,
+
+		/** Special state to mark circular references */
+		CIRCULAR,
 
 		/** The value has not been looked at and has been ignored. */
 		IGNORED
@@ -98,6 +100,9 @@ public interface Node extends CanonicalAccessor
 	/** Convenience method for <code>{@link #getState()} == {@link State#IGNORED}</code> */
 	boolean isIgnored();
 
+	/** Convenience method for <code>{@link #getState()} == {@link State#CIRCULAR}</code> */
+	boolean isCircular();
+
 	boolean isCollectionDifference();
 
 	CollectionNode toCollectionDifference();
@@ -136,13 +141,13 @@ public interface Node extends CanonicalAccessor
 	Node getChild(String propertyName);
 
 	/**
-	 * Retrieve a child that matches the given absolute path.
+	 * Retrieve a child that matches the given absolute path, starting from the current node.
 	 *
-	 * @param absolutePath The path from the object root to the requested child node.
+	 * @param path The path from the object root to the requested child node.
 	 *
 	 * @return The requested child node or <code>null</code>.
 	 */
-	Node getChild(PropertyPath absolutePath);
+	Node getChild(PropertyPath path);
 
 	/**
 	 * Retrieve a child that matches the given path element relative to this node.
@@ -158,7 +163,7 @@ public interface Node extends CanonicalAccessor
 	 *
 	 * @param node The node to add.
 	 */
-	void addChild(Node node);
+	boolean addChild(Node node);
 
 	/**
 	 * Visit this and all child nodes.

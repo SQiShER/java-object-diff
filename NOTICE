@@ -17,6 +17,8 @@ under the License.
 
 This project includes:
   SLF4J - MIT License
+  Logback - EPL v1.0 / LGPL 2.1 License
   Mockito - MIT License
   JUnit - BSD License
   Hamcrest - BSD License
+  Fest Assertions = Apache 2.0 License

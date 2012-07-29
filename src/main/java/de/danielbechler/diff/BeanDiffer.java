@@ -22,11 +22,12 @@ import de.danielbechler.diff.node.*;
 import de.danielbechler.util.*;
 
 /**
- * Used to find differences between objects that were not handled by one of the other (specialized) {@link Differ Differs}.
+ * Used to find differences between objects that were not handled by one of the other (specialized) {@link
+ * Differ Differs}.
  *
  * @author Daniel Bechler
  */
-final class BeanDiffer extends AbstractDiffer
+final class BeanDiffer extends AbstractDiffer<Node>
 {
 	private Introspector introspector = new StandardIntrospector();
 
@@ -51,9 +52,10 @@ final class BeanDiffer extends AbstractDiffer
 		return compare(Node.ROOT, Instances.of(new RootAccessor(), working, base));
 	}
 
-	public Node compare(final Node parentNode, final Instances instances)
+	@Override
+	protected Node internalCompare(final Node parentNode, final Instances instances)
 	{
-		final Node node = new DefaultNode(parentNode, instances.getSourceAccessor(), instances.getType());
+		final Node node = newNode(parentNode, instances);
 		if (getDelegate().isIgnored(node))
 		{
 			node.setState(Node.State.IGNORED);
@@ -69,9 +71,15 @@ final class BeanDiffer extends AbstractDiffer
 		return node;
 	}
 
+	@Override
+	protected Node newNode(final Node parentNode, final Instances instances)
+	{
+		return new DefaultNode(parentNode, instances.getSourceAccessor(), instances.getType());
+	}
+
 	private Node compareBean(final Node parentNode, final Instances instances)
 	{
-		final Node node = new DefaultNode(parentNode, instances.getSourceAccessor(), instances.getType());
+		final Node node = newNode(parentNode, instances);
 		if (instances.hasBeenAdded())
 		{
 			node.setState(Node.State.ADDED);

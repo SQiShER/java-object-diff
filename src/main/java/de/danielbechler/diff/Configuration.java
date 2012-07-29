@@ -34,6 +34,7 @@ public class Configuration implements NodeInspector
 	private final Collection<Class<?>> equalsOnlyTypes = new LinkedHashSet<Class<?>>(10);
 	private boolean returnUnchangedNodes = false;
 	private boolean returnIgnoredNodes = false;
+	private boolean returnCircularNodes = true;
 
 	public Configuration withCategory(final String category)
 	{
@@ -92,6 +93,18 @@ public class Configuration implements NodeInspector
 	public Configuration withoutUntouchedNodes()
 	{
 		this.returnUnchangedNodes = false;
+		return this;
+	}
+
+	public Configuration withCircularNodes()
+	{
+		this.returnCircularNodes = true;
+		return this;
+	}
+
+	public Configuration withoutCircularNodes()
+	{
+		this.returnCircularNodes = false;
 		return this;
 	}
 
@@ -170,13 +183,17 @@ public class Configuration implements NodeInspector
 	@Override
 	public boolean isReturnable(final Node node)
 	{
-		if (node.getState() == Node.State.UNTOUCHED)
+		if (node.isUntouched())
 		{
 			return returnUnchangedNodes;
 		}
-		else if (node.getState() == Node.State.IGNORED)
+		else if (node.isIgnored())
 		{
 			return returnIgnoredNodes;
+		}
+		else if (node.isCircular())
+		{
+			return returnCircularNodes;
 		}
 		return true;
 	}

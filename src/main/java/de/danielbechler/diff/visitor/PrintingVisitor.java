@@ -34,11 +34,16 @@ public class PrintingVisitor implements Node.Visitor
 
 	public void accept(final Node node, final Visit visit)
 	{
-		if (node.hasChanges() && node.getChildren().isEmpty())
+		if (filter(node))
 		{
 			final String text = differenceToString(node, base, working);
 			print(text);
 		}
+	}
+
+	protected boolean filter(final Node node)
+	{
+		return node.hasChanges() && node.getChildren().isEmpty();
 	}
 
 	protected void print(final String text)

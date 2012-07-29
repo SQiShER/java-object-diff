@@ -18,15 +18,15 @@ package de.danielbechler.diff;
 
 import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.path.*;
-import org.hamcrest.core.*;
 import org.junit.*;
 
 import java.util.*;
 
+import static de.danielbechler.diff.node.NodeAssertions.assertThat;
 import static org.hamcrest.core.Is.*;
 import static org.hamcrest.core.IsEqual.*;
 import static org.hamcrest.core.IsNull.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 /** @author Daniel Bechler */
 public class MapDifferTest
@@ -153,19 +153,13 @@ public class MapDifferTest
 		final Map<String, String> base = new LinkedHashMap<String, String>(modified);
 		modified.put("ping", "pong");
 
-		final MapNode node = differ.compare(modified, base);
+		final MapNode root = differ.compare(modified, base);
 
-		final Collection<Node> children = node.getChildren();
-		assertThat("There can only be one child", children.size(), is(1));
-
-		final Node fooNode = node.getChild(new MapElement("foo"));
-		assertThat("A node for map entry 'foo' should not exist", fooNode, IsNull.nullValue());
-
-		// this part is needed to reproduce a special error case where the parent node got added as its own
-		// child and caused an infinite loop. this wouldn't happen if the parent node didn't have any changes
-		final Node pingNode = node.getChild(new MapElement("ping"));
-		assertThat(pingNode, IsNull.notNullValue());
-		assertThat(pingNode.getState(), is(Node.State.ADDED));
+		assertThat(root).node().hasChildren(1);
+		assertThat(root).child(PropertyPath.createBuilder().withRoot().withMapKey("foo")).doesNotExist();
+		assertThat(root).child(PropertyPath.createBuilder().withRoot().withMapKey("ping"))
+				.hasState(Node.State.ADDED)
+				.hasNoChildren();
 	}
 
 	@Test

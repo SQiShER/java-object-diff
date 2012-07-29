@@ -20,6 +20,7 @@ import de.danielbechler.diff.accessor.*;
 import de.danielbechler.diff.mock.*;
 import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.path.*;
+import de.danielbechler.diff.visitor.*;
 import org.hamcrest.core.*;
 import org.junit.*;
 import org.mockito.*;
@@ -130,8 +131,9 @@ public class DelegatingObjectDifferTest
 		working.getCollection().add("foo");
 		final ObjectWithCollection base = new ObjectWithCollection();
 		final ObjectDiffer objectDiffer = new DelegatingObjectDifferImpl();
-		objectDiffer.getConfiguration().withoutProperty(PropertyPath.with("collection"));
+		objectDiffer.getConfiguration().withoutProperty(PropertyPath.buildWith("collection"));
 		final Node node = objectDiffer.compare(working, base);
+		node.visit(new PrintingVisitor(working, base));
 		Assert.assertThat(node.hasChanges(), Is.is(false));
 		Assert.assertThat(node.hasChildren(), Is.is(false));
 	}

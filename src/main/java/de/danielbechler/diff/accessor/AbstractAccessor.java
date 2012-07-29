@@ -54,4 +54,5 @@ public abstract class AbstractAccessor implements Accessor
 	{
 		this.ignored = ignored;
 	}
+
 }

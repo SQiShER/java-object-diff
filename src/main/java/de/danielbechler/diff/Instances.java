@@ -25,6 +25,7 @@ import de.danielbechler.util.Collections;
 import java.util.*;
 
 /** @author Daniel Bechler */
+@SuppressWarnings({"UnusedDeclaration"})
 class Instances
 {
 	private final Accessor sourceAccessor;
@@ -164,9 +165,16 @@ class Instances
 
 	public PropertyPath getPropertyPath(final Node parentNode)
 	{
-		return new PropertyPathBuilder()
-				.withPropertyPath(parentNode != null ? parentNode.getPropertyPath() : null)
-				.withElement(sourceAccessor.getPathElement())
-				.build();
+		if (parentNode != null)
+		{
+			return PropertyPath.createBuilder()
+									  .withPropertyPath(parentNode.getPropertyPath())
+									  .withElement(sourceAccessor.getPathElement())
+									  .build();
+		}
+		else
+		{
+			return PropertyPath.createBuilder().withRoot().build();
+		}
 	}
 }
