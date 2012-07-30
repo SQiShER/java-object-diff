@@ -126,6 +126,11 @@ public final class PropertyPath
 		return createBuilder().withRoot().withPropertyName(propertyName, additionalPropertyNames).build();
 	}
 
+	public static PropertyPath buildRootPath()
+	{
+		return createBuilder().withRoot().build();
+	}
+
 	/** @author Daniel Bechler */
 	@SuppressWarnings({"UnusedDeclaration"})
 	private static final class InitialBuilderImpl implements InitialBuilder
