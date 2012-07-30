@@ -30,9 +30,9 @@ import java.util.*;
  * @author Daniel Bechler (SQiShER)
  * @author Mayank Kumar (mayankk)
  */
-public class ToMapPrintingVisitor extends PrintingVisitor implements Iterable<Map.Entry<PropertyPath, String>>
+public class ToMapPrintingVisitor extends PrintingVisitor
 {
-	private final Map<PropertyPath, String> messages = new LinkedHashMap<PropertyPath, String>(20);
+	private final Map<PropertyPath, String> messages = new LinkedHashMap<PropertyPath, String>();
 
 	public ToMapPrintingVisitor(final Object working, final Object base)
 	{
@@ -52,6 +52,11 @@ public class ToMapPrintingVisitor extends PrintingVisitor implements Iterable<Ma
 		return text;
 	}
 
+	public void clear()
+	{
+		messages.clear();
+	}
+
 	public Map<PropertyPath, String> getMessages()
 	{
 		return messages;
@@ -67,14 +72,19 @@ public class ToMapPrintingVisitor extends PrintingVisitor implements Iterable<Ma
 		return !messages.isEmpty();
 	}
 
-	public void clear()
+	public String getMessagesAsString()
 	{
-		messages.clear();
+		final StringBuilder sb = new StringBuilder();
+		for (final String message : messages.values())
+		{
+			sb.append(message).append('\n');
+		}
+		return sb.toString();
 	}
 
 	@Override
-	public Iterator<Map.Entry<PropertyPath, String>> iterator()
+	public String toString()
 	{
-		return messages.entrySet().iterator();
+		return getMessagesAsString();
 	}
 }
