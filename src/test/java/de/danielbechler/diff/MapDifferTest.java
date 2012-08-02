@@ -47,7 +47,7 @@ public class MapDifferTest
 		working.put("foo", "bar");
 
 		final MapNode node = differ.compare(working, base);
-		assertThat(node.isMapDifference(), is(true));
+		assertThat(node.isMapNode(), is(true));
 		assertThat(node.hasChildren(), is(true));
 		assertThat(node.getState(), is(Node.State.CHANGED));
 

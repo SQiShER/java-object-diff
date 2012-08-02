@@ -56,13 +56,13 @@ public final class CollectionNode extends DefaultNode
 	}
 
 	@Override
-	public boolean isCollectionDifference()
+	public boolean isCollectionNode()
 	{
 		return true;
 	}
 
 	@Override
-	public CollectionNode toCollectionDifference()
+	public CollectionNode toCollectionNode()
 	{
 		return this;
 	}

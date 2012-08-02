@@ -81,13 +81,13 @@ public class MapNode extends DefaultNode
 	}
 
 	@Override
-	public final boolean isMapDifference()
+	public final boolean isMapNode()
 	{
 		return true;
 	}
 
 	@Override
-	public final MapNode toMapDifference()
+	public final MapNode toMapNode()
 	{
 		return this;
 	}

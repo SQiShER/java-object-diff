@@ -137,22 +137,22 @@ public class DefaultNode implements Node
 		return accessor.getPathElement();
 	}
 
-	public boolean isCollectionDifference()
+	public boolean isCollectionNode()
 	{
 		return false;
 	}
 
-	public CollectionNode toCollectionDifference()
+	public CollectionNode toCollectionNode()
 	{
 		throw new UnsupportedOperationException();
 	}
 
-	public boolean isMapDifference()
+	public boolean isMapNode()
 	{
 		return false;
 	}
 
-	public MapNode toMapDifference()
+	public MapNode toMapNode()
 	{
 		throw new UnsupportedOperationException();
 	}

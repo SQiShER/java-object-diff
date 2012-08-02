@@ -103,13 +103,13 @@ public interface Node extends CanonicalAccessor
 	/** Convenience method for <code>{@link #getState()} == {@link State#CIRCULAR}</code> */
 	boolean isCircular();
 
-	boolean isCollectionDifference();
+	boolean isCollectionNode();
 
-	CollectionNode toCollectionDifference();
+	CollectionNode toCollectionNode();
 
-	boolean isMapDifference();
+	boolean isMapNode();
 
-	MapNode toMapDifference();
+	MapNode toMapNode();
 
 	/** @return Returns the type of the property represented by this node, or null if unavailable. */
 	Class<?> getType();
