@@ -130,7 +130,8 @@ public class Strings
 	}
 
 	/**
-	 * Same as {@link #join(String, Object...)} but with a {@link Collection} instead of an Array for the elements.
+	 * Same as {@link #join(String, Object...)} but with a {@link Collection} instead of an Array for the
+	 * elements.
 	 *
 	 * @see #join(String, java.util.Collection)
 	 */
@@ -152,5 +153,16 @@ public class Strings
 			return matcher.replaceAll(" \\\\ ");
 		}
 		return null;
+	}
+
+	public static String indent(final int times, final String text)
+	{
+		final StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < times; i++)
+		{
+			sb.append("  ");
+		}
+		sb.append(text);
+		return sb.toString();
 	}
 }

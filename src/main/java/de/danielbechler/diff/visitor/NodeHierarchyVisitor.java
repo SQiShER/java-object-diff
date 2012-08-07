@@ -17,62 +17,70 @@
 package de.danielbechler.diff.visitor;
 
 import de.danielbechler.diff.node.*;
+import de.danielbechler.util.*;
 
 import java.lang.Override;
 import java.lang.String;
-import java.lang.StringBuilder;
+import java.lang.SuppressWarnings;
 
-/** @author Daniel Bechler */
-// TODO The name of this class is confusing. Should be renamed in a future version
-public class ToStringPrintingVisitor implements Node.Visitor
+/**
+ * Prints the hierarchy of the object graph in a human-readable form.
+ *
+ * @author Daniel Bechler
+ */
+public class NodeHierarchyVisitor implements Node.Visitor
 {
-	private int depth;
+	public static final int UNLIMITED = -1;
 
-	public ToStringPrintingVisitor()
+	private final int maxDepth;
+
+	@SuppressWarnings({"UnusedDeclaration"})
+	public NodeHierarchyVisitor()
 	{
+		this(UNLIMITED);
 	}
 
-	public ToStringPrintingVisitor(final int depth)
+	public NodeHierarchyVisitor(final int maxDepth)
 	{
-		this.depth = depth;
-	}
-
-	public int getDepth()
-	{
-		return depth;
-	}
-
-	public void setDepth(final int depth)
-	{
-		this.depth = depth;
+		this.maxDepth = maxDepth;
 	}
 
 	@Override
 	public void accept(final Node node, final Visit visit)
 	{
-		if (depth > 0)
+		if (maxDepth == 0)
 		{
-			if (calculateDepth(node) <= depth)
+			visit.stop();
+		}
+		final int currentLevel = calculateDepth(node);
+		if (maxDepth > 0)
+		{
+			if (currentLevel <= maxDepth)
 			{
-				System.out.println(toIndentedString(node));
+				print(node, currentLevel);
 			}
 			else
 			{
 				visit.dontGoDeeper();
 			}
 		}
+		else if (maxDepth < 0)
+		{
+			print(node, currentLevel);
+		}
 	}
 
-	private static String toIndentedString(final Node node)
+	protected void print(final Node node, final int level)
 	{
-		final int level = calculateDepth(node);
-		final StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < level; i++)
-		{
-			sb.append("    ");
-		}
-		sb.append(node.toString());
-		return sb.toString();
+		final String nodeAsString = node.toString();
+		final String indentedNodeString = Strings.indent(level, nodeAsString);
+		print(indentedNodeString);
+	}
+
+	@SuppressWarnings({"MethodMayBeStatic"})
+	protected void print(final String text)
+	{
+		System.out.println(text);
 	}
 
 	private static int calculateDepth(final Node node)
