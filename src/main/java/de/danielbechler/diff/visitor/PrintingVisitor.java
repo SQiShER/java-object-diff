@@ -43,7 +43,8 @@ public class PrintingVisitor implements Node.Visitor
 
 	protected boolean filter(final Node node)
 	{
-		return node.hasChanges() && node.getChildren().isEmpty();
+		return (node.isRootNode() && !node.hasChanges())
+				|| (node.hasChanges() && node.getChildren().isEmpty());
 	}
 
 	protected void print(final String text)
