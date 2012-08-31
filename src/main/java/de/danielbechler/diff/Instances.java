@@ -157,7 +157,20 @@ class Instances
 		if (types.size() == 1)
 		{
 			return Collections.firstElementOf(types);
-		}
+		} 
+        if (types.size() > 1)
+        {
+            // check for common Collection base type
+            boolean areAllCollectionTypes = true;
+            for (Class<?> type : types) {
+                areAllCollectionTypes = Collection.class.isAssignableFrom(type);
+            }
+            if (areAllCollectionTypes)
+            {
+                return Collection.class;
+            }
+        }
+
 		throw new IllegalStateException("Detected instances of different types " + types + ". " +
 				"Instances must either be null or have the exact same type.");
 		// NOTE It would be nice to be able to define a least common denominator like Map or Collection to allow mixed types
