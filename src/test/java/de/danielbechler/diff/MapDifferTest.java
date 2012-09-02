@@ -178,4 +178,13 @@ public class MapDifferTest
 														 .next()
 														 .getState(), is(Node.State.CHANGED));
 	}
+
+	@Test
+	public void testCompareWithDifferentMapImplementationsSucceeds() throws Exception
+	{
+		final Map<String, String> base = new LinkedHashMap<String, String>(Collections.singletonMap("test", "foo"));
+		final Map<String, String> working = new TreeMap<String, String>(Collections.singletonMap("test", "bar"));
+		final MapNode node = differ.compare(base, working);
+		assertThat(node.hasChanges(), is(true));
+	}
 }

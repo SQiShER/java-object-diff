@@ -16,8 +16,6 @@
 
 package de.danielbechler.diff;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 import de.danielbechler.diff.mock.*;
 import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.path.*;
@@ -129,12 +127,13 @@ public class CollectionDifferTest
 		final Node child = node.getChild(propertyPath);
 		assertThat(child.getState(), is(Node.State.CHANGED));
 	}
-    
-    @Test
-    public void testCollectionBaseType() throws Exception {
-        Set base = Sets.newHashSet("one", "two");
-        Set working = ImmutableSet.copyOf(Sets.newHashSet("one", "three"));
-        final CollectionNode node = differ.compare(base, working);
-        assertThat(node.hasChanges(), is(true));
-    }
+
+	@Test
+	public void testCompareWithDifferentCollectionImplementationsSucceeds() throws Exception
+	{
+		final Collection<String> base = new LinkedHashSet<String>(Arrays.asList("one", "two"));
+		final Collection<String> working = new TreeSet<String>(Arrays.asList("one", "three"));
+		final CollectionNode node = differ.compare(base, working);
+		assertThat(node.hasChanges(), is(true));
+	}
 }

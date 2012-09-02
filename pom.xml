@@ -156,12 +156,6 @@
 			<version>2.0M6</version>
 			<scope>test</scope>
 		</dependency>
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <version>13.0.1</version>
-      <scope>test</scope>
-    </dependency>
 	</dependencies>
 
 	<distributionManagement>

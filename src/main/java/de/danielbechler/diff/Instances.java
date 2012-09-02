@@ -53,10 +53,10 @@ class Instances
 		return new Instances(new RootAccessor(), working, base, fresh);
 	}
 
-	private Instances(final Accessor sourceAccessor,
-					  final Object working,
-					  final Object base,
-					  final Object fresh)
+	Instances(final Accessor sourceAccessor,
+			  final Object working,
+			  final Object base,
+			  final Object fresh)
 	{
 		Assert.notNull(sourceAccessor, "sourceAccessor");
 		this.sourceAccessor = sourceAccessor;
@@ -157,23 +157,51 @@ class Instances
 		if (types.size() == 1)
 		{
 			return Collections.firstElementOf(types);
-		} 
-        if (types.size() > 1)
-        {
-            // check for common Collection base type
-            boolean areAllCollectionTypes = true;
-            for (Class<?> type : types) {
-                areAllCollectionTypes = Collection.class.isAssignableFrom(type);
-            }
-            if (areAllCollectionTypes)
-            {
-                return Collection.class;
-            }
-        }
-
+		}
+		if (types.size() > 1)
+		{
+//
+// 			The following lines could be added if more precise type resolution is required:
+//
+//			if (Classes.allAssignableFrom(SortedSet.class, types))
+//			{
+//				return SortedSet.class;
+//			}
+//			if (Classes.allAssignableFrom(Set.class, types))
+//			{
+//				return Set.class;
+//			}
+//			if (Classes.allAssignableFrom(Queue.class, types))
+//			{
+//				return Queue.class;
+//			}
+//			if (Classes.allAssignableFrom(Deque.class, types))
+//			{
+//				return Deque.class;
+//			}
+//			if (Classes.allAssignableFrom(List.class, types))
+//			{
+//				return List.class;
+//			}
+//			else if (Classes.allAssignableFrom(SortedMap.class, types))
+//			{
+//				return SortedMap.class;
+//			}
+			if (Classes.allAssignableFrom(Collection.class, types))
+			{
+				return Collection.class;
+			}
+			else if (Classes.allAssignableFrom(Map.class, types))
+			{
+				return Map.class;
+			}
+			else
+			{
+				// special handling for beans and arrays should go here
+			}
+		}
 		throw new IllegalStateException("Detected instances of different types " + types + ". " +
 				"Instances must either be null or have the exact same type.");
-		// NOTE It would be nice to be able to define a least common denominator like Map or Collection to allow mixed types
 	}
 
 	public PropertyPath getPropertyPath(final Node parentNode)
@@ -181,9 +209,9 @@ class Instances
 		if (parentNode != null)
 		{
 			return PropertyPath.createBuilder()
-									  .withPropertyPath(parentNode.getPropertyPath())
-									  .withElement(sourceAccessor.getPathElement())
-									  .build();
+							   .withPropertyPath(parentNode.getPropertyPath())
+							   .withElement(sourceAccessor.getPathElement())
+							   .build();
 		}
 		else
 		{

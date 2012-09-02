@@ -80,4 +80,18 @@ public final class Classes
 		}
 		return types;
 	}
+
+	public static boolean allAssignableFrom(final Class<?> sharedType,
+											final Iterable<? extends Class<?>> types)
+	{
+		boolean matching = true;
+		for (final Class<?> type : types)
+		{
+			if (!sharedType.isAssignableFrom(type))
+			{
+				matching = false;
+			}
+		}
+		return matching;
+	}
 }
