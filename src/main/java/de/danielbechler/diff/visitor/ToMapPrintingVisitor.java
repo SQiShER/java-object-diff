@@ -45,10 +45,10 @@ public class ToMapPrintingVisitor extends PrintingVisitor
 	}
 
 	@Override
-	protected String differenceToString(final Node difference, final Object base, final Object modified)
+	protected String differenceToString(final Node node, final Object base, final Object modified)
 	{
-		final String text = super.differenceToString(difference, base, modified);
-		messages.put(difference.getPropertyPath(), text);
+		final String text = super.differenceToString(node, base, modified);
+		messages.put(node.getPropertyPath(), text);
 		return text;
 	}
 

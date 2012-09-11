@@ -72,7 +72,7 @@ public class NodeHierarchyVisitor implements Node.Visitor
 
 	protected void print(final Node node, final int level)
 	{
-		final String nodeAsString = node.toString();
+		final String nodeAsString = node.getPropertyPath() + " ===> " + node.toString();
 		final String indentedNodeString = Strings.indent(level, nodeAsString);
 		print(indentedNodeString);
 	}

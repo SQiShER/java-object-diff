@@ -39,4 +39,10 @@ public class ObjectWithString
 	{
 		this.value = value;
 	}
+
+	@Override
+	public String toString()
+	{
+		return getClass().getSimpleName() + "[" + value + "]";
+	}
 }

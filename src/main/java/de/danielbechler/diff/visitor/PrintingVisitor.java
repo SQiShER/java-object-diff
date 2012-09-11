@@ -17,6 +17,7 @@
 package de.danielbechler.diff.visitor;
 
 import de.danielbechler.diff.node.*;
+import de.danielbechler.diff.path.*;
 import de.danielbechler.util.*;
 
 /** @author Daniel Bechler */
@@ -52,13 +53,18 @@ public class PrintingVisitor implements Node.Visitor
 		System.out.println(text);
 	}
 
-	protected String differenceToString(final Node difference, final Object base, final Object modified)
+	protected String differenceToString(final Node node, final Object base, final Object modified)
 	{
-		return String.format("Property at path '%s' %s",
-				difference.getPropertyPath(),
-				translateState(difference.getState(),
-						difference.canonicalGet(base),
-						difference.canonicalGet(modified)));
+		final PropertyPath propertyPath = node.getPropertyPath();
+		final String stateMessage = translateState(node.getState(), node.canonicalGet(base), node.canonicalGet(modified));
+		final String propertyMessage = String.format("Property at path '%s' %s", propertyPath, stateMessage);
+		final StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append(propertyMessage);
+		if (node.isCircular())
+		{
+			stringBuilder.append(" (Circular reference detected: The property has already been processed at another position.)");
+		}
+		return stringBuilder.toString();
 	}
 
 	private String translateState(final Node.State state, final Object base, final Object modified)
@@ -69,8 +75,9 @@ public class PrintingVisitor implements Node.Visitor
 		}
 		else if (state == Node.State.CHANGED)
 		{
-			return String.format("has changed from [ %s ] to [ %s ]", Strings.toSingleLineString(base), Strings
-					.toSingleLineString(modified));
+			return String.format("has changed from [ %s ] to [ %s ]",
+					Strings.toSingleLineString(base),
+					Strings.toSingleLineString(modified));
 		}
 		else if (state == Node.State.ADDED)
 		{
