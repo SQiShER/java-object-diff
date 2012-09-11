@@ -19,7 +19,6 @@ package de.danielbechler.diff.accessor;
 import de.danielbechler.diff.accessor.exception.*;
 import de.danielbechler.diff.path.*;
 import de.danielbechler.util.*;
-
 import org.slf4j.*;
 
 import java.lang.reflect.*;
@@ -114,7 +113,8 @@ public final class PropertyAccessor extends AbstractAccessor implements TypeAwar
 		logFailedSet(value);
 	}
 
-	private static boolean tryToReplaceCollectionContent(final Collection<Object> target, final Collection<Object> value)
+	private static boolean tryToReplaceCollectionContent(final Collection<Object> target,
+														 final Collection<Object> value)
 	{
 		if (target == null)
 		{
@@ -133,7 +133,8 @@ public final class PropertyAccessor extends AbstractAccessor implements TypeAwar
 		}
 	}
 
-	private static boolean tryToReplaceMapContent(final Map<Object, Object> target, final Map<Object, Object> value)
+	private static boolean tryToReplaceMapContent(final Map<Object, Object> target,
+												  final Map<Object, Object> value)
 	{
 		if (target == null)
 		{
@@ -191,4 +192,9 @@ public final class PropertyAccessor extends AbstractAccessor implements TypeAwar
 		return new NamedPropertyElement(this.propertyName);
 	}
 
+	@Override
+	public String toString()
+	{
+		return "property '" + propertyName + "'";
+	}
 }

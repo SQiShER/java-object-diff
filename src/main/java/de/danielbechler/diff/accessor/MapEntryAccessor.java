@@ -90,4 +90,9 @@ public final class MapEntryAccessor extends AbstractAccessor
 		}
 	}
 
+	@Override
+	public String toString()
+	{
+		return "map key " + getPathElement();
+	}
 }

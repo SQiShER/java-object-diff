@@ -96,4 +96,9 @@ public final class CollectionItemAccessor extends AbstractAccessor implements Ty
 		}
 	}
 
+	@Override
+	public String toString()
+	{
+		return "collection item " + getPathElement();
+	}
 }

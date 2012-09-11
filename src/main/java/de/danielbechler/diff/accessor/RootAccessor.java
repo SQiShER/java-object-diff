@@ -51,4 +51,10 @@ public final class RootAccessor extends AbstractAccessor
 	{
 		return RootElement.getInstance();
 	}
+
+	@Override
+	public String toString()
+	{
+		return "root element";
+	}
 }
