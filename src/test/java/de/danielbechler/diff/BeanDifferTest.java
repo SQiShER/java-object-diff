@@ -21,15 +21,17 @@ import de.danielbechler.diff.annotation.*;
 import de.danielbechler.diff.introspect.*;
 import de.danielbechler.diff.mock.*;
 import de.danielbechler.diff.node.*;
+import de.danielbechler.diff.visitor.*;
 import org.hamcrest.core.*;
 import org.junit.*;
 import org.mockito.*;
 
 import java.util.*;
 
+import static de.danielbechler.diff.node.NodeAssertions.assertThat;
 import static org.hamcrest.core.Is.*;
 import static org.hamcrest.core.IsSame.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
 /** @author Daniel Bechler */
@@ -154,6 +156,7 @@ public class BeanDifferTest
 	{
 		when(introspector.introspect(any(Class.class))).thenReturn(Arrays.<Accessor>asList(accessor));
 		when(delegate.delegate(any(Node.class), any(Instances.class))).thenReturn(node);
+		when(delegate.isReturnable(any(Node.class))).thenReturn(true);
 		when(node.hasChanges()).thenReturn(true);
 
 		final Node node = differ.compare(new Object(), new Object());
@@ -189,6 +192,19 @@ public class BeanDifferTest
 		new BeanDiffer().compare(working, base);
 		Assert.assertThat(working.accessed, Is.is(false));
 		Assert.assertThat(base.accessed, Is.is(false));
+	}
+
+	@Test
+	public void testThatObjectGraphForAddedObjectsGetsReturned()
+	{
+		final ObjectWithNestedObject base = new ObjectWithNestedObject("1");
+		final ObjectWithNestedObject working = new ObjectWithNestedObject("1", new ObjectWithNestedObject("2", new ObjectWithNestedObject("foo")));
+		differ = new BeanDiffer();
+		node = differ.compare(working, base);
+		node.visit(new NodeHierarchyVisitor());
+		assertThat(node).node().hasState(Node.State.CHANGED);
+		assertThat(node).child("object").hasState(Node.State.ADDED);
+		assertThat(node).child("object", "object").hasState(Node.State.ADDED);
 	}
 
 	@SuppressWarnings({"MethodMayBeStatic", "UnusedDeclaration"})

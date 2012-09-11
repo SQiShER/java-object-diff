@@ -143,6 +143,11 @@ class Instances
 		return working == base;
 	}
 
+	public boolean areNull()
+	{
+		return working == null && base == null;
+	}
+
 	public Class<?> getType()
 	{
 		if (sourceAccessor instanceof TypeAwareAccessor)

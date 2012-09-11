@@ -41,7 +41,7 @@ public class CircularReferenceIntegrationTest
 		baseB.setReference(baseA);
 
 		final Node root = ObjectDifferFactory.getInstance().compare(workingA, baseA);
-		assertThat(root).child("reference", "reference").hasState(Node.State.CIRCULAR);
+		assertThat(root).child("reference", "reference").isCircular();
 	}
 
 	@Test
@@ -65,6 +65,6 @@ public class CircularReferenceIntegrationTest
 //		objectDiffer.getConfiguration().withoutCircularNodes();
 		final Node root = objectDiffer.compare(workingA, baseA);
 		root.visit(new PrintingVisitor(workingA, baseA));
-		assertThat(root).child("reference", "reference", "reference").hasState(Node.State.CIRCULAR);
+		assertThat(root).child("reference", "reference", "reference").isCircular();
 	}
 }

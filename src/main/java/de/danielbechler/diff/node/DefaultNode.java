@@ -222,14 +222,20 @@ public class DefaultNode implements Node
 		{
 			node.setParentNode(this);
 			children.put(pathElement, node);
-			return true;
 		}
 		else if (node.getParentNode() == this)
 		{
 			children.put(pathElement, node);
-			return true;
 		}
-		throw new IllegalStateException("Detected attempt to replace the parent node of node at path '" + getPropertyPath() + "'");
+		else
+		{
+			throw new IllegalStateException("Detected attempt to replace the parent node of node at path '" + getPropertyPath() + "'");
+		}
+		if (state == State.UNTOUCHED && node.hasChanges())
+		{
+			state = State.CHANGED;
+		}
+		return true;
 	}
 
 	public final void visit(final Visitor visitor)
@@ -374,11 +380,13 @@ public class DefaultNode implements Node
 	public String toString()
 	{
 		final StringBuilder sb = new StringBuilder();
-		sb.append(getPropertyPath());
-		sb.append(" = { ").append(getState().toString().toLowerCase());
+		sb.append(getClass().getSimpleName());
+		sb.append("(");
+		sb.append("state=");
+		sb.append(getState().toString());
 		if (getType() != null)
 		{
-			sb.append(", type is ").append(getType().getCanonicalName());
+			sb.append(", type=").append(getType().getCanonicalName());
 		}
 		if (getChildren().size() == 1)
 		{
@@ -396,7 +404,8 @@ public class DefaultNode implements Node
 		{
 			sb.append(", categorized as ").append(getCategories());
 		}
-		sb.append(" }");
+		sb.append(", accessed via ").append(accessor);
+		sb.append(')');
 		return sb.toString();
 	}
 

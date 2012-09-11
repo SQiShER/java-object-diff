@@ -47,7 +47,7 @@ final class CollectionDiffer extends AbstractDiffer<CollectionNode>
 	@Override
 	protected CollectionNode internalCompare(final Node parentNode, final Instances instances)
 	{
-		final CollectionNode node = new CollectionNode(parentNode, instances.getSourceAccessor(), instances.getType());
+		final CollectionNode node = newNode(parentNode, instances);
 		if (getDelegate().isIgnored(node))
 		{
 			node.setState(Node.State.IGNORED);
@@ -88,12 +88,7 @@ final class CollectionDiffer extends AbstractDiffer<CollectionNode>
 		for (final Object item : items)
 		{
 			final Node child = compareItem(collectionNode, instances, item);
-			if (child.hasChanges())
-			{
-				collectionNode.addChild(child);
-				collectionNode.setState(Node.State.CHANGED);
-			}
-			else if (getConfiguration().isReturnable(child))
+			if (getDelegate().isReturnable(child))
 			{
 				collectionNode.addChild(child);
 			}
@@ -104,8 +99,7 @@ final class CollectionDiffer extends AbstractDiffer<CollectionNode>
 							 final Instances instances,
 							 final Object item)
 	{
-		final Accessor accessor = collectionNode.accessorForItem(item);
-		return getDelegate().delegate(collectionNode, instances.access(accessor));
+		return getDelegate().delegate(collectionNode, instances.access(collectionNode.accessorForItem(item)));
 	}
 
 	private static Collection<?> findAddedItems(final Instances instances)

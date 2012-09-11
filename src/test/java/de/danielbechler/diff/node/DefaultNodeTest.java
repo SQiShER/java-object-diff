@@ -152,4 +152,14 @@ public class DefaultNodeTest
 		assertThat(node1.getChildren()).containsOnly(node2);
 		assertThat(node2.getParentNode()).isSameAs(node1);
 	}
+
+	@Test
+	public void testAddChild_changes_node_state_to_changed_if_changed_child_node_gets_added()
+	{
+		final Node node = new DefaultNode(Object.class);
+		final Node nodeMock = mock(Node.class);
+		when(nodeMock.hasChanges()).thenReturn(true);
+		node.addChild(nodeMock);
+		NodeAssertions.assertThat(node).node().hasState(Node.State.CHANGED);
+	}
 }

@@ -64,7 +64,11 @@ final class DelegatingObjectDifferImpl implements DelegatingObjectDiffer
 	 */
 	public Node delegate(final Node parentNode, final Instances instances)
 	{
-		if (Collection.class.isAssignableFrom(instances.getType()))
+		if (instances.areNull())
+		{
+			return newNode(parentNode, instances);
+		}
+		else if (Collection.class.isAssignableFrom(instances.getType()))
 		{
 			return collectionDiffer.compare(parentNode, instances);
 		}
@@ -76,6 +80,11 @@ final class DelegatingObjectDifferImpl implements DelegatingObjectDiffer
 		{
 			return beanDiffer.compare(parentNode, instances);
 		}
+	}
+
+	private static Node newNode(final Node parentNode, final Instances instances)
+	{
+		return new DefaultNode(parentNode, instances.getSourceAccessor(), instances.getType());
 	}
 
 	public boolean isIgnored(final Node node)

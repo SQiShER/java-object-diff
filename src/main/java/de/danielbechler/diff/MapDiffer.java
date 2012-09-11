@@ -47,7 +47,7 @@ final class MapDiffer extends AbstractDiffer<MapNode>
 	@Override
 	protected MapNode internalCompare(final Node parentNode, final Instances instances)
 	{
-		final MapNode node = new MapNode(parentNode, instances.getSourceAccessor(), instances.getType());
+		final MapNode node = newNode(parentNode, instances);
 
 		if (getConfiguration().isIgnored(node))
 		{
@@ -104,27 +104,20 @@ final class MapDiffer extends AbstractDiffer<MapNode>
 	private void handleEntries(final Object key, final Instances instances, final MapNode parent)
 	{
 		final Node node = compareEntry(key, instances, parent);
-		if (node.hasChanges())
-		{
-			parent.setState(Node.State.CHANGED);
-			parent.addChild(node);
-		}
-		else if (getConfiguration().isReturnable(node))
+		if (getDelegate().isReturnable(node))
 		{
 			parent.addChild(node);
 		}
 	}
 
-	private Node compareEntry(final Object key, Instances instances, final MapNode parent)
+	private Node compareEntry(final Object key, final Instances instances, final MapNode parent)
 	{
-		final Accessor accessor = parent.accessorForKey(key);
-		instances = instances.access(accessor);
-		if (instances.areSame())
-		{
-			// if the instances are the same, there is no need to delegate
-			return new DefaultNode(parent, accessor, instances.getType());
-		}
-		return getDelegate().delegate(parent, instances);
+//		if (instances.areSame())
+//		{
+//			// if the instances are the same, there is no need to delegate
+//			return new DefaultNode(parent, accessor, instances.getType());
+//		}
+		return getDelegate().delegate(parent, instances.access(parent.accessorForKey(key)));
 	}
 
 	private static Collection<?> findAddedKeys(final Instances instances)

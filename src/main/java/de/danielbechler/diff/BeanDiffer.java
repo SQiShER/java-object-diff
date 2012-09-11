@@ -82,10 +82,12 @@ final class BeanDiffer extends AbstractDiffer<Node>
 		final Node node = newNode(parentNode, instances);
 		if (instances.hasBeenAdded())
 		{
+			compareNodeWithAppropriateMethod(node, instances);
 			node.setState(Node.State.ADDED);
 		}
 		else if (instances.hasBeenRemoved())
 		{
+			compareNodeWithAppropriateMethod(node, instances);
 			node.setState(Node.State.REMOVED);
 		}
 		else if (instances.areSame())
@@ -94,16 +96,21 @@ final class BeanDiffer extends AbstractDiffer<Node>
 		}
 		else
 		{
-			if (getDelegate().isEqualsOnly(node))
-			{
-				compareWithEquals(node, instances);
-			}
-			else
-			{
-				compareProperties(node, instances);
-			}
+			compareNodeWithAppropriateMethod(node, instances);
 		}
 		return node;
+	}
+
+	private void compareNodeWithAppropriateMethod(final Node node, final Instances instances)
+	{
+		if (getDelegate().isEqualsOnly(node))
+		{
+			compareWithEquals(node, instances);
+		}
+		else
+		{
+			compareProperties(node, instances);
+		}
 	}
 
 	private static void compareWithEquals(final Node node, final Instances instances)
@@ -116,34 +123,25 @@ final class BeanDiffer extends AbstractDiffer<Node>
 
 	private void compareProperties(final Node parentNode, final Instances instances)
 	{
+		final DelegatingObjectDiffer delegate = getDelegate();
 		for (final Accessor accessor : introspect(instances.getType()))
 		{
-			final Node node = new DefaultNode(parentNode, accessor, instances.getType());
-			if (getDelegate().isIgnored(node))
+			final Node propertyNode = delegate.delegate(parentNode, instances.access(accessor));
+			if (delegate.isReturnable(propertyNode))
 			{
-				if (getDelegate().isReturnable(node))
-				{
-					node.setState(Node.State.IGNORED);
-					parentNode.addChild(node);
-				}
-				continue;
-			}
-			final Node child = getDelegate().delegate(parentNode, instances.access(accessor));
-			if (child.hasChanges())
-			{
-				parentNode.setState(Node.State.CHANGED);
-				parentNode.addChild(child);
-			}
-			else if (getConfiguration().isReturnable(child))
-			{
-				parentNode.addChild(child);
+				parentNode.addChild(propertyNode);
 			}
 		}
 	}
 
 	private Iterable<Accessor> introspect(final Class<?> type)
 	{
-		return introspector.introspect(type);
+		final Iterable<Accessor> accessorIterable = introspector.introspect(type);
+		if (accessorIterable != null)
+		{
+			return accessorIterable;
+		}
+		return java.util.Collections.emptyList();
 	}
 
 	void setIntrospector(final Introspector introspector)

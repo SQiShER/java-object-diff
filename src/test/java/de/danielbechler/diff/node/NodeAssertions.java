@@ -133,12 +133,19 @@ public final class NodeAssertions
 
 		private static Condition<Node> state(final Node.State state)
 		{
-			return new Condition<Node>()
+			return new Condition<Node>("state " + state)
 			{
 				@Override
 				public boolean matches(final Node value)
 				{
-					return value != null && value.getState() == state;
+					if (value == null)
+					{
+						return false;
+					}
+					else
+					{
+						return value.getState() == state;
+					}
 				}
 			};
 		}
@@ -204,6 +211,14 @@ public final class NodeAssertions
 		{
 			return hasChildren(0);
 		}
+
+		@Override
+		public Syntax.AssertNode isCircular()
+		{
+			doesExist();
+			Assertions.assertThat(selectedNode.isCircular()).isTrue();
+			return this;
+		}
 	}
 
 	private NodeAssertions()
@@ -236,6 +251,8 @@ public final class NodeAssertions
 			AssertNode hasChildren(int count);
 
 			AssertNode hasNoChildren();
+
+			AssertNode isCircular();
 		}
 	}
 }

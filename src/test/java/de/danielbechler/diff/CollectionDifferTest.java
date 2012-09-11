@@ -19,12 +19,16 @@ package de.danielbechler.diff;
 import de.danielbechler.diff.mock.*;
 import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.path.*;
+import de.danielbechler.diff.visitor.*;
 import org.junit.*;
 
 import java.util.*;
 
+import static de.danielbechler.diff.node.NodeAssertions.assertThat;
+import static de.danielbechler.diff.path.PropertyPath.*;
+import static java.util.Arrays.*;
 import static org.hamcrest.core.Is.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 /** @author Daniel Bechler */
 public class CollectionDifferTest
@@ -79,17 +83,17 @@ public class CollectionDifferTest
 	@Test
 	public void testCompareWithAddedItem() throws Exception
 	{
-		final Collection<String> working = new LinkedList<String>(Arrays.asList("foo"));
+		final Collection<String> working = new LinkedList<String>(asList("foo"));
 		final Collection<String> base = new LinkedList<String>();
 
 		final CollectionNode node = differ.compare(working, base);
 
 		assertThat(node.hasChanges(), is(true));
 
-		final Node child = node.getChild(PropertyPath.createBuilder()
-													 .withRoot()
-													 .withCollectionItem("foo")
-													 .build());
+		final Node child = node.getChild(createBuilder()
+				.withRoot()
+				.withCollectionItem("foo")
+				.build());
 		assertThat(child.getState(), is(Node.State.ADDED));
 	}
 
@@ -97,33 +101,33 @@ public class CollectionDifferTest
 	public void testCompareWithRemovedItem() throws Exception
 	{
 		final Collection<String> working = new LinkedList<String>();
-		final Collection<String> base = new LinkedList<String>(Arrays.asList("foo"));
+		final Collection<String> base = new LinkedList<String>(asList("foo"));
 
 		final CollectionNode node = differ.compare(working, base);
 
 		assertThat(node.hasChanges(), is(true));
 
-		final Node child = node.getChild(PropertyPath.createBuilder()
-													 .withRoot()
-													 .withCollectionItem("foo")
-													 .build());
+		final Node child = node.getChild(createBuilder()
+				.withRoot()
+				.withCollectionItem("foo")
+				.build());
 		assertThat(child.getState(), is(Node.State.REMOVED));
 	}
 
 	@Test
 	public void testCompareWithChangedItem() throws Exception
 	{
-		final List<ObjectWithHashCodeAndEquals> working = Arrays.asList(new ObjectWithHashCodeAndEquals("foo", "1"));
-		final List<ObjectWithHashCodeAndEquals> base = Arrays.asList(new ObjectWithHashCodeAndEquals("foo", "2"));
+		final List<ObjectWithHashCodeAndEquals> working = asList(new ObjectWithHashCodeAndEquals("foo", "1"));
+		final List<ObjectWithHashCodeAndEquals> base = asList(new ObjectWithHashCodeAndEquals("foo", "2"));
 
 		final CollectionNode node = differ.compare(working, base);
 
 		assertThat(node.hasChanges(), is(true));
 
-		final PropertyPath propertyPath = PropertyPath.createBuilder()
-													  .withRoot()
-													  .withCollectionItem(new ObjectWithHashCodeAndEquals("foo"))
-													  .build();
+		final PropertyPath propertyPath = createBuilder()
+				.withRoot()
+				.withCollectionItem(new ObjectWithHashCodeAndEquals("foo"))
+				.build();
 		final Node child = node.getChild(propertyPath);
 		assertThat(child.getState(), is(Node.State.CHANGED));
 	}
@@ -131,9 +135,41 @@ public class CollectionDifferTest
 	@Test
 	public void testCompareWithDifferentCollectionImplementationsSucceeds() throws Exception
 	{
-		final Collection<String> base = new LinkedHashSet<String>(Arrays.asList("one", "two"));
-		final Collection<String> working = new TreeSet<String>(Arrays.asList("one", "three"));
+		final Collection<String> base = new LinkedHashSet<String>(asList("one", "two"));
+		final Collection<String> working = new TreeSet<String>(asList("one", "three"));
 		final CollectionNode node = differ.compare(base, working);
 		assertThat(node.hasChanges(), is(true));
+	}
+
+	@Test
+	@Ignore("Currently this is simply not possible because of the way, the CollectionItemAccessor works. Would be great, to support this.")
+	public void testCompareWithListContainingObjectTwiceDetectsIfOneGetsRemoved() throws Exception
+	{
+		final List<ObjectWithHashCodeAndEquals> base = asList(new ObjectWithHashCodeAndEquals("foo"), new ObjectWithHashCodeAndEquals("foo"));
+		final List<ObjectWithHashCodeAndEquals> working = asList(new ObjectWithHashCodeAndEquals("foo"));
+		final CollectionNode node = differ.compare(working, base);
+		node.visit(new NodeHierarchyVisitor());
+		assertThat(node)
+				.child(PropertyPath.createBuilder()
+								   .withRoot()
+								   .withCollectionItem(new ObjectWithHashCodeAndEquals("foo"))
+								   .build())
+				.hasState(Node.State.REMOVED);
+	}
+
+	@Test
+	@Ignore("Currently this is simply not possible because of the way, the CollectionItemAccessor works. Would be great, to support this.")
+	public void testCompareWithListContainingObjectOnceDetectsIfAnotherInstanceOfItGetsAdded() throws Exception
+	{
+		final List<ObjectWithHashCodeAndEquals> base = asList(new ObjectWithHashCodeAndEquals("foo"));
+		final List<ObjectWithHashCodeAndEquals> working = asList(new ObjectWithHashCodeAndEquals("foo"), new ObjectWithHashCodeAndEquals("foo"));
+		final CollectionNode node = differ.compare(working, base);
+		node.visit(new NodeHierarchyVisitor());
+		assertThat(node)
+				.child(PropertyPath.createBuilder()
+								   .withRoot()
+								   .withCollectionItem(new ObjectWithHashCodeAndEquals("foo"))
+								   .build())
+				.hasState(Node.State.ADDED);
 	}
 }

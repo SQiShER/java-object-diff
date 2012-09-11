@@ -183,17 +183,25 @@ public class Configuration implements NodeInspector
 	@Override
 	public boolean isReturnable(final Node node)
 	{
-		if (node.isUntouched())
-		{
-			return returnUnchangedNodes;
-		}
-		else if (node.isIgnored())
+		if (node.isIgnored())
 		{
 			return returnIgnoredNodes;
 		}
 		else if (node.isCircular())
 		{
 			return returnCircularNodes;
+		}
+		else if (node.isUntouched())
+		{
+			if (node.hasChanges())
+			{
+				return true;
+			}
+			else if (node.hasChildren())
+			{
+				return true;
+			}
+			return returnUnchangedNodes;
 		}
 		return true;
 	}

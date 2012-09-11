@@ -18,15 +18,20 @@ package de.danielbechler.diff;
 
 import de.danielbechler.diff.node.*;
 import de.danielbechler.util.*;
+import org.slf4j.*;
 
 /** @author Daniel Bechler */
 abstract class AbstractDiffer<T extends Node> implements Differ<T>, Configurable
 {
-	static final ThreadLocal<CircularReferenceDetector> CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL;
+	private static final Logger logger = LoggerFactory.getLogger(AbstractDiffer.class);
+
+	static final ThreadLocal<CircularReferenceDetector> WORKING_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL;
+	static final ThreadLocal<CircularReferenceDetector> BASE_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL;
 
 	static
 	{
-		CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL = new CircularReferenceDetectorThreadLocal();
+		WORKING_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL = new CircularReferenceDetectorThreadLocal();
+		BASE_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL = new CircularReferenceDetectorThreadLocal();
 	}
 
 	private DelegatingObjectDiffer delegate;
@@ -44,30 +49,38 @@ abstract class AbstractDiffer<T extends Node> implements Differ<T>, Configurable
 	@Override
 	public final T compare(final Node parentNode, final Instances instances)
 	{
-		final Object working = instances.getWorking();
-		final CircularReferenceDetector circularReferenceDetector = CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL.get();
-		final boolean destroyOnReturn = circularReferenceDetector.isNew();
+		final CircularReferenceDetector workingCircularReferenceDetector =
+				WORKING_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL.get();
+		final CircularReferenceDetector baseCircularReferenceDetector =
+				BASE_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL.get();
+		final boolean destroyOnReturn = workingCircularReferenceDetector.isNew();
 		T node;
 		try
 		{
-			circularReferenceDetector.push(working);
+			workingCircularReferenceDetector.push(instances.getWorking());
+			baseCircularReferenceDetector.push(instances.getBase());
 			try
 			{
 				node = internalCompare(parentNode, instances);
 			}
 			finally
 			{
-				circularReferenceDetector.remove(working);
+				workingCircularReferenceDetector.remove(instances.getWorking());
+				baseCircularReferenceDetector.remove(instances.getBase());
 			}
 		}
 		catch (CircularReferenceDetector.CircularReferenceException e)
 		{
 			node = newNode(parentNode, instances);
 			node.setState(Node.State.CIRCULAR);
+			logger.warn("Detected circular reference in node at path {}. " +
+					"Going deeper would cause an infinite loop, so I'll stop looking at " +
+					"this instance along the current path.", node.getPropertyPath());
 		}
 		if (destroyOnReturn)
 		{
-			CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL.remove();
+			WORKING_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL.remove();
+			BASE_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL.remove();
 		}
 		return node;
 	}

@@ -17,10 +17,11 @@
 package de.danielbechler.diff;
 
 import de.danielbechler.diff.accessor.*;
-import org.fest.assertions.api.*;
 import org.junit.*;
 
 import java.util.*;
+
+import static org.fest.assertions.api.Assertions.*;
 
 /** @author Daniel Bechler */
 public class InstancesTest
@@ -36,7 +37,7 @@ public class InstancesTest
 	{
 		final Instances instances = new Instances(RootAccessor.getInstance(), new ArrayList<Object>(), new LinkedHashSet(), null);
 		final Class<?> type = instances.getType();
-		Assertions.assertThat(type == Collection.class);
+		assertThat(type == Collection.class);
 	}
 
 	@Test
@@ -44,6 +45,27 @@ public class InstancesTest
 	{
 		final Instances instances = new Instances(RootAccessor.getInstance(), new HashMap<Object, Object>(), new TreeMap<Object, Object>(), null);
 		final Class<?> type = instances.getType();
-		Assertions.assertThat(type == Map.class);
+		assertThat(type == Map.class);
+	}
+
+	@Test
+	public void testAreNull_returns_true_when_base_and_working_are_null()
+	{
+		final Instances instances = new Instances(RootAccessor.getInstance(), null, null, null);
+		assertThat(instances.areNull()).isTrue();
+	}
+
+	@Test
+	public void testAreNull_returns_false_when_base_is_not_null()
+	{
+		final Instances instances = new Instances(RootAccessor.getInstance(), null, "", null);
+		assertThat(instances.areNull()).isFalse();
+	}
+
+	@Test
+	public void testAreNull_returns_false_when_working_is_not_null()
+	{
+		final Instances instances = new Instances(RootAccessor.getInstance(), "", null, null);
+		assertThat(instances.areNull()).isFalse();
 	}
 }
