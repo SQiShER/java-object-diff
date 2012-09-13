@@ -30,4 +30,11 @@ public interface NodeInspector
 	boolean isEqualsOnly(Node node);
 
 	boolean isReturnable(Node node);
+
+	/**
+	 * @return Returns <code>true</code> if the object represented by the given node should be compared via
+	 *         introspection. It must always return </code><code>false</code> if {@link
+	 *         #isEqualsOnly(de.danielbechler.diff.node.Node)} returns <code>true</code>.
+	 */
+	boolean isIntrospectible(Node node);
 }

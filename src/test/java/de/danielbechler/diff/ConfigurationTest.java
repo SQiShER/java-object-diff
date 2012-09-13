@@ -21,9 +21,12 @@ import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.path.*;
 import org.junit.*;
 import org.mockito.*;
+import org.mockito.invocation.*;
+import org.mockito.stubbing.*;
 
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.hamcrest.core.Is.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
 /** @author Daniel Bechler */
@@ -132,10 +135,70 @@ public class ConfigurationTest
 
 	@SuppressWarnings({"unchecked"})
 	@Test
-	public void testEqualsOnlyWithTypeThatShouldNotBeComparedUsingEquals() throws Exception
+	public void testIsEqualsOnlyWithTypeThatShouldNotBeComparedUsingEquals() throws Exception
 	{
 		final Class aClass = ObjectWithCollection.class;
 		when(node.getType()).thenReturn(aClass);
 		assertThat(configuration.isEqualsOnly(node), is(false));
+	}
+
+	@Test
+	public void testIsIntrospectibleWithEqualsOnlyNodeReturnsFalse()
+	{
+		when(node.getType()).then(returnClass(String.class));
+		assertThat(configuration.isIntrospectible(node)).isFalse();
+	}
+
+	@Test
+	public void testIsIntrospectibleWithUntouchedNonEqualsOnlyNodeReturnsFalse()
+	{
+		when(node.getType()).then(returnClass(ObjectWithString.class));
+		when(node.isUntouched()).thenReturn(true);
+		assertThat(configuration.isIntrospectible(node)).isTrue();
+	}
+
+	@Test
+	public void testIsIntrospectibleReturnsTrueForAddedNodeIfChildrenOfAddedNodesAreEnabled()
+	{
+		configuration.withChildrenOfAddedNodes();
+		when(node.isAdded()).thenReturn(true);
+		assertThat(configuration.isIntrospectible(node)).isTrue();
+	}
+
+	@Test
+	public void testIsIntrospectibleReturnsFalseForAddedNodeIfChildrenOfAddedNodesAreDisabled()
+	{
+		configuration.withoutChildrenOfAddedNodes();
+		when(node.isAdded()).thenReturn(true);
+		assertThat(configuration.isIntrospectible(node)).isFalse();
+	}
+
+	@Test
+	public void testIsIntrospectibleReturnsTrueForRemovedNodeIfChildrenOfRemovedNodesAreEnabled()
+	{
+		configuration.withChildrenOfRemovedNodes();
+		when(node.isRemoved()).thenReturn(true);
+		assertThat(configuration.isIntrospectible(node)).isTrue();
+	}
+
+	@Test
+	public void testIsIntrospectibleReturnsFalseForRemovedNodeIfChildrenOfRemovedNodesAreDisabled()
+	{
+		configuration.withoutChildrenOfRemovedNodes();
+		when(node.isRemoved()).thenReturn(true);
+		assertThat(configuration.isIntrospectible(node)).isFalse();
+	}
+
+	@SuppressWarnings({"TypeMayBeWeakened"})
+	private static <T> Answer<Class<T>> returnClass(final Class<T> aClass)
+	{
+		return new Answer<Class<T>>()
+		{
+			@Override
+			public Class<T> answer(final InvocationOnMock invocation) throws Throwable
+			{
+				return aClass;
+			}
+		};
 	}
 }

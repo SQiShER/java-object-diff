@@ -112,11 +112,6 @@ final class MapDiffer extends AbstractDiffer<MapNode>
 
 	private Node compareEntry(final Object key, final Instances instances, final MapNode parent)
 	{
-//		if (instances.areSame())
-//		{
-//			// if the instances are the same, there is no need to delegate
-//			return new DefaultNode(parent, accessor, instances.getType());
-//		}
 		return getDelegate().delegate(parent, instances.access(parent.accessorForKey(key)));
 	}
 

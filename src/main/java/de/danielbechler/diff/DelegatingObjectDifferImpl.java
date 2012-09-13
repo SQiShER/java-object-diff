@@ -115,6 +115,12 @@ final class DelegatingObjectDifferImpl implements DelegatingObjectDiffer
 		return configuration.isReturnable(node);
 	}
 
+	@Override
+	public boolean isIntrospectible(final Node node)
+	{
+		return configuration.isIntrospectible(node);
+	}
+
 	public Configuration getConfiguration()
 	{
 		return configuration;

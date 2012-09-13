@@ -35,6 +35,8 @@ public class Configuration implements NodeInspector
 	private boolean returnUnchangedNodes = false;
 	private boolean returnIgnoredNodes = false;
 	private boolean returnCircularNodes = true;
+	private boolean returnChildrenOfAddedNodes = false;
+	private boolean returnChildrenOfRemovedNodes = false;
 
 	public Configuration withCategory(final String category)
 	{
@@ -105,6 +107,30 @@ public class Configuration implements NodeInspector
 	public Configuration withoutCircularNodes()
 	{
 		this.returnCircularNodes = false;
+		return this;
+	}
+
+	public Configuration withChildrenOfAddedNodes()
+	{
+		this.returnChildrenOfAddedNodes = true;
+		return this;
+	}
+
+	public Configuration withoutChildrenOfAddedNodes()
+	{
+		this.returnChildrenOfAddedNodes = false;
+		return this;
+	}
+
+	public Configuration withChildrenOfRemovedNodes()
+	{
+		this.returnChildrenOfRemovedNodes = true;
+		return this;
+	}
+
+	public Configuration withoutChildrenOfRemovedNodes()
+	{
+		this.returnChildrenOfRemovedNodes = false;
 		return this;
 	}
 
@@ -202,6 +228,23 @@ public class Configuration implements NodeInspector
 				return true;
 			}
 			return returnUnchangedNodes;
+		}
+		return true;
+	}
+
+	public boolean isIntrospectible(final Node node)
+	{
+		if (isEqualsOnly(node))
+		{
+			return false;
+		}
+		else if (node.isAdded())
+		{
+			return returnChildrenOfAddedNodes;
+		}
+		else if (node.isRemoved())
+		{
+			return returnChildrenOfRemovedNodes;
 		}
 		return true;
 	}

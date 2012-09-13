@@ -58,11 +58,11 @@ final class BeanDiffer extends AbstractDiffer<Node>
 		final Node node = newNode(parentNode, instances);
 		if (getDelegate().isIgnored(node))
 		{
-			node.setState(Node.State.IGNORED);
+			ensureNodeState(node, Node.State.IGNORED);
 		}
 		else if (instances.getType() == null)
 		{
-			node.setState(Node.State.UNTOUCHED);
+			ensureNodeState(node, Node.State.UNTOUCHED);
 		}
 		else
 		{
@@ -82,42 +82,50 @@ final class BeanDiffer extends AbstractDiffer<Node>
 		final Node node = newNode(parentNode, instances);
 		if (instances.hasBeenAdded())
 		{
-			compareNodeWithAppropriateMethod(node, instances);
-			node.setState(Node.State.ADDED);
+			ensureNodeState(node, Node.State.ADDED);
+			compareBeanUsingAppropriateMethod(node, instances);
+			ensureNodeState(node, Node.State.ADDED);
 		}
 		else if (instances.hasBeenRemoved())
 		{
-			compareNodeWithAppropriateMethod(node, instances);
-			node.setState(Node.State.REMOVED);
+			ensureNodeState(node, Node.State.REMOVED);
+			compareBeanUsingAppropriateMethod(node, instances);
+			ensureNodeState(node, Node.State.REMOVED);
 		}
 		else if (instances.areSame())
 		{
-			node.setState(Node.State.UNTOUCHED);
+			ensureNodeState(node, Node.State.UNTOUCHED);
 		}
 		else
 		{
-			compareNodeWithAppropriateMethod(node, instances);
+			compareBeanUsingAppropriateMethod(node, instances);
 		}
 		return node;
 	}
 
-	private void compareNodeWithAppropriateMethod(final Node node, final Instances instances)
+	private static void ensureNodeState(final Node node, final Node.State state)
 	{
-		if (getDelegate().isEqualsOnly(node))
-		{
-			compareWithEquals(node, instances);
-		}
-		else
+		node.setState(state);
+	}
+
+	private void compareBeanUsingAppropriateMethod(final Node node, final Instances instances)
+	{
+		if (getDelegate().isIntrospectible(node))
 		{
 			compareProperties(node, instances);
 		}
+		else if (getDelegate().isEqualsOnly(node))
+		{
+			compareEquality(node, instances);
+		}
 	}
 
-	private static void compareWithEquals(final Node node, final Instances instances)
+	@SuppressWarnings({"MethodMayBeStatic"})
+	private void compareEquality(final Node node, final Instances instances)
 	{
 		if (!instances.areEqual())
 		{
-			node.setState(Node.State.CHANGED);
+			ensureNodeState(node, Node.State.CHANGED);
 		}
 	}
 

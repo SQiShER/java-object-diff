@@ -156,6 +156,7 @@ public class BeanDifferTest
 	{
 		when(introspector.introspect(any(Class.class))).thenReturn(Arrays.<Accessor>asList(accessor));
 		when(delegate.delegate(any(Node.class), any(Instances.class))).thenReturn(node);
+		when(delegate.isIntrospectible(any(Node.class))).thenReturn(true);
 		when(delegate.isReturnable(any(Node.class))).thenReturn(true);
 		when(node.hasChanges()).thenReturn(true);
 
@@ -200,6 +201,7 @@ public class BeanDifferTest
 		final ObjectWithNestedObject base = new ObjectWithNestedObject("1");
 		final ObjectWithNestedObject working = new ObjectWithNestedObject("1", new ObjectWithNestedObject("2", new ObjectWithNestedObject("foo")));
 		differ = new BeanDiffer();
+		differ.getConfiguration().withChildrenOfAddedNodes();
 		node = differ.compare(working, base);
 		node.visit(new NodeHierarchyVisitor());
 		assertThat(node).node().hasState(Node.State.CHANGED);

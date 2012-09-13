@@ -73,9 +73,11 @@ public class NodeAssertionsTest
 	@Test
 	public void testAssertThat_child_at_property_names_does_exist_succeeds_when_child_exists()
 	{
-		final ObjectWithString working = new ObjectWithString("foo");
-		final ObjectWithString base = new ObjectWithString("bar");
-		final Node node = ObjectDifferFactory.getInstance().compare(working, base);
+		final Accessor accessor = mock(Accessor.class);
+		when(accessor.getPathElement()).thenReturn(new NamedPropertyElement("value"));
+		final Node node = new DefaultNode(ObjectWithString.class);
+		final Node child = new DefaultNode(node, accessor, String.class);
+		node.addChild(child);
 		assertThat(node).child("value").doesExist();
 	}
 
