@@ -19,7 +19,7 @@ package de.danielbechler.diff.visitor;
 import de.danielbechler.diff.*;
 import de.danielbechler.diff.mock.*;
 import de.danielbechler.diff.node.*;
-import org.junit.*;
+import org.testng.annotations.*;
 
 import static org.fest.assertions.api.Assertions.*;
 

@@ -21,7 +21,7 @@ import de.danielbechler.diff.mock.*;
 import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.path.*;
 import de.danielbechler.diff.visitor.*;
-import org.junit.*;
+import org.testng.annotations.*;
 
 import static de.danielbechler.diff.node.NodeAssertions.*;
 

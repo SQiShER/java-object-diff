@@ -18,22 +18,22 @@ package de.danielbechler.diff;
 
 import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.path.*;
-import org.junit.*;
+import org.testng.annotations.*;
 
 import java.util.*;
 
 import static de.danielbechler.diff.node.NodeAssertions.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.*;
 import static org.hamcrest.core.IsEqual.*;
 import static org.hamcrest.core.IsNull.*;
-import static org.junit.Assert.assertThat;
 
 /** @author Daniel Bechler */
 public class MapDifferTest
 {
 	private MapDiffer differ;
 
-	@Before
+	@BeforeMethod
 	public void setUp()
 	{
 		differ = new MapDiffer();
@@ -115,7 +115,7 @@ public class MapDifferTest
 		assertThat(node.hasChildren(), is(false));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testConstructionWithoutDelegator()
 	{
 		new MapDiffer(null);

@@ -26,22 +26,35 @@ public final class Classes
 {
 	private static final Logger logger = LoggerFactory.getLogger(Classes.class);
 
+	private static final Set<Class<?>> WRAPPER_TYPES = getWrapperTypes();
+
 	private Classes()
 	{
 	}
 
+	private static Set<Class<?>> getWrapperTypes()
+	{
+		final Set<Class<?>> wrapperTypes = new HashSet<Class<?>>();
+		wrapperTypes.add(Boolean.class);
+		wrapperTypes.add(Character.class);
+		wrapperTypes.add(Byte.class);
+		wrapperTypes.add(Short.class);
+		wrapperTypes.add(Integer.class);
+		wrapperTypes.add(Long.class);
+		wrapperTypes.add(Float.class);
+		wrapperTypes.add(Double.class);
+		wrapperTypes.add(Void.class);
+		return wrapperTypes;
+	}
+
+	public static boolean isWrapperType(final Class<?> clazz)
+	{
+		return WRAPPER_TYPES.contains(clazz);
+	}
+
 	public static boolean isSimpleType(final Class<?> clazz)
 	{
-		return clazz.isPrimitive() ||
-				clazz.equals(Boolean.class) || clazz.equals(boolean.class) ||
-				clazz.equals(Byte.class) || clazz.equals(byte.class) ||
-				clazz.equals(Character.class) || clazz.equals(char.class) ||
-				clazz.equals(Double.class) || clazz.equals(double.class) ||
-				clazz.equals(Float.class) || clazz.equals(float.class) ||
-				clazz.equals(Integer.class) || clazz.equals(int.class) ||
-				clazz.equals(Long.class) || clazz.equals(long.class) ||
-				clazz.equals(Short.class) || clazz.equals(short.class) ||
-				clazz.isEnum() ||
+		return clazz.isPrimitive() || isWrapperType(clazz) || clazz.isEnum() ||
 				CharSequence.class.isAssignableFrom(clazz) ||
 				Number.class.isAssignableFrom(clazz) ||
 				Date.class.isAssignableFrom(clazz) ||
@@ -94,4 +107,5 @@ public final class Classes
 		}
 		return matching;
 	}
+
 }

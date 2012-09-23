@@ -18,22 +18,27 @@ package de.danielbechler.diff.accessor;
 
 import de.danielbechler.diff.path.*;
 import org.hamcrest.core.*;
-import org.junit.*;
+import org.testng.annotations.*;
 
 import java.util.*;
+
+import static org.hamcrest.MatcherAssert.*;
+import static org.hamcrest.core.Is.*;
+import static org.hamcrest.core.IsEqual.*;
+import static org.hamcrest.core.IsInstanceOf.*;
 
 /** @author Daniel Bechler */
 public class MapEntryAccessorTest
 {
 	private MapEntryAccessor accessor;
 
-	@Before
+	@BeforeMethod
 	public void setUp()
 	{
 		accessor = new MapEntryAccessor(Arrays.asList("a", "b", "c"), 1);
 	}
 
-	@Test(expected = IndexOutOfBoundsException.class)
+	@Test(expectedExceptions = IndexOutOfBoundsException.class)
 	public void testConstructionWithInvalidIndex()
 	{
 		new MapEntryAccessor(Arrays.asList("foo"), 5);
@@ -42,7 +47,8 @@ public class MapEntryAccessorTest
 	@Test
 	public void testToPathElement() throws Exception
 	{
-		Assert.assertThat(accessor.getPathElement(), Is.is(MapElement.class));
+		final Element pathElement = accessor.getPathElement();
+		assertThat(pathElement, is(instanceOf(MapElement.class)));
 	}
 
 	@Test
@@ -51,10 +57,10 @@ public class MapEntryAccessorTest
 		final TreeMap<String, String> map = new TreeMap<String, String>();
 
 		accessor.set(map, "foo");
-		Assert.assertThat(map.get("b"), IsEqual.equalTo("foo"));
+		assertThat(map.get("b"), equalTo("foo"));
 
 		accessor.set(map, "bar");
-		Assert.assertThat(map.get("b"), IsEqual.equalTo("bar"));
+		assertThat(map.get("b"), equalTo("bar"));
 	}
 
 	@Test
@@ -62,10 +68,10 @@ public class MapEntryAccessorTest
 	{
 		final Map<String, String> map = new TreeMap<String, String>();
 		map.put("b", "foo");
-		Assert.assertThat((String) accessor.get(map), IsEqual.equalTo("foo"));
+		assertThat((String) accessor.get(map), equalTo("foo"));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testGetFromInvalidObjectType()
 	{
 		accessor.get(new Object());
@@ -74,7 +80,7 @@ public class MapEntryAccessorTest
 	@Test
 	public void testGetFromNull()
 	{
-		Assert.assertThat(accessor.get(null), IsNull.nullValue());
+		assertThat(accessor.get(null), IsNull.nullValue());
 	}
 
 	@Test
@@ -83,6 +89,6 @@ public class MapEntryAccessorTest
 		final Map<String, String> map = new TreeMap<String, String>();
 		map.put("b", "foo");
 		accessor.unset(map);
-		Assert.assertTrue(map.isEmpty());
+		org.testng.Assert.assertTrue(map.isEmpty());
 	}
 }

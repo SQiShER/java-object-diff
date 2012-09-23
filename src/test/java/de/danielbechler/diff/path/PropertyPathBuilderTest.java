@@ -16,7 +16,7 @@
 
 package de.danielbechler.diff.path;
 
-import org.junit.*;
+import org.testng.annotations.*;
 
 import static org.fest.assertions.api.Assertions.*;
 
@@ -69,7 +69,7 @@ public class PropertyPathBuilderTest
 		assertThat(propertyPath.getElements()).containsSequence(RootElement.getInstance(), new MapElement("foo"));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testWithMapKey_throws_exception_when_key_is_null()
 	{
 		PropertyPath.createBuilder().withRoot().withMapKey(null).build();
@@ -95,7 +95,7 @@ public class PropertyPathBuilderTest
 		assertThat(propertyPath.getElements()).containsSequence(RootElement.getInstance(), new NamedPropertyElement("foo"));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testWithPropertyPath_throws_exception_when_property_path_is_null()
 	{
 		PropertyPath.createBuilder().withPropertyPath(null).build();

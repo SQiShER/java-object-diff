@@ -1,9 +1,10 @@
 package de.danielbechler.diff.integration.graph;
 
 import de.danielbechler.diff.*;
+import de.danielbechler.diff.Configuration;
 import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.visitor.*;
-import org.junit.*;
+import org.testng.annotations.*;
 
 import static de.danielbechler.diff.node.Node.State.*;
 import static de.danielbechler.diff.node.NodeAssertions.assertThat;

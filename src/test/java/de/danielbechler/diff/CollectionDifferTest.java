@@ -20,28 +20,28 @@ import de.danielbechler.diff.mock.*;
 import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.path.*;
 import de.danielbechler.diff.visitor.*;
-import org.junit.*;
+import org.testng.annotations.*;
 
 import java.util.*;
 
 import static de.danielbechler.diff.node.NodeAssertions.assertThat;
 import static de.danielbechler.diff.path.PropertyPath.*;
 import static java.util.Arrays.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.*;
-import static org.junit.Assert.assertThat;
 
 /** @author Daniel Bechler */
 public class CollectionDifferTest
 {
 	private CollectionDiffer differ;
 
-	@Before
+	@BeforeMethod
 	public void setUp() throws Exception
 	{
 		differ = new CollectionDiffer();
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testConstructionWithoutDelegate()
 	{
 		new CollectionDiffer(null);
@@ -141,8 +141,7 @@ public class CollectionDifferTest
 		assertThat(node.hasChanges(), is(true));
 	}
 
-	@Test
-	@Ignore("Currently this is simply not possible because of the way, the CollectionItemAccessor works. Would be great, to support this.")
+	@Test(enabled = false, description = "Currently this is simply not possible because of the way, the CollectionItemAccessor works. Would be great, to support this.")
 	public void testCompareWithListContainingObjectTwiceDetectsIfOneGetsRemoved() throws Exception
 	{
 		final List<ObjectWithHashCodeAndEquals> base = asList(new ObjectWithHashCodeAndEquals("foo"), new ObjectWithHashCodeAndEquals("foo"));
@@ -157,8 +156,7 @@ public class CollectionDifferTest
 				.hasState(Node.State.REMOVED);
 	}
 
-	@Test
-	@Ignore("Currently this is simply not possible because of the way, the CollectionItemAccessor works. Would be great, to support this.")
+	@Test(enabled = false, description = "Currently this is simply not possible because of the way, the CollectionItemAccessor works. Would be great, to support this.")
 	public void testCompareWithListContainingObjectOnceDetectsIfAnotherInstanceOfItGetsAdded() throws Exception
 	{
 		final List<ObjectWithHashCodeAndEquals> base = asList(new ObjectWithHashCodeAndEquals("foo"));

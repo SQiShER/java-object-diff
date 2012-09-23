@@ -23,15 +23,15 @@ import de.danielbechler.diff.mock.*;
 import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.visitor.*;
 import org.hamcrest.core.*;
-import org.junit.*;
 import org.mockito.*;
+import org.testng.annotations.*;
 
 import java.util.*;
 
 import static de.danielbechler.diff.node.NodeAssertions.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.*;
 import static org.hamcrest.core.IsSame.*;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
 /** @author Daniel Bechler */
@@ -47,7 +47,7 @@ public class BeanDifferTest
 	private Node node;
 	private BeanDiffer differ;
 
-	@Before
+	@BeforeMethod
 	public void setUp()
 	{
 		MockitoAnnotations.initMocks(this);
@@ -66,13 +66,13 @@ public class BeanDifferTest
 		assertThat(node.getState(), is(Node.State.CHANGED));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testCompareWithDifferentTypes()
 	{
 		differ.compare("foo", 1337);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testCompareWithoutWorkingInstance()
 	{
 		when(delegate.isEqualsOnly(any(Node.class))).thenReturn(true);
@@ -172,7 +172,7 @@ public class BeanDifferTest
 		assertThat(differ.getConfiguration(), sameInstance(configuration));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testConstructionWithoutObjectDiffer()
 	{
 		new BeanDiffer(null);
@@ -191,8 +191,8 @@ public class BeanDifferTest
 		final ObjectWithAccessTrackingIgnoredProperty working = new ObjectWithAccessTrackingIgnoredProperty();
 		final ObjectWithAccessTrackingIgnoredProperty base = new ObjectWithAccessTrackingIgnoredProperty();
 		new BeanDiffer().compare(working, base);
-		Assert.assertThat(working.accessed, Is.is(false));
-		Assert.assertThat(base.accessed, Is.is(false));
+		assertThat(working.accessed, Is.is(false));
+		assertThat(base.accessed, Is.is(false));
 	}
 
 	@Test

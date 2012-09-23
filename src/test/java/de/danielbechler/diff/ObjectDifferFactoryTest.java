@@ -17,12 +17,14 @@
 package de.danielbechler.diff;
 
 import org.hamcrest.core.*;
-import org.junit.*;
+import org.testng.annotations.*;
+
+import static org.hamcrest.MatcherAssert.*;
 
 /** @author Daniel Bechler */
 public class ObjectDifferFactoryTest
 {
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testGetInstanceWithNullConfiguration() throws Exception
 	{
 		ObjectDifferFactory.getInstance(null);
@@ -33,17 +35,17 @@ public class ObjectDifferFactoryTest
 	{
 		final Configuration configuration = new Configuration();
 		final ObjectDiffer objectDiffer = ObjectDifferFactory.getInstance(configuration);
-		Assert.assertThat(objectDiffer.getConfiguration(), IsEqual.equalTo(configuration));
+		assertThat(objectDiffer.getConfiguration(), IsEqual.equalTo(configuration));
 	}
 
 	@Test
 	public void testGetInstance() throws Exception
 	{
 		final ObjectDiffer objectDiffer = ObjectDifferFactory.getInstance();
-		Assert.assertThat(objectDiffer, IsNull.notNullValue());
+		assertThat(objectDiffer, IsNull.notNullValue());
 	}
 
-	@Test(expected = UnsupportedOperationException.class)
+	@Test(expectedExceptions = UnsupportedOperationException.class)
 	public void testConstruction()
 	{
 		new ObjectDifferFactory();

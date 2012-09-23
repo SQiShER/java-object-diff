@@ -22,12 +22,12 @@ import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.path.*;
 import de.danielbechler.diff.visitor.*;
 import org.hamcrest.core.*;
-import org.junit.*;
 import org.mockito.*;
+import org.testng.annotations.*;
 
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.*;
 import static org.mockito.Mockito.*;
 
 /** @author Daniel Bechler */
@@ -46,7 +46,7 @@ public class DelegatingObjectDifferTest
 
 	private DelegatingObjectDifferImpl differ;
 
-	@Before
+	@BeforeMethod
 	public void setUp() throws Exception
 	{
 		MockitoAnnotations.initMocks(this);
@@ -120,8 +120,8 @@ public class DelegatingObjectDifferTest
 		final ObjectWithIgnoredMap base = new ObjectWithIgnoredMap();
 		final ObjectDiffer objectDiffer = new DelegatingObjectDifferImpl();
 		final Node node = objectDiffer.compare(working, base);
-		Assert.assertThat(node.hasChanges(), Is.is(false));
-		Assert.assertThat(node.hasChildren(), Is.is(false));
+		assertThat(node.hasChanges(), Is.is(false));
+		assertThat(node.hasChildren(), Is.is(false));
 	}
 
 	@Test
@@ -134,7 +134,7 @@ public class DelegatingObjectDifferTest
 		objectDiffer.getConfiguration().withoutProperty(PropertyPath.buildWith("collection"));
 		final Node node = objectDiffer.compare(working, base);
 		node.visit(new PrintingVisitor(working, base));
-		Assert.assertThat(node.hasChanges(), Is.is(false));
-		Assert.assertThat(node.hasChildren(), Is.is(false));
+		assertThat(node.hasChanges(), Is.is(false));
+		assertThat(node.hasChildren(), Is.is(false));
 	}
 }

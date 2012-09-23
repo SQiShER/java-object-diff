@@ -20,17 +20,19 @@ import de.danielbechler.diff.accessor.exception.*;
 import de.danielbechler.diff.mock.*;
 import de.danielbechler.diff.path.*;
 import org.hamcrest.core.*;
-import org.junit.*;
+import org.testng.annotations.*;
 
 import java.lang.reflect.*;
 import java.util.*;
+
+import static org.hamcrest.MatcherAssert.*;
 
 /** @author Daniel Bechler */
 public class PropertyAccessorTest
 {
 	private PropertyAccessor accessor;
 
-	@Before
+	@BeforeMethod
 	public void setUp() throws Exception
 	{
 		final Method readMethod = ObjectWithHashCodeAndEquals.class.getMethod("getValue");
@@ -42,12 +44,12 @@ public class PropertyAccessorTest
 	public void testSet() throws Exception
 	{
 		final ObjectWithHashCodeAndEquals item = new ObjectWithHashCodeAndEquals("foo");
-		Assert.assertThat(item.getValue(), IsNull.nullValue());
+		assertThat(item.getValue(), IsNull.nullValue());
 		accessor.set(item, "bar");
-		Assert.assertThat(item.getValue(), IsEqual.equalTo("bar"));
+		assertThat(item.getValue(), IsEqual.equalTo("bar"));
 	}
 
-	@Test(expected = PropertyWriteException.class)
+	@Test(expectedExceptions = PropertyWriteException.class)
 	public void testSetWithUnsupportedWriteMethod() throws NoSuchMethodException
 	{
 		final ObjectWithStringAndUnsupportedWriteMethod target = new ObjectWithStringAndUnsupportedWriteMethod("foo");
@@ -63,7 +65,7 @@ public class PropertyAccessorTest
 		final ObjectWithHashCodeAndEquals item = new ObjectWithHashCodeAndEquals("foo");
 		accessor = new PropertyAccessor("value", ObjectWithHashCodeAndEquals.class.getMethod("getValue"), null);
 		accessor.set(item, "bar");
-		Assert.assertThat(item.getValue(), IsNull.nullValue());
+		assertThat(item.getValue(), IsNull.nullValue());
 	}
 
 	@Test
@@ -78,7 +80,7 @@ public class PropertyAccessorTest
 		final ObjectWithMap objectWithMap = initMapAccessor(true);
 		accessor.set(objectWithMap, Collections.singletonMap("foo", "bar"));
 		final Map<String, String> resultMap = objectWithMap.getMap();
-		Assert.assertThat(resultMap.get("foo"), IsEqual.equalTo("bar"));
+		assertThat(resultMap.get("foo"), IsEqual.equalTo("bar"));
 	}
 
 	@Test
@@ -87,7 +89,7 @@ public class PropertyAccessorTest
 		final Map<String, String> map = Collections.unmodifiableMap(new TreeMap<String, String>());
 		final ObjectWithMap objectWithMap = initMapAccessor(map, true);
 		accessor.set(objectWithMap, Collections.singletonMap("foo", "bar"));
-		Assert.assertThat(objectWithMap.getMap().get("foo"), IsNull.nullValue());
+		assertThat(objectWithMap.getMap().get("foo"), IsNull.nullValue());
 	}
 
 	@Test
@@ -95,7 +97,7 @@ public class PropertyAccessorTest
 	{
 		final ObjectWithMap objectWithMap = initMapAccessor(null, true);
 		accessor.set(objectWithMap, Collections.singletonMap("foo", "bar"));
-		Assert.assertThat(objectWithMap.getMap(), IsNull.nullValue());
+		assertThat(objectWithMap.getMap(), IsNull.nullValue());
 	}
 
 	private ObjectWithMap initMapAccessor(final boolean omitWriteMethod) throws NoSuchMethodException
@@ -146,7 +148,7 @@ public class PropertyAccessorTest
 	{
 		final ObjectWithCollection target = initCollectionAccessor(new LinkedList<String>(), true);
 		accessor.set(target, Collections.singletonList("foo"));
-		Assert.assertThat(target.getCollection().iterator().next(), IsEqual.equalTo("foo"));
+		assertThat(target.getCollection().iterator().next(), IsEqual.equalTo("foo"));
 	}
 
 	@Test
@@ -155,7 +157,7 @@ public class PropertyAccessorTest
 		final List<String> targetList = Collections.unmodifiableList(new LinkedList<String>());
 		final ObjectWithCollection target = initCollectionAccessor(targetList, true);
 		accessor.set(target, Collections.singletonList("foo"));
-		Assert.assertThat(target.getCollection().contains("foo"), Is.is(false));
+		assertThat(target.getCollection().contains("foo"), Is.is(false));
 	}
 
 	@Test
@@ -164,7 +166,7 @@ public class PropertyAccessorTest
 		final List<String> targetList = null;
 		final ObjectWithCollection target = initCollectionAccessor(targetList, true);
 		accessor.set(target, Collections.singletonList("foo"));
-		Assert.assertThat(target.getCollection(), IsNull.nullValue());
+		assertThat(target.getCollection(), IsNull.nullValue());
 	}
 
 	@Test
@@ -172,16 +174,16 @@ public class PropertyAccessorTest
 	{
 		final ObjectWithHashCodeAndEquals item = new ObjectWithHashCodeAndEquals("foo");
 		item.setValue("bar");
-		Assert.assertThat((String) accessor.get(item), IsEqual.equalTo("bar"));
+		assertThat((String) accessor.get(item), IsEqual.equalTo("bar"));
 	}
 
 	@Test
 	public void testGetWithNullTarget()
 	{
-		Assert.assertThat(accessor.get(null), IsNull.nullValue());
+		assertThat(accessor.get(null), IsNull.nullValue());
 	}
 
-	@Test(expected = PropertyReadException.class)
+	@Test(expectedExceptions = PropertyReadException.class)
 	public void testGetWithInvocationException() throws NoSuchMethodException
 	{
 		final Method readMethod = ObjectWithString.class.getMethod("getValue");
@@ -195,19 +197,19 @@ public class PropertyAccessorTest
 		final ObjectWithHashCodeAndEquals item = new ObjectWithHashCodeAndEquals("foo");
 		item.setValue("bar");
 		accessor.unset(item);
-		Assert.assertThat(item.getValue(), IsNull.nullValue());
+		assertThat(item.getValue(), IsNull.nullValue());
 	}
 
 	@Test
 	public void testGetType() throws Exception
 	{
 		//noinspection unchecked
-		Assert.assertThat((Class<String>) accessor.getType(), IsEqual.equalTo(String.class));
+		assertThat((Class<String>) accessor.getType(), IsEqual.equalTo(String.class));
 	}
 
 	@Test
 	public void testToPathElement() throws Exception
 	{
-		Assert.assertThat((NamedPropertyElement) accessor.getPathElement(), IsEqual.equalTo(new NamedPropertyElement("value")));
+		assertThat((NamedPropertyElement) accessor.getPathElement(), IsEqual.equalTo(new NamedPropertyElement("value")));
 	}
 }

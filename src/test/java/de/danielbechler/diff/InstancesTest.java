@@ -17,7 +17,7 @@
 package de.danielbechler.diff;
 
 import de.danielbechler.diff.accessor.*;
-import org.junit.*;
+import org.testng.annotations.*;
 
 import java.util.*;
 
@@ -26,7 +26,7 @@ import static org.fest.assertions.api.Assertions.*;
 /** @author Daniel Bechler */
 public class InstancesTest
 {
-	@Test(expected = IllegalStateException.class)
+	@Test(expectedExceptions = IllegalStateException.class)
 	public void testGetType_throws_exception_for_incompatible_types() throws Exception
 	{
 		new Instances(RootAccessor.getInstance(), "foo", 1, null).getType();
@@ -67,5 +67,17 @@ public class InstancesTest
 	{
 		final Instances instances = new Instances(RootAccessor.getInstance(), "", null, null);
 		assertThat(instances.areNull()).isFalse();
+	}
+
+	@Test
+	public void testArePrimitiveReturnsTrueForPrimitiveType()
+	{
+		assertThat(new Instances(RootAccessor.getInstance(), 1L, 2L, 0L).arePrimitive()).isTrue();
+	}
+
+	@Test
+	public void testArePrimitiveReturnsFalseForComplexType()
+	{
+		assertThat(new Instances(RootAccessor.getInstance(), "1", "2", null).arePrimitive()).isFalse();
 	}
 }

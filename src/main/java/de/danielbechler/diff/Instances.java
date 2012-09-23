@@ -109,6 +109,10 @@ class Instances
 
 	public boolean hasBeenAdded()
 	{
+		if (arePrimitive())
+		{
+			return false;
+		}
 		if (working != null && base == null)
 		{
 			return true;
@@ -122,11 +126,25 @@ class Instances
 
 	public boolean hasBeenRemoved()
 	{
+		if (arePrimitive())
+		{
+			return false;
+		}
 		if (base != null && working == null)
 		{
 			return true;
 		}
 		if (Objects.isEqual(fresh, working) && !Objects.isEqual(base, working))
+		{
+			return true;
+		}
+		return false;
+	}
+
+	public boolean arePrimitive()
+	{
+		final Class<?> type = getType();
+		if (type != null && type.isPrimitive() || Classes.isWrapperType(type))
 		{
 			return true;
 		}

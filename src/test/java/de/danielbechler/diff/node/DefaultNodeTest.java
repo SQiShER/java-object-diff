@@ -19,11 +19,12 @@ package de.danielbechler.diff.node;
 import de.danielbechler.diff.accessor.*;
 import de.danielbechler.diff.path.*;
 import org.hamcrest.core.*;
-import org.junit.*;
+import org.testng.annotations.*;
 
 import java.util.*;
 
-import static org.fest.assertions.api.Assertions.*;
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.*;
 
@@ -35,7 +36,7 @@ public class DefaultNodeTest
 	@Mock
 	private Accessor accessor;
 
-	@Before
+	@BeforeMethod
 	public void setUp()
 	{
 		initMocks(this);
@@ -46,7 +47,7 @@ public class DefaultNodeTest
 	{
 		final Node node = new DefaultNode(String.class);
 		node.setState(Node.State.UNTOUCHED);
-		Assert.assertThat(node.hasChanges(), Is.is(false));
+		assertThat(node.hasChanges(), Is.is(false));
 	}
 
 	@Test
@@ -54,7 +55,7 @@ public class DefaultNodeTest
 	{
 		final Node node = new DefaultNode(String.class);
 		node.setState(Node.State.IGNORED);
-		Assert.assertThat(node.hasChanges(), Is.is(false));
+		assertThat(node.hasChanges(), Is.is(false));
 	}
 
 	@Test
@@ -62,7 +63,7 @@ public class DefaultNodeTest
 	{
 		final Node node = new DefaultNode(String.class);
 		node.setState(Node.State.CIRCULAR);
-		Assert.assertThat(node.hasChanges(), Is.is(false));
+		assertThat(node.hasChanges(), Is.is(false));
 	}
 
 	@Test
@@ -70,7 +71,7 @@ public class DefaultNodeTest
 	{
 		final Node node = new DefaultNode(String.class);
 		node.setState(Node.State.CHANGED);
-		Assert.assertThat(node.hasChanges(), Is.is(true));
+		assertThat(node.hasChanges(), Is.is(true));
 	}
 
 	@Test
@@ -78,7 +79,7 @@ public class DefaultNodeTest
 	{
 		final Node node = new DefaultNode(String.class);
 		node.setState(Node.State.REMOVED);
-		Assert.assertThat(node.hasChanges(), Is.is(true));
+		assertThat(node.hasChanges(), Is.is(true));
 	}
 
 	@Test
@@ -86,7 +87,7 @@ public class DefaultNodeTest
 	{
 		final Node node = new DefaultNode(String.class);
 		node.setState(Node.State.ADDED);
-		Assert.assertThat(node.hasChanges(), Is.is(true));
+		assertThat(node.hasChanges(), Is.is(true));
 	}
 
 	@Test
@@ -96,7 +97,7 @@ public class DefaultNodeTest
 		final Node child = new CollectionNode(root, new CollectionItemAccessor("foo"), String.class);
 		root.addChild(child);
 		child.setState(Node.State.ADDED);
-		Assert.assertThat(root.hasChanges(), Is.is(true));
+		assertThat(root.hasChanges(), Is.is(true));
 	}
 
 	@Test
@@ -119,14 +120,14 @@ public class DefaultNodeTest
 				.createBuilder().withRoot().build());
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testAddChild_throws_exception_when_root_node_is_passed() throws Exception
 	{
 		final Node root = new DefaultNode(Object.class);
 		root.addChild(new DefaultNode(Object.class));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testAddChild_throws_exception_when_passed_node_is_already_child_of_another_node() throws Exception
 	{
 		final Node node1 = new DefaultNode(Object.class);
@@ -136,7 +137,7 @@ public class DefaultNodeTest
 		node2.addChild(node3);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testAddChild_throws_exception_when_node_is_added_to_itself() throws Exception
 	{
 		final Node node = new DefaultNode(parentNode, accessor, Object.class);

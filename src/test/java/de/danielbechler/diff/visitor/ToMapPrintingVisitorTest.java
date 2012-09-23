@@ -18,7 +18,7 @@ package de.danielbechler.diff.visitor;
 
 import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.path.*;
-import org.junit.*;
+import org.testng.annotations.*;
 
 import static org.fest.assertions.api.Assertions.*;
 
@@ -27,7 +27,7 @@ public class ToMapPrintingVisitorTest
 {
 	private ToMapPrintingVisitor visitor;
 
-	@Before
+	@BeforeMethod
 	public void setUp() throws Exception
 	{
 		visitor = new ToMapPrintingVisitor("foo", "bar");

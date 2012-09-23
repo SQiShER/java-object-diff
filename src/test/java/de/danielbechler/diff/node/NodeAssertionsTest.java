@@ -20,7 +20,7 @@ import de.danielbechler.diff.*;
 import de.danielbechler.diff.accessor.*;
 import de.danielbechler.diff.mock.*;
 import de.danielbechler.diff.path.*;
-import org.junit.*;
+import org.testng.annotations.*;
 
 import static de.danielbechler.diff.node.NodeAssertions.*;
 import static org.mockito.Mockito.*;
@@ -35,7 +35,7 @@ public class NodeAssertionsTest
 		assertThat(node).node().doesExist();
 	}
 
-	@Test(expected = AssertionError.class)
+	@Test(expectedExceptions = AssertionError.class)
 	public void testAssertThat_node_does_exist_fails_when_node_doesnt_exist() throws Exception
 	{
 		assertThat(null).node().doesExist();
@@ -47,7 +47,7 @@ public class NodeAssertionsTest
 		assertThat(null).node().doesNotExist();
 	}
 
-	@Test(expected = AssertionError.class)
+	@Test(expectedExceptions = AssertionError.class)
 	public void testAssertThat_node_does_not_exist_fails_when_node_exist() throws Exception
 	{
 		final Node node = new DefaultNode(String.class);
@@ -63,7 +63,7 @@ public class NodeAssertionsTest
 		assertThat(root).node().hasChildren();
 	}
 
-	@Test(expected = AssertionError.class)
+	@Test(expectedExceptions = AssertionError.class)
 	public void testAssertThat_node_has_children_fails_when_no_children_are_present() throws Exception
 	{
 		final Node node = new DefaultNode(String.class);
@@ -81,7 +81,7 @@ public class NodeAssertionsTest
 		assertThat(node).child("value").doesExist();
 	}
 
-	@Test(expected = AssertionError.class)
+	@Test(expectedExceptions = AssertionError.class)
 	public void testAssertThat_child_at_property_names_does_exist_fails_when_child_doesnt_exist()
 	{
 		assertThat(null).child("value").doesExist();
@@ -96,7 +96,7 @@ public class NodeAssertionsTest
 		assertThat(node).child(PropertyPath.buildWith("value")).doesExist();
 	}
 
-	@Test(expected = AssertionError.class)
+	@Test(expectedExceptions = AssertionError.class)
 	public void testAssertThat_child_at_property_path_does_exist_fails_when_child_doesnt_exist()
 	{
 		assertThat(null).child(PropertyPath.buildWith("value")).doesExist();
@@ -111,7 +111,7 @@ public class NodeAssertionsTest
 		assertThat(node).child(PropertyPath.createBuilder().withRoot().withPropertyName("value")).doesExist();
 	}
 
-	@Test(expected = AssertionError.class)
+	@Test(expectedExceptions = AssertionError.class)
 	public void testAssertThat_child_at_property_path_builder_does_exist_fails_when_child_doesnt_exist()
 	{
 		assertThat(null).child(PropertyPath.createBuilder().withRoot().withPropertyName("value")).doesExist();
@@ -124,7 +124,7 @@ public class NodeAssertionsTest
 		assertThat(node).node().hasNoChildren();
 	}
 
-	@Test(expected = AssertionError.class)
+	@Test(expectedExceptions = AssertionError.class)
 	public void testAssertThat_node_has_no_children_fails_when_node_has_children()
 	{
 		final Node root = new DefaultNode(String.class);
@@ -133,7 +133,7 @@ public class NodeAssertionsTest
 		assertThat(root).node().hasNoChildren();
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testAssertThat_node_has_children_with_negative_count_throws_IllegalArgumentException()
 	{
 		final Node node = new DefaultNode(String.class);
@@ -148,7 +148,7 @@ public class NodeAssertionsTest
 		assertThat(node).node().hasState(Node.State.CHANGED);
 	}
 
-	@Test(expected = AssertionError.class)
+	@Test(expectedExceptions = AssertionError.class)
 	public void testAssertThat_node_has_changed_state_fails_when_node_has_different_state()
 	{
 		final Node node = new DefaultNode(String.class);
@@ -156,7 +156,7 @@ public class NodeAssertionsTest
 		assertThat(node).node().hasState(Node.State.CHANGED);
 	}
 
-	@Test(expected = AssertionError.class)
+	@Test(expectedExceptions = AssertionError.class)
 	public void testAssertThat_node_has_changed_state_fails_when_node_doesnt_exist()
 	{
 		assertThat(null).node().hasState(Node.State.CHANGED);

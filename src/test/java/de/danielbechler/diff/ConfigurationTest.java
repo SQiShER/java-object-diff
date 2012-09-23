@@ -19,14 +19,14 @@ package de.danielbechler.diff;
 import de.danielbechler.diff.mock.*;
 import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.path.*;
-import org.junit.*;
 import org.mockito.*;
 import org.mockito.invocation.*;
 import org.mockito.stubbing.*;
+import org.testng.annotations.*;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.*;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
 /** @author Daniel Bechler */
@@ -37,7 +37,7 @@ public class ConfigurationTest
 
 	private Configuration configuration;
 
-	@Before
+	@BeforeMethod
 	public void setUp()
 	{
 		MockitoAnnotations.initMocks(this);

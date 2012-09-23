@@ -17,8 +17,12 @@
 package de.danielbechler.diff.accessor;
 
 import de.danielbechler.diff.path.*;
-import org.hamcrest.core.*;
-import org.junit.*;
+import org.testng.annotations.*;
+
+import static org.hamcrest.MatcherAssert.*;
+import static org.hamcrest.core.Is.*;
+import static org.hamcrest.core.IsInstanceOf.*;
+import static org.hamcrest.core.IsSame.*;
 
 /** @author Daniel Bechler */
 public class RootAccessorTest
@@ -29,10 +33,10 @@ public class RootAccessorTest
 	public void testGet() throws Exception
 	{
 		final Object root = new Object();
-		Assert.assertThat(accessor.get(root), IsSame.sameInstance(root));
+		assertThat(accessor.get(root), sameInstance(root));
 	}
 
-	@Test(expected = UnsupportedOperationException.class)
+	@Test(expectedExceptions = UnsupportedOperationException.class)
 	public void testSet() throws Exception
 	{
 		final Object original = new Object();
@@ -40,7 +44,7 @@ public class RootAccessorTest
 		accessor.set(original, replacement);
 	}
 
-	@Test(expected = UnsupportedOperationException.class)
+	@Test(expectedExceptions = UnsupportedOperationException.class)
 	public void testUnset() throws Exception
 	{
 		final Object original = new Object();
@@ -50,6 +54,6 @@ public class RootAccessorTest
 	@Test
 	public void testToPathElement() throws Exception
 	{
-		Assert.assertThat(accessor.getPathElement(), Is.is(RootElement.class));
+		assertThat(accessor.getPathElement(), is(instanceOf(RootElement.class)));
 	}
 }

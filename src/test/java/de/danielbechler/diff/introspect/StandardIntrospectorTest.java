@@ -21,17 +21,18 @@ import de.danielbechler.diff.mock.*;
 import de.danielbechler.diff.path.*;
 import de.danielbechler.util.*;
 import org.hamcrest.core.*;
-import org.junit.Assert;
-import org.junit.*;
+import org.testng.annotations.*;
 
 import java.beans.*;
+
+import static org.hamcrest.MatcherAssert.*;
 
 /** @author Daniel Bechler */
 public class StandardIntrospectorTest
 {
 	private StandardIntrospector introspector;
 
-	@Before
+	@BeforeMethod
 	public void setUp() throws Exception
 	{
 		introspector = new StandardIntrospector();
@@ -41,8 +42,8 @@ public class StandardIntrospectorTest
 	public void testIntrospectWithEqualsOnlyPropertyType() throws Exception
 	{
 		final Iterable<Accessor> accessors = introspector.introspect(ObjectWithEqualsOnlyPropertyType.class);
-		Assert.assertThat(accessors.iterator().hasNext(), Is.is(true));
-		Assert.assertThat(accessors.iterator().next().isEqualsOnly(), Is.is(true));
+		assertThat(accessors.iterator().hasNext(), Is.is(true));
+		assertThat(accessors.iterator().next().isEqualsOnly(), Is.is(true));
 	}
 
 	@Test
@@ -53,22 +54,22 @@ public class StandardIntrospectorTest
 		{
 			if (accessor.getPathElement().equals(new NamedPropertyElement("ignored")))
 			{
-				Assert.assertThat(accessor.isIgnored(), Is.is(true));
+				assertThat(accessor.isIgnored(), Is.is(true));
 			}
 			else if (accessor.getPathElement().equals(new NamedPropertyElement("equalsOnly")))
 			{
-				Assert.assertThat(accessor.isEqualsOnly(), Is.is(true));
+				assertThat(accessor.isEqualsOnly(), Is.is(true));
 			}
 			else if (accessor.getPathElement().equals(new NamedPropertyElement("categorized")))
 			{
-				Assert.assertThat(accessor.getCategories().size(), Is.is(1));
-				Assert.assertThat(accessor.getCategories(), IsEqual.equalTo(Collections.setOf("foo")));
+				assertThat(accessor.getCategories().size(), Is.is(1));
+				assertThat(accessor.getCategories(), IsEqual.equalTo(Collections.setOf("foo")));
 			}
 			else if (accessor.getPathElement().equals(new NamedPropertyElement("item")))
 			{
-				Assert.assertThat(accessor.isEqualsOnly(), Is.is(false));
-				Assert.assertThat(accessor.isIgnored(), Is.is(false));
-				Assert.assertThat(accessor.getCategories().isEmpty(), Is.is(true));
+				assertThat(accessor.isEqualsOnly(), Is.is(false));
+				assertThat(accessor.isIgnored(), Is.is(false));
+				assertThat(accessor.getCategories().isEmpty(), Is.is(true));
 			}
 			else if (accessor.getPathElement().equals(new NamedPropertyElement("key")))
 			{
@@ -80,7 +81,7 @@ public class StandardIntrospectorTest
 			}
 			else
 			{
-				Assert.fail("Unexpected accessor: " + accessor.getPathElement());
+				org.testng.Assert.fail("Unexpected accessor: " + accessor.getPathElement());
 			}
 		}
 	}
@@ -91,17 +92,17 @@ public class StandardIntrospectorTest
 		final Iterable<Accessor> accessors =
 				introspector.introspect(ObjectWithInheritedPropertyAnnotation.class);
 		final Accessor accessor = accessors.iterator().next();
-		Assert.assertThat((NamedPropertyElement) accessor.getPathElement(), IsEqual.equalTo(new NamedPropertyElement("value")));
-		Assert.assertThat(accessor.isIgnored(), Is.is(true));
+		assertThat((NamedPropertyElement) accessor.getPathElement(), IsEqual.equalTo(new NamedPropertyElement("value")));
+		assertThat(accessor.isIgnored(), Is.is(true));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testIntrospectWithNullType() throws Exception
 	{
 		introspector.introspect(null);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test(expectedExceptions = RuntimeException.class)
 	public void testIntrospectWithSimulatedIntrospectionException() throws Exception
 	{
 		introspector = new StandardIntrospector()

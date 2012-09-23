@@ -16,17 +16,18 @@
 
 package de.danielbechler.diff;
 
-import org.junit.*;
+import org.testng.annotations.*;
 
+import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.core.Is.*;
-import static org.junit.Assert.*;
+import static org.testng.Assert.*;
 
 /** @author Daniel Bechler */
 public class CircularReferenceDetectorTest
 {
 	private CircularReferenceDetector circularReferenceDetector;
 
-	@Before
+	@BeforeMethod
 	public void setUp()
 	{
 		circularReferenceDetector = new CircularReferenceDetector();
@@ -67,7 +68,7 @@ public class CircularReferenceDetectorTest
 		assertThat(circularReferenceDetector.size(), is(1));
 	}
 
-	@Test(expected = CircularReferenceDetector.CircularReferenceException.class)
+	@Test(expectedExceptions = CircularReferenceDetector.CircularReferenceException.class)
 	public void testPush_throws_CircularReferenceException_on_known_object() throws Exception
 	{
 		circularReferenceDetector.push("foo");
@@ -82,7 +83,7 @@ public class CircularReferenceDetectorTest
 		assertThat(circularReferenceDetector.size(), is(0));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testRemove_throws_IllegalArgumentException_when_trying_to_remove_any_instance_other_than_the_last_pushed_one() throws Exception
 	{
 		circularReferenceDetector.push("foo");

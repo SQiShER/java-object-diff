@@ -16,8 +16,12 @@
 
 package de.danielbechler.util;
 
-import org.junit.*;
+import de.danielbechler.diff.integration.*;
+import de.danielbechler.diff.node.*;
+import org.testng.annotations.*;
 
+import java.net.*;
+import java.text.*;
 import java.util.*;
 
 import static org.fest.assertions.api.Assertions.*;
@@ -43,5 +47,88 @@ public class ClassesTest
 		items.add(LinkedList.class);
 		final boolean result = Classes.allAssignableFrom(List.class, items);
 		assertThat(result).isFalse();
+	}
+
+	@Test(dataProvider = "wrapperTypes")
+	public void testIsWrapperType(final Class<?> type)
+	{
+		assertThat(Classes.isWrapperType(type)).isTrue();
+	}
+
+	@Test(dataProvider = "complexTypes")
+	public void testIsNotWrapperType(final Class<?> type)
+	{
+		assertThat(Classes.isWrapperType(type)).isFalse();
+	}
+
+	@Test(dataProvider = "simpleTypes")
+	public void testIsSimpleType(final Class<?> type)
+	{
+		assertThat(Classes.isSimpleType(type)).isTrue();
+	}
+
+	@Test(dataProvider = "complexTypes")
+	public void testIsNotSimpleType(final Class<?> type)
+	{
+		assertThat(Classes.isSimpleType(type)).isFalse();
+	}
+
+	@DataProvider
+	public Object[][] wrapperTypes()
+	{
+		return new Object[][] {
+				new Object[] {Integer.class},
+				new Object[] {Short.class},
+				new Object[] {Character.class},
+				new Object[] {Long.class},
+				new Object[] {Boolean.class},
+				new Object[] {Byte.class},
+				new Object[] {Float.class},
+				new Object[] {Double.class},
+		};
+	}
+
+	@DataProvider
+	public Object[][] complexTypes()
+	{
+		return new Object[][] {
+				new Object[] {Contact.class},
+				new Object[] {PhoneBook.class},
+				new Object[] {PhoneNumber.class},
+				new Object[] {Scanner.class},
+				new Object[] {Collator.class},
+		};
+	}
+
+	@DataProvider
+	public Object[][] simpleTypes()
+	{
+		return new Object[][] {
+				new Object[] {int.class},
+				new Object[] {Integer.class},
+				new Object[] {short.class},
+				new Object[] {Short.class},
+				new Object[] {char.class},
+				new Object[] {Character.class},
+				new Object[] {long.class},
+				new Object[] {Long.class},
+				new Object[] {boolean.class},
+				new Object[] {Boolean.class},
+				new Object[] {byte.class},
+				new Object[] {Byte.class},
+				new Object[] {float.class},
+				new Object[] {Float.class},
+				new Object[] {double.class},
+				new Object[] {Double.class},
+				new Object[] {CharSequence.class},
+				new Object[] {String.class},
+				new Object[] {Date.class},
+				new Object[] {URL.class},
+				new Object[] {Locale.class},
+				new Object[] {URI.class},
+				new Object[] {Number.class},
+				new Object[] {Node.State.class},
+				new Object[] {Class.class},
+		};
 	}
 }

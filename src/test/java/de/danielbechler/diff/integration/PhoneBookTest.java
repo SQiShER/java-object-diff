@@ -20,10 +20,10 @@ import de.danielbechler.diff.*;
 import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.path.*;
 import org.hamcrest.core.*;
-import org.junit.*;
+import org.testng.annotations.*;
 
+import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.core.Is.*;
-import static org.junit.Assert.*;
 
 /** @author Daniel Bechler */
 public class PhoneBookTest

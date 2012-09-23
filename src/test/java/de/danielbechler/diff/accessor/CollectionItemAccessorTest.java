@@ -18,9 +18,11 @@ package de.danielbechler.diff.accessor;
 
 import de.danielbechler.diff.mock.*;
 import org.hamcrest.core.*;
-import org.junit.*;
+import org.testng.annotations.*;
 
 import java.util.*;
+
+import static org.hamcrest.MatcherAssert.*;
 
 /** @author Daniel Bechler */
 public class CollectionItemAccessorTest
@@ -52,7 +54,7 @@ public class CollectionItemAccessorTest
 									   final String value)
 	{
 		final ObjectWithHashCodeAndEquals next = iterator.next();
-		Assert.assertThat(next.getKey(), IsEqual.equalTo(key));
-		Assert.assertThat(next.getValue(), IsEqual.equalTo(value));
+		assertThat(next.getKey(), IsEqual.equalTo(key));
+		assertThat(next.getValue(), IsEqual.equalTo(value));
 	}
 }
