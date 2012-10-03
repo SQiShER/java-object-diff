@@ -19,21 +19,25 @@ package de.danielbechler.diff;
 import de.danielbechler.diff.accessor.*;
 import org.testng.annotations.*;
 
+import java.lang.reflect.*;
 import java.util.*;
 
+import static de.danielbechler.diff.extension.AssertionsExtensions.*;
+import static de.danielbechler.diff.extension.MockitoExtensions.*;
 import static org.fest.assertions.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /** @author Daniel Bechler */
 public class InstancesTest
 {
 	@Test(expectedExceptions = IllegalStateException.class)
-	public void testGetType_throws_exception_for_incompatible_types() throws Exception
+	public void testGetTypeThrowsExceptionForIncompatibleTypes() throws Exception
 	{
 		new Instances(RootAccessor.getInstance(), "foo", 1, null).getType();
 	}
 
 	@Test
-	public void testGetType_returns_Collection_type_for_different_Collection_implementations() throws Exception
+	public void testGetTypeReturnsCollectionTypeForDifferentCollectionImplementations() throws Exception
 	{
 		final Instances instances = new Instances(RootAccessor.getInstance(), new ArrayList<Object>(), new LinkedHashSet(), null);
 		final Class<?> type = instances.getType();
@@ -41,11 +45,26 @@ public class InstancesTest
 	}
 
 	@Test
-	public void testGetType_returns_Map_type_for_different_Map_implementations() throws Exception
+	public void testGetTypeReturnsMapTypeForDifferentMapImplementations() throws Exception
 	{
 		final Instances instances = new Instances(RootAccessor.getInstance(), new HashMap<Object, Object>(), new TreeMap<Object, Object>(), null);
 		final Class<?> type = instances.getType();
 		assertThat(type == Map.class);
+	}
+
+	@Test
+	public void testGetTypeReturnsTypeOfTypeAwareAccessor() throws Exception
+	{
+		final TypeAwareAccessor typeAwareAccessor = mockTypeAwareAccessorOfType(Long.class);
+		final Instances instances = new Instances(typeAwareAccessor, 0, 0, 0);
+		assertThat(instances.getType()).is(ofType(Long.class));
+	}
+
+	private static <T> TypeAwareAccessor mockTypeAwareAccessorOfType(final Class<T> clazz)
+	{
+		final TypeAwareAccessor typeAwareAccessor = mock(TypeAwareAccessor.class);
+		when(typeAwareAccessor.getType()).then(returnClass(clazz));
+		return typeAwareAccessor;
 	}
 
 	@Test
@@ -70,14 +89,72 @@ public class InstancesTest
 	}
 
 	@Test
-	public void testArePrimitiveReturnsTrueForPrimitiveType()
+	public void testIsPrimitiveTypeReturnsTrueForPrimitiveType()
 	{
-		assertThat(new Instances(RootAccessor.getInstance(), 1L, 2L, 0L).arePrimitive()).isTrue();
+		final TypeAwareAccessor typeAwareAccessor = mockTypeAwareAccessorOfType(long.class);
+		assertThat(new Instances(typeAwareAccessor, 1L, 2L, 0L).isPrimitiveType()).isTrue();
 	}
 
 	@Test
-	public void testArePrimitiveReturnsFalseForComplexType()
+	public void testIsPrimitiveTypeReturnsFalseForPrimitiveWrapperType()
 	{
-		assertThat(new Instances(RootAccessor.getInstance(), "1", "2", null).arePrimitive()).isFalse();
+		final TypeAwareAccessor typeAwareAccessor = mockTypeAwareAccessorOfType(Long.class);
+		assertThat(new Instances(typeAwareAccessor, 1L, 2L, 0L).isPrimitiveType()).isFalse();
+	}
+
+	@Test
+	public void testGetFreshReturnsZeroForPrimitiveNumericTypeIfUndefined() throws Exception
+	{
+		final TypeAwareAccessor typeAwareAccessor = mockTypeAwareAccessorOfType(long.class);
+		assertThat(new Instances(typeAwareAccessor, 0, 0, null).getFresh()).isEqualTo(0);
+	}
+
+	@Test
+	public void testGetFreshReturnsDefinedDefaultValueForPrimitiveNumericType() throws Exception
+	{
+		final TypeAwareAccessor typeAwareAccessor = mockTypeAwareAccessorOfType(long.class);
+		assertThat(new Instances(typeAwareAccessor, 0, 0, 1337).getFresh()).isEqualTo(1337);
+	}
+
+	@Test
+	public void testGetFreshReturnsZeroForPrimitiveBooleanTypeIfUndefined() throws Exception
+	{
+		final TypeAwareAccessor typeAwareAccessor = mockTypeAwareAccessorOfType(boolean.class);
+		assertThat(new Instances(typeAwareAccessor, true, true, null).getFresh()).isEqualTo(false);
+	}
+
+	@Test
+	public void testGetFreshReturnsNullForDefaultLessPrimitiveWrapperType() throws Exception
+	{
+		final TypeAwareAccessor typeAwareAccessor = mockTypeAwareAccessorOfType(Long.class);
+		assertThat(new Instances(typeAwareAccessor, 0L, 0L, null).getFresh()).isNull();
+	}
+
+	@Test
+	public void testGetFreshReturnsDefinedDefaultValueForPrimitiveBooleanType() throws Exception
+	{
+		final TypeAwareAccessor typeAwareAccessor = mockTypeAwareAccessorOfType(boolean.class);
+		assertThat(new Instances(typeAwareAccessor, true, true, true).getFresh()).isEqualTo(true);
+	}
+
+	@Test
+	public void testIsPrimitiveTypeReturnsPrimitiveClassForPrimitiveType() throws Exception
+	{
+		final Method readMethod = getClass().getDeclaredMethod("getTestValue");
+		final PropertyAccessor accessor = new PropertyAccessor("testValue", readMethod, null);
+		final Instances instances = new Instances(accessor, 1L, 2L, 0L);
+		assertThat(instances.getType() == long.class).isTrue();
+	}
+
+	@Test
+	public void testIsPrimitiveTypeReturnsFalseForComplexType()
+	{
+		assertThat(new Instances(RootAccessor.getInstance(), "1", "2", null).isPrimitiveType()).isFalse();
+	}
+
+	@SuppressWarnings({"MethodMayBeStatic", "UnusedDeclaration"})
+	public long getTestValue()
+	{
+		return 0L;
 	}
 }

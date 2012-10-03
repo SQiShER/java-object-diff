@@ -32,26 +32,26 @@ public class NodeAssertionsTest
 	public void testAssertThat_node_does_exist_succeeds_when_node_exists() throws Exception
 	{
 		final Node node = new DefaultNode(String.class);
-		assertThat(node).node().doesExist();
+		assertThat(node).root().doesExist();
 	}
 
 	@Test(expectedExceptions = AssertionError.class)
 	public void testAssertThat_node_does_exist_fails_when_node_doesnt_exist() throws Exception
 	{
-		assertThat(null).node().doesExist();
+		assertThat(null).root().doesExist();
 	}
 
 	@Test
 	public void testAssertThat_node_does_not_exist_succeeds_when_node_doesnt_exist() throws Exception
 	{
-		assertThat(null).node().doesNotExist();
+		assertThat(null).root().doesNotExist();
 	}
 
 	@Test(expectedExceptions = AssertionError.class)
 	public void testAssertThat_node_does_not_exist_fails_when_node_exist() throws Exception
 	{
 		final Node node = new DefaultNode(String.class);
-		assertThat(node).node().doesNotExist();
+		assertThat(node).root().doesNotExist();
 	}
 
 	@Test
@@ -60,14 +60,14 @@ public class NodeAssertionsTest
 		final Node root = new DefaultNode(String.class);
 		final Node child = new DefaultNode(root, mock(Accessor.class), String.class);
 		root.addChild(child);
-		assertThat(root).node().hasChildren();
+		assertThat(root).root().hasChildren();
 	}
 
 	@Test(expectedExceptions = AssertionError.class)
 	public void testAssertThat_node_has_children_fails_when_no_children_are_present() throws Exception
 	{
 		final Node node = new DefaultNode(String.class);
-		assertThat(node).node().hasChildren();
+		assertThat(node).root().hasChildren();
 	}
 
 	@Test
@@ -121,7 +121,7 @@ public class NodeAssertionsTest
 	public void testAssertThat_node_has_no_children_succeeds_when_node_has_no_children()
 	{
 		final Node node = new DefaultNode(String.class);
-		assertThat(node).node().hasNoChildren();
+		assertThat(node).root().hasNoChildren();
 	}
 
 	@Test(expectedExceptions = AssertionError.class)
@@ -130,14 +130,14 @@ public class NodeAssertionsTest
 		final Node root = new DefaultNode(String.class);
 		final Node child = new DefaultNode(root, mock(Accessor.class), String.class);
 		root.addChild(child);
-		assertThat(root).node().hasNoChildren();
+		assertThat(root).root().hasNoChildren();
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testAssertThat_node_has_children_with_negative_count_throws_IllegalArgumentException()
 	{
 		final Node node = new DefaultNode(String.class);
-		assertThat(node).node().hasChildren(-1);
+		assertThat(node).root().hasChildren(-1);
 	}
 
 	@Test
@@ -145,7 +145,7 @@ public class NodeAssertionsTest
 	{
 		final Node node = new DefaultNode(String.class);
 		node.setState(Node.State.CHANGED);
-		assertThat(node).node().hasState(Node.State.CHANGED);
+		assertThat(node).root().hasState(Node.State.CHANGED);
 	}
 
 	@Test(expectedExceptions = AssertionError.class)
@@ -153,12 +153,12 @@ public class NodeAssertionsTest
 	{
 		final Node node = new DefaultNode(String.class);
 		node.setState(Node.State.UNTOUCHED);
-		assertThat(node).node().hasState(Node.State.CHANGED);
+		assertThat(node).root().hasState(Node.State.CHANGED);
 	}
 
 	@Test(expectedExceptions = AssertionError.class)
 	public void testAssertThat_node_has_changed_state_fails_when_node_doesnt_exist()
 	{
-		assertThat(null).node().hasState(Node.State.CHANGED);
+		assertThat(null).root().hasState(Node.State.CHANGED);
 	}
 }

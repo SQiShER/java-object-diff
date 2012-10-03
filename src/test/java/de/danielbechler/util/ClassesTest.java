@@ -17,6 +17,7 @@
 package de.danielbechler.util;
 
 import de.danielbechler.diff.integration.*;
+import de.danielbechler.diff.mock.*;
 import de.danielbechler.diff.node.*;
 import org.testng.annotations.*;
 
@@ -52,13 +53,13 @@ public class ClassesTest
 	@Test(dataProvider = "wrapperTypes")
 	public void testIsWrapperType(final Class<?> type)
 	{
-		assertThat(Classes.isWrapperType(type)).isTrue();
+		assertThat(Classes.isPrimitiveWrapperType(type)).isTrue();
 	}
 
 	@Test(dataProvider = "complexTypes")
 	public void testIsNotWrapperType(final Class<?> type)
 	{
-		assertThat(Classes.isWrapperType(type)).isFalse();
+		assertThat(Classes.isPrimitiveWrapperType(type)).isFalse();
 	}
 
 	@Test(dataProvider = "simpleTypes")
@@ -71,6 +72,36 @@ public class ClassesTest
 	public void testIsNotSimpleType(final Class<?> type)
 	{
 		assertThat(Classes.isSimpleType(type)).isFalse();
+	}
+
+	@Test
+	public void testFreshInstanceOfClassWithPublicDefaultConstructorReturnsNewInstance()
+	{
+		assertThat(Classes.freshInstanceOf(ObjectWithString.class)).isOfAnyClassIn(ObjectWithString.class);
+	}
+
+	@Test
+	public void testFreshInstanceOfClassWithPrivateDefaultConstructorReturnsNewInstance()
+	{
+		assertThat(Classes.freshInstanceOf(ObjectWithPrivateDefaultConstructor.class)).isOfAnyClassIn(ObjectWithPrivateDefaultConstructor.class);
+	}
+
+	@Test
+	public void testFreshInstanceOfClassWithoutDefaultConstructorReturnsNull()
+	{
+		assertThat(Classes.freshInstanceOf(ObjectWithoutDefaultConstructor.class)).isNull();
+	}
+
+	@Test(expectedExceptions = RuntimeException.class)
+	public void testFreshInstanceOfThrowsExceptionIfOneIsThrownByDefaultConstructor()
+	{
+		Classes.freshInstanceOf(ObjectWithExceptionThrowingDefaultConstructor.class);
+	}
+
+	@Test
+	public void testFreshInstanceOfReturnsNullWhenNoClassIsGiven()
+	{
+		assertThat(Classes.freshInstanceOf(null)).isNull();
 	}
 
 	@DataProvider

@@ -50,7 +50,7 @@ public class DelegatingObjectDifferTest
 	public void setUp() throws Exception
 	{
 		MockitoAnnotations.initMocks(this);
-		differ = new DelegatingObjectDifferImpl(beanDiffer, mapDiffer, collectionDiffer);
+		differ = new DelegatingObjectDifferImpl(beanDiffer, mapDiffer, collectionDiffer, null);
 	}
 
 	@Test

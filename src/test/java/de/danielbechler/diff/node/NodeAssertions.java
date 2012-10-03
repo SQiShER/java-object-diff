@@ -42,10 +42,18 @@ public final class NodeAssertions
 		}
 
 		@Override
-		public Syntax.AssertNode node()
+		public Syntax.AssertNode root()
 		{
 			this.selectedNode = rootNode;
 			this.propertyPath = PropertyPath.createBuilder().withRoot().build();
+			return this;
+		}
+
+		@Override
+		public Syntax.AssertNode self()
+		{
+			this.selectedNode = rootNode;
+			this.propertyPath = rootNode.getPropertyPath();
 			return this;
 		}
 
@@ -229,7 +237,9 @@ public final class NodeAssertions
 	{
 		public interface SelectNode
 		{
-			AssertNode node();
+			AssertNode root();
+
+			AssertNode self();
 
 			AssertNode child(PropertyPath propertyPath);
 

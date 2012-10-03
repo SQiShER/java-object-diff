@@ -36,7 +36,7 @@ public class GraphIntegrationTest
 
 		final Node root = compareAndPrint(modified, base);
 
-		assertThat(root).node().hasChildren(1);
+		assertThat(root).root().hasChildren(1);
 		assertThat(root).child("directReference", "value").hasState(Node.State.CHANGED).hasNoChildren();
 	}
 
@@ -53,7 +53,7 @@ public class GraphIntegrationTest
 
 		final Node root = compareAndPrint(modified, base);
 
-		assertThat(root).node().hasChildren(1);
+		assertThat(root).root().hasChildren(1);
 		assertThat(root).child("directReference", "value").hasState(Node.State.CHANGED).hasNoChildren();
 	}
 
@@ -74,7 +74,7 @@ public class GraphIntegrationTest
 
 		final Node root = compareAndPrint(modified, base);
 
-		assertThat(root).node().hasChildren(1);
+		assertThat(root).root().hasChildren(1);
 		assertThat(root).child("children").hasChildren(2);
 		assertThat(root).child(createBuilder()
 				.withRoot()
@@ -216,7 +216,7 @@ public class GraphIntegrationTest
 
 		final Node root = compareAndPrint(modified, base);
 
-		NodeAssertions.assertThat(root).node().hasState(Node.State.UNTOUCHED); // not a bug!
+		NodeAssertions.assertThat(root).root().hasState(Node.State.UNTOUCHED); // not a bug!
 
 		// NOTE: This is expected, since Collections (and java-object-diff) rely heavily on the proper
 		// implementation of hashCode and equals. The GraphNode uses the ID as sole criteria in it's
@@ -296,7 +296,7 @@ public class GraphIntegrationTest
 
 		final Node root = compareAndPrint(modified, base);
 
-		assertThat(root).node().hasState(Node.State.UNTOUCHED);
+		assertThat(root).root().hasState(Node.State.UNTOUCHED);
 	}
 
 	@Test

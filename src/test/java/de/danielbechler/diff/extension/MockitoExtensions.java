@@ -14,10 +14,24 @@
  * limitations under the License.
  */
 
-package de.danielbechler.diff.accessor;
+package de.danielbechler.diff.extension;
+
+import org.mockito.invocation.*;
+import org.mockito.stubbing.*;
 
 /** @author Daniel Bechler */
-public interface TypeAwareAccessor extends Accessor
+public class MockitoExtensions
 {
-	Class<?> getType();
+	public static <T> Answer<Class<T>> returnClass(final Class<T> clazz)
+	{
+		return new Answer<Class<T>>()
+		{
+			@Override
+			public Class<T> answer(final InvocationOnMock invocation) throws Throwable
+			{
+				return clazz;
+			}
+		};
+	}
+
 }

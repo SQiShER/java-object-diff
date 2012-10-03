@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
-package de.danielbechler.diff.accessor;
+package de.danielbechler.diff.mock;
 
 /** @author Daniel Bechler */
-public interface TypeAwareAccessor extends Accessor
+public class ObjectWithExceptionThrowingDefaultConstructor
 {
-	Class<?> getType();
+	public ObjectWithExceptionThrowingDefaultConstructor()
+	{
+		throw new UnsupportedOperationException();
+	}
 }

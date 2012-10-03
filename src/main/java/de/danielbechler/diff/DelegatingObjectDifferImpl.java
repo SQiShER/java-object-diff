@@ -32,6 +32,7 @@ final class DelegatingObjectDifferImpl implements DelegatingObjectDiffer
 	private final Differ beanDiffer;
 	private final Differ mapDiffer;
 	private final Differ collectionDiffer;
+	private final Differ primitiveDiffer;
 
 	private Configuration configuration = new Configuration();
 
@@ -40,16 +41,19 @@ final class DelegatingObjectDifferImpl implements DelegatingObjectDiffer
 		this.beanDiffer = new BeanDiffer(this);
 		this.mapDiffer = new MapDiffer(this);
 		this.collectionDiffer = new CollectionDiffer(this);
+		this.primitiveDiffer = new PrimitiveDiffer(this);
 	}
 
 	/** Constructor used for lazy initialization of the concrete Differs. */
 	public DelegatingObjectDifferImpl(final Differ beanDiffer,
 									  final Differ mapDiffer,
-									  final Differ collectionDiffer)
+									  final Differ collectionDiffer,
+									  final Differ primitiveDiffer)
 	{
 		this.beanDiffer = beanDiffer != null ? beanDiffer : new BeanDiffer(this);
 		this.mapDiffer = mapDiffer != null ? mapDiffer : new MapDiffer(this);
 		this.collectionDiffer = collectionDiffer != null ? collectionDiffer : new CollectionDiffer(this);
+		this.primitiveDiffer = primitiveDiffer != null ? primitiveDiffer : new PrimitiveDiffer(this);
 	}
 
 	public <T> Node compare(final T working, final T base)
@@ -64,9 +68,14 @@ final class DelegatingObjectDifferImpl implements DelegatingObjectDiffer
 	 */
 	public Node delegate(final Node parentNode, final Instances instances)
 	{
+		Assert.notNull(instances, "instances");
 		if (instances.areNull())
 		{
 			return newNode(parentNode, instances);
+		}
+		else if (instances.isPrimitiveType())
+		{
+			return primitiveDiffer.compare(parentNode, instances);
 		}
 		else if (Collection.class.isAssignableFrom(instances.getType()))
 		{

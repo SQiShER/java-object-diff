@@ -31,7 +31,7 @@ final class CollectionDiffer extends AbstractDiffer<CollectionNode>
 {
 	public CollectionDiffer()
 	{
-		setDelegate(new DelegatingObjectDifferImpl(null, null, this));
+		setDelegate(new DelegatingObjectDifferImpl(null, null, this, null));
 	}
 
 	public CollectionDiffer(final DelegatingObjectDiffer delegate)

@@ -155,7 +155,7 @@ public class MapDifferTest
 
 		final MapNode root = differ.compare(modified, base);
 
-		assertThat(root).node().hasChildren(1);
+		assertThat(root).root().hasChildren(1);
 		assertThat(root).child(PropertyPath.createBuilder().withRoot().withMapKey("foo")).doesNotExist();
 		assertThat(root).child(PropertyPath.createBuilder().withRoot().withMapKey("ping"))
 				.hasState(Node.State.ADDED)

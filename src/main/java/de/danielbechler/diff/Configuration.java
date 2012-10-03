@@ -26,6 +26,31 @@ import java.util.*;
 /** @author Daniel Bechler */
 public class Configuration implements NodeInspector
 {
+	/**
+	 * Defines how default values of primitive types (int, long, short, byte, char, boolean, float, double) will
+	 * be treated. A default value is either the one specified by the JDK (numbers are 0, booleans are false) or
+	 * the value of the corresponding property when a new instance of its holding class gets created. In order to
+	 * determine the proper default value, we'll attempt to instantiate the holding class once via its public
+	 * constructor. If this instantiation fails (for example if there is no such constructor), we'll fall back to
+	 * the JDK default. This configuration does not apply to the corresponding wrapper types (Integer, Long,
+	 * Short, Byte, Character, Boolean, Float, Double).
+	 */
+	public enum PrimitiveDefaultValueMode
+	{
+		/**
+		 * Default values of primitive types will be treated like any other value. Since there is no distinction,
+		 * any change to a primitive value will be marked as {@linkplain Node.State#CHANGED}.
+		 */
+		ASSIGNED,
+
+		/**
+		 * Default values of primitive types will be treated as if the property has not been set. The consequence of
+		 * this is that a change from default value to something else will be marked as {@linkplain
+		 * Node.State#ADDED} and from something else to the default value as {@linkplain Node.State#REMOVED}.
+		 */
+		UNASSIGNED
+	}
+
 	private final Collection<String> includedCategories = new TreeSet<String>();
 	private final Collection<String> excludedCategories = new TreeSet<String>();
 	private final Collection<PropertyPath> includedProperties = new HashSet<PropertyPath>(10);
@@ -37,6 +62,7 @@ public class Configuration implements NodeInspector
 	private boolean returnCircularNodes = true;
 	private boolean returnChildrenOfAddedNodes = false;
 	private boolean returnChildrenOfRemovedNodes = false;
+	private PrimitiveDefaultValueMode treatPrimitivesAs = PrimitiveDefaultValueMode.UNASSIGNED;
 
 	public Configuration withCategory(final String category)
 	{
@@ -132,6 +158,17 @@ public class Configuration implements NodeInspector
 	{
 		this.returnChildrenOfRemovedNodes = false;
 		return this;
+	}
+
+	public Configuration treatPrimitiveDefaultValuesAs(final PrimitiveDefaultValueMode mode)
+	{
+		this.treatPrimitivesAs = mode;
+		return this;
+	}
+
+	public PrimitiveDefaultValueMode getPrimitiveDefaultValueMode()
+	{
+		return treatPrimitivesAs;
 	}
 
 	@Override

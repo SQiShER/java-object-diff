@@ -14,10 +14,23 @@
  * limitations under the License.
  */
 
-package de.danielbechler.diff.accessor;
+package de.danielbechler.diff.extension;
+
+import org.fest.assertions.core.*;
 
 /** @author Daniel Bechler */
-public interface TypeAwareAccessor extends Accessor
+public class AssertionsExtensions
 {
-	Class<?> getType();
+	public static Condition<Class<?>> ofType(final Class<Long> aClass)
+	{
+		return new Condition<Class<?>>()
+		{
+			@Override
+			public boolean matches(final Class<?> value)
+			{
+				return aClass.equals(value);
+			}
+		};
+	}
+
 }

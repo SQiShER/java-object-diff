@@ -99,25 +99,33 @@ class Instances
 
 	public Object getFresh()
 	{
+		if (fresh == null)
+		{
+			if (isPrimitiveNumericType())
+			{
+				return 0;
+			}
+			else if (isPrimitiveBooleanType())
+			{
+				return false;
+			}
+		}
 		return fresh;
 	}
 
 	public <T> T getFresh(final Class<T> type)
 	{
-		return fresh != null ? type.cast(fresh) : null;
+		final Object o = getFresh();
+		return o != null ? type.cast(o) : null;
 	}
 
 	public boolean hasBeenAdded()
 	{
-		if (arePrimitive())
-		{
-			return false;
-		}
 		if (working != null && base == null)
 		{
 			return true;
 		}
-		if (Objects.isEqual(fresh, base) && !Objects.isEqual(base, working))
+		if (Objects.isEqual(getFresh(), base) && !Objects.isEqual(base, working))
 		{
 			return true;
 		}
@@ -126,29 +134,35 @@ class Instances
 
 	public boolean hasBeenRemoved()
 	{
-		if (arePrimitive())
-		{
-			return false;
-		}
 		if (base != null && working == null)
 		{
 			return true;
 		}
-		if (Objects.isEqual(fresh, working) && !Objects.isEqual(base, working))
+		if (Objects.isEqual(getFresh(), working) && !Objects.isEqual(base, working))
 		{
 			return true;
 		}
 		return false;
 	}
 
-	public boolean arePrimitive()
+	public boolean isPrimitiveType()
 	{
-		final Class<?> type = getType();
-		if (type != null && type.isPrimitive() || Classes.isWrapperType(type))
-		{
-			return true;
-		}
-		return false;
+		return Classes.isPrimitiveType(getType());
+	}
+
+	public boolean isPrimitiveWrapperType()
+	{
+		return Classes.isPrimitiveWrapperType(getType());
+	}
+
+	public boolean isPrimitiveNumericType()
+	{
+		return Classes.isPrimitiveNumericType(getType());
+	}
+
+	private boolean isPrimitiveBooleanType()
+	{
+		return getType() == boolean.class;
 	}
 
 	public boolean areEqual()

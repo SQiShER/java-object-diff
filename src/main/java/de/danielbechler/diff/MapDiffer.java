@@ -31,7 +31,7 @@ final class MapDiffer extends AbstractDiffer<MapNode>
 {
 	public MapDiffer()
 	{
-		setDelegate(new DelegatingObjectDifferImpl(null, this, null));
+		setDelegate(new DelegatingObjectDifferImpl(null, this, null, null));
 	}
 
 	public MapDiffer(final DelegatingObjectDiffer delegate)

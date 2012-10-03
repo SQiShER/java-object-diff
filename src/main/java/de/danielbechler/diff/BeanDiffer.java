@@ -33,7 +33,7 @@ final class BeanDiffer extends AbstractDiffer<Node>
 
 	BeanDiffer()
 	{
-		setDelegate(new DelegatingObjectDifferImpl(this, null, null));
+		setDelegate(new DelegatingObjectDifferImpl(this, null, null, null));
 	}
 
 	BeanDiffer(final DelegatingObjectDiffer delegate)
@@ -58,11 +58,11 @@ final class BeanDiffer extends AbstractDiffer<Node>
 		final Node node = newNode(parentNode, instances);
 		if (getDelegate().isIgnored(node))
 		{
-			ensureNodeState(node, Node.State.IGNORED);
+			node.setState(Node.State.IGNORED);
 		}
 		else if (instances.getType() == null)
 		{
-			ensureNodeState(node, Node.State.UNTOUCHED);
+			node.setState(Node.State.UNTOUCHED);
 		}
 		else
 		{
@@ -134,7 +134,8 @@ final class BeanDiffer extends AbstractDiffer<Node>
 		final DelegatingObjectDiffer delegate = getDelegate();
 		for (final Accessor accessor : introspect(instances.getType()))
 		{
-			final Node propertyNode = delegate.delegate(parentNode, instances.access(accessor));
+			final Instances propertyInstances = instances.access(accessor);
+			final Node propertyNode = delegate.delegate(parentNode, propertyInstances);
 			if (delegate.isReturnable(propertyNode))
 			{
 				parentNode.addChild(propertyNode);

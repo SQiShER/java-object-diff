@@ -204,7 +204,7 @@ public class BeanDifferTest
 		differ.getConfiguration().withChildrenOfAddedNodes();
 		node = differ.compare(working, base);
 		node.visit(new NodeHierarchyVisitor());
-		assertThat(node).node().hasState(Node.State.CHANGED);
+		assertThat(node).root().hasState(Node.State.CHANGED);
 		assertThat(node).child("object").hasState(Node.State.ADDED);
 		assertThat(node).child("object", "object").hasState(Node.State.ADDED);
 	}

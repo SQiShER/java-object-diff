@@ -161,6 +161,6 @@ public class DefaultNodeTest
 		final Node nodeMock = mock(Node.class);
 		when(nodeMock.hasChanges()).thenReturn(true);
 		node.addChild(nodeMock);
-		NodeAssertions.assertThat(node).node().hasState(Node.State.CHANGED);
+		NodeAssertions.assertThat(node).root().hasState(Node.State.CHANGED);
 	}
 }
