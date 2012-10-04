@@ -1,3 +1,7 @@
+## News
+
+The latest version 0.10 is out and introduces some improvements, that affect the way objects are compared. Make sure to read the [changelogs](https://github.com/SQiShER/java-object-diff/wiki/Changelog) before you upgrade and let me know, if the changes are causing you any trouble.
+
 ## Introduction
 
 Sometimes you need to figure out, how one version of an object differs from another one. One of the simplest solutions that'll cross your mind is most certainly to use reflection to scan the object for fields or getters and use them to compare the values of the different object instances. In many cases this is a perfectly valid strategy and the way to go. After all, we want to keep things simple, don't we?
