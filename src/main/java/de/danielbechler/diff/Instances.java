@@ -125,7 +125,7 @@ class Instances
 		{
 			return true;
 		}
-		if (Objects.isEqual(getFresh(), base) && !Objects.isEqual(base, working))
+		if (isPrimitiveType() && Objects.isEqual(getFresh(), base) && !Objects.isEqual(base, working))
 		{
 			return true;
 		}
@@ -138,7 +138,7 @@ class Instances
 		{
 			return true;
 		}
-		if (Objects.isEqual(getFresh(), working) && !Objects.isEqual(base, working))
+		if (isPrimitiveType() && Objects.isEqual(getFresh(), working) && !Objects.isEqual(base, working))
 		{
 			return true;
 		}

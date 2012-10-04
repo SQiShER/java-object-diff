@@ -60,7 +60,7 @@ final class BeanDiffer extends AbstractDiffer<Node>
 		{
 			node.setState(Node.State.IGNORED);
 		}
-		else if (instances.getType() == null)
+		else if (instances.areNull())
 		{
 			node.setState(Node.State.UNTOUCHED);
 		}
