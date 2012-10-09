@@ -22,7 +22,6 @@ import de.danielbechler.diff.introspect.*;
 import de.danielbechler.diff.mock.*;
 import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.visitor.*;
-import org.hamcrest.core.*;
 import org.mockito.*;
 import org.testng.annotations.*;
 
@@ -190,9 +189,10 @@ public class BeanDifferTest
 	{
 		final ObjectWithAccessTrackingIgnoredProperty working = new ObjectWithAccessTrackingIgnoredProperty();
 		final ObjectWithAccessTrackingIgnoredProperty base = new ObjectWithAccessTrackingIgnoredProperty();
-		new BeanDiffer().compare(working, base);
-		assertThat(working.accessed, Is.is(false));
-		assertThat(base.accessed, Is.is(false));
+		differ = new BeanDiffer();
+		node = differ.compare(working, base);
+		assertThat(working.accessed, is(false));
+		assertThat(base.accessed, is(false));
 	}
 
 	@Test
@@ -212,17 +212,20 @@ public class BeanDifferTest
 	@SuppressWarnings({"MethodMayBeStatic", "UnusedDeclaration"})
 	private static class ObjectWithAccessTrackingIgnoredProperty
 	{
-		private boolean accessed = false;
+		private boolean value;
+		private boolean accessed;
 
 		@ObjectDiffProperty(ignore = true)
-		public void getValue()
+		public boolean getValue()
 		{
-			accessed = true;
+			this.accessed = true;
+			return this.value;
 		}
 
-		public void setValue()
+		public void setValue(final boolean value)
 		{
-			accessed = true;
+			this.value = value;
+			this.accessed = true;
 		}
 	}
 }
