@@ -17,26 +17,30 @@
 package de.danielbechler.diff;
 
 import de.danielbechler.diff.node.*;
+import de.danielbechler.util.*;
 
 import static de.danielbechler.diff.Configuration.PrimitiveDefaultValueMode.*;
 
 /** @author Daniel Bechler */
-public class PrimitiveDiffer extends AbstractDiffer<Node>
+public class PrimitiveDiffer implements Differ<DefaultNode>
 {
-	public PrimitiveDiffer(final DelegatingObjectDiffer delegator, final Configuration configuration)
+	private final Configuration configuration;
+
+	public PrimitiveDiffer(final Configuration configuration)
 	{
-		super(delegator, configuration);
+		Assert.notNull(configuration, "configuration");
+		this.configuration = configuration;
 	}
 
 	@Override
-	protected Node internalCompare(final Node parentNode, final Instances instances)
+	public final DefaultNode compare(final Node parentNode, final Instances instances)
 	{
 		if (!instances.getType().isPrimitive())
 		{
 			throw new IllegalArgumentException("The primitive differ can only deal with primitive types.");
 		}
 
-		final Node node = newNode(parentNode, instances);
+		final DefaultNode node = newNode(parentNode, instances);
 		if (getConfiguration().isIgnored(node))
 		{
 			node.setState(Node.State.IGNORED);
@@ -62,9 +66,13 @@ public class PrimitiveDiffer extends AbstractDiffer<Node>
 		return getConfiguration().getPrimitiveDefaultValueMode() == UNASSIGNED;
 	}
 
-	@Override
-	protected Node newNode(final Node parentNode, final Instances instances)
+	private static DefaultNode newNode(final Node parentNode, final Instances instances)
 	{
 		return new DefaultNode(parentNode, instances.getSourceAccessor(), instances.getType());
+	}
+
+	protected final Configuration getConfiguration()
+	{
+		return configuration;
 	}
 }

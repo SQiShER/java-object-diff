@@ -28,7 +28,7 @@ public class BeanDifferShould
 {
 	private BeanDiffer differ;
 	@Mock
-	private DelegatingObjectDiffer delegatingObjectDiffer;
+	private DifferDelegator delegator;
 	@Mock
 	private Node node;
 	@Mock
@@ -37,9 +37,9 @@ public class BeanDifferShould
 	@BeforeMethod
 	public void setUp() throws Exception
 	{
-		delegatingObjectDiffer = mock(DelegatingObjectDiffer.class);
+		delegator = mock(DifferDelegator.class);
 		configuration = mock(Configuration.class);
-		differ = new BeanDiffer(delegatingObjectDiffer, configuration);
+		differ = new BeanDiffer(delegator, configuration);
 	}
 
 	@Test

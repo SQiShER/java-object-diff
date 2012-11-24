@@ -18,18 +18,40 @@ package de.danielbechler.diff;
 
 import de.danielbechler.diff.node.*;
 
-/** @author Daniel Bechler */
-public interface ObjectDiffer extends Configurable
+/**
+ * This is the entry point for all comparisons. It determines the type of the given objects and passes them to
+ * the appropriate {@link Differ}.
+ *
+ * @author Daniel Bechler
+ */
+public class ObjectDiffer implements Configurable
 {
+	private final Configuration configuration;
+	private final DifferDelegator delegator;
+
+	ObjectDiffer(final Configuration configuration)
+	{
+		this.configuration = configuration;
+		this.delegator = new DifferDelegator(new DifferFactory(configuration));
+	}
+
 	/**
-	 * Recursively inspects the given objects and returns a node representing their differences. Both objects have be have the
-	 * same type.
+	 * Recursively inspects the given objects and returns a node representing their differences. Both objects
+	 * have be have the same type.
 	 *
 	 * @param working This object will be treated as the successor of the <code>base</code> object.
-	 * @param base	This object will be treated as the predecessor of the <code>working</code> object.
+	 * @param base    This object will be treated as the predecessor of the <code>working</code> object.
 	 * @param <T>     The type of the objects to compare.
 	 *
 	 * @return A node representing the differences between the given objects.
 	 */
-	<T> Node compare(T working, T base);
+	public <T> Node compare(final T working, final T base)
+	{
+		return delegator.delegate(Node.ROOT, Instances.of(working, base));
+	}
+
+	public Configuration getConfiguration()
+	{
+		return configuration;
+	}
 }

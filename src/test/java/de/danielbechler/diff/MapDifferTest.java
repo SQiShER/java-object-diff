@@ -30,7 +30,7 @@ public class MapDifferTest
 {
 	private MapDiffer differ;
 	@Mock
-	private DelegatingObjectDiffer delegatingObjectDiffer;
+	private DifferDelegator delegatingObjectDiffer;
 	private Configuration configuration;
 
 	@BeforeMethod
@@ -59,6 +59,6 @@ public class MapDifferTest
 	public void testConstructionWithDelegator()
 	{
 		// just for the coverage
-		new MapDiffer(new DelegatingObjectDiffer(new Configuration()), new Configuration());
+		new MapDiffer(new DifferDelegator(new DifferFactory(new Configuration())), new Configuration());
 	}
 }

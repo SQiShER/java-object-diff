@@ -30,7 +30,7 @@ public class DifferFactoryShould
 {
 	private DifferFactory differFactory;
 	@Mock
-	private DelegatingObjectDiffer delegatingObjectDiffer;
+	private DifferDelegator differDelegator;
 	@Mock
 	private Configuration configuration;
 
@@ -38,13 +38,13 @@ public class DifferFactoryShould
 	public void initDifferFactory()
 	{
 		initMocks(this);
-		differFactory = new DifferFactory(configuration, delegatingObjectDiffer);
+		differFactory = new DifferFactory(configuration);
 	}
 
 	@Test(dataProvider = "primitiveTypes")
 	public void return_primitive_differ_for_primitive_type(final Class<?> type)
 	{
-		final Differ<?> differ = differFactory.createDiffer(type);
+		final Differ<?> differ = differFactory.createDiffer(type, differDelegator);
 
 		assertThat(differ).isInstanceOf(PrimitiveDiffer.class);
 	}
@@ -52,7 +52,7 @@ public class DifferFactoryShould
 	@Test(dataProvider = "collectionTypes")
 	public void return_collection_differ_for_collection_type(final Class<? extends Collection<?>> type)
 	{
-		final Differ<?> differ = differFactory.createDiffer(type);
+		final Differ<?> differ = differFactory.createDiffer(type, differDelegator);
 
 		assertThat(differ).isInstanceOf(CollectionDiffer.class);
 	}
@@ -60,7 +60,7 @@ public class DifferFactoryShould
 	@Test(dataProvider = "mapTypes")
 	public void return_map_differ_for_map_types(final Class<? extends Map<?, ?>> type)
 	{
-		final Differ<?> differ = differFactory.createDiffer(type);
+		final Differ<?> differ = differFactory.createDiffer(type, differDelegator);
 
 		assertThat(differ).isInstanceOf(MapDiffer.class);
 	}
@@ -68,23 +68,16 @@ public class DifferFactoryShould
 	@Test(dataProvider = "beanTypes")
 	public void return_bean_differ_for_any_other_type(final Class<?> type)
 	{
-		final Differ<?> differ = differFactory.createDiffer(type);
+		final Differ<?> differ = differFactory.createDiffer(type, differDelegator);
 
 		assertThat(differ).isInstanceOf(BeanDiffer.class);
 	}
 
-	@Test(expectedExceptions = IllegalStateException.class, expectedExceptionsMessageRegExp = "DelegatingObjectDiffer has not yet been initialized")
+	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void fail_if_no_delegating_object_differ_was_given()
 	{
 		differFactory = new DifferFactory(configuration);
-		differFactory.createDiffer(Object.class);
-	}
-
-	@Test(expectedExceptions = IllegalArgumentException.class)
-	public void fail_on_attempt_to_set_delegating_object_differ_to_null()
-	{
-		differFactory = new DifferFactory(configuration);
-		differFactory.setDelegatingObjectDiffer(null);
+		differFactory.createDiffer(Object.class, null);
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)

@@ -18,6 +18,7 @@ package de.danielbechler.diff;
 
 import de.danielbechler.diff.accessor.*;
 import de.danielbechler.diff.node.*;
+import de.danielbechler.util.*;
 import de.danielbechler.util.Collections;
 
 import java.util.*;
@@ -27,11 +28,17 @@ import java.util.*;
  *
  * @author Daniel Bechler
  */
-final class CollectionDiffer extends AbstractDiffer<CollectionNode>
+final class CollectionDiffer implements Differ<CollectionNode>
 {
-	public CollectionDiffer(final DelegatingObjectDiffer delegate, final Configuration configuration)
+	private final DifferDelegator delegator;
+	private final Configuration configuration;
+
+	public CollectionDiffer(final DifferDelegator delegator, final Configuration configuration)
 	{
-		super(delegate, configuration);
+		Assert.notNull(delegator, "delegator");
+		Assert.notNull(configuration, "configuration");
+		this.delegator = delegator;
+		this.configuration = configuration;
 	}
 
 	public CollectionNode compare(final Collection<?> working, final Collection<?> base)
@@ -39,8 +46,34 @@ final class CollectionDiffer extends AbstractDiffer<CollectionNode>
 		return compare(Node.ROOT, Instances.of(new RootAccessor(), working, base));
 	}
 
+	private CollectionNode newNode(final Node parentNode, final Instances instances)
+	{
+		return new CollectionNode(parentNode, instances.getSourceAccessor(), instances.getType());
+	}
+
+	private void handleItems(final CollectionNode collectionNode,
+							 final Instances instances,
+							 final Iterable<?> items)
+	{
+		for (final Object item : items)
+		{
+			final Node child = compareItem(collectionNode, instances, item);
+			if (getConfiguration().isReturnable(child))
+			{
+				collectionNode.addChild(child);
+			}
+		}
+	}
+
+	private Node compareItem(final CollectionNode node, final Instances instances, final Object item)
+	{
+		final Accessor itemAccessor = node.accessorForItem(item);
+		final Instances itemInstances = instances.access(itemAccessor);
+		return delegate(node, itemInstances);
+	}
+
 	@Override
-	protected CollectionNode internalCompare(final Node parentNode, final Instances instances)
+	public final CollectionNode compare(final Node parentNode, final Instances instances)
 	{
 		final CollectionNode node = newNode(parentNode, instances);
 		if (getConfiguration().isIgnored(node))
@@ -81,31 +114,14 @@ final class CollectionDiffer extends AbstractDiffer<CollectionNode>
 		return node;
 	}
 
-	@Override
-	protected CollectionNode newNode(final Node parentNode, final Instances instances)
+	public Node delegate(final Node parentNode, final Instances instances)
 	{
-		return new CollectionNode(parentNode, instances.getSourceAccessor(), instances.getType());
+		return delegator.delegate(parentNode, instances);
 	}
 
-	private void handleItems(final CollectionNode collectionNode,
-							 final Instances instances,
-							 final Iterable<?> items)
+	protected final Configuration getConfiguration()
 	{
-		for (final Object item : items)
-		{
-			final Node child = compareItem(collectionNode, instances, item);
-			if (getConfiguration().isReturnable(child))
-			{
-				collectionNode.addChild(child);
-			}
-		}
-	}
-
-	private Node compareItem(final CollectionNode node, final Instances instances, final Object item)
-	{
-		final Accessor itemAccessor = node.accessorForItem(item);
-		final Instances itemInstances = instances.access(itemAccessor);
-		return delegate(node, itemInstances);
+		return configuration;
 	}
 
 	private static Collection<?> findAddedItems(final Instances instances)

@@ -16,13 +16,19 @@
 
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.accessor.*;
 import de.danielbechler.diff.node.*;
 import de.danielbechler.util.*;
+import org.slf4j.*;
+
+import static de.danielbechler.diff.CircularReferenceDetector.*;
 
 /** @author Daniel Bechler */
 class DifferDelegator
 {
+	private static final Logger logger = LoggerFactory.getLogger(DifferDelegator.class);
+	private static final ThreadLocal<CircularReferenceDetector> WORKING_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL = new CircularReferenceDetectorThreadLocal();
+	private static final ThreadLocal<CircularReferenceDetector> BASE_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL = new CircularReferenceDetectorThreadLocal();
+
 	private final DifferFactory differFactory;
 
 	public DifferDelegator(final DifferFactory differFactory)
@@ -41,16 +47,87 @@ class DifferDelegator
 		final Class<?> type = instances.getType();
 		if (type == null)
 		{
-			if (instances.areNull())
+			return newSimpleNode(parentNode, instances, type);
+		}
+		return delegateWithCircularReferenceTracking(parentNode, instances);
+	}
+
+	private Node delegateWithCircularReferenceTracking(final Node parentNode, final Instances instances)
+	{
+		Node node;
+		try
+		{
+			rememberInstances(instances);
+			try
 			{
-				final Accessor accessor = instances.getSourceAccessor();
-				return new DefaultNode(parentNode, accessor, type);
+				node = compare(parentNode, instances);
 			}
-			else
+			finally
 			{
-				throw new IllegalArgumentException("Instances didn't return a type. That shouldn't happen and must be a bug!");
+				forgetInstances(instances);
 			}
 		}
-		return differFactory.createDiffer(type).compare(parentNode, instances);
+		catch (CircularReferenceException e)
+		{
+			node = newCircularNode(parentNode, instances);
+			logCircularReference(node);
+		}
+		if (parentNode == null)
+		{
+			resetInstanceMemory();
+		}
+		return node;
+	}
+
+	private static Node newSimpleNode(final Node parentNode, final Instances instances, final Class<?> type)
+	{
+		return new DefaultNode(parentNode, instances.getSourceAccessor(), type);
+	}
+
+	private static Node newCircularNode(final Node parentNode, final Instances instances)
+	{
+		final Node node;
+		node = new DefaultNode(parentNode, instances.getSourceAccessor(), instances.getType());
+		node.setState(Node.State.CIRCULAR);
+		return node;
+	}
+
+	private static void logCircularReference(final Node node)
+	{
+		logger.warn("Detected circular reference in node at path {}. " +
+				"Going deeper would cause an infinite loop, so I'll stop looking at " +
+				"this instance along the current path.", node.getPropertyPath());
+	}
+
+	private Node compare(final Node parentNode, final Instances instances)
+	{
+		return differFactory.createDiffer(instances.getType(), this).compare(parentNode, instances);
+	}
+
+	private static void resetInstanceMemory()
+	{
+		WORKING_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL.remove();
+		BASE_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL.remove();
+	}
+
+	private static void forgetInstances(final Instances instances)
+	{
+		WORKING_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL.get().remove(instances.getWorking());
+		BASE_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL.get().remove(instances.getBase());
+	}
+
+	private static void rememberInstances(final Instances instances)
+	{
+		WORKING_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL.get().push(instances.getWorking());
+		BASE_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL.get().push(instances.getBase());
+	}
+
+	private static final class CircularReferenceDetectorThreadLocal extends ThreadLocal<CircularReferenceDetector>
+	{
+		@Override
+		protected CircularReferenceDetector initialValue()
+		{
+			return new CircularReferenceDetector();
+		}
 	}
 }

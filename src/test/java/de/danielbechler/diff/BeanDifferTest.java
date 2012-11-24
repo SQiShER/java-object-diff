@@ -23,8 +23,6 @@ import de.danielbechler.diff.node.*;
 import org.mockito.Mock;
 import org.testng.annotations.*;
 
-import java.util.*;
-
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.core.Is.*;
 import static org.mockito.Mockito.*;
@@ -34,15 +32,11 @@ import static org.mockito.MockitoAnnotations.*;
 public class BeanDifferTest
 {
 	private BeanDiffer differ;
-	@Mock
-	private DelegatingObjectDiffer delegate;
-	@Mock
-	private Introspector introspector;
-	@Mock
-	private Accessor accessor;
-	@Mock
-	private Node node;
 	private Configuration configuration;
+	@Mock private DifferDelegator delegator;
+	@Mock private Introspector introspector;
+	@Mock private Accessor accessor;
+	@Mock private Node node;
 
 	@BeforeMethod
 	public void setUp()
@@ -51,24 +45,22 @@ public class BeanDifferTest
 		configuration = mock(Configuration.class);
 		when(configuration.isIncluded(any(Node.class))).thenReturn(true);
 		when(configuration.isReturnable(any(Node.class))).thenReturn(true);
-		differ = new BeanDiffer(delegate, configuration);
+		differ = new BeanDiffer(delegator, configuration);
 		differ.setIntrospector(introspector);
 	}
 
-	@Test
+	@Test(groups = TestGroups.INTEGRATION)
 	public void testCompareWithDifferentStrings() throws Exception
 	{
-		when(configuration.isEqualsOnly(any(Node.class))).thenReturn(true);
-		final Node node = differ.compare("foo", "bar");
-		assertThat(node.hasChanges(), is(true));
-		assertThat(node.hasChildren(), is(false));
+		final Node node = ObjectDifferFactory.getInstance().compare("foo", "bar");
+
 		assertThat(node.getState(), is(Node.State.CHANGED));
 	}
 
-	@Test(expectedExceptions = IllegalArgumentException.class)
+	@Test(expectedExceptions = IllegalArgumentException.class, groups = TestGroups.INTEGRATION)
 	public void testCompareWithDifferentTypes()
 	{
-		differ.compare("foo", 1337);
+		ObjectDifferFactory.getInstance().compare("foo", 1337);
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
@@ -156,16 +148,19 @@ public class BeanDifferTest
 //		assertThat(node.getState(), is(Node.State.CHANGED));
 //	}
 
-	@Test
+	@Test(groups = TestGroups.INTEGRATION)
 	public void testCompareWithComplexType()
 	{
-		when(introspector.introspect(any(Class.class))).thenReturn(Arrays.<Accessor>asList(accessor));
-		when(delegate.delegate(any(Node.class), any(Instances.class))).thenReturn(node);
-		when(configuration.isIntrospectible(any(Node.class))).thenReturn(true);
-		when(configuration.isReturnable(any(Node.class))).thenReturn(true);
-		when(node.hasChanges()).thenReturn(true);
+//		when(introspector.introspect(any(Class.class))).thenReturn(Arrays.<Accessor>asList(accessor));
+//		when(delegate.delegate(any(Node.class), any(Instances.class))).thenReturn(node);
+//		when(configuration.isIntrospectible(any(Node.class))).thenReturn(true);
+//		when(configuration.isReturnable(any(Node.class))).thenReturn(true);
+//		when(node.hasChanges()).thenReturn(true);
 
-		final Node node = differ.compare(new Object(), new Object());
+		final Node node = ObjectDifferFactory.getInstance().compare(
+				new ObjectWithIdentityAndValue("a", "1"),
+				new ObjectWithIdentityAndValue("a", "2"));
+
 		assertThat(node.getState(), is(Node.State.CHANGED));
 	}
 

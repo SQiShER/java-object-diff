@@ -35,7 +35,7 @@ import static org.mockito.MockitoAnnotations.*;
 public class CollectionDifferShould
 {
 	private CollectionDiffer differ;
-	@Mock private DelegatingObjectDiffer delegatingObjectDiffer;
+	@Mock private DifferDelegator delegatingObjectDiffer;
 	private Configuration configuration;
 
 	@BeforeMethod

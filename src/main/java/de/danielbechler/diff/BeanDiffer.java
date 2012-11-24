@@ -29,28 +29,22 @@ import static java.util.Collections.*;
  *
  * @author Daniel Bechler
  */
-final class BeanDiffer extends AbstractDiffer<Node>
+final class BeanDiffer implements Differ<Node>
 {
 	private Introspector introspector = new StandardIntrospector();
+	private final DifferDelegator delegator;
+	private final Configuration configuration;
 
-	BeanDiffer(final DelegatingObjectDiffer delegate, final Configuration configuration)
+	BeanDiffer(final DifferDelegator delegator, final Configuration configuration)
 	{
-		super(delegate, configuration);
-	}
-
-	Node compare(final Object working, final Object base)
-	{
-		// Root call requires an existing working instance
-		Assert.notNull(working, "working");
-
-		// Comparison of different types is not (yet) supported
-		Assert.equalTypesOrNull(working, base);
-
-		return compare(Node.ROOT, Instances.of(new RootAccessor(), working, base));
+		Assert.notNull(delegator, "delegator");
+		Assert.notNull(configuration, "configuration");
+		this.delegator = delegator;
+		this.configuration = configuration;
 	}
 
 	@Override
-	protected Node internalCompare(final Node parentNode, final Instances instances)
+	public final Node compare(final Node parentNode, final Instances instances)
 	{
 		final Node node = newNode(parentNode, instances);
 		if (getConfiguration().isIgnored(node))
@@ -68,8 +62,19 @@ final class BeanDiffer extends AbstractDiffer<Node>
 		return node;
 	}
 
-	@Override
-	protected Node newNode(final Node parentNode, final Instances instances)
+	@Deprecated
+	Node compare(final Object working, final Object base)
+	{
+		// Root call requires an existing working instance
+		Assert.notNull(working, "working");
+
+		// Comparison of different types is not (yet) supported
+		Assert.equalTypesOrNull(working, base);
+
+		return compare(Node.ROOT, Instances.of(new RootAccessor(), working, base));
+	}
+
+	private static Node newNode(final Node parentNode, final Instances instances)
 	{
 		return new DefaultNode(parentNode, instances.getSourceAccessor(), instances.getType());
 	}
@@ -159,5 +164,15 @@ final class BeanDiffer extends AbstractDiffer<Node>
 	{
 		Assert.notNull(introspector, "introspector");
 		this.introspector = introspector;
+	}
+
+	public Node delegate(final Node parentNode, final Instances instances)
+	{
+		return delegator.delegate(parentNode, instances);
+	}
+
+	protected final Configuration getConfiguration()
+	{
+		return configuration;
 	}
 }

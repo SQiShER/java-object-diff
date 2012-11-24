@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
 /** @author Daniel Bechler */
 public class InstancesTest
 {
-	@Test(expectedExceptions = IllegalStateException.class)
+	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testGetTypeThrowsExceptionForIncompatibleTypes() throws Exception
 	{
 		new Instances(RootAccessor.getInstance(), "foo", 1, null).getType();

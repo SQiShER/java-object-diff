@@ -41,7 +41,7 @@ public class PrimitiveDifferTest
 	private PrimitiveDiffer differ;
 	private Configuration configuration;
 	@Mock
-	private DelegatingObjectDiffer delegate;
+	private DifferDelegator delegate;
 	@Mock
 	private TypeAwareAccessor accessor;
 
@@ -51,7 +51,7 @@ public class PrimitiveDifferTest
 		initMocks(this);
 		configuration = new Configuration();
 		configuration.treatPrimitiveDefaultValuesAs(UNASSIGNED);
-		differ = new PrimitiveDiffer(delegate, configuration);
+		differ = new PrimitiveDiffer(configuration);
 	}
 
 	@Test(dataProvider = "removals")
@@ -132,7 +132,7 @@ public class PrimitiveDifferTest
 												  .withPropertyName("ignored")
 												  .build());
 
-		final Node node = new PrimitiveDiffer(delegate, configuration).compare(Node.ROOT, instances);
+		final Node node = new PrimitiveDiffer(configuration).compare(Node.ROOT, instances);
 
 		assertThat(node).self().hasState(IGNORED);
 	}

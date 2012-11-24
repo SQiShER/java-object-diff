@@ -36,7 +36,7 @@ public final class ObjectDifferFactory
 	 */
 	public static ObjectDiffer getInstance()
 	{
-		return new DelegatingObjectDiffer(new Configuration());
+		return new ObjectDiffer(new Configuration());
 	}
 
 	/**
@@ -48,6 +48,6 @@ public final class ObjectDifferFactory
 	 */
 	public static ObjectDiffer getInstance(final Configuration configuration)
 	{
-		return new DelegatingObjectDiffer(configuration);
+		return new ObjectDiffer(configuration);
 	}
 }

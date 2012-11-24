@@ -18,6 +18,7 @@ package de.danielbechler.diff;
 
 import de.danielbechler.diff.accessor.*;
 import de.danielbechler.diff.node.*;
+import de.danielbechler.util.*;
 import de.danielbechler.util.Collections;
 
 import java.util.*;
@@ -27,11 +28,17 @@ import java.util.*;
  *
  * @author Daniel Bechler
  */
-final class MapDiffer extends AbstractDiffer<MapNode>
+final class MapDiffer implements Differ<MapNode>
 {
-	public MapDiffer(final DelegatingObjectDiffer delegator, final Configuration configuration)
+	private final DifferDelegator delegator;
+	private final Configuration configuration;
+
+	public MapDiffer(final DifferDelegator delegator, final Configuration configuration)
 	{
-		super(delegator, configuration);
+		Assert.notNull(delegator, "delegator");
+		Assert.notNull(configuration, "configuration");
+		this.delegator = delegator;
+		this.configuration = configuration;
 	}
 
 	public MapNode compare(final Map<?, ?> modified, final Map<?, ?> base)
@@ -40,7 +47,7 @@ final class MapDiffer extends AbstractDiffer<MapNode>
 	}
 
 	@Override
-	protected MapNode internalCompare(final Node parentNode, final Instances instances)
+	public final MapNode compare(final Node parentNode, final Instances instances)
 	{
 		final MapNode node = newNode(parentNode, instances);
 
@@ -86,10 +93,19 @@ final class MapDiffer extends AbstractDiffer<MapNode>
 		return node;
 	}
 
-	@Override
-	protected MapNode newNode(final Node parentNode, final Instances instances)
+	private static MapNode newNode(final Node parentNode, final Instances instances)
 	{
 		return new MapNode(parentNode, instances.getSourceAccessor(), instances.getType());
+	}
+
+	public Node delegate(final Node parentNode, final Instances instances)
+	{
+		return delegator.delegate(parentNode, instances);
+	}
+
+	protected final Configuration getConfiguration()
+	{
+		return configuration;
 	}
 
 	private static void indexAll(final Instances instances, final MapNode node)

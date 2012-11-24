@@ -26,7 +26,6 @@ import static de.danielbechler.util.Classes.*;
 public class DifferFactory
 {
 	private final Configuration configuration;
-	private DelegatingObjectDiffer delegatingObjectDiffer;
 
 	public DifferFactory(final Configuration configuration)
 	{
@@ -34,40 +33,24 @@ public class DifferFactory
 		this.configuration = configuration;
 	}
 
-	public DifferFactory(final Configuration configuration,
-						 final DelegatingObjectDiffer delegatingObjectDiffer)
+	public Differ<?> createDiffer(final Class<?> type, final DifferDelegator delegator)
 	{
-		this(configuration);
-		setDelegatingObjectDiffer(delegatingObjectDiffer);
-	}
-
-	public Differ<?> createDiffer(final Class<?> type)
-	{
-		if (delegatingObjectDiffer == null)
+		Assert.notNull(delegator, "delegator");
+		if (isPrimitiveType(type))
 		{
-			throw new IllegalStateException("DelegatingObjectDiffer has not yet been initialized");
-		}
-		else if (isPrimitiveType(type))
-		{
-			return new PrimitiveDiffer(delegatingObjectDiffer, configuration);
+			return new PrimitiveDiffer(configuration);
 		}
 		else if (Collection.class.isAssignableFrom(type))
 		{
-			return new CollectionDiffer(delegatingObjectDiffer, configuration);
+			return new CollectionDiffer(delegator, configuration);
 		}
 		else if (Map.class.isAssignableFrom(type))
 		{
-			return new MapDiffer(delegatingObjectDiffer, configuration);
+			return new MapDiffer(delegator, configuration);
 		}
 		else
 		{
-			return new BeanDiffer(delegatingObjectDiffer, configuration);
+			return new BeanDiffer(delegator, configuration);
 		}
-	}
-
-	public final void setDelegatingObjectDiffer(final DelegatingObjectDiffer delegatingObjectDiffer)
-	{
-		Assert.notNull(delegatingObjectDiffer, "delegatingObjectDiffer");
-		this.delegatingObjectDiffer = delegatingObjectDiffer;
 	}
 }

@@ -239,7 +239,7 @@ class Instances
 				// special handling for beans and arrays should go here
 			}
 		}
-		throw new IllegalStateException("Detected instances of different types " + types + ". " +
+		throw new IllegalArgumentException("Detected instances of different types " + types + ". " +
 				"Instances must either be null or have the exact same type.");
 	}
 
