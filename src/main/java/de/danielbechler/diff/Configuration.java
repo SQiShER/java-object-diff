@@ -23,6 +23,8 @@ import de.danielbechler.util.*;
 
 import java.util.*;
 
+import static de.danielbechler.util.Collections.*;
+
 /** @author Daniel Bechler */
 public class Configuration implements NodeInspector
 {
@@ -76,12 +78,26 @@ public class Configuration implements NodeInspector
 		return this;
 	}
 
+	/**
+	 * Adds the property at the given path to the list of included properties.
+	 *
+	 * @param propertyPath The property path to include.
+	 *
+	 * @return This configuration instance.
+	 */
 	public Configuration withPropertyPath(final PropertyPath propertyPath)
 	{
 		this.includedProperties.add(propertyPath);
 		return this;
 	}
 
+	/**
+	 * Adds the property at the given path to the list of excluded properties.
+	 *
+	 * @param propertyPath The property path to exclude.
+	 *
+	 * @return This configuration instance.
+	 */
 	public Configuration withoutProperty(final PropertyPath propertyPath)
 	{
 		this.excludedProperties.add(propertyPath);
@@ -188,7 +204,7 @@ public class Configuration implements NodeInspector
 		{
 			return true;
 		}
-		else if (de.danielbechler.util.Collections.containsAny(node.getCategories(), includedCategories))
+		else if (containsAny(node.getCategories(), includedCategories))
 		{
 			return true;
 		}
@@ -206,7 +222,7 @@ public class Configuration implements NodeInspector
 		{
 			return true;
 		}
-		if (de.danielbechler.util.Collections.containsAny(node.getCategories(), excludedCategories))
+		if (containsAny(node.getCategories(), excludedCategories))
 		{
 			return true;
 		}

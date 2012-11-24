@@ -34,16 +34,15 @@ abstract class AbstractDiffer<T extends Node> implements Differ<T>, Configurable
 		BASE_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL = new CircularReferenceDetectorThreadLocal();
 	}
 
-	private DelegatingObjectDiffer delegate;
+	private final DelegatingObjectDiffer delegate;
+	private final Configuration configuration;
 
-	protected AbstractDiffer()
-	{
-	}
-
-	protected AbstractDiffer(final DelegatingObjectDiffer delegate)
+	protected AbstractDiffer(final DelegatingObjectDiffer delegate, final Configuration configuration)
 	{
 		Assert.notNull(delegate, "delegate");
 		this.delegate = delegate;
+		Assert.notNull(configuration, "configuration");
+		this.configuration = configuration;
 	}
 
 	@Override
@@ -89,20 +88,14 @@ abstract class AbstractDiffer<T extends Node> implements Differ<T>, Configurable
 
 	protected abstract T newNode(Node parentNode, Instances instances);
 
-	public final DelegatingObjectDiffer getDelegate()
+	public Node delegate(final Node parentNode, final Instances instances)
 	{
-		return delegate;
-	}
-
-	public final void setDelegate(final DelegatingObjectDiffer delegate)
-	{
-		Assert.notNull(delegate, "delegate");
-		this.delegate = delegate;
+		return delegate.delegate(parentNode, instances);
 	}
 
 	public final Configuration getConfiguration()
 	{
-		return delegate.getConfiguration();
+		return configuration;
 	}
 
 	private static final class CircularReferenceDetectorThreadLocal extends ThreadLocal<CircularReferenceDetector>

@@ -19,6 +19,8 @@ package de.danielbechler.diff;
 import de.danielbechler.diff.accessor.*;
 import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.path.*;
+import org.mockito.Mock;
+import org.mockito.internal.debugging.*;
 import org.testng.annotations.*;
 
 import java.util.ArrayList;
@@ -49,8 +51,7 @@ public class PrimitiveDifferTest
 		initMocks(this);
 		configuration = new Configuration();
 		configuration.treatPrimitiveDefaultValuesAs(UNASSIGNED);
-		when(delegate.getConfiguration()).thenReturn(configuration);
-		differ = new PrimitiveDiffer(delegate);
+		differ = new PrimitiveDiffer(delegate, configuration);
 	}
 
 	@Test(dataProvider = "removals")
@@ -64,6 +65,13 @@ public class PrimitiveDifferTest
 		final Node node = differ.compare(Node.ROOT, instances);
 
 		assertThat(node).self().hasState(REMOVED);
+
+	}
+
+	@AfterMethod
+	public void tearDown()
+	{
+		new MockitoDebuggerImpl().printInvocations(delegate, accessor);
 	}
 
 	@Test(dataProvider = "changes")
@@ -117,9 +125,15 @@ public class PrimitiveDifferTest
 	@Test
 	public void testIgnoresIgnorableNodes() throws Exception
 	{
-		final Instances instances = whenInstancesAre(int.class, 1, 2, 0);
-		when(delegate.isIgnored(any(Node.class))).thenReturn(true);
-		final Node node = new PrimitiveDiffer(delegate).compare(Node.ROOT, instances);
+		final Instances instances = whenInstancesAre(int.class, 2, 1, 0);
+
+		configuration.withoutProperty(PropertyPath.createBuilder()
+												  .withRoot()
+												  .withPropertyName("ignored")
+												  .build());
+
+		final Node node = new PrimitiveDiffer(delegate, configuration).compare(Node.ROOT, instances);
+
 		assertThat(node).self().hasState(IGNORED);
 	}
 

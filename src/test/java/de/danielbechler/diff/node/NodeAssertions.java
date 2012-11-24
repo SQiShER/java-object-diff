@@ -81,6 +81,18 @@ public final class NodeAssertions
 		}
 
 		@Override
+		public Syntax.AssertNode child(final Element pathElement)
+		{
+			return child(PropertyPath.createBuilder().withRoot().withElement(pathElement));
+		}
+
+		@Override
+		public Syntax.AssertNode collectionChild(final Object referenceItem)
+		{
+			return child(new CollectionElement(referenceItem));
+		}
+
+		@Override
 		public Syntax.AssertNode doesExist()
 		{
 			Assertions.assertThat(rootNode).has(childAt(propertyPath));
@@ -246,6 +258,10 @@ public final class NodeAssertions
 			AssertNode child(PropertyPath.AppendableBuilder propertyPathBuilder);
 
 			AssertNode child(String propertyName, String... propertyPathElements);
+
+			AssertNode child(Element pathElement);
+
+			AssertNode collectionChild(Object referenceItem);
 		}
 
 		public interface AssertNode

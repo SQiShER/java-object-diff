@@ -21,6 +21,8 @@ import de.danielbechler.diff.introspect.*;
 import de.danielbechler.diff.node.*;
 import de.danielbechler.util.*;
 
+import static java.util.Collections.*;
+
 /**
  * Used to find differences between objects that were not handled by one of the other (specialized) {@link
  * Differ Differs}.
@@ -31,14 +33,9 @@ final class BeanDiffer extends AbstractDiffer<Node>
 {
 	private Introspector introspector = new StandardIntrospector();
 
-	BeanDiffer()
+	BeanDiffer(final DelegatingObjectDiffer delegate, final Configuration configuration)
 	{
-		setDelegate(new DelegatingObjectDifferImpl(this, null, null, null));
-	}
-
-	BeanDiffer(final DelegatingObjectDiffer delegate)
-	{
-		super(delegate);
+		super(delegate, configuration);
 	}
 
 	Node compare(final Object working, final Object base)
@@ -56,7 +53,7 @@ final class BeanDiffer extends AbstractDiffer<Node>
 	protected Node internalCompare(final Node parentNode, final Instances instances)
 	{
 		final Node node = newNode(parentNode, instances);
-		if (getDelegate().isIgnored(node))
+		if (getConfiguration().isIgnored(node))
 		{
 			node.setState(Node.State.IGNORED);
 		}
@@ -82,39 +79,34 @@ final class BeanDiffer extends AbstractDiffer<Node>
 		final Node node = newNode(parentNode, instances);
 		if (instances.hasBeenAdded())
 		{
-			ensureNodeState(node, Node.State.ADDED);
-			compareBeanUsingAppropriateMethod(node, instances);
-			ensureNodeState(node, Node.State.ADDED);
+			node.setState(Node.State.ADDED);
+			compareWithAppropriateMethod(node, instances);
+			node.setState(Node.State.ADDED);
 		}
 		else if (instances.hasBeenRemoved())
 		{
-			ensureNodeState(node, Node.State.REMOVED);
-			compareBeanUsingAppropriateMethod(node, instances);
-			ensureNodeState(node, Node.State.REMOVED);
+			node.setState(Node.State.REMOVED);
+			compareWithAppropriateMethod(node, instances);
+			node.setState(Node.State.REMOVED);
 		}
 		else if (instances.areSame())
 		{
-			ensureNodeState(node, Node.State.UNTOUCHED);
+			node.setState(Node.State.UNTOUCHED);
 		}
 		else
 		{
-			compareBeanUsingAppropriateMethod(node, instances);
+			compareWithAppropriateMethod(node, instances);
 		}
 		return node;
 	}
 
-	private static void ensureNodeState(final Node node, final Node.State state)
+	private void compareWithAppropriateMethod(final Node node, final Instances instances)
 	{
-		node.setState(state);
-	}
-
-	private void compareBeanUsingAppropriateMethod(final Node node, final Instances instances)
-	{
-		if (getDelegate().isIntrospectible(node))
+		if (getConfiguration().isIntrospectible(node))
 		{
 			compareProperties(node, instances);
 		}
-		else if (getDelegate().isEqualsOnly(node))
+		else if (getConfiguration().isEqualsOnly(node))
 		{
 			compareEquality(node, instances);
 		}
@@ -123,27 +115,30 @@ final class BeanDiffer extends AbstractDiffer<Node>
 	@SuppressWarnings({"MethodMayBeStatic"})
 	private void compareEquality(final Node node, final Instances instances)
 	{
-		if (!instances.areEqual())
+		if (instances.areEqual())
 		{
-			ensureNodeState(node, Node.State.CHANGED);
+			node.setState(Node.State.UNTOUCHED);
+		}
+		else
+		{
+			node.setState(Node.State.CHANGED);
 		}
 	}
 
 	private void compareProperties(final Node parentNode, final Instances instances)
 	{
-		final DelegatingObjectDiffer delegate = getDelegate();
 		for (final Accessor accessor : introspect(instances.getType()))
 		{
 			Node propertyNode = new DefaultNode(parentNode, accessor, null);
-			if (delegate.isIgnored(propertyNode))
+			if (getConfiguration().isIgnored(propertyNode))
 			{
 				propertyNode.setState(Node.State.IGNORED);
 			}
 			else
 			{
-				propertyNode = delegate.delegate(parentNode, instances.access(accessor));
+				propertyNode = delegate(parentNode, instances.access(accessor));
 			}
-			if (delegate.isReturnable(propertyNode))
+			if (getConfiguration().isReturnable(propertyNode))
 			{
 				parentNode.addChild(propertyNode);
 			}
@@ -152,12 +147,12 @@ final class BeanDiffer extends AbstractDiffer<Node>
 
 	private Iterable<Accessor> introspect(final Class<?> type)
 	{
-		final Iterable<Accessor> accessorIterable = introspector.introspect(type);
-		if (accessorIterable != null)
+		final Iterable<Accessor> accessors = introspector.introspect(type);
+		if (accessors == null)
 		{
-			return accessorIterable;
+			return emptyList();
 		}
-		return java.util.Collections.emptyList();
+		return accessors;
 	}
 
 	void setIntrospector(final Introspector introspector)

@@ -29,14 +29,9 @@ import java.util.*;
  */
 final class MapDiffer extends AbstractDiffer<MapNode>
 {
-	public MapDiffer()
+	public MapDiffer(final DelegatingObjectDiffer delegator, final Configuration configuration)
 	{
-		setDelegate(new DelegatingObjectDifferImpl(null, this, null, null));
-	}
-
-	public MapDiffer(final DelegatingObjectDiffer delegate)
-	{
-		super(delegate);
+		super(delegator, configuration);
 	}
 
 	public MapNode compare(final Map<?, ?> modified, final Map<?, ?> base)
@@ -71,6 +66,17 @@ final class MapDiffer extends AbstractDiffer<MapNode>
 		{
 			node.setState(Node.State.UNTOUCHED);
 		}
+		else if (getConfiguration().isEqualsOnly(node))
+		{
+			if (instances.areEqual())
+			{
+				node.setState(Node.State.UNTOUCHED);
+			}
+			else
+			{
+				node.setState(Node.State.CHANGED);
+			}
+		}
 		else
 		{
 			handleEntries(instances, node, findAddedKeys(instances));
@@ -104,7 +110,7 @@ final class MapDiffer extends AbstractDiffer<MapNode>
 	private void handleEntries(final Object key, final Instances instances, final MapNode parent)
 	{
 		final Node node = compareEntry(key, instances, parent);
-		if (getDelegate().isReturnable(node))
+		if (getConfiguration().isReturnable(node))
 		{
 			parent.addChild(node);
 		}
@@ -112,7 +118,7 @@ final class MapDiffer extends AbstractDiffer<MapNode>
 
 	private Node compareEntry(final Object key, final Instances instances, final MapNode parent)
 	{
-		return getDelegate().delegate(parent, instances.access(parent.accessorForKey(key)));
+		return delegate(parent, instances.access(parent.accessorForKey(key)));
 	}
 
 	private static Collection<?> findAddedKeys(final Instances instances)

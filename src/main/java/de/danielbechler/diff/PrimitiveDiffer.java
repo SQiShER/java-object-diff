@@ -23,9 +23,9 @@ import static de.danielbechler.diff.Configuration.PrimitiveDefaultValueMode.*;
 /** @author Daniel Bechler */
 public class PrimitiveDiffer extends AbstractDiffer<Node>
 {
-	public PrimitiveDiffer(final DelegatingObjectDiffer delegatingObjectDiffer)
+	public PrimitiveDiffer(final DelegatingObjectDiffer delegator, final Configuration configuration)
 	{
-		super(delegatingObjectDiffer);
+		super(delegator, configuration);
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class PrimitiveDiffer extends AbstractDiffer<Node>
 		}
 
 		final Node node = newNode(parentNode, instances);
-		if (getDelegate().isIgnored(node))
+		if (getConfiguration().isIgnored(node))
 		{
 			node.setState(Node.State.IGNORED);
 		}
@@ -53,13 +53,13 @@ public class PrimitiveDiffer extends AbstractDiffer<Node>
 		{
 			node.setState(Node.State.CHANGED);
 		}
-		
+
 		return node;
 	}
 
 	private boolean shouldTreatPrimitiveDefaultsAsUnassigned()
 	{
-		return getDelegate().getConfiguration().getPrimitiveDefaultValueMode() == UNASSIGNED;
+		return getConfiguration().getPrimitiveDefaultValueMode() == UNASSIGNED;
 	}
 
 	@Override

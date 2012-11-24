@@ -23,14 +23,15 @@ import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.*;
 
 /** @author Daniel Bechler */
-public class DelegatingObjectDifferImplTest
+public class DelegatingObjectDifferShould
 {
-	private DelegatingObjectDifferImpl delegatingObjectDiffer;
-	private Node parentNode;
-
+	private DelegatingObjectDiffer delegatingObjectDiffer;
 	@Mock
-	private Differ primitiveDiffer;
-
+	private Node parentNode;
+	@Mock
+	private Differ differ;
+	@Mock
+	private DifferFactory differFactory;
 	@Mock
 	private Instances instances;
 
@@ -38,23 +39,24 @@ public class DelegatingObjectDifferImplTest
 	public void setUp()
 	{
 		initMocks(this);
-		parentNode = Node.ROOT;
-		delegatingObjectDiffer = new DelegatingObjectDifferImpl(null, null, null, primitiveDiffer);
+		delegatingObjectDiffer = new DelegatingObjectDiffer(new Configuration());
+		delegatingObjectDiffer.setDifferFactory(differFactory);
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
-	public void testDelegateThrowsExceptionWhenInstancesAreNotPassed() throws Exception
+	public void fail_if_no_instances_are_passed() throws Exception
 	{
 		delegatingObjectDiffer.delegate(parentNode, null);
 	}
 
 	@Test
-	public void testDelegatesPrimitiveTypesToPrimitiveDiffer() throws Exception
+	public void delegate_comparison_to_appropriate_differ() throws Exception
 	{
-		when(instances.isPrimitiveType()).thenReturn(true);
+		doReturn(Object.class).when(instances).getType();
+		doReturn(differ).when(differFactory).createDiffer(Object.class);
 
 		delegatingObjectDiffer.delegate(parentNode, instances);
 
-		verify(primitiveDiffer, times(1)).compare(eq(parentNode), eq(instances));
+		verify(differ).compare(parentNode, instances);
 	}
 }

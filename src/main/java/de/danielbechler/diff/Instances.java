@@ -24,6 +24,8 @@ import de.danielbechler.util.Collections;
 
 import java.util.*;
 
+import static de.danielbechler.util.Objects.*;
+
 /** @author Daniel Bechler */
 @SuppressWarnings({"UnusedDeclaration"})
 class Instances
@@ -125,7 +127,7 @@ class Instances
 		{
 			return true;
 		}
-		if (isPrimitiveType() && Objects.isEqual(getFresh(), base) && !Objects.isEqual(base, working))
+		if (isPrimitiveType() && isEqual(getFresh(), base) && !isEqual(base, working))
 		{
 			return true;
 		}
@@ -138,7 +140,7 @@ class Instances
 		{
 			return true;
 		}
-		if (isPrimitiveType() && Objects.isEqual(getFresh(), working) && !Objects.isEqual(base, working))
+		if (isPrimitiveType() && isEqual(getFresh(), working) && !isEqual(base, working))
 		{
 			return true;
 		}
@@ -167,7 +169,7 @@ class Instances
 
 	public boolean areEqual()
 	{
-		return Objects.isEqual(base, working);
+		return isEqual(base, working);
 	}
 
 	public boolean areSame()

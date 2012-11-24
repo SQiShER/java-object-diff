@@ -29,14 +29,9 @@ import java.util.*;
  */
 final class CollectionDiffer extends AbstractDiffer<CollectionNode>
 {
-	public CollectionDiffer()
+	public CollectionDiffer(final DelegatingObjectDiffer delegate, final Configuration configuration)
 	{
-		setDelegate(new DelegatingObjectDifferImpl(null, null, this, null));
-	}
-
-	public CollectionDiffer(final DelegatingObjectDiffer delegate)
-	{
-		super(delegate);
+		super(delegate, configuration);
 	}
 
 	public CollectionNode compare(final Collection<?> working, final Collection<?> base)
@@ -48,16 +43,16 @@ final class CollectionDiffer extends AbstractDiffer<CollectionNode>
 	protected CollectionNode internalCompare(final Node parentNode, final Instances instances)
 	{
 		final CollectionNode node = newNode(parentNode, instances);
-		if (getDelegate().isIgnored(node))
+		if (getConfiguration().isIgnored(node))
 		{
 			node.setState(Node.State.IGNORED);
 		}
-		else if (instances.getWorking() != null && instances.getBase() == null)
+		else if (instances.hasBeenAdded())
 		{
 			handleItems(node, instances, instances.getWorking(Collection.class));
 			node.setState(Node.State.ADDED);
 		}
-		else if (instances.getWorking() == null && instances.getBase() != null)
+		else if (instances.hasBeenRemoved())
 		{
 			handleItems(node, instances, instances.getBase(Collection.class));
 			node.setState(Node.State.REMOVED);
@@ -65,6 +60,17 @@ final class CollectionDiffer extends AbstractDiffer<CollectionNode>
 		else if (instances.areSame())
 		{
 			node.setState(Node.State.UNTOUCHED);
+		}
+		else if (getConfiguration().isEqualsOnly(node))
+		{
+			if (instances.areEqual())
+			{
+				node.setState(Node.State.UNTOUCHED);
+			}
+			else
+			{
+				node.setState(Node.State.CHANGED);
+			}
 		}
 		else
 		{
@@ -88,18 +94,18 @@ final class CollectionDiffer extends AbstractDiffer<CollectionNode>
 		for (final Object item : items)
 		{
 			final Node child = compareItem(collectionNode, instances, item);
-			if (getDelegate().isReturnable(child))
+			if (getConfiguration().isReturnable(child))
 			{
 				collectionNode.addChild(child);
 			}
 		}
 	}
 
-	private Node compareItem(final CollectionNode collectionNode,
-							 final Instances instances,
-							 final Object item)
+	private Node compareItem(final CollectionNode node, final Instances instances, final Object item)
 	{
-		return getDelegate().delegate(collectionNode, instances.access(collectionNode.accessorForItem(item)));
+		final Accessor itemAccessor = node.accessorForItem(item);
+		final Instances itemInstances = instances.access(itemAccessor);
+		return delegate(node, itemInstances);
 	}
 
 	private static Collection<?> findAddedItems(final Instances instances)

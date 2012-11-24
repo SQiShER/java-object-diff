@@ -20,45 +20,41 @@ import de.danielbechler.diff.node.*;
 import org.mockito.*;
 import org.testng.annotations.*;
 
-import java.util.*;
-
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.core.Is.*;
+import static de.danielbechler.diff.node.NodeAssertions.*;
+import static org.mockito.Mockito.*;
 
 /** @author Daniel Bechler */
-public class MapDifferTest
+public class BeanDifferShould
 {
-	private MapDiffer differ;
+	private BeanDiffer differ;
 	@Mock
 	private DelegatingObjectDiffer delegatingObjectDiffer;
+	@Mock
+	private Node node;
+	@Mock
 	private Configuration configuration;
 
 	@BeforeMethod
-	public void setUp()
+	public void setUp() throws Exception
 	{
-		MockitoAnnotations.initMocks(this);
-		configuration = new Configuration();
-		differ = new MapDiffer(delegatingObjectDiffer, configuration);
+		delegatingObjectDiffer = mock(DelegatingObjectDiffer.class);
+		configuration = mock(Configuration.class);
+		differ = new BeanDiffer(delegatingObjectDiffer, configuration);
 	}
 
 	@Test
-	public void testWithoutMapInBaseAndWorking()
+	public void detect_added_bean()
 	{
-		final MapNode node = differ.compare((Map<?, ?>) null, null);
-		assertThat(node.getState(), is(Node.State.UNTOUCHED));
-		assertThat(node.hasChildren(), is(false));
+		final Node node = differ.compare(new Object(), null);
+
+		assertThat(node).self().hasState(Node.State.ADDED);
 	}
 
-	@Test(expectedExceptions = IllegalArgumentException.class)
-	public void testConstructionWithoutDelegator()
-	{
-		new MapDiffer(null, null);
-	}
-
-	@Test
-	public void testConstructionWithDelegator()
-	{
-		// just for the coverage
-		new MapDiffer(new DelegatingObjectDiffer(new Configuration()), new Configuration());
-	}
+//	@Test
+//	public void detect_removed_bean()
+//	{
+//		final Node node = differ.compare(null, new Object());
+//
+//		assertThat(node).self().hasState(Node.State.REMOVED);
+//	}
 }
