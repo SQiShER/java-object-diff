@@ -29,117 +29,119 @@ import de.danielbechler.util.*;
  */
 final class BeanDiffer implements Differ<Node>
 {
-	private Introspector introspector = new StandardIntrospector();
-	private final DifferDelegator delegator;
 	private final Configuration configuration;
+	private Introspector introspector = new StandardIntrospector();
+	private BeanPropertyComparisonDelegator beanPropertyComparer;
+	private DefaultNodeFactory defaultNodeFactory = new DefaultNodeFactory();
 
 	public BeanDiffer(final DifferDelegator delegator, final Configuration configuration)
 	{
 		Assert.notNull(delegator, "delegator");
 		Assert.notNull(configuration, "configuration");
-		this.delegator = delegator;
+		this.beanPropertyComparer = new BeanPropertyComparisonDelegator(delegator, configuration);
 		this.configuration = configuration;
 	}
 
 	@Override
 	public final Node compare(final Node parentNode, final Instances instances)
 	{
-		Node node = newNode(parentNode, instances);
-		if (configuration.isIgnored(node))
+		final Node beanNode = defaultNodeFactory.createNode(parentNode, instances);
+		if (configuration.isIgnored(beanNode))
 		{
-			node.setState(Node.State.IGNORED);
+			beanNode.setState(Node.State.IGNORED);
+			return beanNode;
 		}
 		else if (instances.areNull())
 		{
-			node.setState(Node.State.UNTOUCHED);
+			beanNode.setState(Node.State.UNTOUCHED);
+			return beanNode;
 		}
-		else
-		{
-			node = compareBean(parentNode, instances);
-		}
-		return node;
-	}
-
-	private static Node newNode(final Node parentNode, final Instances instances)
-	{
-		return new DefaultNode(parentNode, instances.getSourceAccessor(), instances.getType());
+		return compareBean(parentNode, instances);
 	}
 
 	private Node compareBean(final Node parentNode, final Instances instances)
 	{
-		final Node node = newNode(parentNode, instances);
+		final Node beanNode = defaultNodeFactory.createNode(parentNode, instances);
 		if (instances.hasBeenAdded())
 		{
-			node.setState(Node.State.ADDED);
-			compareWithAppropriateMethod(node, instances);
-			node.setState(Node.State.ADDED);
+			beanNode.setState(Node.State.ADDED);
+			compareUsingAppropriateMethod(beanNode, instances);
+			beanNode.setState(Node.State.ADDED);
 		}
 		else if (instances.hasBeenRemoved())
 		{
-			node.setState(Node.State.REMOVED);
-			compareWithAppropriateMethod(node, instances);
-			node.setState(Node.State.REMOVED);
+			beanNode.setState(Node.State.REMOVED);
+			compareUsingAppropriateMethod(beanNode, instances);
+			beanNode.setState(Node.State.REMOVED);
 		}
 		else if (instances.areSame())
 		{
-			node.setState(Node.State.UNTOUCHED);
+			beanNode.setState(Node.State.UNTOUCHED);
 		}
 		else
 		{
-			compareWithAppropriateMethod(node, instances);
+			compareUsingAppropriateMethod(beanNode, instances);
 		}
-		return node;
+		return beanNode;
 	}
 
-	private void compareWithAppropriateMethod(final Node node, final Instances instances)
+	private void compareUsingAppropriateMethod(final Node beanNode, final Instances instances)
 	{
-		if (configuration.isIntrospectible(node))
+		if (configuration.isIntrospectible(beanNode))
 		{
-			compareProperties(node, instances);
+			compareUsingIntrospection(beanNode, instances);
 		}
-		else if (configuration.isEqualsOnly(node))
+		else if (configuration.isEqualsOnly(beanNode))
 		{
-			compareEquality(node, instances);
+			compareUsingEquals(beanNode, instances);
 		}
 	}
 
 	@SuppressWarnings({"MethodMayBeStatic"})
-	private void compareEquality(final Node node, final Instances instances)
+	private void compareUsingEquals(final Node beanNode, final Instances instances)
 	{
 		if (instances.areEqual())
 		{
-			node.setState(Node.State.UNTOUCHED);
+			beanNode.setState(Node.State.UNTOUCHED);
 		}
 		else
 		{
-			node.setState(Node.State.CHANGED);
+			beanNode.setState(Node.State.CHANGED);
 		}
 	}
 
-	private void compareProperties(final Node parentNode, final Instances instances)
+	private void compareUsingIntrospection(final Node beanNode, final Instances beanInstances)
 	{
-		for (final Accessor accessor : introspector.introspect(instances.getType()))
+		final Class<?> beanType = beanInstances.getType();
+		final Iterable<Accessor> propertyAccessors = introspector.introspect(beanType);
+		for (final Accessor propertyAccessor : propertyAccessors)
 		{
-			Node propertyNode = new DefaultNode(parentNode, accessor, null);
-			if (configuration.isIgnored(propertyNode))
-			{
-				// this check is here to prevent the invocation of the accessor of ignored properties
-				propertyNode.setState(Node.State.IGNORED);
-			}
-			else
-			{
-				propertyNode = delegator.delegate(parentNode, instances.access(accessor));
-			}
+			final Node propertyNode = beanPropertyComparer.compare(beanNode, beanInstances, propertyAccessor);
 			if (configuration.isReturnable(propertyNode))
 			{
-				parentNode.addChild(propertyNode);
+				beanNode.addChild(propertyNode);
 			}
 		}
 	}
 
+	@TestOnly
 	void setIntrospector(final Introspector introspector)
 	{
 		Assert.notNull(introspector, "introspector");
 		this.introspector = introspector;
+	}
+
+	@TestOnly
+	void setBeanPropertyComparer(final BeanPropertyComparisonDelegator beanPropertyComparer)
+	{
+		Assert.notNull(beanPropertyComparer, "beanPropertyComparer");
+		this.beanPropertyComparer = beanPropertyComparer;
+	}
+
+	@TestOnly
+	public void setDefaultNodeFactory(final DefaultNodeFactory defaultNodeFactory)
+	{
+		Assert.notNull(defaultNodeFactory, "defaultNodeFactory");
+		this.defaultNodeFactory = defaultNodeFactory;
 	}
 }

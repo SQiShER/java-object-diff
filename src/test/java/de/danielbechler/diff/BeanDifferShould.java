@@ -25,8 +25,10 @@ import org.mockito.Mock;
 import org.testng.annotations.*;
 
 import static de.danielbechler.diff.node.NodeAssertions.assertThat;
+import static java.util.Arrays.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.*;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.*;
 
 /** @author Daniel Bechler */
@@ -39,6 +41,9 @@ public class BeanDifferShould
 	@Mock private Introspector introspector;
 	@Mock private Accessor accessor;
 	@Mock private Node node;
+	@Mock private BeanPropertyComparisonDelegator beanPropertyComparer;
+	@Mock private DefaultNodeFactory defaultNodeFactory;
+	@Mock private Instances instances;
 
 	@BeforeMethod
 	public void setUp()
@@ -103,38 +108,36 @@ public class BeanDifferShould
 		assertThat(node).self().isUntouched();
 	}
 
-//	@Test
-//	public void introspect_introspectible_beans()
-//	{
-//		accessor = mock(Accessor.class);
-//
-//		final Instances propertyInstances = mock(Instances.class);
-//		instances = mock(Instances.class);
-//		doReturn(accessor).when(instances).getSourceAccessor();
-//		doReturn(ObjectWithIdentityAndValue.class).when(instances).getType();
-//		doReturn(propertyInstances).when(instances).access(accessor);
-//
-//		configuration = mock(Configuration.class);
-//		doReturn(true).when(configuration).isIntrospectible(any(DefaultNode.class));
-//
-//		delegator = mock(DifferDelegator.class);
-//
-//		differ = new BeanDiffer(delegator, configuration);
-//		differ.setIntrospector(introspector);
-//
-//		when(introspector.introspect(ObjectWithIdentityAndValue.class)).thenReturn(asList(accessor));
-//
-//		final Node node = differ.compare(Node.ROOT, instances);
-//
-//		verify(introspector).introspect(ObjectWithIdentityAndValue.class);
-//	}
-//
-//	@AfterMethod
-//	public void tearDown() throws Exception
-//	{
-//		final MockitoDebugger debugger = new MockitoDebuggerImpl();
-//		debugger.printInvocations(instances, configuration, delegator, introspector, accessor);
-//	}
+	@Test
+	public void add_returnable_property_node_of_introspectable_bean_to_bean_node()
+	{
+		final Class<Object> beanType = Object.class;
+		final Accessor propertyAccessor = mock(Accessor.class);
+		final Instances beanInstances = mock(Instances.class);
+		final DefaultNode beanNode = mock(DefaultNode.class);
+		final DefaultNode propertyNode = mock(DefaultNode.class);
+		final BeanPropertyComparisonDelegator beanPropertyComparer = mock(BeanPropertyComparisonDelegator.class);
+		final DefaultNodeFactory defaultNodeFactory = mock(DefaultNodeFactory.class);
+		final Configuration configuration = mock(Configuration.class);
+		final DifferDelegator delegator = mock(DifferDelegator.class);
+		final Introspector introspector = mock(Introspector.class);
+
+		when(defaultNodeFactory.createNode(Node.ROOT, beanInstances)).thenReturn(beanNode);
+		when(configuration.isIntrospectible(beanNode)).thenReturn(true);
+		doReturn(beanType).when(beanInstances).getType();
+		when(introspector.introspect(beanType)).thenReturn(asList(propertyAccessor));
+		when(beanPropertyComparer.compare(beanNode, beanInstances, propertyAccessor)).thenReturn(propertyNode);
+		when(configuration.isReturnable(propertyNode)).thenReturn(true);
+
+		differ = new BeanDiffer(delegator, configuration);
+		differ.setIntrospector(introspector);
+		differ.setBeanPropertyComparer(beanPropertyComparer);
+		differ.setDefaultNodeFactory(defaultNodeFactory);
+
+		final Node node = differ.compare(Node.ROOT, beanInstances);
+
+		verify(node).addChild(propertyNode);
+	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testConstructionWithoutObjectDiffer()
