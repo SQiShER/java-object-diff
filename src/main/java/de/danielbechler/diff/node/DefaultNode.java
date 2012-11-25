@@ -409,4 +409,31 @@ public class DefaultNode implements Node
 		return sb.toString();
 	}
 
+	@Override
+	public boolean equals(final Object o)
+	{
+		if (this == o)
+		{
+			return true;
+		}
+		if (o == null || getClass() != o.getClass())
+		{
+			return false;
+		}
+
+		final DefaultNode that = (DefaultNode) o;
+
+		if (!accessor.equals(that.accessor))
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return accessor.hashCode();
+	}
 }

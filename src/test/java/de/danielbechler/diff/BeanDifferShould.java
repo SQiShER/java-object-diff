@@ -16,45 +16,130 @@
 
 package de.danielbechler.diff;
 
+import de.danielbechler.diff.accessor.*;
+import de.danielbechler.diff.introspect.*;
+import de.danielbechler.diff.mock.*;
 import de.danielbechler.diff.node.*;
-import org.mockito.*;
+import de.danielbechler.diff.path.*;
+import org.mockito.Mock;
 import org.testng.annotations.*;
 
-import static de.danielbechler.diff.node.NodeAssertions.*;
-import static org.mockito.Mockito.*;
+import static de.danielbechler.diff.node.NodeAssertions.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.*;
+import static org.mockito.MockitoAnnotations.*;
 
 /** @author Daniel Bechler */
 public class BeanDifferShould
 {
 	private BeanDiffer differ;
-	@Mock
-	private DifferDelegator delegator;
-	@Mock
-	private Node node;
-	@Mock
 	private Configuration configuration;
 
+	@Mock private DifferDelegator delegator;
+	@Mock private Introspector introspector;
+	@Mock private Accessor accessor;
+	@Mock private Node node;
+
 	@BeforeMethod
-	public void setUp() throws Exception
+	public void setUp()
 	{
-		delegator = mock(DifferDelegator.class);
-		configuration = mock(Configuration.class);
+		initMocks(this);
+		configuration = new Configuration();
 		differ = new BeanDiffer(delegator, configuration);
+		differ.setIntrospector(introspector);
 	}
 
 	@Test
-	public void detect_added_bean()
+	public void return_untouched_node_if_working_and_base_are_null()
 	{
-		final Node node = differ.compare(new Object(), null);
+		final Node node = differ.compare(Node.ROOT, Instances.of(null, null));
 
-		assertThat(node).self().hasState(Node.State.ADDED);
+		assertThat(node).self().isUntouched();
+	}
+
+	@Test
+	public void return_added_node_if_working_is_not_null_and_base_is()
+	{
+		final Node node = differ.compare(Node.ROOT, Instances.of("foo", null));
+
+		assertThat(node.getState(), is(Node.State.ADDED));
+	}
+
+	@Test
+	public void return_removed_node_if_working_is_null_and_base_is_not()
+	{
+		final Node node = differ.compare(Node.ROOT, Instances.of(null, "foo"));
+
+		assertThat(node.getState(), is(Node.State.REMOVED));
+	}
+
+	@Test
+	public void return_untouched_node_if_working_and_base_are_the_same_instance()
+	{
+		final Node node = differ.compare(Node.ROOT, Instances.of("foo", "foo"));
+
+		assertThat(node).self().isUntouched();
+	}
+
+	@Test
+	public void ignore_ignored_properties()
+	{
+		configuration.withoutProperty(PropertyPath.buildRootPath());
+
+		final Node node = differ.compare(Node.ROOT, Instances.of("foo", "bar"));
+
+		assertThat(node).self().hasState(Node.State.IGNORED);
+	}
+
+	@Test
+	public void compare_beans_via_equals_method_if_configured()
+	{
+		final ObjectWithHashCodeAndEquals working = new ObjectWithHashCodeAndEquals("foo", "ignore");
+		final ObjectWithHashCodeAndEquals base = new ObjectWithHashCodeAndEquals("foo", "ignore this too");
+		configuration.withEqualsOnlyProperty(PropertyPath.buildRootPath());
+
+		final Node node = differ.compare(Node.ROOT, Instances.of(working, base));
+
+		assertThat(node).self().isUntouched();
 	}
 
 //	@Test
-//	public void detect_removed_bean()
+//	public void introspect_introspectible_beans()
 //	{
-//		final Node node = differ.compare(null, new Object());
+//		accessor = mock(Accessor.class);
 //
-//		assertThat(node).self().hasState(Node.State.REMOVED);
+//		final Instances propertyInstances = mock(Instances.class);
+//		instances = mock(Instances.class);
+//		doReturn(accessor).when(instances).getSourceAccessor();
+//		doReturn(ObjectWithIdentityAndValue.class).when(instances).getType();
+//		doReturn(propertyInstances).when(instances).access(accessor);
+//
+//		configuration = mock(Configuration.class);
+//		doReturn(true).when(configuration).isIntrospectible(any(DefaultNode.class));
+//
+//		delegator = mock(DifferDelegator.class);
+//
+//		differ = new BeanDiffer(delegator, configuration);
+//		differ.setIntrospector(introspector);
+//
+//		when(introspector.introspect(ObjectWithIdentityAndValue.class)).thenReturn(asList(accessor));
+//
+//		final Node node = differ.compare(Node.ROOT, instances);
+//
+//		verify(introspector).introspect(ObjectWithIdentityAndValue.class);
 //	}
+//
+//	@AfterMethod
+//	public void tearDown() throws Exception
+//	{
+//		final MockitoDebugger debugger = new MockitoDebuggerImpl();
+//		debugger.printInvocations(instances, configuration, delegator, introspector, accessor);
+//	}
+
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void testConstructionWithoutObjectDiffer()
+	{
+		new BeanDiffer(null, null);
+	}
+
 }

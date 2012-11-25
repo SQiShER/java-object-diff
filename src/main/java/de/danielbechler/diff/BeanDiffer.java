@@ -21,8 +21,6 @@ import de.danielbechler.diff.introspect.*;
 import de.danielbechler.diff.node.*;
 import de.danielbechler.util.*;
 
-import static java.util.Collections.*;
-
 /**
  * Used to find differences between objects that were not handled by one of the other (specialized) {@link
  * Differ Differs}.
@@ -35,7 +33,7 @@ final class BeanDiffer implements Differ<Node>
 	private final DifferDelegator delegator;
 	private final Configuration configuration;
 
-	BeanDiffer(final DifferDelegator delegator, final Configuration configuration)
+	public BeanDiffer(final DifferDelegator delegator, final Configuration configuration)
 	{
 		Assert.notNull(delegator, "delegator");
 		Assert.notNull(configuration, "configuration");
@@ -46,8 +44,8 @@ final class BeanDiffer implements Differ<Node>
 	@Override
 	public final Node compare(final Node parentNode, final Instances instances)
 	{
-		final Node node = newNode(parentNode, instances);
-		if (getConfiguration().isIgnored(node))
+		Node node = newNode(parentNode, instances);
+		if (configuration.isIgnored(node))
 		{
 			node.setState(Node.State.IGNORED);
 		}
@@ -57,21 +55,9 @@ final class BeanDiffer implements Differ<Node>
 		}
 		else
 		{
-			return compareBean(parentNode, instances);
+			node = compareBean(parentNode, instances);
 		}
 		return node;
-	}
-
-	@Deprecated
-	Node compare(final Object working, final Object base)
-	{
-		// Root call requires an existing working instance
-		Assert.notNull(working, "working");
-
-		// Comparison of different types is not (yet) supported
-		Assert.equalTypesOrNull(working, base);
-
-		return compare(Node.ROOT, Instances.of(new RootAccessor(), working, base));
 	}
 
 	private static Node newNode(final Node parentNode, final Instances instances)
@@ -107,11 +93,11 @@ final class BeanDiffer implements Differ<Node>
 
 	private void compareWithAppropriateMethod(final Node node, final Instances instances)
 	{
-		if (getConfiguration().isIntrospectible(node))
+		if (configuration.isIntrospectible(node))
 		{
 			compareProperties(node, instances);
 		}
-		else if (getConfiguration().isEqualsOnly(node))
+		else if (configuration.isEqualsOnly(node))
 		{
 			compareEquality(node, instances);
 		}
@@ -132,47 +118,28 @@ final class BeanDiffer implements Differ<Node>
 
 	private void compareProperties(final Node parentNode, final Instances instances)
 	{
-		for (final Accessor accessor : introspect(instances.getType()))
+		for (final Accessor accessor : introspector.introspect(instances.getType()))
 		{
 			Node propertyNode = new DefaultNode(parentNode, accessor, null);
-			if (getConfiguration().isIgnored(propertyNode))
+			if (configuration.isIgnored(propertyNode))
 			{
+				// this check is here to prevent the invocation of the accessor of ignored properties
 				propertyNode.setState(Node.State.IGNORED);
 			}
 			else
 			{
-				propertyNode = delegate(parentNode, instances.access(accessor));
+				propertyNode = delegator.delegate(parentNode, instances.access(accessor));
 			}
-			if (getConfiguration().isReturnable(propertyNode))
+			if (configuration.isReturnable(propertyNode))
 			{
 				parentNode.addChild(propertyNode);
 			}
 		}
 	}
 
-	private Iterable<Accessor> introspect(final Class<?> type)
-	{
-		final Iterable<Accessor> accessors = introspector.introspect(type);
-		if (accessors == null)
-		{
-			return emptyList();
-		}
-		return accessors;
-	}
-
 	void setIntrospector(final Introspector introspector)
 	{
 		Assert.notNull(introspector, "introspector");
 		this.introspector = introspector;
-	}
-
-	public Node delegate(final Node parentNode, final Instances instances)
-	{
-		return delegator.delegate(parentNode, instances);
-	}
-
-	protected final Configuration getConfiguration()
-	{
-		return configuration;
 	}
 }

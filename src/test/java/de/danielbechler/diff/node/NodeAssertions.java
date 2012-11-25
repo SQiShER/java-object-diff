@@ -239,6 +239,22 @@ public final class NodeAssertions
 			Assertions.assertThat(selectedNode.isCircular()).isTrue();
 			return this;
 		}
+
+		@Override
+		public Syntax.AssertNode isUntouched()
+		{
+			doesExist();
+			Assertions.assertThat(selectedNode.getState()).isEqualTo(Node.State.UNTOUCHED);
+			return this;
+		}
+
+		@Override
+		public Syntax.AssertNode hasChanges()
+		{
+			doesExist();
+			Assertions.assertThat(selectedNode.hasChanges()).isTrue();
+			return this;
+		}
 	}
 
 	private NodeAssertions()
@@ -279,6 +295,10 @@ public final class NodeAssertions
 			AssertNode hasNoChildren();
 
 			AssertNode isCircular();
+
+			AssertNode isUntouched();
+
+			AssertNode hasChanges();
 		}
 	}
 }

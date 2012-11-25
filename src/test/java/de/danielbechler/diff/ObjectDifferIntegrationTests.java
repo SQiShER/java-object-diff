@@ -25,6 +25,7 @@ import org.testng.annotations.*;
 
 import java.util.*;
 
+import static de.danielbechler.diff.TestGroups.*;
 import static java.util.Arrays.*;
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.core.Is.*;
@@ -253,4 +254,46 @@ public class ObjectDifferIntegrationTests
 
 		NodeAssertions.assertThat(node).self().hasState(Node.State.CHANGED);
 	}
+
+	@Test(groups = INTEGRATION)
+	public void testCompareWithDifferentStrings() throws Exception
+	{
+		final Node node = ObjectDifferFactory.getInstance().compare("foo", "bar");
+
+		assertThat(node.getState(), is(Node.State.CHANGED));
+	}
+
+	@Test(expectedExceptions = IllegalArgumentException.class, groups = INTEGRATION)
+	public void testCompareWithDifferentTypes()
+	{
+		ObjectDifferFactory.getInstance().compare("foo", 1337);
+	}
+
+	@Test(groups = INTEGRATION)
+	public void testCompareWithIgnoredProperty()
+	{
+		objectDiffer = ObjectDifferFactory.getInstance();
+		objectDiffer.getConfiguration().withoutProperty(PropertyPath.buildRootPath());
+
+		final Node node = objectDiffer.compare("foo", "bar");
+
+		NodeAssertions.assertThat(node).self().hasState(Node.State.IGNORED);
+	}
+
+	@Test(groups = INTEGRATION)
+	public void testCompareWithComplexType()
+	{
+//		when(introspector.introspect(any(Class.class))).thenReturn(Arrays.<Accessor>asList(accessor));
+//		when(delegate.delegate(any(Node.class), any(Instances.class))).thenReturn(node);
+//		when(configuration.isIntrospectible(any(Node.class))).thenReturn(true);
+//		when(configuration.isReturnable(any(Node.class))).thenReturn(true);
+//		when(node.hasChanges()).thenReturn(true);
+
+		final Node node = ObjectDifferFactory.getInstance().compare(
+				new ObjectWithIdentityAndValue("a", "1"),
+				new ObjectWithIdentityAndValue("a", "2"));
+
+		assertThat(node.getState(), is(Node.State.CHANGED));
+	}
+
 }
