@@ -314,7 +314,7 @@ public class DefaultNode implements Node
 		return set;
 	}
 
-	public final void setState(final State state)
+	public void setState(final State state)
 	{
 		Assert.notNull(state, "state");
 		this.state = state;

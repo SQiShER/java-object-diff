@@ -16,10 +16,16 @@
 
 package de.danielbechler.diff;
 
-/**
- * A simple marker annotation to mark methods that are only needed for testing.
- *
- * @author Daniel Bechler
- */
-@interface TestOnly {
+import de.danielbechler.diff.accessor.*;
+
+class CollectionItemAccessorFactory
+{
+	public CollectionItemAccessorFactory()
+	{
+	}
+
+	public CollectionItemAccessor createAccessorForItem(final Object item)
+	{
+		return new CollectionItemAccessor(item);
+	}
 }

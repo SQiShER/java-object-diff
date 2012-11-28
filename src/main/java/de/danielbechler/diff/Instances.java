@@ -52,7 +52,7 @@ class Instances
 	public static <T> Instances of(final T working, final T base)
 	{
 		final Object fresh = (working != null) ? Classes.freshInstanceOf(working.getClass()) : null;
-		return new Instances(new RootAccessor(), working, base, fresh);
+		return new Instances(RootAccessor.getInstance(), working, base, fresh);
 	}
 
 	Instances(final Accessor sourceAccessor,

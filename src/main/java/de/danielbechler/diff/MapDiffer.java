@@ -43,7 +43,7 @@ final class MapDiffer implements Differ<MapNode>
 
 	public MapNode compare(final Map<?, ?> modified, final Map<?, ?> base)
 	{
-		return compare(Node.ROOT, Instances.of(new RootAccessor(), modified, base));
+		return compare(Node.ROOT, Instances.of(RootAccessor.getInstance(), modified, base));
 	}
 
 	@Override

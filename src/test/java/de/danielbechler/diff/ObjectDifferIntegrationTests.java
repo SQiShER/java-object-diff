@@ -26,9 +26,8 @@ import org.testng.annotations.*;
 import java.util.*;
 
 import static de.danielbechler.diff.TestGroups.*;
+import static de.danielbechler.diff.node.NodeAssertions.*;
 import static java.util.Arrays.*;
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.core.Is.*;
 
 /** @author Daniel Bechler */
 @Test(groups = TestGroups.INTEGRATION)
@@ -133,11 +132,9 @@ public class ObjectDifferIntegrationTests
 
 		final Node node = ObjectDifferFactory.getInstance().compare(working, base);
 
-		assertThat(node.hasChanges(), is(true));
-
-		NodeAssertions.assertThat(node)
-					  .child(new CollectionElement(new ObjectWithIdentityAndValue("foo")))
-					  .hasState(Node.State.CHANGED);
+		assertThat(node).self().hasChanges();
+		assertThat(node).child(new CollectionElement(new ObjectWithIdentityAndValue("foo")))
+				.hasState(Node.State.CHANGED);
 	}
 
 	@Test(groups = TestGroups.INTEGRATION)
@@ -260,7 +257,7 @@ public class ObjectDifferIntegrationTests
 	{
 		final Node node = ObjectDifferFactory.getInstance().compare("foo", "bar");
 
-		assertThat(node.getState(), is(Node.State.CHANGED));
+		assertThat(node).self().hasState(Node.State.CHANGED);
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class, groups = INTEGRATION)
@@ -293,7 +290,34 @@ public class ObjectDifferIntegrationTests
 				new ObjectWithIdentityAndValue("a", "1"),
 				new ObjectWithIdentityAndValue("a", "2"));
 
-		assertThat(node.getState(), is(Node.State.CHANGED));
+		assertThat(node).self().hasState(Node.State.CHANGED);
 	}
 
+	@Test(enabled = false, description = "Currently this is simply not possible because of the way, the CollectionItemAccessor works. Would be great, to support this.")
+	public void testCompareWithListContainingObjectTwiceDetectsIfOneGetsRemoved() throws Exception
+	{
+		final List<ObjectWithHashCodeAndEquals> base = asList(new ObjectWithHashCodeAndEquals("foo"), new ObjectWithHashCodeAndEquals("foo"));
+		final List<ObjectWithHashCodeAndEquals> working = asList(new ObjectWithHashCodeAndEquals("foo"));
+		final Node node = ObjectDifferFactory.getInstance().compare(working, base);
+		node.visit(new NodeHierarchyVisitor());
+		assertThat(node)
+				.child(PropertyPath.createBuilder()
+								   .withRoot()
+								   .withCollectionItem(new ObjectWithHashCodeAndEquals("foo"))
+								   .build())
+				.hasState(Node.State.REMOVED);
+	}
+
+	@Test(enabled = false, description = "Currently this is simply not possible because of the way, the CollectionItemAccessor works. Would be great, to support this.")
+	public void testCompareWithListContainingObjectOnceDetectsIfAnotherInstanceOfItGetsAdded() throws Exception
+	{
+		final List<ObjectWithHashCodeAndEquals> base = asList(new ObjectWithHashCodeAndEquals("foo"));
+		final List<ObjectWithHashCodeAndEquals> working = asList(new ObjectWithHashCodeAndEquals("foo"), new ObjectWithHashCodeAndEquals("foo"));
+		final Node node = ObjectDifferFactory.getInstance().compare(working, base);
+		node.visit(new NodeHierarchyVisitor());
+		assertThat(node).child(PropertyPath.createBuilder()
+										   .withRoot()
+										   .withCollectionItem(new ObjectWithHashCodeAndEquals("foo"))
+										   .build()).hasState(Node.State.ADDED);
+	}
 }

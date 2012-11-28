@@ -16,196 +16,166 @@
 
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.mock.*;
+import de.danielbechler.diff.accessor.*;
 import de.danielbechler.diff.node.*;
-import de.danielbechler.diff.path.*;
-import de.danielbechler.diff.visitor.*;
-import org.mockito.internal.debugging.*;
+import org.fest.assertions.api.*;
+import org.mockito.*;
 import org.testng.annotations.*;
 
 import java.util.*;
 
-import static de.danielbechler.diff.node.NodeAssertions.*;
 import static java.util.Arrays.*;
 import static java.util.Collections.*;
 import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.*;
 
 /** @author Daniel Bechler */
 public class CollectionDifferShould
 {
-	private CollectionDiffer differ;
-	@Mock private DifferDelegator delegatingObjectDiffer;
-	private Configuration configuration;
+	private CollectionDiffer collectionDiffer;
+
+	@Mock private Configuration configuration;
+	@Mock private DifferDelegator delegator;
+	@Mock private CollectionNodeFactory collectionNodeFactory;
+	@Mock private CollectionNode collectionNode;
+	@Mock private Node collectionItemNode;
+	@Mock private Instances instances;
+	@Mock private Instances itemInstances;
+	@Mock private CollectionItemAccessorFactory collectionItemAccessorFactory;
 
 	@BeforeMethod
 	public void setUp() throws Exception
 	{
-		initMocks(this);
-		configuration = new Configuration();
-		differ = new CollectionDiffer(delegatingObjectDiffer, configuration);
-	}
-
-	@AfterMethod
-	public void tearDown()
-	{
-		new MockitoDebuggerImpl().printInvocations(delegatingObjectDiffer);
+		MockitoAnnotations.initMocks(this);
+		collectionDiffer = new CollectionDiffer(delegator, configuration);
+		collectionDiffer.setCollectionNodeFactory(collectionNodeFactory);
+		collectionDiffer.setCollectionItemAccessorFactory(collectionItemAccessorFactory);
+		when(collectionNodeFactory.create(Node.ROOT, instances)).thenReturn(collectionNode);
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
-	public void fail_if_constructed_without_delegator_and_configuration()
+	public void fail_if_constructed_without_delegator()
 	{
-		new CollectionDiffer(null, null);
+		new CollectionDiffer(null, configuration);
+	}
+
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void fail_if_constructed_without_configuration()
+	{
+		new CollectionDiffer(delegator, null);
 	}
 
 	@Test
 	public void return_untouched_node_if_base_and_working_are_the_same_instance()
 	{
-		final List<String> working = emptyList();
-
-		final CollectionNode node = differ.compare(working, working);
-
-		assertThat(node).self().hasState(Node.State.UNTOUCHED);
+		when(instances.areSame()).thenReturn(true);
+		compare();
+		verify(collectionNode).setState(Node.State.UNTOUCHED);
 	}
 
 	@Test
 	public void return_added_node_if_working_is_not_null_and_base_is_null() throws Exception
 	{
-		final CollectionNode node = differ.compare(emptyList(), null);
+		when(instances.hasBeenAdded()).thenReturn(true);
+		when(instances.getWorking(Collection.class)).thenReturn(emptyList());
+		compare();
+		verify(collectionNode).setState(Node.State.ADDED);
+	}
 
-		assertThat(node).self().hasState(Node.State.ADDED);
+	@Test(dependsOnMethods = "return_added_node_if_working_is_not_null_and_base_is_null")
+	public void delegate_items_of_added_collection_to_delegator()
+	{
+		when(instances.hasBeenAdded()).thenReturn(true);
+		when(instances.getWorking(Collection.class)).thenReturn(asList("foo"));
+		when(instances.access(any(CollectionItemAccessor.class))).thenReturn(itemInstances); // TODO get rid of any
+		when(delegator.delegate(collectionNode, itemInstances)).thenReturn(collectionItemNode);
+		when(configuration.isReturnable(collectionItemNode)).thenReturn(true);
+		compare();
+		verify(collectionNode).addChild(collectionItemNode);
 	}
 
 	@Test
 	public void return_ignored_node_if_property_is_ignored() throws Exception
 	{
-		configuration.withoutProperty(PropertyPath.buildRootPath());
-
-		final CollectionNode node = differ.compare(emptyList(), null);
-
-		assertThat(node).self().hasState(Node.State.IGNORED);
+		when(configuration.isIgnored(collectionNode)).thenReturn(true);
+		compare();
+		verify(collectionNode).setState(Node.State.IGNORED);
 	}
 
 	@Test
 	public void return_removed_node_if_working_is_null_and_base_is_not_null() throws Exception
 	{
-		final CollectionNode node = differ.compare(null, emptyList());
-
-		assertThat(node).self().hasState(Node.State.REMOVED);
+		when(instances.hasBeenRemoved()).thenReturn(true);
+		when(instances.getBase(Collection.class)).thenReturn(emptyList());
+		compare();
+		verify(collectionNode).setState(Node.State.REMOVED);
 	}
 
 	@Test
 	public void compare_only_via_equals_if_equals_only_is_enabled()
 	{
-		final List<?> working = asList(new ObjectWithIdentityAndValue("foo", "ignore"));
-		final List<?> base = asList(new ObjectWithIdentityAndValue("foo", "ignore this too"));
-		configuration.withEqualsOnlyProperty(PropertyPath.buildRootPath());
-
-		final CollectionNode node = differ.compare(working, base);
-
-		assertThat(node).self().hasState(Node.State.UNTOUCHED);
+		when(configuration.isEqualsOnly(collectionNode)).thenReturn(true);
+		when(instances.areEqual()).thenReturn(true);
+		compare();
+		verify(collectionNode).setState(Node.State.UNTOUCHED);
 	}
 
 	@Test
 	public void detect_changes_if_equals_only_is_enabled()
 	{
-		final List<?> working = asList(new ObjectWithIdentityAndValue("foo", "ignore"));
-		final List<?> base = asList(new ObjectWithIdentityAndValue("bar", "ignore"));
-		configuration.withEqualsOnlyProperty(PropertyPath.buildRootPath());
-
-		final CollectionNode node = differ.compare(working, base);
-
-		assertThat(node).self().hasState(Node.State.CHANGED);
+		when(configuration.isEqualsOnly(collectionNode)).thenReturn(true);
+		compare();
+		verify(collectionNode).setState(Node.State.CHANGED);
 	}
 
-	@Test
-	public void delegate_items_of_added_collection_to_delegator()
+	private void compare()
 	{
-		final List<String> working = asList("foo");
-
-		doAnswer(new ReturnDefaultNode(Node.State.ADDED))
-				.when(delegatingObjectDiffer)
-				.delegate(any(CollectionNode.class), any(Instances.class));
-
-		final CollectionNode node = differ.compare(working, null);
-
-		assertThat(node).child(new CollectionElement("foo")).hasState(Node.State.ADDED);
+		final CollectionNode node = collectionDiffer.compare(Node.ROOT, instances);
+		Assertions.assertThat(node).isSameAs(collectionNode);
 	}
 
 	@Test
 	public void delegate_items_of_removed_collection_to_delegator()
 	{
-		final List<String> base = asList("foo");
-
-		doAnswer(new ReturnDefaultNode(Node.State.REMOVED))
-				.when(delegatingObjectDiffer)
-				.delegate(any(CollectionNode.class), any(Instances.class));
-
-		final CollectionNode node = differ.compare(null, base);
-
-		assertThat(node).child(new CollectionElement("foo")).hasState(Node.State.REMOVED);
-	}
-
-	@Test
-	public void delegate_removed_items_to_delegator_on_deep_comparison()
-	{
-		final List<String> working = emptyList();
-		final List<String> base = asList("foo");
-
-		when(delegatingObjectDiffer.delegate(any(CollectionNode.class), any(Instances.class))).then(new ReturnDefaultNode(Node.State.REMOVED));
-
-		final CollectionNode node = differ.compare(working, base);
-
-		assertThat(node).child(new CollectionElement("foo")).hasState(Node.State.REMOVED);
-		verify(delegatingObjectDiffer).delegate(any(CollectionNode.class), any(Instances.class));
-		verifyNoMoreInteractions(delegatingObjectDiffer);
+		when(instances.hasBeenRemoved()).thenReturn(true);
+		when(instances.getBase(Collection.class)).thenReturn(asList("foo"));
+		when(instances.access(any(CollectionItemAccessor.class))).thenReturn(itemInstances); // TODO get rid of any
+		when(delegator.delegate(collectionNode, itemInstances)).thenReturn(collectionItemNode);
+		when(configuration.isReturnable(collectionItemNode)).thenReturn(true);
+		compare();
+		verify(collectionNode).addChild(collectionItemNode);
 	}
 
 	@Test
 	public void delegate_all_items_to_delegator_on_deep_comparison()
 	{
-		final List<String> working = asList("foo", "bar");
-		final List<String> base = asList("foobar");
+		when(instances.getWorking(Collection.class)).thenReturn(asList("foo", "bar"));
+		when(instances.getBase(Collection.class)).thenReturn(asList("foo", "foobar"));
 
-		when(delegatingObjectDiffer.delegate(any(CollectionNode.class), any(Instances.class))).then(new ReturnDefaultNode(Node.State.ADDED));
+		final Node fooNode = whenDelegatorGetsCalledWithInstancesForItem("foo");
+		final Node barNode = whenDelegatorGetsCalledWithInstancesForItem("bar");
+		final Node foobarNode = whenDelegatorGetsCalledWithInstancesForItem("foobar");
 
-		final CollectionNode node = differ.compare(working, base);
+		when(configuration.isReturnable(any(Node.class))).thenReturn(true);
 
-		verify(delegatingObjectDiffer, times(3)).delegate(any(CollectionNode.class), any(Instances.class));
-		verifyNoMoreInteractions(delegatingObjectDiffer);
+		compare();
 
-		assertThat(node).child(new CollectionElement("foo")).hasState(Node.State.ADDED);
-		assertThat(node).child(new CollectionElement("bar")).hasState(Node.State.ADDED);
-		assertThat(node).child(new CollectionElement("foobar")).hasState(Node.State.ADDED);
+		verify(collectionNode).addChild(fooNode);
+		verify(collectionNode).addChild(barNode);
+		verify(collectionNode).addChild(foobarNode);
+		verifyNoMoreInteractions(collectionNode);
 	}
 
-	@Test(enabled = false, description = "Currently this is simply not possible because of the way, the CollectionItemAccessor works. Would be great, to support this.")
-	public void testCompareWithListContainingObjectTwiceDetectsIfOneGetsRemoved() throws Exception
+	private Node whenDelegatorGetsCalledWithInstancesForItem(final String item)
 	{
-		final List<ObjectWithHashCodeAndEquals> base = asList(new ObjectWithHashCodeAndEquals("foo"), new ObjectWithHashCodeAndEquals("foo"));
-		final List<ObjectWithHashCodeAndEquals> working = asList(new ObjectWithHashCodeAndEquals("foo"));
-		final CollectionNode node = differ.compare(working, base);
-		node.visit(new NodeHierarchyVisitor());
-		assertThat(node)
-				.child(PropertyPath.createBuilder()
-								   .withRoot()
-								   .withCollectionItem(new ObjectWithHashCodeAndEquals("foo"))
-								   .build())
-				.hasState(Node.State.REMOVED);
-	}
+		final CollectionItemAccessor fooAccessor = mock(CollectionItemAccessor.class);
+		when(collectionItemAccessorFactory.createAccessorForItem(item)).thenReturn(fooAccessor);
 
-	@Test(enabled = false, description = "Currently this is simply not possible because of the way, the CollectionItemAccessor works. Would be great, to support this.")
-	public void testCompareWithListContainingObjectOnceDetectsIfAnotherInstanceOfItGetsAdded() throws Exception
-	{
-		final List<ObjectWithHashCodeAndEquals> base = asList(new ObjectWithHashCodeAndEquals("foo"));
-		final List<ObjectWithHashCodeAndEquals> working = asList(new ObjectWithHashCodeAndEquals("foo"), new ObjectWithHashCodeAndEquals("foo"));
-		final CollectionNode node = differ.compare(working, base);
-		node.visit(new NodeHierarchyVisitor());
-		assertThat(node)
-				.child(PropertyPath.createBuilder()
-								   .withRoot()
-								   .withCollectionItem(new ObjectWithHashCodeAndEquals("foo"))
-								   .build())
-				.hasState(Node.State.ADDED);
+		final Instances fooInstances = mock(Instances.class);
+		when(instances.access(fooAccessor)).thenReturn(fooInstances);
+
+		final Node fooNode = mock(Node.class);
+		when(delegator.delegate(collectionNode, fooInstances)).thenReturn(fooNode);
+
+		return fooNode;
 	}
 }

@@ -50,6 +50,12 @@ public class ObjectDiffer implements Configurable
 		return delegator.delegate(Node.ROOT, Instances.of(working, base));
 	}
 
+	/**
+	 * @deprecated The configuration will become an immutable object created by the configuration builder. The
+	 *             only way to configure an ObjectDiffer is by creating a new instance via {@link
+	 *             ObjectDifferFactory}. Therefore there will be no need for this getter anymore.
+	 */
+	@Deprecated
 	public Configuration getConfiguration()
 	{
 		return configuration;

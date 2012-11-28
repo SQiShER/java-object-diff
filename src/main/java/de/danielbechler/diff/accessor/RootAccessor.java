@@ -28,7 +28,7 @@ public final class RootAccessor extends AbstractAccessor
 		return instance;
 	}
 
-	public RootAccessor()
+	private RootAccessor()
 	{
 	}
 

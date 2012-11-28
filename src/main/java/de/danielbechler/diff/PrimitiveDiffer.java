@@ -22,7 +22,7 @@ import de.danielbechler.util.*;
 import static de.danielbechler.diff.Configuration.PrimitiveDefaultValueMode.*;
 
 /** @author Daniel Bechler */
-public class PrimitiveDiffer implements Differ<DefaultNode>
+class PrimitiveDiffer implements Differ<DefaultNode>
 {
 	private final Configuration configuration;
 

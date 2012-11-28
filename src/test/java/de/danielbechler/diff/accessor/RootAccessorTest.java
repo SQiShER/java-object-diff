@@ -27,7 +27,7 @@ import static org.hamcrest.core.IsSame.*;
 /** @author Daniel Bechler */
 public class RootAccessorTest
 {
-	private final Accessor accessor = new RootAccessor();
+	private final Accessor accessor = RootAccessor.getInstance();
 
 	@Test
 	public void testGet() throws Exception

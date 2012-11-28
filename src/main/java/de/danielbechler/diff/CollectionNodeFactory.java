@@ -16,10 +16,17 @@
 
 package de.danielbechler.diff;
 
-/**
- * A simple marker annotation to mark methods that are only needed for testing.
- *
- * @author Daniel Bechler
- */
-@interface TestOnly {
+import de.danielbechler.diff.node.*;
+
+@SuppressWarnings("MethodMayBeStatic")
+class CollectionNodeFactory
+{
+	public CollectionNodeFactory()
+	{
+	}
+
+	public CollectionNode create(final Node parentNode, final Instances instances)
+	{
+		return new CollectionNode(parentNode, instances.getSourceAccessor(), instances.getType());
+	}
 }

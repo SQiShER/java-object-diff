@@ -32,6 +32,8 @@ final class CollectionDiffer implements Differ<CollectionNode>
 {
 	private final DifferDelegator delegator;
 	private final Configuration configuration;
+	private CollectionNodeFactory collectionNodeFactory = new CollectionNodeFactory();
+	private CollectionItemAccessorFactory collectionItemAccessorFactory = new CollectionItemAccessorFactory();
 
 	public CollectionDiffer(final DifferDelegator delegator, final Configuration configuration)
 	{
@@ -41,107 +43,97 @@ final class CollectionDiffer implements Differ<CollectionNode>
 		this.configuration = configuration;
 	}
 
-	public CollectionNode compare(final Collection<?> working, final Collection<?> base)
+	@Override
+	public final CollectionNode compare(final Node parentNode, final Instances collectionInstances)
 	{
-		return compare(Node.ROOT, Instances.of(new RootAccessor(), working, base));
+		final CollectionNode collectionNode = collectionNodeFactory.create(parentNode, collectionInstances);
+		if (configuration.isIgnored(collectionNode))
+		{
+			collectionNode.setState(Node.State.IGNORED);
+		}
+		else if (configuration.isEqualsOnly(collectionNode))
+		{
+			if (collectionInstances.areEqual())
+			{
+				collectionNode.setState(Node.State.UNTOUCHED);
+			}
+			else
+			{
+				collectionNode.setState(Node.State.CHANGED);
+			}
+		}
+		else if (collectionInstances.hasBeenAdded())
+		{
+			compareItems(collectionNode, collectionInstances, collectionInstances.getWorking(Collection.class));
+			collectionNode.setState(Node.State.ADDED);
+		}
+		else if (collectionInstances.hasBeenRemoved())
+		{
+			compareItems(collectionNode, collectionInstances, collectionInstances.getBase(Collection.class));
+			collectionNode.setState(Node.State.REMOVED);
+		}
+		else if (collectionInstances.areSame())
+		{
+			collectionNode.setState(Node.State.UNTOUCHED);
+		}
+		else
+		{
+			compareItems(collectionNode, collectionInstances, addedItemsOf(collectionInstances));
+			compareItems(collectionNode, collectionInstances, removedItemsOf(collectionInstances));
+			compareItems(collectionNode, collectionInstances, knownItemsOf(collectionInstances));
+		}
+		return collectionNode;
 	}
 
-	private CollectionNode newNode(final Node parentNode, final Instances instances)
-	{
-		return new CollectionNode(parentNode, instances.getSourceAccessor(), instances.getType());
-	}
-
-	private void handleItems(final CollectionNode collectionNode,
-							 final Instances instances,
-							 final Iterable<?> items)
+	private void compareItems(final Node collectionNode, final Instances instances, final Iterable<?> items)
 	{
 		for (final Object item : items)
 		{
 			final Node child = compareItem(collectionNode, instances, item);
-			if (getConfiguration().isReturnable(child))
+			if (configuration.isReturnable(child))
 			{
 				collectionNode.addChild(child);
 			}
 		}
 	}
 
-	private Node compareItem(final CollectionNode node, final Instances instances, final Object item)
+	private Node compareItem(final Node collectionNode,
+							 final Instances collectionInstances,
+							 final Object collectionItem)
 	{
-		final Accessor itemAccessor = node.accessorForItem(item);
-		final Instances itemInstances = instances.access(itemAccessor);
-		return delegate(node, itemInstances);
+		final CollectionItemAccessor itemAccessor = collectionItemAccessorFactory.createAccessorForItem(collectionItem);
+		final Instances itemInstances = collectionInstances.access(itemAccessor);
+		return delegator.delegate(collectionNode, itemInstances);
 	}
 
-	@Override
-	public final CollectionNode compare(final Node parentNode, final Instances instances)
+	@SuppressWarnings("unchecked")
+	private static Collection<?> addedItemsOf(final Instances instances)
 	{
-		final CollectionNode node = newNode(parentNode, instances);
-		if (getConfiguration().isIgnored(node))
-		{
-			node.setState(Node.State.IGNORED);
-		}
-		else if (instances.hasBeenAdded())
-		{
-			handleItems(node, instances, instances.getWorking(Collection.class));
-			node.setState(Node.State.ADDED);
-		}
-		else if (instances.hasBeenRemoved())
-		{
-			handleItems(node, instances, instances.getBase(Collection.class));
-			node.setState(Node.State.REMOVED);
-		}
-		else if (instances.areSame())
-		{
-			node.setState(Node.State.UNTOUCHED);
-		}
-		else if (getConfiguration().isEqualsOnly(node))
-		{
-			if (instances.areEqual())
-			{
-				node.setState(Node.State.UNTOUCHED);
-			}
-			else
-			{
-				node.setState(Node.State.CHANGED);
-			}
-		}
-		else
-		{
-			handleItems(node, instances, findAddedItems(instances));
-			handleItems(node, instances, findRemovedItems(instances));
-			handleItems(node, instances, findKnownItems(instances));
-		}
-		return node;
-	}
-
-	public Node delegate(final Node parentNode, final Instances instances)
-	{
-		return delegator.delegate(parentNode, instances);
-	}
-
-	protected final Configuration getConfiguration()
-	{
-		return configuration;
-	}
-
-	private static Collection<?> findAddedItems(final Instances instances)
-	{
-		//noinspection unchecked
 		return Collections.filteredCopyOf(instances.getWorking(Collection.class), instances.getBase(Collection.class));
 	}
 
-	private static Collection<?> findRemovedItems(final Instances instances)
+	@SuppressWarnings("unchecked")
+	private static Collection<?> removedItemsOf(final Instances instances)
 	{
-		//noinspection unchecked
 		return Collections.filteredCopyOf(instances.getBase(Collection.class), instances.getWorking(Collection.class));
 	}
 
-	private static Iterable<?> findKnownItems(final Instances instances)
+	@SuppressWarnings("unchecked")
+	private static Iterable<?> knownItemsOf(final Instances instances)
 	{
-		@SuppressWarnings({"unchecked"})
 		final Collection<?> changed = new ArrayList<Object>(instances.getWorking(Collection.class));
-		changed.removeAll(findAddedItems(instances));
-		changed.removeAll(findRemovedItems(instances));
+		changed.removeAll(addedItemsOf(instances));
+		changed.removeAll(removedItemsOf(instances));
 		return changed;
+	}
+
+	void setCollectionNodeFactory(final CollectionNodeFactory collectionNodeFactory)
+	{
+		this.collectionNodeFactory = collectionNodeFactory;
+	}
+
+	void setCollectionItemAccessorFactory(final CollectionItemAccessorFactory collectionItemAccessorFactory)
+	{
+		this.collectionItemAccessorFactory = collectionItemAccessorFactory;
 	}
 }

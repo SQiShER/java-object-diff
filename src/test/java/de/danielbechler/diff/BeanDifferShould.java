@@ -97,7 +97,7 @@ public class BeanDifferShould
 	}
 
 	@Test
-	public void compare_beans_via_equals_method_if_configured()
+	public void compare_bean_via_equals()
 	{
 		final ObjectWithHashCodeAndEquals working = new ObjectWithHashCodeAndEquals("foo", "ignore");
 		final ObjectWithHashCodeAndEquals base = new ObjectWithHashCodeAndEquals("foo", "ignore this too");
@@ -109,7 +109,7 @@ public class BeanDifferShould
 	}
 
 	@Test
-	public void add_returnable_property_node_of_introspectable_bean_to_bean_node()
+	public void compare_bean_via_introspection_and_delegate_comparison_of_properties()
 	{
 		final Class<Object> beanType = Object.class;
 		final Accessor propertyAccessor = mock(Accessor.class);
@@ -140,9 +140,14 @@ public class BeanDifferShould
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
-	public void testConstructionWithoutObjectDiffer()
+	public void fail_construction_without_delegator()
 	{
-		new BeanDiffer(null, null);
+		new BeanDiffer(null, configuration);
 	}
 
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void fail_construction_without_configuration()
+	{
+		new BeanDiffer(delegator, null);
+	}
 }

@@ -64,13 +64,13 @@ final class BeanDiffer implements Differ<Node>
 		final Node beanNode = defaultNodeFactory.createNode(parentNode, instances);
 		if (instances.hasBeenAdded())
 		{
-			beanNode.setState(Node.State.ADDED);
+//			beanNode.setState(Node.State.ADDED);
 			compareUsingAppropriateMethod(beanNode, instances);
 			beanNode.setState(Node.State.ADDED);
 		}
 		else if (instances.hasBeenRemoved())
 		{
-			beanNode.setState(Node.State.REMOVED);
+//			beanNode.setState(Node.State.REMOVED);
 			compareUsingAppropriateMethod(beanNode, instances);
 			beanNode.setState(Node.State.REMOVED);
 		}

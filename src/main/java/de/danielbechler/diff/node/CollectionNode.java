@@ -22,16 +22,11 @@ import de.danielbechler.diff.visitor.*;
 import java.util.*;
 
 /** @author Daniel Bechler */
-public final class CollectionNode extends DefaultNode
+public class CollectionNode extends DefaultNode
 {
 	public CollectionNode(final Node parent, final Accessor accessor, final Class<?> valueType)
 	{
 		super(parent, accessor, valueType);
-	}
-
-	public Accessor accessorForItem(final Object item)
-	{
-		return new CollectionItemAccessor(item);
 	}
 
 	public Collection<Node> getAdditions()

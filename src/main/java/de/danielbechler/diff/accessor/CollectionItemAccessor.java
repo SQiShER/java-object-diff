@@ -21,7 +21,7 @@ import de.danielbechler.diff.path.*;
 import java.util.*;
 
 /** @author Daniel Bechler */
-public final class CollectionItemAccessor extends AbstractAccessor implements TypeAwareAccessor
+public class CollectionItemAccessor extends AbstractAccessor implements TypeAwareAccessor
 {
 	private final Object referenceItem;
 

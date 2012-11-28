@@ -19,7 +19,7 @@ package de.danielbechler.diff;
 import de.danielbechler.diff.node.*;
 
 /** @author Daniel Bechler */
-public interface NodeInspector
+interface NodeInspector
 {
 	boolean isIgnored(Node node);
 
