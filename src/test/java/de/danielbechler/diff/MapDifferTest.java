@@ -20,8 +20,6 @@ import de.danielbechler.diff.node.*;
 import org.mockito.*;
 import org.testng.annotations.*;
 
-import java.util.*;
-
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.core.Is.*;
 
@@ -44,7 +42,7 @@ public class MapDifferTest
 	@Test
 	public void testWithoutMapInBaseAndWorking()
 	{
-		final MapNode node = differ.compare((Map<?, ?>) null, null);
+		final MapNode node = differ.compare(Node.ROOT, Instances.of(null, null));
 		assertThat(node.getState(), is(Node.State.UNTOUCHED));
 		assertThat(node.hasChildren(), is(false));
 	}

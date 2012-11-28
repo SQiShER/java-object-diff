@@ -131,7 +131,7 @@ public class BeanDifferShould
 
 		differ = new BeanDiffer(delegator, configuration);
 		differ.setIntrospector(introspector);
-		differ.setBeanPropertyComparer(beanPropertyComparer);
+		differ.setBeanPropertyComparisonDelegator(beanPropertyComparer);
 		differ.setDefaultNodeFactory(defaultNodeFactory);
 
 		final Node node = differ.compare(Node.ROOT, beanInstances);

@@ -39,7 +39,6 @@ class PrimitiveDiffer implements Differ<DefaultNode>
 		{
 			throw new IllegalArgumentException("The primitive differ can only deal with primitive types.");
 		}
-
 		final DefaultNode node = newNode(parentNode, instances);
 		if (getConfiguration().isIgnored(node))
 		{
@@ -57,7 +56,6 @@ class PrimitiveDiffer implements Differ<DefaultNode>
 		{
 			node.setState(Node.State.CHANGED);
 		}
-
 		return node;
 	}
 

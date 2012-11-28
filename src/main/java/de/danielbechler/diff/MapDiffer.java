@@ -32,6 +32,7 @@ final class MapDiffer implements Differ<MapNode>
 {
 	private final DifferDelegator delegator;
 	private final Configuration configuration;
+	private final MapNodeFactory mapNodeFactory = new MapNodeFactory();
 
 	public MapDiffer(final DifferDelegator delegator, final Configuration configuration)
 	{
@@ -41,100 +42,73 @@ final class MapDiffer implements Differ<MapNode>
 		this.configuration = configuration;
 	}
 
-	public MapNode compare(final Map<?, ?> modified, final Map<?, ?> base)
-	{
-		return compare(Node.ROOT, Instances.of(RootAccessor.getInstance(), modified, base));
-	}
-
 	@Override
 	public final MapNode compare(final Node parentNode, final Instances instances)
 	{
-		final MapNode node = newNode(parentNode, instances);
-
-		if (getConfiguration().isIgnored(node))
+		final MapNode mapNode = mapNodeFactory.createMapNode(parentNode, instances);
+		indexAll(instances, mapNode);
+		if (configuration.isIgnored(mapNode))
 		{
-			node.setState(Node.State.IGNORED);
-			return node;
+			mapNode.setState(Node.State.IGNORED);
 		}
-
-		indexAll(instances, node);
-
-		if (instances.getWorking() != null && instances.getBase() == null)
-		{
-			handleEntries(instances, node, instances.getWorking(Map.class).keySet());
-			node.setState(Node.State.ADDED);
-		}
-		else if (instances.getWorking() == null && instances.getBase() != null)
-		{
-			handleEntries(instances, node, instances.getBase(Map.class).keySet());
-			node.setState(Node.State.REMOVED);
-		}
-		else if (instances.areSame())
-		{
-			node.setState(Node.State.UNTOUCHED);
-		}
-		else if (getConfiguration().isEqualsOnly(node))
+		else if (configuration.isEqualsOnly(mapNode))
 		{
 			if (instances.areEqual())
 			{
-				node.setState(Node.State.UNTOUCHED);
+				mapNode.setState(Node.State.UNTOUCHED);
 			}
 			else
 			{
-				node.setState(Node.State.CHANGED);
+				mapNode.setState(Node.State.CHANGED);
 			}
+		}
+		else if (instances.hasBeenAdded())
+		{
+			compareEntries(mapNode, instances, instances.getWorking(Map.class).keySet());
+			mapNode.setState(Node.State.ADDED);
+		}
+		else if (instances.hasBeenRemoved())
+		{
+			compareEntries(mapNode, instances, instances.getBase(Map.class).keySet());
+			mapNode.setState(Node.State.REMOVED);
+		}
+		else if (instances.areSame())
+		{
+			mapNode.setState(Node.State.UNTOUCHED);
 		}
 		else
 		{
-			handleEntries(instances, node, findAddedKeys(instances));
-			handleEntries(instances, node, findRemovedKeys(instances));
-			handleEntries(instances, node, findKnownKeys(instances));
+			compareEntries(mapNode, instances, findAddedKeys(instances));
+			compareEntries(mapNode, instances, findRemovedKeys(instances));
+			compareEntries(mapNode, instances, findKnownKeys(instances));
 		}
-		return node;
-	}
-
-	private static MapNode newNode(final Node parentNode, final Instances instances)
-	{
-		return new MapNode(parentNode, instances.getSourceAccessor(), instances.getType());
-	}
-
-	public Node delegate(final Node parentNode, final Instances instances)
-	{
-		return delegator.delegate(parentNode, instances);
-	}
-
-	protected final Configuration getConfiguration()
-	{
-		return configuration;
+		return mapNode;
 	}
 
 	private static void indexAll(final Instances instances, final MapNode node)
 	{
-		node.indexKeys(instances.getWorking(Map.class),
-				instances.getBase(Map.class),
-				instances.getFresh(Map.class));
+		node.indexKeys(instances.getWorking(Map.class));
+		node.indexKeys(instances.getBase(Map.class));
+		node.indexKeys(instances.getFresh(Map.class));
 	}
 
-	private void handleEntries(final Instances instances, final MapNode parent, final Iterable<?> keys)
+	private void compareEntries(final MapNode mapNode, final Instances mapInstances, final Iterable<?> keys)
 	{
 		for (final Object key : keys)
 		{
-			handleEntries(key, instances, parent);
+			final Node node = compareEntry(mapNode, mapInstances, key);
+			if (configuration.isReturnable(node))
+			{
+				mapNode.addChild(node);
+			}
 		}
 	}
 
-	private void handleEntries(final Object key, final Instances instances, final MapNode parent)
+	private Node compareEntry(final MapNode mapNode, final Instances mapInstances, final Object key)
 	{
-		final Node node = compareEntry(key, instances, parent);
-		if (getConfiguration().isReturnable(node))
-		{
-			parent.addChild(node);
-		}
-	}
-
-	private Node compareEntry(final Object key, final Instances instances, final MapNode parent)
-	{
-		return delegate(parent, instances.access(parent.accessorForKey(key)));
+		final Accessor mapEntryAccessor = mapNode.accessorForKey(key);
+		final Instances mapEntryInstances = mapInstances.access(mapEntryAccessor);
+		return delegator.delegate(mapNode, mapEntryInstances);
 	}
 
 	private static Collection<?> findAddedKeys(final Instances instances)

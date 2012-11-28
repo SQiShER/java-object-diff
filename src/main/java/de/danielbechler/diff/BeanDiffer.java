@@ -31,14 +31,14 @@ final class BeanDiffer implements Differ<Node>
 {
 	private final Configuration configuration;
 	private Introspector introspector = new StandardIntrospector();
-	private BeanPropertyComparisonDelegator beanPropertyComparer;
+	private BeanPropertyComparisonDelegator beanPropertyComparisonDelegator;
 	private DefaultNodeFactory defaultNodeFactory = new DefaultNodeFactory();
 
 	public BeanDiffer(final DifferDelegator delegator, final Configuration configuration)
 	{
 		Assert.notNull(delegator, "delegator");
 		Assert.notNull(configuration, "configuration");
-		this.beanPropertyComparer = new BeanPropertyComparisonDelegator(delegator, configuration);
+		this.beanPropertyComparisonDelegator = new BeanPropertyComparisonDelegator(delegator, configuration);
 		this.configuration = configuration;
 	}
 
@@ -49,34 +49,20 @@ final class BeanDiffer implements Differ<Node>
 		if (configuration.isIgnored(beanNode))
 		{
 			beanNode.setState(Node.State.IGNORED);
-			return beanNode;
 		}
-		else if (instances.areNull())
+		else if (instances.areNull() || instances.areSame())
 		{
 			beanNode.setState(Node.State.UNTOUCHED);
-			return beanNode;
 		}
-		return compareBean(parentNode, instances);
-	}
-
-	private Node compareBean(final Node parentNode, final Instances instances)
-	{
-		final Node beanNode = defaultNodeFactory.createNode(parentNode, instances);
-		if (instances.hasBeenAdded())
+		else if (instances.hasBeenAdded())
 		{
-//			beanNode.setState(Node.State.ADDED);
 			compareUsingAppropriateMethod(beanNode, instances);
 			beanNode.setState(Node.State.ADDED);
 		}
 		else if (instances.hasBeenRemoved())
 		{
-//			beanNode.setState(Node.State.REMOVED);
 			compareUsingAppropriateMethod(beanNode, instances);
 			beanNode.setState(Node.State.REMOVED);
-		}
-		else if (instances.areSame())
-		{
-			beanNode.setState(Node.State.UNTOUCHED);
 		}
 		else
 		{
@@ -97,6 +83,20 @@ final class BeanDiffer implements Differ<Node>
 		}
 	}
 
+	private void compareUsingIntrospection(final Node beanNode, final Instances beanInstances)
+	{
+		final Class<?> beanType = beanInstances.getType();
+		final Iterable<Accessor> propertyAccessors = introspector.introspect(beanType);
+		for (final Accessor propertyAccessor : propertyAccessors)
+		{
+			final Node propertyNode = beanPropertyComparisonDelegator.compare(beanNode, beanInstances, propertyAccessor);
+			if (configuration.isReturnable(propertyNode))
+			{
+				beanNode.addChild(propertyNode);
+			}
+		}
+	}
+
 	@SuppressWarnings({"MethodMayBeStatic"})
 	private void compareUsingEquals(final Node beanNode, final Instances instances)
 	{
@@ -110,20 +110,6 @@ final class BeanDiffer implements Differ<Node>
 		}
 	}
 
-	private void compareUsingIntrospection(final Node beanNode, final Instances beanInstances)
-	{
-		final Class<?> beanType = beanInstances.getType();
-		final Iterable<Accessor> propertyAccessors = introspector.introspect(beanType);
-		for (final Accessor propertyAccessor : propertyAccessors)
-		{
-			final Node propertyNode = beanPropertyComparer.compare(beanNode, beanInstances, propertyAccessor);
-			if (configuration.isReturnable(propertyNode))
-			{
-				beanNode.addChild(propertyNode);
-			}
-		}
-	}
-
 	@TestOnly
 	void setIntrospector(final Introspector introspector)
 	{
@@ -132,10 +118,10 @@ final class BeanDiffer implements Differ<Node>
 	}
 
 	@TestOnly
-	void setBeanPropertyComparer(final BeanPropertyComparisonDelegator beanPropertyComparer)
+	void setBeanPropertyComparisonDelegator(final BeanPropertyComparisonDelegator beanPropertyComparisonDelegator)
 	{
-		Assert.notNull(beanPropertyComparer, "beanPropertyComparer");
-		this.beanPropertyComparer = beanPropertyComparer;
+		Assert.notNull(beanPropertyComparisonDelegator, "beanPropertyComparisonDelegator");
+		this.beanPropertyComparisonDelegator = beanPropertyComparisonDelegator;
 	}
 
 	@TestOnly
