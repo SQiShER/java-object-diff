@@ -31,7 +31,7 @@ public class MapNode extends DefaultNode
 		super(parentNode, accessor, valueType);
 	}
 
-	public final int indexKey(final Object key)
+	public int indexKey(final Object key)
 	{
 		if (!isIndexed(key))
 		{
@@ -40,7 +40,8 @@ public class MapNode extends DefaultNode
 		return indexOf(key);
 	}
 
-	public final void indexKeys(final Map<?, ?> map)
+	@Deprecated
+	public void indexKeys(final Map<?, ?> map)
 	{
 		if (map != null)
 		{
@@ -51,6 +52,7 @@ public class MapNode extends DefaultNode
 		}
 	}
 
+	@Deprecated
 	public final void indexKeys(final Map<?, ?> map, final Map<?, ?>... additionalMaps)
 	{
 		indexKeys(map);

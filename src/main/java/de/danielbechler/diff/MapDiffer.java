@@ -32,7 +32,7 @@ final class MapDiffer implements Differ<MapNode>
 {
 	private final DifferDelegator delegator;
 	private final Configuration configuration;
-	private final MapNodeFactory mapNodeFactory = new MapNodeFactory();
+	private MapNodeFactory mapNodeFactory = new MapNodeFactory();
 
 	public MapDiffer(final DifferDelegator delegator, final Configuration configuration)
 	{
@@ -46,7 +46,7 @@ final class MapDiffer implements Differ<MapNode>
 	public final MapNode compare(final Node parentNode, final Instances instances)
 	{
 		final MapNode mapNode = mapNodeFactory.createMapNode(parentNode, instances);
-		indexAll(instances, mapNode);
+		indexAll(mapNode, instances);
 		if (configuration.isIgnored(mapNode))
 		{
 			mapNode.setState(Node.State.IGNORED);
@@ -85,11 +85,23 @@ final class MapDiffer implements Differ<MapNode>
 		return mapNode;
 	}
 
-	private static void indexAll(final Instances instances, final MapNode node)
+	private static void indexAll(final MapNode node, final Instances instances)
 	{
-		node.indexKeys(instances.getWorking(Map.class));
-		node.indexKeys(instances.getBase(Map.class));
-		node.indexKeys(instances.getFresh(Map.class));
+		indexKeys(node, instances.getWorking(Map.class));
+		indexKeys(node, instances.getBase(Map.class));
+		indexKeys(node, instances.getFresh(Map.class));
+	}
+
+	private static void indexKeys(final MapNode mapNode, final Map map)
+	{
+		if (map != null)
+		{
+			final Set<?> keys = map.keySet();
+			for (final Object key : keys)
+			{
+				mapNode.indexKey(key);
+			}
+		}
 	}
 
 	private void compareEntries(final MapNode mapNode, final Instances mapInstances, final Iterable<?> keys)
@@ -132,5 +144,11 @@ final class MapDiffer implements Differ<MapNode>
 		changed.removeAll(findAddedKeys(instances));
 		changed.removeAll(findRemovedKeys(instances));
 		return changed;
+	}
+
+	@TestOnly
+	public void setMapNodeFactory(final MapNodeFactory mapNodeFactory)
+	{
+		this.mapNodeFactory = mapNodeFactory;
 	}
 }
