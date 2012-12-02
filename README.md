@@ -1,7 +1,3 @@
-## News
-
-The latest version 0.10 is out and introduces some improvements, that affect the way objects are compared. Make sure to read the [changelogs](https://github.com/SQiShER/java-object-diff/wiki/Changelog) before you upgrade and let me know, if the changes are causing you any trouble.
-
 ## Introduction
 
 Sometimes you need to figure out, how one version of an object differs from another one. One of the simplest solutions that'll cross your mind is most certainly to use reflection to scan the object for fields or getters and use them to compare the values of the different object instances. In many cases this is a perfectly valid strategy and the way to go. After all, we want to keep things simple, don't we?
@@ -43,15 +39,6 @@ To learn how to use **Java Object Diff**, please have a look at the [Starter Gui
 * Visualize the differences between object versions
 * Automatically resolve conflicts on conflicting database updates
 * Detect and persist only properties that were actually changed
-
-## How to Improve
-
-* Performance has not been a hight priority so far, so there is still some room for improvement.
-* Object comparison is very strict. Objects with different types cannot be compared, even when they share the same interface.
-* It should be possible to apply the annotations to fields and not only to methods, to allow for some advanced merging techniques.
-* It would be great to integrate a text-based diff algorithm for regular strings.
-* Some out-out-of-the-box Mergers would be nice (e.g. `LeftToRightMerger`, `NonConflictingMerger`, etc.)
-* Needs more documentation and could use some more tests.
 
 ## Known Issues and Limitations
 
