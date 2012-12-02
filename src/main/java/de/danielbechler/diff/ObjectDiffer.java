@@ -24,7 +24,7 @@ import de.danielbechler.diff.node.*;
  *
  * @author Daniel Bechler
  */
-public class ObjectDiffer implements Configurable
+public class ObjectDiffer
 {
 	private final Configuration configuration;
 	private final DifferDelegator delegator;

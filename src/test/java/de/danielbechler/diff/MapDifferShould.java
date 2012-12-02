@@ -36,7 +36,7 @@ public class MapDifferShould
 	private Map<String, String> working;
 	private Map<String, String> base;
 	@Mock private DifferDelegator differDelegator;
-	@Mock private Configuration configuration;
+	@Mock private NodeInspector nodeInspector;
 	@Mock private MapNodeFactory mapNodeFactory;
 	@Mock private MapNode internalNode;
 	@Mock private Instances instances;
@@ -51,7 +51,7 @@ public class MapDifferShould
 		when(instances.access(any(Accessor.class))).thenReturn(childInstances);
 		when(differDelegator.delegate(internalNode, childInstances)).thenReturn(childNode);
 
-		differ = new MapDiffer(differDelegator, configuration);
+		differ = new MapDiffer(differDelegator, nodeInspector);
 		differ.setMapNodeFactory(mapNodeFactory);
 
 		working = new HashMap<String, String>();
@@ -61,7 +61,7 @@ public class MapDifferShould
 	@Test
 	public void ignore_given_map_if_ignorable() throws Exception
 	{
-		when(configuration.isIgnored(internalNode)).thenReturn(true);
+		when(nodeInspector.isIgnored(internalNode)).thenReturn(true);
 
 		node = compare(working, base);
 
@@ -71,7 +71,7 @@ public class MapDifferShould
 	@Test
 	public void detect_change_when_comparing_using_equals()
 	{
-		when(configuration.isEqualsOnly(internalNode)).thenReturn(true);
+		when(nodeInspector.isEqualsOnly(internalNode)).thenReturn(true);
 		when(instances.areEqual()).thenReturn(false);
 
 		node = compare(working, base);
@@ -82,7 +82,7 @@ public class MapDifferShould
 	@Test
 	public void detect_no_change_when_comparing_using_equals()
 	{
-		when(configuration.isEqualsOnly(internalNode)).thenReturn(true);
+		when(nodeInspector.isEqualsOnly(internalNode)).thenReturn(true);
 		when(instances.areEqual()).thenReturn(true);
 
 		node = compare(working, base);
@@ -113,7 +113,7 @@ public class MapDifferShould
 	@Test
 	public void delegate_comparison_of_map_entries()
 	{
-		when(configuration.isReturnable(childNode)).thenReturn(true);
+		when(nodeInspector.isReturnable(childNode)).thenReturn(true);
 		working.put("foo", "bar");
 
 		node = compare(working, base);
@@ -124,7 +124,7 @@ public class MapDifferShould
 	@Test
 	public void not_add_child_nodes_if_they_are_not_returnable()
 	{
-		when(configuration.isReturnable(childNode)).thenReturn(false);
+		when(nodeInspector.isReturnable(childNode)).thenReturn(false);
 		working.put("foo", "bar");
 
 		node = compare(working, base);
@@ -160,11 +160,11 @@ public class MapDifferShould
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void fail_when_constructed_without_delegator()
 	{
-		new MapDiffer(null, configuration);
+		new MapDiffer(null, nodeInspector);
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
-	public void fail_when_constructed_without_configuration()
+	public void fail_when_constructed_without_node_inspector()
 	{
 		new MapDiffer(differDelegator, null);
 	}

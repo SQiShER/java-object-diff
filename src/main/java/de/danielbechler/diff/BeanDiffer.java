@@ -29,24 +29,24 @@ import de.danielbechler.util.*;
  */
 final class BeanDiffer implements Differ<Node>
 {
-	private final Configuration configuration;
+	private final NodeInspector nodeInspector;
 	private Introspector introspector = new StandardIntrospector();
 	private BeanPropertyComparisonDelegator beanPropertyComparisonDelegator;
 	private DefaultNodeFactory defaultNodeFactory = new DefaultNodeFactory();
 
-	public BeanDiffer(final DifferDelegator delegator, final Configuration configuration)
+	public BeanDiffer(final DifferDelegator delegator, final NodeInspector nodeInspector)
 	{
 		Assert.notNull(delegator, "delegator");
-		Assert.notNull(configuration, "configuration");
-		this.beanPropertyComparisonDelegator = new BeanPropertyComparisonDelegator(delegator, configuration);
-		this.configuration = configuration;
+		Assert.notNull(nodeInspector, "configuration");
+		this.beanPropertyComparisonDelegator = new BeanPropertyComparisonDelegator(delegator, nodeInspector);
+		this.nodeInspector = nodeInspector;
 	}
 
 	@Override
 	public final Node compare(final Node parentNode, final Instances instances)
 	{
 		final Node beanNode = defaultNodeFactory.createNode(parentNode, instances);
-		if (configuration.isIgnored(beanNode))
+		if (nodeInspector.isIgnored(beanNode))
 		{
 			beanNode.setState(Node.State.IGNORED);
 		}
@@ -73,11 +73,11 @@ final class BeanDiffer implements Differ<Node>
 
 	private void compareUsingAppropriateMethod(final Node beanNode, final Instances instances)
 	{
-		if (configuration.isIntrospectible(beanNode))
+		if (nodeInspector.isIntrospectible(beanNode))
 		{
 			compareUsingIntrospection(beanNode, instances);
 		}
-		else if (configuration.isEqualsOnly(beanNode))
+		else if (nodeInspector.isEqualsOnly(beanNode))
 		{
 			compareUsingEquals(beanNode, instances);
 		}
@@ -90,7 +90,7 @@ final class BeanDiffer implements Differ<Node>
 		for (final Accessor propertyAccessor : propertyAccessors)
 		{
 			final Node propertyNode = beanPropertyComparisonDelegator.compare(beanNode, beanInstances, propertyAccessor);
-			if (configuration.isReturnable(propertyNode))
+			if (nodeInspector.isReturnable(propertyNode))
 			{
 				beanNode.addChild(propertyNode);
 			}

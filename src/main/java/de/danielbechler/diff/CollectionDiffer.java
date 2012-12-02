@@ -31,27 +31,27 @@ import java.util.*;
 final class CollectionDiffer implements Differ<CollectionNode>
 {
 	private final DifferDelegator delegator;
-	private final Configuration configuration;
+	private final NodeInspector nodeInspector;
 	private CollectionNodeFactory collectionNodeFactory = new CollectionNodeFactory();
 	private CollectionItemAccessorFactory collectionItemAccessorFactory = new CollectionItemAccessorFactory();
 
-	public CollectionDiffer(final DifferDelegator delegator, final Configuration configuration)
+	public CollectionDiffer(final DifferDelegator delegator, final NodeInspector nodeInspector)
 	{
 		Assert.notNull(delegator, "delegator");
-		Assert.notNull(configuration, "configuration");
+		Assert.notNull(nodeInspector, "nodeInspector");
 		this.delegator = delegator;
-		this.configuration = configuration;
+		this.nodeInspector = nodeInspector;
 	}
 
 	@Override
 	public final CollectionNode compare(final Node parentNode, final Instances collectionInstances)
 	{
 		final CollectionNode collectionNode = collectionNodeFactory.create(parentNode, collectionInstances);
-		if (configuration.isIgnored(collectionNode))
+		if (nodeInspector.isIgnored(collectionNode))
 		{
 			collectionNode.setState(Node.State.IGNORED);
 		}
-		else if (configuration.isEqualsOnly(collectionNode))
+		else if (nodeInspector.isEqualsOnly(collectionNode))
 		{
 			if (collectionInstances.areEqual())
 			{
@@ -90,7 +90,7 @@ final class CollectionDiffer implements Differ<CollectionNode>
 		for (final Object item : items)
 		{
 			final Node child = compareItem(collectionNode, instances, item);
-			if (configuration.isReturnable(child))
+			if (nodeInspector.isReturnable(child))
 			{
 				collectionNode.addChild(child);
 			}
@@ -127,11 +127,13 @@ final class CollectionDiffer implements Differ<CollectionNode>
 		return changed;
 	}
 
+	@TestOnly
 	void setCollectionNodeFactory(final CollectionNodeFactory collectionNodeFactory)
 	{
 		this.collectionNodeFactory = collectionNodeFactory;
 	}
 
+	@TestOnly
 	void setCollectionItemAccessorFactory(final CollectionItemAccessorFactory collectionItemAccessorFactory)
 	{
 		this.collectionItemAccessorFactory = collectionItemAccessorFactory;

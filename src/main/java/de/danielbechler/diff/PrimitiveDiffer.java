@@ -25,6 +25,7 @@ import static de.danielbechler.diff.Configuration.PrimitiveDefaultValueMode.*;
 class PrimitiveDiffer implements Differ<DefaultNode>
 {
 	private final Configuration configuration;
+	private DefaultNodeFactory defaultNodeFactory = new DefaultNodeFactory();
 
 	public PrimitiveDiffer(final Configuration configuration)
 	{
@@ -39,8 +40,8 @@ class PrimitiveDiffer implements Differ<DefaultNode>
 		{
 			throw new IllegalArgumentException("The primitive differ can only deal with primitive types.");
 		}
-		final DefaultNode node = newNode(parentNode, instances);
-		if (getConfiguration().isIgnored(node))
+		final DefaultNode node = defaultNodeFactory.createNode(parentNode, instances);
+		if (configuration.isIgnored(node))
 		{
 			node.setState(Node.State.IGNORED);
 		}
@@ -61,16 +62,12 @@ class PrimitiveDiffer implements Differ<DefaultNode>
 
 	private boolean shouldTreatPrimitiveDefaultsAsUnassigned()
 	{
-		return getConfiguration().getPrimitiveDefaultValueMode() == UNASSIGNED;
+		return configuration.getPrimitiveDefaultValueMode() == UNASSIGNED;
 	}
 
-	private static DefaultNode newNode(final Node parentNode, final Instances instances)
+	@TestOnly
+	public void setDefaultNodeFactory(final DefaultNodeFactory defaultNodeFactory)
 	{
-		return new DefaultNode(parentNode, instances.getSourceAccessor(), instances.getType());
-	}
-
-	protected final Configuration getConfiguration()
-	{
-		return configuration;
+		this.defaultNodeFactory = defaultNodeFactory;
 	}
 }

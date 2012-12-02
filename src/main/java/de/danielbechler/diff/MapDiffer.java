@@ -31,15 +31,15 @@ import java.util.*;
 final class MapDiffer implements Differ<MapNode>
 {
 	private final DifferDelegator delegator;
-	private final Configuration configuration;
+	private final NodeInspector nodeInspector;
 	private MapNodeFactory mapNodeFactory = new MapNodeFactory();
 
-	public MapDiffer(final DifferDelegator delegator, final Configuration configuration)
+	public MapDiffer(final DifferDelegator delegator, final NodeInspector nodeInspector)
 	{
 		Assert.notNull(delegator, "delegator");
-		Assert.notNull(configuration, "configuration");
+		Assert.notNull(nodeInspector, "nodeInspector");
 		this.delegator = delegator;
-		this.configuration = configuration;
+		this.nodeInspector = nodeInspector;
 	}
 
 	@Override
@@ -47,11 +47,11 @@ final class MapDiffer implements Differ<MapNode>
 	{
 		final MapNode mapNode = mapNodeFactory.createMapNode(parentNode, instances);
 		indexAll(mapNode, instances);
-		if (configuration.isIgnored(mapNode))
+		if (nodeInspector.isIgnored(mapNode))
 		{
 			mapNode.setState(Node.State.IGNORED);
 		}
-		else if (configuration.isEqualsOnly(mapNode))
+		else if (nodeInspector.isEqualsOnly(mapNode))
 		{
 			if (instances.areEqual())
 			{
@@ -109,7 +109,7 @@ final class MapDiffer implements Differ<MapNode>
 		for (final Object key : keys)
 		{
 			final Node node = compareEntry(mapNode, mapInstances, key);
-			if (configuration.isReturnable(node))
+			if (nodeInspector.isReturnable(node))
 			{
 				mapNode.addChild(node);
 			}

@@ -32,6 +32,7 @@ import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.*;
 
 /** @author Daniel Bechler */
+// TODO Use mocked NodeInspector instead of actual implementation of Configuration
 public class BeanDifferShould
 {
 	private BeanDiffer differ;

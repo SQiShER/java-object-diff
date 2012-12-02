@@ -24,16 +24,16 @@ import de.danielbechler.util.*;
 class BeanPropertyComparisonDelegator
 {
 	private final DifferDelegator delegator;
-	private final Configuration configuration;
+	private final NodeInspector nodeInspector;
 	private PropertyNodeFactory propertyNodeFactory = new PropertyNodeFactory();
 
-	public BeanPropertyComparisonDelegator(final DifferDelegator delegator, final Configuration configuration)
+	public BeanPropertyComparisonDelegator(final DifferDelegator delegator, final NodeInspector nodeInspector)
 	{
 		Assert.notNull(delegator, "delegator");
-		Assert.notNull(configuration, "configuration");
+		Assert.notNull(nodeInspector, "nodeInspector");
 
 		this.delegator = delegator;
-		this.configuration = configuration;
+		this.nodeInspector = nodeInspector;
 	}
 
 	public Node compare(final Node beanNode, final Instances beanInstances, final Accessor propertyAccessor)
@@ -43,7 +43,7 @@ class BeanPropertyComparisonDelegator
 		Assert.notNull(propertyAccessor, "propertyAccessor");
 
 		final Node propertyNode = propertyNodeFactory.createPropertyNode(beanNode, propertyAccessor);
-		if (configuration.isIgnored(propertyNode))
+		if (nodeInspector.isIgnored(propertyNode))
 		{
 			// this check is here to prevent the invocation of the propertyAccessor of ignored properties
 			propertyNode.setState(Node.State.IGNORED);

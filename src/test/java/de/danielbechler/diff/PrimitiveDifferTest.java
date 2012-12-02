@@ -40,10 +40,8 @@ public class PrimitiveDifferTest
 {
 	private PrimitiveDiffer differ;
 	private Configuration configuration;
-	@Mock
-	private DifferDelegator delegate;
-	@Mock
-	private TypeAwareAccessor accessor;
+	@Mock private DifferDelegator differDelegator;
+	@Mock private TypeAwareAccessor accessor;
 
 	@BeforeMethod
 	public void setUp()
@@ -71,7 +69,7 @@ public class PrimitiveDifferTest
 	@AfterMethod
 	public void tearDown()
 	{
-		new MockitoDebuggerImpl().printInvocations(delegate, accessor);
+		new MockitoDebuggerImpl().printInvocations(differDelegator, accessor);
 	}
 
 	@Test(dataProvider = "changes")

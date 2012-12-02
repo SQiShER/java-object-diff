@@ -29,6 +29,8 @@ final class CircularReferenceDetector
 	{
 	}
 
+	/** @deprecated Only used in tests. */
+	@Deprecated
 	public boolean isNew()
 	{
 		return isNew;

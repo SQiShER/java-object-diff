@@ -25,7 +25,7 @@ class DefaultNodeFactory
 	{
 	}
 
-	public Node createNode(final Node parentNode, final Instances instances)
+	public DefaultNode createNode(final Node parentNode, final Instances instances)
 	{
 		return new DefaultNode(parentNode, instances.getSourceAccessor(), instances.getType());
 	}

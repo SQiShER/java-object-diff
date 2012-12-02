@@ -1,5 +1,6 @@
-package de.danielbechler.diff;
+package de.danielbechler.diff.integration.issues;
 
+import de.danielbechler.diff.*;
 import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.path.*;
 import org.testng.annotations.*;
@@ -11,9 +12,10 @@ import static java.util.Collections.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.*;
 
-public class DiffTest
+/** https://github.com/SQiShER/java-object-diff/issues/43 */
+@SuppressWarnings("ALL")
+public class Issue43IntegrationTest
 {
-
 	private class Thing
 	{
 		private final String a;
@@ -142,7 +144,7 @@ public class DiffTest
 	public void shouldDiffThings()
 	{
 		final List<String> propertyNames = asList("things", "include");
-		Configuration configuration = new Configuration();
+		de.danielbechler.diff.Configuration configuration = new de.danielbechler.diff.Configuration();
 		for (final String name : propertyNames)
 		{
 			final PropertyPath propertyPath = PropertyPath.buildWith(name);

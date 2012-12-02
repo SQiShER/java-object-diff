@@ -18,12 +18,14 @@ package de.danielbechler.diff;
 
 import de.danielbechler.diff.accessor.*;
 
+@SuppressWarnings("MethodMayBeStatic")
 class CollectionItemAccessorFactory
 {
 	public CollectionItemAccessorFactory()
 	{
 	}
 
+	// Moved from CollectionNode to extra class for easier testing. I don't like it, though.
 	public CollectionItemAccessor createAccessorForItem(final Object item)
 	{
 		return new CollectionItemAccessor(item);

@@ -33,7 +33,7 @@ public class CollectionDifferShould
 {
 	private CollectionDiffer collectionDiffer;
 
-	@Mock private Configuration configuration;
+	@Mock private NodeInspector nodeInspector;
 	@Mock private DifferDelegator delegator;
 	@Mock private CollectionNodeFactory collectionNodeFactory;
 	@Mock private CollectionNode collectionNode;
@@ -46,7 +46,7 @@ public class CollectionDifferShould
 	public void setUp() throws Exception
 	{
 		MockitoAnnotations.initMocks(this);
-		collectionDiffer = new CollectionDiffer(delegator, configuration);
+		collectionDiffer = new CollectionDiffer(delegator, nodeInspector);
 		collectionDiffer.setCollectionNodeFactory(collectionNodeFactory);
 		collectionDiffer.setCollectionItemAccessorFactory(collectionItemAccessorFactory);
 		when(collectionNodeFactory.create(Node.ROOT, instances)).thenReturn(collectionNode);
@@ -55,7 +55,7 @@ public class CollectionDifferShould
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void fail_if_constructed_without_delegator()
 	{
-		new CollectionDiffer(null, configuration);
+		new CollectionDiffer(null, nodeInspector);
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
@@ -88,7 +88,7 @@ public class CollectionDifferShould
 		when(instances.getWorking(Collection.class)).thenReturn(asList("foo"));
 		when(instances.access(any(CollectionItemAccessor.class))).thenReturn(itemInstances); // TODO get rid of any
 		when(delegator.delegate(collectionNode, itemInstances)).thenReturn(collectionItemNode);
-		when(configuration.isReturnable(collectionItemNode)).thenReturn(true);
+		when(nodeInspector.isReturnable(collectionItemNode)).thenReturn(true);
 		compare();
 		verify(collectionNode).addChild(collectionItemNode);
 	}
@@ -96,7 +96,7 @@ public class CollectionDifferShould
 	@Test
 	public void return_ignored_node_if_property_is_ignored() throws Exception
 	{
-		when(configuration.isIgnored(collectionNode)).thenReturn(true);
+		when(nodeInspector.isIgnored(collectionNode)).thenReturn(true);
 		compare();
 		verify(collectionNode).setState(Node.State.IGNORED);
 	}
@@ -113,7 +113,7 @@ public class CollectionDifferShould
 	@Test
 	public void compare_only_via_equals_if_equals_only_is_enabled()
 	{
-		when(configuration.isEqualsOnly(collectionNode)).thenReturn(true);
+		when(nodeInspector.isEqualsOnly(collectionNode)).thenReturn(true);
 		when(instances.areEqual()).thenReturn(true);
 		compare();
 		verify(collectionNode).setState(Node.State.UNTOUCHED);
@@ -122,7 +122,7 @@ public class CollectionDifferShould
 	@Test
 	public void detect_changes_if_equals_only_is_enabled()
 	{
-		when(configuration.isEqualsOnly(collectionNode)).thenReturn(true);
+		when(nodeInspector.isEqualsOnly(collectionNode)).thenReturn(true);
 		compare();
 		verify(collectionNode).setState(Node.State.CHANGED);
 	}
@@ -140,7 +140,7 @@ public class CollectionDifferShould
 		when(instances.getBase(Collection.class)).thenReturn(asList("foo"));
 		when(instances.access(any(CollectionItemAccessor.class))).thenReturn(itemInstances); // TODO get rid of any
 		when(delegator.delegate(collectionNode, itemInstances)).thenReturn(collectionItemNode);
-		when(configuration.isReturnable(collectionItemNode)).thenReturn(true);
+		when(nodeInspector.isReturnable(collectionItemNode)).thenReturn(true);
 		compare();
 		verify(collectionNode).addChild(collectionItemNode);
 	}
@@ -155,7 +155,7 @@ public class CollectionDifferShould
 		final Node barNode = whenDelegatorGetsCalledWithInstancesForItem("bar");
 		final Node foobarNode = whenDelegatorGetsCalledWithInstancesForItem("foobar");
 
-		when(configuration.isReturnable(any(Node.class))).thenReturn(true);
+		when(nodeInspector.isReturnable(any(Node.class))).thenReturn(true);
 
 		compare();
 
