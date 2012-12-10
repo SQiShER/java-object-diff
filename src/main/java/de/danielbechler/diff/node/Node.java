@@ -152,7 +152,7 @@ public interface Node extends CanonicalAccessor
 	/**
 	 * Retrieve a child that matches the given path element relative to this node.
 	 *
-	 * @param pathElement The path element of the childe node to get.
+	 * @param pathElement The path element of the child node to get.
 	 *
 	 * @return The requested child node or <code>null</code>.
 	 */

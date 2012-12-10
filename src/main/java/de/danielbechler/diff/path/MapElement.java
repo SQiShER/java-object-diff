@@ -28,7 +28,9 @@ public final class MapElement extends Element
 		this.key = key;
 	}
 
+	/** @deprecated Low-level API. Don't use in production code. May be removed in future versions. */
 	@SuppressWarnings({"UnusedDeclaration"})
+	@Deprecated
 	public Object getKey()
 	{
 		return key;

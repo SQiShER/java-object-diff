@@ -95,4 +95,22 @@ public final class MapEntryAccessor extends AbstractAccessor
 	{
 		return "map key " + getPathElement();
 	}
+
+	public Object getKey(final Map<?, ?> target)
+	{
+		final Map<Object, Object> map = objectToMap(target);
+		if (map == null)
+		{
+			return null;
+		}
+		final Object referenceKey = getReferenceKey();
+		for (final Object key : map.keySet())
+		{
+			if (key == referenceKey || key.equals(referenceKey))
+			{
+				return key;
+			}
+		}
+		return null;
+	}
 }

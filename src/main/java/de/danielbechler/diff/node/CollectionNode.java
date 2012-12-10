@@ -22,6 +22,7 @@ import de.danielbechler.diff.visitor.*;
 import java.util.*;
 
 /** @author Daniel Bechler */
+@SuppressWarnings("UnusedDeclaration")
 public class CollectionNode extends DefaultNode
 {
 	public CollectionNode(final Node parent, final Accessor accessor, final Class<?> valueType)

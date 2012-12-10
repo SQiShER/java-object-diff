@@ -28,7 +28,9 @@ public final class CollectionElement extends Element
 		this.item = item;
 	}
 
+	/** @deprecated Low-level API. Don't use in production code. May be removed in future versions. */
 	@SuppressWarnings({"UnusedDeclaration"})
+	@Deprecated
 	public Object getItem()
 	{
 		return item;

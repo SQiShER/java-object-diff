@@ -33,43 +33,22 @@ public class MapNode extends DefaultNode
 
 	public int indexKey(final Object key)
 	{
-		if (!isIndexed(key))
+		if (isIndexed(key))
 		{
-			referenceKeys.add(key);
+			return indexOf(key);
 		}
+		referenceKeys.add(key);
 		return indexOf(key);
-	}
-
-	@Deprecated
-	public void indexKeys(final Map<?, ?> map)
-	{
-		if (map != null)
-		{
-			for (final Object key : map.keySet())
-			{
-				indexKey(key);
-			}
-		}
-	}
-
-	@Deprecated
-	public final void indexKeys(final Map<?, ?> map, final Map<?, ?>... additionalMaps)
-	{
-		indexKeys(map);
-		for (final Map<?, ?> additionalMap : additionalMaps)
-		{
-			indexKeys(additionalMap);
-		}
 	}
 
 	@SuppressWarnings({"unchecked"})
 	public Accessor accessorForKey(final Object key)
 	{
-		if (!isIndexed(key))
+		if (isIndexed(key))
 		{
-			throw new ItemNotIndexedException(key);
+			return new MapEntryAccessor(referenceKeys, indexOf(key));
 		}
-		return new MapEntryAccessor(referenceKeys, indexOf(key));
+		throw new ItemNotIndexedException(key);
 	}
 
 	private boolean isIndexed(final Object key)
