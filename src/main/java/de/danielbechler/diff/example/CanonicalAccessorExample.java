@@ -25,8 +25,12 @@ import java.util.*;
 import static java.util.Arrays.*;
 
 /** @author Daniel Bechler */
-public class CanonicalAccessorExample
+class CanonicalAccessorExample
 {
+	private CanonicalAccessorExample()
+	{
+	}
+
 	@SuppressWarnings("unchecked")
 	public static void main(final String[] args)
 	{
@@ -44,6 +48,17 @@ public class CanonicalAccessorExample
 		final Node nicknameNode = getFirstChildOf(contactNode);
 
 		rootNode.visit(new NodeHierarchyVisitor());
+
+		/*
+
+		Output:
+
+		/ ===> DefaultNode(state=CHANGED, type=de.danielbechler.diff.example.CanonicalAccessorExample.AddressBook, 1 child, accessed via root element)
+		  /contacts ===> CollectionNode(state=CHANGED, type=java.util.List, 1 child, accessed via property 'contacts')
+		    /contacts[Contact{name='Walter White'}] ===> DefaultNode(state=CHANGED, type=de.danielbechler.diff.example.CanonicalAccessorExample.Contact, 1 child, accessed via collection item [Contact{name='Walter White'}])
+		      /contacts[Contact{name='Walter White'}]/nickname ===> DefaultNode(state=ADDED, type=java.lang.String, no children, accessed via property 'nickname')
+
+		 */
 
 		final AddressBook addressBook = (AddressBook) rootNode.get(workingAddressBook);
 		final List<Contact> contacts = (List<Contact>) contactsNode.get(addressBook);

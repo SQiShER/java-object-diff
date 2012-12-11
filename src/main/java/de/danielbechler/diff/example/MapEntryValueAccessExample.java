@@ -24,7 +24,7 @@ import de.danielbechler.diff.visitor.*;
 import java.util.*;
 
 /** @author Daniel Bechler */
-public class MapEntryValueAccessExample
+class MapEntryValueAccessExample
 {
 	private MapEntryValueAccessExample()
 	{

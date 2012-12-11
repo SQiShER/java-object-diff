@@ -21,8 +21,12 @@ import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.visitor.*;
 
 /** @author Daniel Bechler */
-public class SimpleNodeExample
+class SimpleNodeExample
 {
+	private SimpleNodeExample()
+	{
+	}
+
 	private static class Person
 	{
 		private String firstName;
