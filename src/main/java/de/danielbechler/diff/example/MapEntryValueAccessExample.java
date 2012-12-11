@@ -32,26 +32,26 @@ public class MapEntryValueAccessExample
 
 	public static void main(final String[] args)
 	{
-final Map<String, String> base = new TreeMap<String, String>();
-final Map<Integer, String> working = new TreeMap<Integer, String>();
-working.put(4, "Locke");
-working.put(8, "Reyes");
-working.put(15, "Ford");
-working.put(16, "Jarrah");
-working.put(23, "Shephard");
-working.put(42, "Kwon");
+		final Map<String, String> base = new TreeMap<String, String>();
+		final Map<Integer, String> working = new TreeMap<Integer, String>();
+		working.put(4, "Locke");
+		working.put(8, "Reyes");
+		working.put(15, "Ford");
+		working.put(16, "Jarrah");
+		working.put(23, "Shephard");
+		working.put(42, "Kwon");
 
-final Node mapNode = ObjectDifferFactory.getInstance().compare(working, base);
-mapNode.visitChildren(new Node.Visitor()
-{
-	@Override
-	public void accept(final Node node, final Visit visit)
-	{
-		final Object key = ((MapElement) node.getPathElement()).getKey();
-		//                 ^^^ I do not encourage this, but currently it's the only way
-		final Object value = node.canonicalGet(working);
-		System.out.println(key + " => " + value);
-	}
-});
+		final Node mapNode = ObjectDifferFactory.getInstance().compare(working, base);
+		mapNode.visitChildren(new Node.Visitor()
+		{
+			@Override
+			public void accept(final Node node, final Visit visit)
+			{
+				final Object key = ((MapElement) node.getPathElement()).getKey();
+				//                 ^^^ I do not encourage this, but currently it's the only way
+				final Object value = node.canonicalGet(working);
+				System.out.println(key + " => " + value);
+			}
+		});
 	}
 }
