@@ -111,6 +111,14 @@ public interface Node extends CanonicalAccessor
 
 	MapNode toMapNode();
 
+	void setCircleStartPath(PropertyPath circularStartPath);
+
+	/**
+	 * @return Returns the path to the first node in the hierarchy that represents the same object instance as
+	 *         this one. (Only if {@link #isCircular()} returns <code>true</code>.
+	 */
+	PropertyPath getCircleStartPath();
+
 	/** @return Returns the type of the property represented by this node, or null if unavailable. */
 	Class<?> getType();
 

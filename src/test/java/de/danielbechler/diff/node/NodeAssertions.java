@@ -41,7 +41,6 @@ public final class NodeAssertions
 			this.rootNode = rootNode;
 		}
 
-		@Override
 		public Syntax.AssertNode root()
 		{
 			this.selectedNode = rootNode;
@@ -49,7 +48,6 @@ public final class NodeAssertions
 			return this;
 		}
 
-		@Override
 		public Syntax.AssertNode self()
 		{
 			this.selectedNode = rootNode;
@@ -57,7 +55,6 @@ public final class NodeAssertions
 			return this;
 		}
 
-		@Override
 		public Syntax.AssertNode child(final PropertyPath propertyPath)
 		{
 			if (rootNode != null)
@@ -68,45 +65,38 @@ public final class NodeAssertions
 			return this;
 		}
 
-		@Override
 		public Syntax.AssertNode child(final PropertyPath.AppendableBuilder propertyPathBuilder)
 		{
 			return child(propertyPathBuilder.build());
 		}
 
-		@Override
 		public Syntax.AssertNode child(final String propertyName, final String... propertyNames)
 		{
 			return child(PropertyPath.buildWith(propertyName, propertyNames));
 		}
 
-		@Override
 		public Syntax.AssertNode child(final Element pathElement)
 		{
 			return child(PropertyPath.createBuilder().withRoot().withElement(pathElement));
 		}
 
-		@Override
 		public Syntax.AssertNode collectionChild(final Object referenceItem)
 		{
 			return child(new CollectionElement(referenceItem));
 		}
 
-		@Override
 		public Syntax.AssertNode doesExist()
 		{
 			Assertions.assertThat(rootNode).has(childAt(propertyPath));
 			return this;
 		}
 
-		@Override
 		public Syntax.AssertNode doesNotExist()
 		{
 			Assertions.assertThat(rootNode).has(noChildAt(propertyPath));
 			return this;
 		}
 
-		@Override
 		public Syntax.AssertNode hasState(final Node.State state)
 		{
 			doesExist();
@@ -114,7 +104,6 @@ public final class NodeAssertions
 			return this;
 		}
 
-		@Override
 		public Syntax.AssertNode hasChildren()
 		{
 			doesExist();
@@ -122,7 +111,6 @@ public final class NodeAssertions
 			return this;
 		}
 
-		@Override
 		public Syntax.AssertNode hasChildren(final int count)
 		{
 			doesExist();
@@ -226,13 +214,11 @@ public final class NodeAssertions
 			};
 		}
 
-		@Override
 		public Syntax.AssertNode hasNoChildren()
 		{
 			return hasChildren(0);
 		}
 
-		@Override
 		public Syntax.AssertNode isCircular()
 		{
 			doesExist();
@@ -240,7 +226,6 @@ public final class NodeAssertions
 			return this;
 		}
 
-		@Override
 		public Syntax.AssertNode isUntouched()
 		{
 			doesExist();
@@ -248,11 +233,17 @@ public final class NodeAssertions
 			return this;
 		}
 
-		@Override
 		public Syntax.AssertNode hasChanges()
 		{
 			doesExist();
 			Assertions.assertThat(selectedNode.hasChanges()).isTrue();
+			return this;
+		}
+
+		public Syntax.AssertNode hasCircularStartPathEqualTo(final PropertyPath propertyPath)
+		{
+			doesExist();
+			Assertions.assertThat(selectedNode.getCircleStartPath()).isEqualTo(propertyPath);
 			return this;
 		}
 	}
@@ -299,6 +290,8 @@ public final class NodeAssertions
 			AssertNode isUntouched();
 
 			AssertNode hasChanges();
+
+			AssertNode hasCircularStartPathEqualTo(final PropertyPath propertyPath);
 		}
 	}
 }

@@ -19,7 +19,9 @@ package de.danielbechler.diff.integration.graph;
 import de.danielbechler.diff.*;
 import de.danielbechler.diff.mock.*;
 import de.danielbechler.diff.node.*;
+import de.danielbechler.diff.path.*;
 import de.danielbechler.diff.visitor.*;
+import org.fest.assertions.api.*;
 import org.testng.annotations.*;
 
 import static de.danielbechler.diff.node.NodeAssertions.*;
@@ -42,6 +44,11 @@ public class CircularReferenceIntegrationTest
 
 		final Node root = ObjectDifferFactory.getInstance().compare(workingA, baseA);
 		assertThat(root).child("reference", "reference").isCircular();
+		assertThat(root).child("reference", "reference")
+				.hasCircularStartPathEqualTo(PropertyPath.buildRootPath());
+
+		Assertions.assertThat(root.canonicalGet(workingA))
+				  .isSameAs(root.getChild("reference").getChild("reference").canonicalGet(workingA));
 	}
 
 	@Test

@@ -32,6 +32,7 @@ public class DefaultNode implements Node
 
 	private State state = State.UNTOUCHED;
 	private Node parentNode;
+	private PropertyPath circleStartPath;
 	private Class<?> valueType;
 
 	public DefaultNode(final Node parentNode, final Accessor accessor, final Class<?> valueType)
@@ -83,31 +84,26 @@ public class DefaultNode implements Node
 		return result.get();
 	}
 
-	@Override
 	public final boolean isAdded()
 	{
 		return state == State.ADDED;
 	}
 
-	@Override
 	public final boolean isChanged()
 	{
 		return state == State.CHANGED;
 	}
 
-	@Override
 	public final boolean isRemoved()
 	{
 		return state == State.REMOVED;
 	}
 
-	@Override
 	public final boolean isUntouched()
 	{
 		return state == State.UNTOUCHED;
 	}
 
-	@Override
 	public boolean isCircular()
 	{
 		return state == State.CIRCULAR;
@@ -157,7 +153,6 @@ public class DefaultNode implements Node
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
 	public Class<?> getType()
 	{
 		if (accessor instanceof TypeAwareAccessor)
@@ -435,5 +430,15 @@ public class DefaultNode implements Node
 	public int hashCode()
 	{
 		return accessor.hashCode();
+	}
+
+	public PropertyPath getCircleStartPath()
+	{
+		return circleStartPath;
+	}
+
+	public void setCircleStartPath(final PropertyPath circularStartPath)
+	{
+		this.circleStartPath = circularStartPath;
 	}
 }

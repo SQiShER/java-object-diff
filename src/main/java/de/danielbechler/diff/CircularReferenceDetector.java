@@ -16,14 +16,38 @@
 
 package de.danielbechler.diff;
 
+import de.danielbechler.diff.path.*;
+
 import java.util.*;
 
 /** @author Daniel Bechler */
 final class CircularReferenceDetector
 {
-	private final Deque<Object> stack = new LinkedList<Object>();
+	private final Deque<Entry> stack = new LinkedList<Entry>();
 
 	private boolean isNew = true;
+
+	private static class Entry
+	{
+		private final PropertyPath propertyPath;
+		private final Object instance;
+
+		private Entry(final PropertyPath propertyPath, final Object instance)
+		{
+			this.propertyPath = propertyPath;
+			this.instance = instance;
+		}
+
+		public PropertyPath getPropertyPath()
+		{
+			return propertyPath;
+		}
+
+		public Object getInstance()
+		{
+			return instance;
+		}
+	}
 
 	public CircularReferenceDetector()
 	{
@@ -36,7 +60,7 @@ final class CircularReferenceDetector
 		return isNew;
 	}
 
-	public void push(final Object instance)
+	public void push(final Object instance, final PropertyPath propertyPath)
 	{
 		if (instance == null)
 		{
@@ -48,21 +72,34 @@ final class CircularReferenceDetector
 		}
 		if (knows(instance))
 		{
-			throw new CircularReferenceException();
+			throw new CircularReferenceException(entryForInstance(instance).getPropertyPath());
 		}
-		stack.addLast(instance);
+		final Entry entry = new Entry(propertyPath, instance);
+		stack.addLast(entry);
 	}
 
 	public boolean knows(final Object needle)
 	{
-		for (final Object object : stack)
+		for (final Entry entry : stack)
 		{
-			if (object == needle)
+			if (entry.getInstance() == needle)
 			{
 				return true;
 			}
 		}
 		return false;
+	}
+
+	private Entry entryForInstance(final Object instance)
+	{
+		for (final Entry entry : stack)
+		{
+			if (entry.getInstance() == instance)
+			{
+				return entry;
+			}
+		}
+		return null;
 	}
 
 	public void remove(final Object instance)
@@ -71,7 +108,7 @@ final class CircularReferenceDetector
 		{
 			return;
 		}
-		if (stack.getLast() == instance)
+		if (stack.getLast().getInstance() == instance)
 		{
 			stack.removeLast();
 		}
@@ -90,8 +127,17 @@ final class CircularReferenceDetector
 	{
 		private static final long serialVersionUID = 1L;
 
-		public CircularReferenceException()
+		@SuppressWarnings("NonSerializableFieldInSerializableClass")
+		private final PropertyPath propertyPath;
+
+		public CircularReferenceException(final PropertyPath propertyPath)
 		{
+			this.propertyPath = propertyPath;
+		}
+
+		public PropertyPath getPropertyPath()
+		{
+			return propertyPath;
 		}
 
 		@Override

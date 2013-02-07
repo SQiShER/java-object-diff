@@ -16,6 +16,7 @@
 
 package de.danielbechler.diff;
 
+import de.danielbechler.diff.path.*;
 import org.testng.annotations.*;
 
 import static org.hamcrest.MatcherAssert.*;
@@ -42,14 +43,14 @@ public class CircularReferenceDetectorTest
 	@Test
 	public void testIsNew_returns_false_if_instance_has_been_pushed() throws Exception
 	{
-		circularReferenceDetector.push("foo");
+		circularReferenceDetector.push("foo", PropertyPath.buildRootPath());
 		assertFalse(circularReferenceDetector.isNew());
 	}
 
 	@Test
 	public void testIsNew_returns_false_if_instance_has_been_pushed_but_later_removed() throws Exception
 	{
-		circularReferenceDetector.push("foo");
+		circularReferenceDetector.push("foo", PropertyPath.buildRootPath());
 		circularReferenceDetector.remove("foo");
 		assertFalse(circularReferenceDetector.isNew());
 	}
@@ -57,22 +58,25 @@ public class CircularReferenceDetectorTest
 	@Test
 	public void testPush_does_nothing_with_null_object() throws Exception
 	{
-		circularReferenceDetector.push(null);
+		circularReferenceDetector.push(null, null);
 		assertThat(circularReferenceDetector.size(), is(0));
 	}
 
 	@Test
 	public void testPush_adds_unknown_object_to_stack() throws Exception
 	{
-		circularReferenceDetector.push("foo");
+		circularReferenceDetector.push("foo", PropertyPath.buildRootPath());
 		assertThat(circularReferenceDetector.size(), is(1));
 	}
 
 	@Test(expectedExceptions = CircularReferenceDetector.CircularReferenceException.class)
 	public void testPush_throws_CircularReferenceException_on_known_object() throws Exception
 	{
-		circularReferenceDetector.push("foo");
-		circularReferenceDetector.push("foo");
+		circularReferenceDetector.push("foo", PropertyPath.buildRootPath());
+		circularReferenceDetector.push("foo", PropertyPath.createBuilder()
+														  .withRoot()
+														  .withPropertyName("test")
+														  .build());
 	}
 
 	@Test
@@ -86,14 +90,14 @@ public class CircularReferenceDetectorTest
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testRemove_throws_IllegalArgumentException_when_trying_to_remove_any_instance_other_than_the_last_pushed_one() throws Exception
 	{
-		circularReferenceDetector.push("foo");
+		circularReferenceDetector.push("foo", null);
 		circularReferenceDetector.remove("bar");
 	}
 
 	@Test
 	public void testRemove_removes_instance_when_it_was_the_last_one_pushed() throws Exception
 	{
-		circularReferenceDetector.push("foo");
+		circularReferenceDetector.push("foo", null);
 		assertThat(circularReferenceDetector.size(), is(1));
 		circularReferenceDetector.remove("foo");
 		assertThat(circularReferenceDetector.size(), is(0));
@@ -102,7 +106,7 @@ public class CircularReferenceDetectorTest
 	@Test
 	public void testKnows_returns_true_for_previously_added_instance()
 	{
-		circularReferenceDetector.push("foo");
+		circularReferenceDetector.push("foo", null);
 		assertTrue(circularReferenceDetector.knows("foo"));
 	}
 
@@ -115,7 +119,7 @@ public class CircularReferenceDetectorTest
 	@Test
 	public void testKnows_returns_false_if_instance_has_been_pushed_but_later_removed()
 	{
-		circularReferenceDetector.push("foo");
+		circularReferenceDetector.push("foo", null);
 		circularReferenceDetector.remove("foo");
 		assertFalse(circularReferenceDetector.knows("foo"));
 	}
