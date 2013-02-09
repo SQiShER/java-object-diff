@@ -49,7 +49,7 @@ class DifferDelegator
 		final Class<?> type = instances.getType();
 		if (type == null)
 		{
-			return newSimpleNode(parentNode, instances, type);
+			return newDefaultNode(parentNode, instances, type);
 		}
 		return delegateWithCircularReferenceTracking(parentNode, instances);
 	}
@@ -82,7 +82,7 @@ class DifferDelegator
 		return node;
 	}
 
-	private static Node newSimpleNode(final Node parentNode, final Instances instances, final Class<?> type)
+	private static Node newDefaultNode(final Node parentNode, final Instances instances, final Class<?> type)
 	{
 		return new DefaultNode(parentNode, instances.getSourceAccessor(), type);
 	}
