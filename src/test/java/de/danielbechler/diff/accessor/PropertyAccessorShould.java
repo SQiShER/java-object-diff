@@ -19,10 +19,14 @@ package de.danielbechler.diff.accessor;
 import de.danielbechler.diff.accessor.exception.*;
 import de.danielbechler.diff.mock.*;
 import de.danielbechler.diff.path.*;
+import org.fest.assertions.api.*;
 import org.testng.annotations.*;
 
+import java.lang.annotation.*;
 import java.lang.reflect.*;
+import java.util.*;
 
+import static java.util.Arrays.*;
 import static org.fest.assertions.api.Assertions.*;
 
 /** @author Daniel Bechler */
@@ -147,4 +151,18 @@ public class PropertyAccessorShould
 		assertThat(accessor.toString()).startsWith("property ");
 	}
 
+	@Test
+	public void returns_annotations_of_getter_as_set() throws Exception
+	{
+		accessor = PropertyAccessorBuilder.forPropertyOf(ObjectWithAnnotatedProperty.class)
+										  .property("value", String.class)
+										  .readOnly(false)
+										  .build();
+		final Annotation[] expectedAnnotations = ObjectWithAnnotatedProperty.class.getMethod("getValue")
+																				  .getAnnotations();
+		Assertions.assertThat(expectedAnnotations).hasSize(2);
+
+		final Set<Annotation> set = accessor.getReadMethodAnnotations();
+		Assertions.assertThat(set).containsAll(asList(expectedAnnotations));
+	}
 }

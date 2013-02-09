@@ -21,11 +21,12 @@ import de.danielbechler.diff.path.*;
 import de.danielbechler.util.*;
 import org.slf4j.*;
 
+import java.lang.annotation.*;
 import java.lang.reflect.*;
 import java.util.*;
 
 /** @author Daniel Bechler */
-public final class PropertyAccessor extends AbstractAccessor implements TypeAwareAccessor
+public class PropertyAccessor extends AbstractAccessor implements TypeAwareAccessor
 {
 	private static final Logger logger = LoggerFactory.getLogger(PropertyAccessor.class);
 
@@ -190,6 +191,12 @@ public final class PropertyAccessor extends AbstractAccessor implements TypeAwar
 	public Element getPathElement()
 	{
 		return new NamedPropertyElement(this.propertyName);
+	}
+
+	/** @return The annotations of the getter used to access this property. */
+	public Set<Annotation> getReadMethodAnnotations()
+	{
+		return new LinkedHashSet<Annotation>(Arrays.asList(readMethod.getAnnotations()));
 	}
 
 	@Override

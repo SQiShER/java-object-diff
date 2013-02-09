@@ -21,8 +21,12 @@ import de.danielbechler.diff.path.*;
 import de.danielbechler.diff.visitor.*;
 import de.danielbechler.util.*;
 
+import java.lang.annotation.*;
 import java.util.*;
+import java.util.Collections;
 import java.util.concurrent.atomic.*;
+
+import static java.util.Collections.*;
 
 /** @author Daniel Bechler */
 public class DefaultNode implements Node
@@ -279,6 +283,15 @@ public class DefaultNode implements Node
 				return;
 			}
 		}
+	}
+
+	public Set<Annotation> getPropertyAnnotations()
+	{
+		if (accessor instanceof PropertyAccessor)
+		{
+			return unmodifiableSet(((PropertyAccessor) accessor).getReadMethodAnnotations());
+		}
+		return unmodifiableSet(Collections.<Annotation>emptySet());
 	}
 
 	public final boolean isRootNode()

@@ -18,9 +18,11 @@ package de.danielbechler.diff.node;
 
 import de.danielbechler.diff.accessor.*;
 import de.danielbechler.diff.path.*;
+import org.fest.assertions.api.*;
 import org.hamcrest.core.*;
 import org.testng.annotations.*;
 
+import java.lang.annotation.*;
 import java.util.*;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -162,5 +164,31 @@ public class DefaultNodeTest
 		when(nodeMock.hasChanges()).thenReturn(true);
 		node.addChild(nodeMock);
 		NodeAssertions.assertThat(node).root().hasState(Node.State.CHANGED);
+	}
+
+	@Test
+	public void testShould_return_property_annotations_of_property_accessor() throws Exception
+	{
+		final PropertyAccessor propertyAccessor = mock(PropertyAccessor.class);
+		final Annotation annotation = mock(Annotation.class);
+		when(propertyAccessor.getReadMethodAnnotations()).thenReturn(new LinkedHashSet<Annotation>(Arrays.asList(annotation)));
+		final Node node = new DefaultNode(propertyAccessor, Object.class);
+
+		final Set<Annotation> annotations = node.getPropertyAnnotations();
+
+		Assertions.assertThat(annotations).containsAll(Arrays.asList(annotation));
+	}
+
+	@Test
+	public void testShould_return_empty_set_of_property_annotations_if_accessor_is_not_property_accessor() throws Exception
+	{
+		final PropertyAccessor propertyAccessor = mock(PropertyAccessor.class);
+		final Annotation annotation = mock(Annotation.class);
+		when(propertyAccessor.getReadMethodAnnotations()).thenReturn(new LinkedHashSet<Annotation>(Arrays.asList(annotation)));
+		final Node node = new DefaultNode(propertyAccessor, Object.class);
+
+		final Set<Annotation> annotations = node.getPropertyAnnotations();
+
+		Assertions.assertThat(annotations).containsAll(Arrays.asList(annotation));
 	}
 }

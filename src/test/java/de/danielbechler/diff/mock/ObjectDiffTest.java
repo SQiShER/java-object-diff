@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Daniel Bechler
+ * Copyright 2013 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,30 +18,12 @@ package de.danielbechler.diff.mock;
 
 import de.danielbechler.diff.annotation.*;
 
+import java.lang.annotation.*;
+
 /** @author Daniel Bechler */
-public class ObjectWithAnnotatedProperty
-{
-	private String value;
-
-	public ObjectWithAnnotatedProperty()
-	{
-	}
-
-	public ObjectWithAnnotatedProperty(final String value)
-	{
-		this.value = value;
-	}
-
-	@ObjectDiffTest
-	@ObjectDiffProperty(ignore = true)
-	public String getValue()
-	{
-		return value;
-	}
-
-	public void setValue(final String value)
-	{
-		this.value = value;
-	}
-
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+@Inherited
+@ObjectDiffAnnotation
+public @interface ObjectDiffTest {
 }

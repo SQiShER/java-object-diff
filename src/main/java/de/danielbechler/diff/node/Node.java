@@ -20,6 +20,7 @@ import de.danielbechler.diff.accessor.*;
 import de.danielbechler.diff.path.*;
 import de.danielbechler.diff.visitor.*;
 
+import java.lang.annotation.*;
 import java.util.*;
 
 /**
@@ -190,4 +191,11 @@ public interface Node extends CanonicalAccessor
 	 * @param visitor The visitor to use.
 	 */
 	void visitChildren(Visitor visitor);
+
+	/**
+	 * If this node represents a bean property this method returns all annotations of its getter.
+	 *
+	 * @return A set of annotations of this nodes property getter or an empty set.
+	 */
+	Set<Annotation> getPropertyAnnotations();
 }
