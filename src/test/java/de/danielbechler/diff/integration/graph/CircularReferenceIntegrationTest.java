@@ -49,6 +49,8 @@ public class CircularReferenceIntegrationTest
 
 		Assertions.assertThat(root.canonicalGet(workingA))
 				  .isSameAs(root.getChild("reference").getChild("reference").canonicalGet(workingA));
+		Assertions.assertThat(root.getChild("reference").getChild("reference").getCircleStartNode())
+				  .isSameAs(root);
 	}
 
 	@Test

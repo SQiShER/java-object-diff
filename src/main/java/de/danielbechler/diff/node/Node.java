@@ -119,6 +119,10 @@ public interface Node extends CanonicalAccessor
 	 */
 	PropertyPath getCircleStartPath();
 
+	void setCircleStartNode(Node node);
+
+	Node getCircleStartNode();
+
 	/** @return Returns the type of the property represented by this node, or null if unavailable. */
 	Class<?> getType();
 

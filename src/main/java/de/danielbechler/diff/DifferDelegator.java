@@ -71,8 +71,7 @@ class DifferDelegator
 		}
 		catch (CircularReferenceException e)
 		{
-			node = newCircularNode(parentNode, instances);
-			node.setCircleStartPath(e.getPropertyPath());
+			node = newCircularNode(parentNode, instances, e.getPropertyPath());
 			logCircularReference(node.getPropertyPath());
 		}
 		if (parentNode == null)
@@ -82,16 +81,32 @@ class DifferDelegator
 		return node;
 	}
 
+	private Node findNodeMatchingPropertyPath(final Node node, final PropertyPath propertyPath)
+	{
+		if (node == null)
+		{
+			return null;
+		}
+		if (node.matches(propertyPath))
+		{
+			return node;
+		}
+		return findNodeMatchingPropertyPath(node.getParentNode(), propertyPath);
+	}
+
 	private static Node newDefaultNode(final Node parentNode, final Instances instances, final Class<?> type)
 	{
 		return new DefaultNode(parentNode, instances.getSourceAccessor(), type);
 	}
 
-	private static Node newCircularNode(final Node parentNode,
-										final Instances instances)
+	private Node newCircularNode(final Node parentNode,
+								 final Instances instances,
+								 final PropertyPath circleStartPath)
 	{
 		final Node node = new DefaultNode(parentNode, instances.getSourceAccessor(), instances.getType());
 		node.setState(Node.State.CIRCULAR);
+		node.setCircleStartPath(circleStartPath);
+		node.setCircleStartNode(findNodeMatchingPropertyPath(parentNode, circleStartPath));
 		return node;
 	}
 

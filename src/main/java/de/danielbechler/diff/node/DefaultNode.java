@@ -33,6 +33,7 @@ public class DefaultNode implements Node
 	private State state = State.UNTOUCHED;
 	private Node parentNode;
 	private PropertyPath circleStartPath;
+	private Node circleStartNode;
 	private Class<?> valueType;
 
 	public DefaultNode(final Node parentNode, final Accessor accessor, final Class<?> valueType)
@@ -440,5 +441,15 @@ public class DefaultNode implements Node
 	public void setCircleStartPath(final PropertyPath circularStartPath)
 	{
 		this.circleStartPath = circularStartPath;
+	}
+
+	public Node getCircleStartNode()
+	{
+		return circleStartNode;
+	}
+
+	public void setCircleStartNode(final Node circleStartNode)
+	{
+		this.circleStartNode = circleStartNode;
 	}
 }
