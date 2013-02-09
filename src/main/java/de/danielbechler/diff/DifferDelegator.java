@@ -24,6 +24,7 @@ import org.slf4j.*;
 import static de.danielbechler.diff.CircularReferenceDetector.*;
 
 /** @author Daniel Bechler */
+@SuppressWarnings("MethodMayBeStatic")
 class DifferDelegator
 {
 	private static final Logger logger = LoggerFactory.getLogger(DifferDelegator.class);
@@ -62,7 +63,6 @@ class DifferDelegator
 			try
 			{
 				node = compare(parentNode, instances);
-//				fillCircularBaseNodeIntoRememberedCircularNodes(node, instances);
 			}
 			finally
 			{
@@ -73,7 +73,6 @@ class DifferDelegator
 		{
 			node = newCircularNode(parentNode, instances);
 			node.setCircleStartPath(e.getPropertyPath());
-//			rememberCircularNodeForInstances(node, instances);
 			logCircularReference(node.getPropertyPath());
 		}
 		if (parentNode == null)
@@ -93,7 +92,6 @@ class DifferDelegator
 	{
 		final Node node = new DefaultNode(parentNode, instances.getSourceAccessor(), instances.getType());
 		node.setState(Node.State.CIRCULAR);
-		node.setCircleStartPath(null);
 		return node;
 	}
 
@@ -106,27 +104,32 @@ class DifferDelegator
 
 	private Node compare(final Node parentNode, final Instances instances)
 	{
-		return differFactory.createDiffer(instances.getType(), this).compare(parentNode, instances);
+		final Differ<?> differ = differFactory.createDiffer(instances.getType(), this);
+		if (differ != null)
+		{
+			return differ.compare(parentNode, instances);
+		}
+		throw new IllegalStateException("Couldn't create Differ for type '" + instances.getType() +
+				"'. This mustn't happen, as there should always be a fallback differ.");
 	}
 
-	private static void resetInstanceMemory()
+	protected void resetInstanceMemory()
 	{
 		WORKING_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL.remove();
 		BASE_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL.remove();
 	}
 
-	private static void forgetInstances(final Instances instances)
+	protected void forgetInstances(final Instances instances)
 	{
 		WORKING_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL.get().remove(instances.getWorking());
 		BASE_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL.get().remove(instances.getBase());
 	}
 
-	private static void rememberInstances(final Node parentNode, final Instances instances)
+	protected void rememberInstances(final Node parentNode, final Instances instances)
 	{
-		WORKING_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL.get()
-														.push(instances.getWorking(), instances.getPropertyPath(parentNode));
-		BASE_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL.get()
-													 .push(instances.getBase(), instances.getPropertyPath(parentNode));
+		final PropertyPath propertyPath = instances.getPropertyPath(parentNode);
+		WORKING_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL.get().push(instances.getWorking(), propertyPath);
+		BASE_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL.get().push(instances.getBase(), propertyPath);
 	}
 
 	private static final class CircularReferenceDetectorThreadLocal extends ThreadLocal<CircularReferenceDetector>

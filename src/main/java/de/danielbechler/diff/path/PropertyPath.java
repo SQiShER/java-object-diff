@@ -139,7 +139,6 @@ public final class PropertyPath
 		{
 		}
 
-		@Override
 		public AppendableBuilder withRoot()
 		{
 			final List<Element> elements = new ArrayList<Element>(1);
@@ -147,7 +146,6 @@ public final class PropertyPath
 			return new AppendableBuilderImpl(elements);
 		}
 
-		@Override
 		public AppendableBuilder withPropertyPath(final PropertyPath propertyPath)
 		{
 			Assert.notNull(propertyPath, "propertyPath");
@@ -165,7 +163,6 @@ public final class PropertyPath
 			this.elements = new ArrayList<Element>(elements);
 		}
 
-		@Override
 		public AppendableBuilder withElement(final Element element)
 		{
 			Assert.notNull(element, "element");
@@ -173,7 +170,6 @@ public final class PropertyPath
 			return this;
 		}
 
-		@Override
 		public AppendableBuilder withPropertyName(final String name, final String... names)
 		{
 			elements.add(new NamedPropertyElement(name));
@@ -184,14 +180,12 @@ public final class PropertyPath
 			return this;
 		}
 
-		@Override
 		public <T> AppendableBuilder withCollectionItem(final T item)
 		{
 			elements.add(new CollectionElement(item));
 			return this;
 		}
 
-		@Override
 		public <K> AppendableBuilder withMapKey(final K key)
 		{
 			Assert.notNull(key, "key");
@@ -199,7 +193,6 @@ public final class PropertyPath
 			return this;
 		}
 
-		@Override
 		public PropertyPath build()
 		{
 			if (elements.isEmpty())

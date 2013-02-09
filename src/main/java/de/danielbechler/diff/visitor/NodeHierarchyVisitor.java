@@ -45,7 +45,6 @@ public class NodeHierarchyVisitor implements Node.Visitor
 		this.maxDepth = maxDepth;
 	}
 
-	@Override
 	public void accept(final Node node, final Visit visit)
 	{
 		if (maxDepth == 0)
