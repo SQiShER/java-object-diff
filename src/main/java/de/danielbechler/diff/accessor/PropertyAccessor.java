@@ -199,6 +199,21 @@ public class PropertyAccessor extends AbstractAccessor implements TypeAwareAcces
 		return new LinkedHashSet<Annotation>(Arrays.asList(readMethod.getAnnotations()));
 	}
 
+	public <T extends Annotation> T getReadMethodAnnotation(final Class<T> annotationClass)
+	{
+		final Set<? extends Annotation> annotations = getReadMethodAnnotations();
+		assert (annotations != null) : "Something is wrong here. " +
+				"The contract of getReadAnnotations() guarantees a non-null return value.";
+		for (final Annotation annotation : annotations)
+		{
+			if (annotationClass.isAssignableFrom(annotation.annotationType()))
+			{
+				return annotationClass.cast(annotation);
+			}
+		}
+		return null;
+	}
+
 	@Override
 	public String toString()
 	{

@@ -17,6 +17,7 @@
 package de.danielbechler.diff.node;
 
 import de.danielbechler.diff.accessor.*;
+import de.danielbechler.diff.mock.*;
 import de.danielbechler.diff.path.*;
 import org.fest.assertions.api.*;
 import org.hamcrest.core.*;
@@ -190,5 +191,26 @@ public class DefaultNodeTest
 		final Set<Annotation> annotations = node.getPropertyAnnotations();
 
 		Assertions.assertThat(annotations).containsAll(Arrays.asList(annotation));
+	}
+
+	@Test
+	public void test_get_property_annotation_should_delegate_call_to_property_accessor()
+	{
+		final PropertyAccessor propertyAccessor = mock(PropertyAccessor.class);
+		when(propertyAccessor.getReadMethodAnnotation(ObjectDiffTest.class)).thenReturn(null);
+
+		new DefaultNode(propertyAccessor, Object.class).getPropertyAnnotation(ObjectDiffTest.class);
+
+		verify(propertyAccessor, times(1)).getReadMethodAnnotation(ObjectDiffTest.class);
+	}
+
+	@Test
+	public void test_get_property_annotation_should_return_null_if_accessor_is_not_property_accessor()
+	{
+		final Accessor propertyAccessor = mock(Accessor.class);
+
+		final ObjectDiffTest annotation = new DefaultNode(propertyAccessor, Object.class).getPropertyAnnotation(ObjectDiffTest.class);
+
+		assertThat(annotation).isNull();
 	}
 }

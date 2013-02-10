@@ -294,6 +294,15 @@ public class DefaultNode implements Node
 		return unmodifiableSet(Collections.<Annotation>emptySet());
 	}
 
+	public <T extends Annotation> T getPropertyAnnotation(final Class<T> annotationClass)
+	{
+		if (accessor instanceof PropertyAccessor)
+		{
+			return ((PropertyAccessor) accessor).getReadMethodAnnotation(annotationClass);
+		}
+		return null;
+	}
+
 	public final boolean isRootNode()
 	{
 		return accessor instanceof RootAccessor;

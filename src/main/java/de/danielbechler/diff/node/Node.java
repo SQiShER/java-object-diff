@@ -198,4 +198,7 @@ public interface Node extends CanonicalAccessor
 	 * @return A set of annotations of this nodes property getter or an empty set.
 	 */
 	Set<Annotation> getPropertyAnnotations();
+
+	<T extends Annotation> T getPropertyAnnotation(Class<T> annotationClass);
+
 }

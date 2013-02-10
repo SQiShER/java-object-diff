@@ -17,14 +17,13 @@
 package de.danielbechler.diff.accessor;
 
 import de.danielbechler.diff.accessor.exception.*;
+import de.danielbechler.diff.annotation.*;
 import de.danielbechler.diff.mock.*;
 import de.danielbechler.diff.path.*;
-import org.fest.assertions.api.*;
 import org.testng.annotations.*;
 
 import java.lang.annotation.*;
 import java.lang.reflect.*;
-import java.util.*;
 
 import static java.util.Arrays.*;
 import static org.fest.assertions.api.Assertions.*;
@@ -152,7 +151,7 @@ public class PropertyAccessorShould
 	}
 
 	@Test
-	public void returns_annotations_of_getter_as_set() throws Exception
+	public void returns_annotations_of_property_getter() throws Exception
 	{
 		accessor = PropertyAccessorBuilder.forPropertyOf(ObjectWithAnnotatedProperty.class)
 										  .property("value", String.class)
@@ -160,9 +159,31 @@ public class PropertyAccessorShould
 										  .build();
 		final Annotation[] expectedAnnotations = ObjectWithAnnotatedProperty.class.getMethod("getValue")
 																				  .getAnnotations();
-		Assertions.assertThat(expectedAnnotations).hasSize(2);
+		assertThat(expectedAnnotations).hasSize(2);
+		assertThat(accessor.getReadMethodAnnotations()).containsAll(asList(expectedAnnotations));
+	}
 
-		final Set<Annotation> set = accessor.getReadMethodAnnotations();
-		Assertions.assertThat(set).containsAll(asList(expectedAnnotations));
+	@Test
+	public void returns_specific_annotation_of_property_getter() throws Exception
+	{
+		accessor = PropertyAccessorBuilder.forPropertyOf(ObjectWithAnnotatedProperty.class)
+										  .property("value", String.class)
+										  .readOnly(false)
+										  .build();
+		final ObjectDiffProperty expectedAnnotation = ObjectWithAnnotatedProperty.class.getMethod("getValue")
+																					   .getAnnotation(ObjectDiffProperty.class);
+		assertThat(expectedAnnotation).isNotNull();
+		final ObjectDiffProperty annotation = accessor.getReadMethodAnnotation(ObjectDiffProperty.class);
+		assertThat(annotation).isEqualTo(expectedAnnotation);
+	}
+
+	@Test
+	public void returns_null_if_specific_annotation_of_property_getter_does_not_exist() throws Exception
+	{
+		accessor = PropertyAccessorBuilder.forPropertyOf(ObjectWithAnnotatedProperty.class)
+										  .property("value", String.class)
+										  .readOnly(false)
+										  .build();
+		assertThat(accessor.getReadMethodAnnotation(Override.class)).isNull();
 	}
 }
