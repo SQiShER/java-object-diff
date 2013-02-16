@@ -141,6 +141,8 @@
                         <forced>true</forced>
                     </archive>
                     <instructions>
+                        <Bundle-Vendor>Daniel Bechler</Bundle-Vendor>
+                        <Bundle-DocURL>${pom.url}</Bundle-DocURL>
                         <Export-Package>{local-packages}</Export-Package>
                     </instructions>
                 </configuration>
