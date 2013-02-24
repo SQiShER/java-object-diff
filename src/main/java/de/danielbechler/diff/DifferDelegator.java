@@ -28,11 +28,11 @@ import static de.danielbechler.diff.CircularReferenceDetector.*;
 class DifferDelegator
 {
 	private static final Logger logger = LoggerFactory.getLogger(DifferDelegator.class);
-	private static final ThreadLocal<CircularReferenceDetector> WORKING_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL = new ThreadLocal<CircularReferenceDetector>();
-	private static final ThreadLocal<CircularReferenceDetector> BASE_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL = new ThreadLocal<CircularReferenceDetector>();
 
 	private final DifferFactory differFactory;
 	private final CircularReferenceDetectorFactory circularReferenceDetectorFactory;
+	private CircularReferenceDetector workingCircularReferenceDetector;
+	private CircularReferenceDetector baseCircularReferenceDetector;
 
 	public DifferDelegator(final DifferFactory differFactory,
 						   final CircularReferenceDetectorFactory circularReferenceDetectorFactory)
@@ -136,20 +136,20 @@ class DifferDelegator
 
 	protected final void resetInstanceMemory()
 	{
-		WORKING_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL.set(circularReferenceDetectorFactory.create());
-		BASE_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL.set(circularReferenceDetectorFactory.create());
+		workingCircularReferenceDetector = circularReferenceDetectorFactory.create();
+		baseCircularReferenceDetector = circularReferenceDetectorFactory.create();
 	}
 
 	protected void forgetInstances(final Instances instances)
 	{
-		WORKING_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL.get().remove(instances.getWorking());
-		BASE_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL.get().remove(instances.getBase());
+		workingCircularReferenceDetector.remove(instances.getWorking());
+		baseCircularReferenceDetector.remove(instances.getBase());
 	}
 
 	protected void rememberInstances(final Node parentNode, final Instances instances)
 	{
 		final PropertyPath propertyPath = instances.getPropertyPath(parentNode);
-		WORKING_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL.get().push(instances.getWorking(), propertyPath);
-		BASE_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL.get().push(instances.getBase(), propertyPath);
+		workingCircularReferenceDetector.push(instances.getWorking(), propertyPath);
+		baseCircularReferenceDetector.push(instances.getBase(), propertyPath);
 	}
 }

@@ -16,10 +16,13 @@
 
 package de.danielbechler.diff;
 
+import de.danielbechler.diff.mock.*;
 import de.danielbechler.diff.path.*;
+import org.fest.assertions.api.*;
 import org.testng.annotations.*;
 
-import static org.hamcrest.MatcherAssert.*;
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.*;
 import static org.testng.Assert.*;
 
@@ -32,27 +35,7 @@ public class CircularReferenceDetectorTest
 	public void setUp()
 	{
 		circularReferenceDetector = new CircularReferenceDetector();
-	}
-
-	@Test
-	public void testIsNew_returns_true_if_nothing_has_been_pushed() throws Exception
-	{
-		assertTrue(circularReferenceDetector.isNew());
-	}
-
-	@Test
-	public void testIsNew_returns_false_if_instance_has_been_pushed() throws Exception
-	{
-		circularReferenceDetector.push("foo", PropertyPath.buildRootPath());
-		assertFalse(circularReferenceDetector.isNew());
-	}
-
-	@Test
-	public void testIsNew_returns_false_if_instance_has_been_pushed_but_later_removed() throws Exception
-	{
-		circularReferenceDetector.push("foo", PropertyPath.buildRootPath());
-		circularReferenceDetector.remove("foo");
-		assertFalse(circularReferenceDetector.isNew());
+		circularReferenceDetector.setReferenceMatchingMode(CircularReferenceDetector.ReferenceMatchingMode.EQUALITY_OPERATOR);
 	}
 
 	@Test
@@ -69,14 +52,23 @@ public class CircularReferenceDetectorTest
 		assertThat(circularReferenceDetector.size(), is(1));
 	}
 
-	@Test(expectedExceptions = CircularReferenceDetector.CircularReferenceException.class)
+	@Test
 	public void testPush_throws_CircularReferenceException_on_known_object() throws Exception
 	{
 		circularReferenceDetector.push("foo", PropertyPath.buildRootPath());
-		circularReferenceDetector.push("foo", PropertyPath.createBuilder()
-														  .withRoot()
-														  .withPropertyName("test")
-														  .build());
+		try
+		{
+			circularReferenceDetector.push("foo", PropertyPath.createBuilder()
+															  .withRoot()
+															  .withPropertyName("test")
+															  .build());
+			Assertions.fail("Expected CircularReferenceException wasn't thrown.");
+		}
+		catch (CircularReferenceDetector.CircularReferenceException e)
+		{
+			final PropertyPath propertyPath = e.getPropertyPath();
+			assertThat(propertyPath).isEqualTo(PropertyPath.buildRootPath());
+		}
 	}
 
 	@Test
@@ -122,5 +114,30 @@ public class CircularReferenceDetectorTest
 		circularReferenceDetector.push("foo", null);
 		circularReferenceDetector.remove("foo");
 		assertFalse(circularReferenceDetector.knows("foo"));
+	}
+
+	@Test
+	public void knowsEqualObject_whenReferenceMatchingModeIsSetToEqualsMethod()
+	{
+		circularReferenceDetector.setReferenceMatchingMode(CircularReferenceDetector.ReferenceMatchingMode.EQUALS_METHOD);
+		circularReferenceDetector.push(new ObjectWithString("foo"), PropertyPath.buildRootPath());
+		assertThat(circularReferenceDetector.knows(new ObjectWithString("foo"))).isTrue();
+	}
+
+	@Test
+	public void removesEqualObject_whenReferenceMatchingModeIsSetToEqualsMethod()
+	{
+		circularReferenceDetector.setReferenceMatchingMode(CircularReferenceDetector.ReferenceMatchingMode.EQUALS_METHOD);
+		circularReferenceDetector.push(new ObjectWithString("foo"), PropertyPath.buildRootPath());
+		circularReferenceDetector.remove(new ObjectWithString("foo"));
+		assertThat(circularReferenceDetector.size()).isEqualTo(0);
+	}
+
+	@Test(expectedExceptions = CircularReferenceDetector.CircularReferenceException.class)
+	public void throwsException_onAttemptToPushEqualObject_whenReferenceMatchingModeIsSetToEqualsMethod()
+	{
+		circularReferenceDetector.setReferenceMatchingMode(CircularReferenceDetector.ReferenceMatchingMode.EQUALS_METHOD);
+		circularReferenceDetector.push(new ObjectWithString("foo"), PropertyPath.buildRootPath());
+		circularReferenceDetector.push(new ObjectWithString("foo"), PropertyPath.buildRootPath());
 	}
 }

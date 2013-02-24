@@ -22,6 +22,8 @@ import de.danielbechler.diff.mock.*;
 import de.danielbechler.diff.node.*;
 import org.testng.annotations.*;
 
+import static de.danielbechler.diff.Configuration.CircularReferenceMatchingMode.*;
+
 /** @author Daniel Bechler */
 public class CircularReferenceDetectionBasedOnIdentityTest
 {
@@ -32,6 +34,7 @@ public class CircularReferenceDetectionBasedOnIdentityTest
 	{
 		final Configuration configuration = new Configuration();
 		configuration.withChildrenOfAddedNodes();
+		configuration.matchCircularReferencesUsing(EQUALITY_OPERATOR);
 		objectDiffer = ObjectDifferFactory.getInstance(configuration);
 	}
 

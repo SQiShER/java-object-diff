@@ -18,6 +18,8 @@ package de.danielbechler.diff;
 
 import de.danielbechler.diff.node.*;
 
+import static de.danielbechler.diff.Configuration.CircularReferenceMatchingMode.*;
+
 /**
  * This is the entry point for all comparisons. It determines the type of the given objects and passes them to
  * the appropriate {@link Differ}.
@@ -26,6 +28,24 @@ import de.danielbechler.diff.node.*;
  */
 public class ObjectDiffer
 {
+	private static final CircularReferenceDetectorFactory CIRCULAR_REFERENCE_DETECTOR_WITH_EQUALITY_OPERATOR_FACTORY = new CircularReferenceDetectorFactory()
+	{
+		public CircularReferenceDetector create()
+		{
+			final CircularReferenceDetector circularReferenceDetector = new CircularReferenceDetector();
+			circularReferenceDetector.setReferenceMatchingMode(CircularReferenceDetector.ReferenceMatchingMode.EQUALITY_OPERATOR);
+			return circularReferenceDetector;
+		}
+	};
+	private static final CircularReferenceDetectorFactory CIRCULAR_REFERENCE_DETECTOR_WITH_EQUALS_METHOD_FACTORY = new CircularReferenceDetectorFactory()
+	{
+		public CircularReferenceDetector create()
+		{
+			final CircularReferenceDetector circularReferenceDetector = new CircularReferenceDetector();
+			circularReferenceDetector.setReferenceMatchingMode(CircularReferenceDetector.ReferenceMatchingMode.EQUALS_METHOD);
+			return circularReferenceDetector;
+		}
+	};
 	private final Configuration configuration;
 	private final DifferDelegator delegator;
 
@@ -63,27 +83,14 @@ public class ObjectDiffer
 
 	private static CircularReferenceDetectorFactory newCircularReferenceDetectorFactory(final Configuration configuration)
 	{
-		if (configuration.shouldTreatEqualObjectsAsSame())
+		if (configuration.getCircularReferenceMatchingMode() == EQUALS_METHOD)
 		{
-			return new CircularReferenceDetectorFactory()
-			{
-				public CircularReferenceDetector create()
-				{
-					final CircularReferenceDetector circularReferenceDetector = new CircularReferenceDetector();
-					circularReferenceDetector.setTreatEqualObjectsAsIdentical(true);
-					return circularReferenceDetector;
-				}
-			};
+			return CIRCULAR_REFERENCE_DETECTOR_WITH_EQUALS_METHOD_FACTORY;
 		}
-		else
+		else if (configuration.getCircularReferenceMatchingMode() == EQUALITY_OPERATOR)
 		{
-			return new CircularReferenceDetectorFactory()
-			{
-				public CircularReferenceDetector create()
-				{
-					return new CircularReferenceDetector();
-				}
-			};
+			return CIRCULAR_REFERENCE_DETECTOR_WITH_EQUALITY_OPERATOR_FACTORY;
 		}
+		throw new IllegalStateException();
 	}
 }

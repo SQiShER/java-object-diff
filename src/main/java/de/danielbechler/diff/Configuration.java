@@ -29,6 +29,23 @@ import static de.danielbechler.util.Collections.*;
 @SuppressWarnings("UnusedDeclaration")
 public class Configuration implements NodeInspector
 {
+	/**
+	 * Defines how the {@link CircularReferenceDetector} compares object instances. The default is {@link
+	 * de.danielbechler.diff.Configuration.CircularReferenceMatchingMode#EQUALITY_OPERATOR} and this should be
+	 * sufficient in mose cases. However, you may be dealing with an object model that returns copies of its
+	 * properties, instead of reusing the exact same instance. In this cases it would be easy to end up in
+	 * infinite loops, as the default circular reference detection would not be able to detect this. In those
+	 * cases you should switch to the {@link #EQUALS_METHOD} mode. The trade-off is, that this renders you unable
+	 * to nest equal but different objects.
+	 */
+	public enum CircularReferenceMatchingMode
+	{
+		/** Compares objects using the <code>==</code> operator. */
+		EQUALITY_OPERATOR,
+
+		/** Compares objects using {@linkplain Object#equals(Object)}. */
+		EQUALS_METHOD
+	}
 
 	/**
 	 * Defines how default values of primitive types (int, long, short, byte, char, boolean, float, double) will
@@ -66,7 +83,7 @@ public class Configuration implements NodeInspector
 	private boolean returnCircularNodes = true;
 	private boolean returnChildrenOfAddedNodes = false;
 	private boolean returnChildrenOfRemovedNodes = false;
-	private boolean treatEqualObjectsAsIdentical = false;
+	private CircularReferenceMatchingMode circularReferenceMatchingMode = CircularReferenceMatchingMode.EQUALITY_OPERATOR;
 	private PrimitiveDefaultValueMode treatPrimitivesAs = PrimitiveDefaultValueMode.UNASSIGNED;
 
 	public Configuration withCategory(final String category)
@@ -185,28 +202,20 @@ public class Configuration implements NodeInspector
 		return this;
 	}
 
-	/**
-	 * If this setting is set to true, the circular reference detector will treat equal objects as identical
-	 * (<code>==</code>). Otherwise only exact same instances will be considered identical. This is very useful
-	 * if you are dealing with objects that return copies of their properties, which could easily lead to
-	 * infinite loops unless equality is taken into account.
-	 *
-	 * @return This instance for easy chaining.
-	 */
-	public Configuration treatEqualObjectsAsIdentical(final boolean value)
-	{
-		this.treatEqualObjectsAsIdentical = value;
-		return this;
-	}
-
-	public boolean shouldTreatEqualObjectsAsSame()
-	{
-		return treatEqualObjectsAsIdentical;
-	}
-
 	public PrimitiveDefaultValueMode getPrimitiveDefaultValueMode()
 	{
 		return treatPrimitivesAs;
+	}
+
+	public CircularReferenceMatchingMode getCircularReferenceMatchingMode()
+	{
+		return circularReferenceMatchingMode;
+	}
+
+	public void matchCircularReferencesUsing(final CircularReferenceMatchingMode circularReferenceMatchingMode)
+	{
+		Assert.notNull(circularReferenceMatchingMode, "circularReferenceMatchingMode");
+		this.circularReferenceMatchingMode = circularReferenceMatchingMode;
 	}
 
 	public boolean isIgnored(final Node node)

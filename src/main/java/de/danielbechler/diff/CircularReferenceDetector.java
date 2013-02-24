@@ -17,6 +17,7 @@
 package de.danielbechler.diff;
 
 import de.danielbechler.diff.path.*;
+import de.danielbechler.util.*;
 
 import java.util.*;
 
@@ -25,8 +26,7 @@ class CircularReferenceDetector
 {
 	private final Deque<Entry> stack = new LinkedList<Entry>();
 
-	private boolean isNew = true;
-	private boolean treatEqualObjectsAsIdentical;
+	private ReferenceMatchingMode referenceMatchingMode = ReferenceMatchingMode.EQUALITY_OPERATOR;
 
 	private static class Entry
 	{
@@ -54,27 +54,11 @@ class CircularReferenceDetector
 	{
 	}
 
-	/** @deprecated Only used in tests. */
-	@Deprecated
-	public boolean isNew()
-	{
-		return isNew;
-	}
-
-	public void setTreatEqualObjectsAsIdentical(final boolean treatEqualObjectsAsIdentical)
-	{
-		this.treatEqualObjectsAsIdentical = treatEqualObjectsAsIdentical;
-	}
-
 	public void push(final Object instance, final PropertyPath propertyPath)
 	{
 		if (instance == null)
 		{
 			return;
-		}
-		if (isNew)
-		{
-			isNew = false;
 		}
 		if (knows(instance))
 		{
@@ -99,14 +83,15 @@ class CircularReferenceDetector
 
 	protected boolean isMatch(final Object anObject, final Object anotherObject)
 	{
-		if (treatEqualObjectsAsIdentical)
+		if (referenceMatchingMode == ReferenceMatchingMode.EQUALS_METHOD)
 		{
 			return anotherObject != null && anObject != null && anotherObject.equals(anObject);
 		}
-		else
+		else if (referenceMatchingMode == ReferenceMatchingMode.EQUALITY_OPERATOR)
 		{
 			return anotherObject == anObject;
 		}
+		throw new IllegalStateException("Missing reference matching mode");
 	}
 
 	private Entry entryForInstance(final Object instance)
@@ -142,6 +127,12 @@ class CircularReferenceDetector
 		return stack.size();
 	}
 
+	public void setReferenceMatchingMode(final ReferenceMatchingMode referenceMatchingMode)
+	{
+		Assert.notNull(referenceMatchingMode, "referenceMatchingMode");
+		this.referenceMatchingMode = referenceMatchingMode;
+	}
+
 	public static class CircularReferenceException extends RuntimeException
 	{
 		private static final long serialVersionUID = 1L;
@@ -164,5 +155,14 @@ class CircularReferenceDetector
 		{
 			return null;
 		}
+	}
+
+	public static enum ReferenceMatchingMode
+	{
+		/** Compares objects using the <code>==</code> operator. */
+		EQUALITY_OPERATOR,
+
+		/** Compares objects using {@linkplain Object#equals(Object)}. */
+		EQUALS_METHOD
 	}
 }
