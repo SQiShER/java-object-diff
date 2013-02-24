@@ -39,9 +39,9 @@ public class ToMapPrintingVisitor extends PrintingVisitor
 		super(working, base);
 	}
 
+	@Override
 	protected void print(final String text)
 	{
-		// noop
 	}
 
 	@Override

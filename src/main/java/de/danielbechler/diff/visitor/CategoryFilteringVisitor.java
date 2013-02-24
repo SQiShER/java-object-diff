@@ -22,6 +22,7 @@ import de.danielbechler.util.Collections;
 import java.util.*;
 
 /** @author Daniel Bechler */
+@SuppressWarnings("UnusedDeclaration")
 public abstract class CategoryFilteringVisitor extends AbstractFilteringVisitor
 {
 	private final Collection<String> include = new TreeSet<String>();

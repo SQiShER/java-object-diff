@@ -42,7 +42,6 @@ final class BeanDiffer implements Differ<Node>
 		this.nodeInspector = nodeInspector;
 	}
 
-	@Override
 	public final Node compare(final Node parentNode, final Instances instances)
 	{
 		final Node beanNode = defaultNodeFactory.createNode(parentNode, instances);

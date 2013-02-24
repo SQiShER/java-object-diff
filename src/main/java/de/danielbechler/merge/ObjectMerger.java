@@ -26,6 +26,7 @@ import de.danielbechler.diff.visitor.*;
  *
  * @author Daniel Bechler
  */
+@SuppressWarnings("UnusedDeclaration")
 public final class ObjectMerger
 {
 	private final ObjectDiffer objectDiffer;
