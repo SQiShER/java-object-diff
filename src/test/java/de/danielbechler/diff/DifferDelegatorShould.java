@@ -36,37 +36,28 @@ public class DifferDelegatorShould
 	private DifferFactory differFactory;
 	@Mock
 	private Accessor accessor;
+	@Mock
+	private CircularReferenceDetectorFactory circularReferenceDetectorFactory;
+	@Mock
+	private CircularReferenceDetector circularReferenceDetector;
 	private Instances instances;
 	private DifferDelegator differDelegator;
-	private ObjectWithCircularReference objectWithCircularReference;
-	private Node rootNode;
-	private Node referenceNode;
-	private PropertyAccessor referencePropertyAccessor;
 
 	@BeforeMethod
 	public void setUp() throws Exception
 	{
 		initMocks(this);
-		differDelegator = new DifferDelegator(differFactory);
 
-		rootNode = new DefaultNode(Node.ROOT, RootAccessor.getInstance(), ObjectWithCircularReference.class);
-		referencePropertyAccessor = PropertyAccessorBuilder.forPropertyOf(ObjectWithCircularReference.class)
-														   .property("reference", ObjectWithCircularReference.class)
-														   .readOnly(false)
-														   .build();
-		referenceNode = new DefaultNode(rootNode,
-				referencePropertyAccessor,
-				ObjectWithCircularReference.class);
+		when(circularReferenceDetectorFactory.create()).thenReturn(circularReferenceDetector);
 
-		objectWithCircularReference = new ObjectWithCircularReference("foo");
-		objectWithCircularReference.setReference(objectWithCircularReference);
+		differDelegator = new DifferDelegator(differFactory, circularReferenceDetectorFactory);
 	}
 
 	@SuppressWarnings("unchecked")
 	private void given_the_delegated_node_is_circular(final PropertyPath circularStartPath)
 	{
 		instances = mock(Instances.class);
-		differDelegator = new DifferDelegator(differFactory)
+		differDelegator = new DifferDelegator(differFactory, circularReferenceDetectorFactory)
 		{
 			@Override
 			protected void rememberInstances(final Node parentNode, final Instances instances)

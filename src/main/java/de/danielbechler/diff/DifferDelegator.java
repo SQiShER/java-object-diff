@@ -28,14 +28,20 @@ import static de.danielbechler.diff.CircularReferenceDetector.*;
 class DifferDelegator
 {
 	private static final Logger logger = LoggerFactory.getLogger(DifferDelegator.class);
-	private static final ThreadLocal<CircularReferenceDetector> WORKING_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL = new CircularReferenceDetectorThreadLocal();
-	private static final ThreadLocal<CircularReferenceDetector> BASE_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL = new CircularReferenceDetectorThreadLocal();
+	private static final ThreadLocal<CircularReferenceDetector> WORKING_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL = new ThreadLocal<CircularReferenceDetector>();
+	private static final ThreadLocal<CircularReferenceDetector> BASE_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL = new ThreadLocal<CircularReferenceDetector>();
 
 	private final DifferFactory differFactory;
+	private final CircularReferenceDetectorFactory circularReferenceDetectorFactory;
 
-	public DifferDelegator(final DifferFactory differFactory)
+	public DifferDelegator(final DifferFactory differFactory,
+						   final CircularReferenceDetectorFactory circularReferenceDetectorFactory)
 	{
+		Assert.notNull(differFactory, "differFactory");
+		Assert.notNull(circularReferenceDetectorFactory, "circularReferenceDetectorFactory");
 		this.differFactory = differFactory;
+		this.circularReferenceDetectorFactory = circularReferenceDetectorFactory;
+		resetInstanceMemory();
 	}
 
 	/**
@@ -128,10 +134,10 @@ class DifferDelegator
 				"'. This mustn't happen, as there should always be a fallback differ.");
 	}
 
-	protected void resetInstanceMemory()
+	protected final void resetInstanceMemory()
 	{
-		WORKING_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL.remove();
-		BASE_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL.remove();
+		WORKING_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL.set(circularReferenceDetectorFactory.create());
+		BASE_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL.set(circularReferenceDetectorFactory.create());
 	}
 
 	protected void forgetInstances(final Instances instances)
@@ -145,14 +151,5 @@ class DifferDelegator
 		final PropertyPath propertyPath = instances.getPropertyPath(parentNode);
 		WORKING_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL.get().push(instances.getWorking(), propertyPath);
 		BASE_CIRCULAR_REFERENCE_DETECTOR_THREAD_LOCAL.get().push(instances.getBase(), propertyPath);
-	}
-
-	private static final class CircularReferenceDetectorThreadLocal extends ThreadLocal<CircularReferenceDetector>
-	{
-		@Override
-		protected CircularReferenceDetector initialValue()
-		{
-			return new CircularReferenceDetector();
-		}
 	}
 }

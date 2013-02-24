@@ -32,7 +32,7 @@ public class ObjectDiffer
 	ObjectDiffer(final Configuration configuration)
 	{
 		this.configuration = configuration;
-		this.delegator = new DifferDelegator(new DifferFactory(configuration));
+		this.delegator = new DifferDelegator(new DifferFactory(configuration), newCircularReferenceDetectorFactory(configuration));
 	}
 
 	/**
@@ -59,5 +59,31 @@ public class ObjectDiffer
 	public Configuration getConfiguration()
 	{
 		return configuration;
+	}
+
+	private static CircularReferenceDetectorFactory newCircularReferenceDetectorFactory(final Configuration configuration)
+	{
+		if (configuration.shouldTreatEqualObjectsAsSame())
+		{
+			return new CircularReferenceDetectorFactory()
+			{
+				public CircularReferenceDetector create()
+				{
+					final CircularReferenceDetector circularReferenceDetector = new CircularReferenceDetector();
+					circularReferenceDetector.setTreatEqualObjectsAsIdentical(true);
+					return circularReferenceDetector;
+				}
+			};
+		}
+		else
+		{
+			return new CircularReferenceDetectorFactory()
+			{
+				public CircularReferenceDetector create()
+				{
+					return new CircularReferenceDetector();
+				}
+			};
+		}
 	}
 }

@@ -21,11 +21,12 @@ import de.danielbechler.diff.path.*;
 import java.util.*;
 
 /** @author Daniel Bechler */
-final class CircularReferenceDetector
+class CircularReferenceDetector
 {
 	private final Deque<Entry> stack = new LinkedList<Entry>();
 
 	private boolean isNew = true;
+	private boolean treatEqualObjectsAsIdentical;
 
 	private static class Entry
 	{
@@ -60,6 +61,11 @@ final class CircularReferenceDetector
 		return isNew;
 	}
 
+	public void setTreatEqualObjectsAsIdentical(final boolean treatEqualObjectsAsIdentical)
+	{
+		this.treatEqualObjectsAsIdentical = treatEqualObjectsAsIdentical;
+	}
+
 	public void push(final Object instance, final PropertyPath propertyPath)
 	{
 		if (instance == null)
@@ -82,7 +88,8 @@ final class CircularReferenceDetector
 	{
 		for (final Entry entry : stack)
 		{
-			if (entry.getInstance() == needle)
+			final Object instance = entry.getInstance();
+			if (isMatch(needle, instance))
 			{
 				return true;
 			}
@@ -90,11 +97,23 @@ final class CircularReferenceDetector
 		return false;
 	}
 
+	protected boolean isMatch(final Object anObject, final Object anotherObject)
+	{
+		if (treatEqualObjectsAsIdentical)
+		{
+			return anotherObject != null && anObject != null && anotherObject.equals(anObject);
+		}
+		else
+		{
+			return anotherObject == anObject;
+		}
+	}
+
 	private Entry entryForInstance(final Object instance)
 	{
 		for (final Entry entry : stack)
 		{
-			if (entry.getInstance() == instance)
+			if (isMatch(instance, entry.getInstance()))
 			{
 				return entry;
 			}
@@ -108,7 +127,7 @@ final class CircularReferenceDetector
 		{
 			return;
 		}
-		if (stack.getLast().getInstance() == instance)
+		if (isMatch(instance, stack.getLast().getInstance()))
 		{
 			stack.removeLast();
 		}

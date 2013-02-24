@@ -26,8 +26,10 @@ import java.util.*;
 import static de.danielbechler.util.Collections.*;
 
 /** @author Daniel Bechler */
+@SuppressWarnings("UnusedDeclaration")
 public class Configuration implements NodeInspector
 {
+
 	/**
 	 * Defines how default values of primitive types (int, long, short, byte, char, boolean, float, double) will
 	 * be treated. A default value is either the one specified by the JDK (numbers are 0, booleans are false) or
@@ -64,6 +66,7 @@ public class Configuration implements NodeInspector
 	private boolean returnCircularNodes = true;
 	private boolean returnChildrenOfAddedNodes = false;
 	private boolean returnChildrenOfRemovedNodes = false;
+	private boolean treatEqualObjectsAsIdentical = false;
 	private PrimitiveDefaultValueMode treatPrimitivesAs = PrimitiveDefaultValueMode.UNASSIGNED;
 
 	public Configuration withCategory(final String category)
@@ -182,18 +185,35 @@ public class Configuration implements NodeInspector
 		return this;
 	}
 
+	/**
+	 * If this setting is set to true, the circular reference detector will treat equal objects as identical
+	 * (<code>==</code>). Otherwise only exact same instances will be considered identical. This is very useful
+	 * if you are dealing with objects that return copies of their properties, which could easily lead to
+	 * infinite loops unless equality is taken into account.
+	 *
+	 * @return This instance for easy chaining.
+	 */
+	public Configuration treatEqualObjectsAsIdentical(final boolean value)
+	{
+		this.treatEqualObjectsAsIdentical = value;
+		return this;
+	}
+
+	public boolean shouldTreatEqualObjectsAsSame()
+	{
+		return treatEqualObjectsAsIdentical;
+	}
+
 	public PrimitiveDefaultValueMode getPrimitiveDefaultValueMode()
 	{
 		return treatPrimitivesAs;
 	}
 
-	@Override
 	public boolean isIgnored(final Node node)
 	{
 		return node.isIgnored() || !isIncluded(node) || isExcluded(node);
 	}
 
-	@Override
 	public boolean isIncluded(final Node node)
 	{
 		if (node.isRootNode())
@@ -215,7 +235,6 @@ public class Configuration implements NodeInspector
 		return false;
 	}
 
-	@Override
 	public boolean isExcluded(final Node node)
 	{
 		if (excludedProperties.contains(node.getPropertyPath()))
@@ -229,7 +248,6 @@ public class Configuration implements NodeInspector
 		return false;
 	}
 
-	@Override
 	public boolean isEqualsOnly(final Node node)
 	{
 		final Class<?> propertyType = node.getType();
@@ -259,7 +277,6 @@ public class Configuration implements NodeInspector
 		return false;
 	}
 
-	@Override
 	public boolean isReturnable(final Node node)
 	{
 		if (node.isIgnored())
