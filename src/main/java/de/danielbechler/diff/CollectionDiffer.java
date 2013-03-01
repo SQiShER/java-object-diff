@@ -43,7 +43,6 @@ final class CollectionDiffer implements Differ<CollectionNode>
 		this.nodeInspector = nodeInspector;
 	}
 
-	@Override
 	public final CollectionNode compare(final Node parentNode, final Instances collectionInstances)
 	{
 		final CollectionNode collectionNode = collectionNodeFactory.create(parentNode, collectionInstances);

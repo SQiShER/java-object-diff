@@ -42,7 +42,6 @@ final class MapDiffer implements Differ<MapNode>
 		this.nodeInspector = nodeInspector;
 	}
 
-	@Override
 	public final MapNode compare(final Node parentNode, final Instances instances)
 	{
 		final MapNode mapNode = mapNodeFactory.createMapNode(parentNode, instances);

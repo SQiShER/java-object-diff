@@ -33,7 +33,6 @@ class PrimitiveDiffer implements Differ<DefaultNode>
 		this.configuration = configuration;
 	}
 
-	@Override
 	public final DefaultNode compare(final Node parentNode, final Instances instances)
 	{
 		if (!instances.getType().isPrimitive())

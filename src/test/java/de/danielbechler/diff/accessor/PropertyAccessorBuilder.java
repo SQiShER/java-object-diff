@@ -39,7 +39,6 @@ public final class PropertyAccessorBuilder
 		private Class<?> targetType;
 		private boolean readOnly;
 
-		@Override
 		public ReadOnly property(final String name, final Class<?> type)
 		{
 			this.propertyName = name;
@@ -47,7 +46,6 @@ public final class PropertyAccessorBuilder
 			return this;
 		}
 
-		@Override
 		public Buildable readOnly(final boolean readOnly)
 		{
 			this.readOnly = readOnly;

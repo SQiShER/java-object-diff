@@ -44,7 +44,6 @@ class MapEntryValueAccessExample
 		final Node mapNode = ObjectDifferFactory.getInstance().compare(working, base);
 		mapNode.visitChildren(new Node.Visitor()
 		{
-			@Override
 			public void accept(final Node node, final Visit visit)
 			{
 				final Object key = ((MapElement) node.getPathElement()).getKey();

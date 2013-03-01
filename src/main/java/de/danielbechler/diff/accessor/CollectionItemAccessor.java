@@ -67,7 +67,6 @@ public class CollectionItemAccessor extends AbstractAccessor implements TypeAwar
 		return null;
 	}
 
-	@Override
 	public Class<?> getType()
 	{
 		return referenceItem != null ? referenceItem.getClass() : null;

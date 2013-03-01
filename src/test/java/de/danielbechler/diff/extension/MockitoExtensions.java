@@ -22,11 +22,14 @@ import org.mockito.stubbing.*;
 /** @author Daniel Bechler */
 public class MockitoExtensions
 {
+	private MockitoExtensions()
+	{
+	}
+
 	public static <T> Answer<Class<T>> returnClass(final Class<T> clazz)
 	{
 		return new Answer<Class<T>>()
 		{
-			@Override
 			public Class<T> answer(final InvocationOnMock invocation) throws Throwable
 			{
 				return clazz;

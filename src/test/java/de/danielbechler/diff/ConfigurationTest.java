@@ -194,7 +194,6 @@ public class ConfigurationTest
 	{
 		return new Answer<Class<T>>()
 		{
-			@Override
 			public Class<T> answer(final InvocationOnMock invocation) throws Throwable
 			{
 				return aClass;
