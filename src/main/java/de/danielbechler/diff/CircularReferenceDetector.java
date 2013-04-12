@@ -24,7 +24,12 @@ import java.util.*;
 /** @author Daniel Bechler */
 class CircularReferenceDetector
 {
-	private final Deque<Entry> stack = new LinkedList<Entry>();
+	/**
+	 * It would be better to use <code>java.util.Deque</code> instead of the linked list, but that was first
+	 * introduced in Java 6 and would break compatibility with Java 5.
+	 */
+	@SuppressWarnings("TypeMayBeWeakened")
+	private final LinkedList<Entry> stack = new LinkedList<Entry>();
 
 	private ReferenceMatchingMode referenceMatchingMode = ReferenceMatchingMode.EQUALITY_OPERATOR;
 
