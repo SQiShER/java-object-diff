@@ -1,7 +1,3 @@
-## Mailing List
-
-Join the new [mailing list](https://groups.google.com/forum/?fromgroups#!forum/java-object-diff)!
-
 ## Introduction
 
 Sometimes you need to figure out, how one version of an object differs from another one. One of the simplest solutions that'll cross your mind is most certainly to use reflection to scan the object for fields or getters and use them to compare the values of the different object instances. In many cases this is a perfectly valid strategy and the way to go. After all, we want to keep things simple, don't we?
