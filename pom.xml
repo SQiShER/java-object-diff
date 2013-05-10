@@ -27,7 +27,7 @@
     <groupId>de.danielbechler</groupId>
     <artifactId>java-object-diff</artifactId>
     <name>Java Object Diff</name>
-    <version>0.11.1</version>
+    <version>0.12-SNAPSHOT</version>
 
     <developers>
         <developer>
