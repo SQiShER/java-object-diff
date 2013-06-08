@@ -76,6 +76,10 @@ final class BeanDiffer implements Differ<Node>
 		{
 			compareUsingIntrospection(beanNode, instances);
 		}
+		else if (nodeInspector.isComparable(beanNode))
+		{
+			compareUsingCompare(beanNode, instances);
+		}
 		else if (nodeInspector.isEqualsOnly(beanNode))
 		{
 			compareUsingEquals(beanNode, instances);
@@ -100,6 +104,18 @@ final class BeanDiffer implements Differ<Node>
 	private void compareUsingEquals(final Node beanNode, final Instances instances)
 	{
 		if (instances.areEqual())
+		{
+			beanNode.setState(Node.State.UNTOUCHED);
+		}
+		else
+		{
+			beanNode.setState(Node.State.CHANGED);
+		}
+	}
+
+	private void compareUsingCompare(final Node beanNode, final Instances instances)
+	{
+		if (instances.areComparable())
 		{
 			beanNode.setState(Node.State.UNTOUCHED);
 		}

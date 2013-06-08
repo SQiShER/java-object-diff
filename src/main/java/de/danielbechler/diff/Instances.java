@@ -172,7 +172,16 @@ class Instances
 		return isEqual(base, working);
 	}
 
-	public boolean areSame()
+    public boolean areComparable()
+	{
+		return areComparable((Comparable) base, (Comparable) working);
+	}
+
+    private boolean areComparable(Comparable base, Comparable working) {
+        return base.compareTo(working) == 0;
+    }
+
+    public boolean areSame()
 	{
 		return working == base;
 	}

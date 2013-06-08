@@ -78,6 +78,8 @@ public class Configuration implements NodeInspector
 	private final Collection<PropertyPath> excludedProperties = new HashSet<PropertyPath>(10);
 	private final Collection<PropertyPath> equalsOnlyProperties = new LinkedHashSet<PropertyPath>(10);
 	private final Collection<Class<?>> equalsOnlyTypes = new LinkedHashSet<Class<?>>(10);
+	private final Collection<Class<?>> comparableTypes = new LinkedHashSet<Class<?>>(10);
+	private final Map<Class<?>, Comparator<?>> compareTypes = new HashMap<Class<?>, Comparator<?>>(10);
 	private boolean returnUnchangedNodes = false;
 	private boolean returnIgnoredNodes = false;
 	private boolean returnCircularNodes = true;
@@ -127,6 +129,18 @@ public class Configuration implements NodeInspector
 	public Configuration withEqualsOnlyType(final Class<?> type)
 	{
 		this.equalsOnlyTypes.add(type);
+		return this;
+	}
+
+	public Configuration withComparableType(final Class<?> type)
+	{
+		this.comparableTypes.add(type);
+		return this;
+	}
+
+	public Configuration withCompareType(final Class<?> type, Comparator<?> comparator)
+	{
+		this.compareTypes.put(type, comparator);
 		return this;
 	}
 
@@ -286,6 +300,7 @@ public class Configuration implements NodeInspector
 		return false;
 	}
 
+
 	public boolean isReturnable(final Node node)
 	{
 		if (node.isIgnored())
@@ -311,9 +326,17 @@ public class Configuration implements NodeInspector
 		return true;
 	}
 
-	public boolean isIntrospectible(final Node node)
+    public boolean isComparable(Node node) {
+        return comparableTypes.contains(node.getType()) && Comparable.class.isAssignableFrom(node.getType());
+    }
+
+    public boolean isIntrospectible(final Node node)
 	{
 		if (isEqualsOnly(node))
+		{
+			return false;
+		}
+        else if (isComparable(node))
 		{
 			return false;
 		}

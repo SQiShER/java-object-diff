@@ -189,7 +189,35 @@ public class ConfigurationTest
 		assertThat(configuration.isIntrospectible(node)).isFalse();
 	}
 
-	@SuppressWarnings({"TypeMayBeWeakened"})
+    @Test
+    public void testIsComparableWithAComparableObjectAddedInConfiguration() throws Exception
+    {
+        final Class aClass = ObjectImplementComparable.class;
+        this.configuration.withComparableType(aClass);
+        when(node.getType()).thenReturn(aClass);
+
+        assertThat(this.configuration.isComparable(node), is(true));
+    }
+
+    @Test
+    public void testIsComparableWithAComparableObjectNotAddedInConfiguration() throws Exception
+    {
+        final Class aClass = ObjectImplementComparable.class;
+        when(node.getType()).thenReturn(aClass);
+
+        assertThat(this.configuration.isComparable(node), is(false));
+    }
+
+    @Test
+    public void testIsNotComparableWithANotComparableObject() throws Exception
+    {
+        final Class aClass = Object.class;
+        when(node.getType()).thenReturn(aClass);
+
+        assertThat(this.configuration.isComparable(node), is(false));
+    }
+
+    @SuppressWarnings({"TypeMayBeWeakened"})
 	private static <T> Answer<Class<T>> returnClass(final Class<T> aClass)
 	{
 		return new Answer<Class<T>>()

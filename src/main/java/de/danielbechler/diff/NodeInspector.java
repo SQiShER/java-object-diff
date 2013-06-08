@@ -31,6 +31,8 @@ interface NodeInspector
 
 	boolean isReturnable(Node node);
 
+    boolean isComparable(Node node);
+
 	/**
 	 * @return Returns <code>true</code> if the object represented by the given node should be compared via
 	 *         introspection. It must always return </code><code>false</code> if {@link
