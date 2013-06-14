@@ -14,29 +14,36 @@
  * limitations under the License.
  */
 
-package de.danielbechler.diff;
-
-import de.danielbechler.diff.node.*;
+package de.danielbechler.diff.mock;
 
 /** @author Daniel Bechler */
-interface NodeInspector
+@SuppressWarnings({
+		"UnusedDeclaration"
+})
+public class ObjectWithStringAndCompareTo implements Comparable<ObjectWithStringAndCompareTo>
 {
-	boolean isIgnored(Node node);
+	private String value;
 
-	boolean isIncluded(Node node);
+	public ObjectWithStringAndCompareTo()
+	{
+	}
 
-	boolean isExcluded(Node node);
+	public ObjectWithStringAndCompareTo(final String value)
+	{
+		this.value = value;
+	}
 
-    boolean isCompareToOnly(Node node);
+	public String getValue()
+	{
+		return value;
+	}
 
-	boolean isEqualsOnly(Node node);
+	public void setValue(final String value)
+	{
+		this.value = value;
+	}
 
-	boolean isReturnable(Node node);
-
-	/**
-	 * @return Returns <code>true</code> if the object represented by the given node should be compared via
-	 *         introspection. It must always return </code><code>false</code> if {@link
-	 *         #isEqualsOnly(de.danielbechler.diff.node.Node)} returns <code>true</code>.
-	 */
-	boolean isIntrospectible(Node node);
+    public int compareTo(ObjectWithStringAndCompareTo objectWithStringAndCompareTo) {
+        return this.value.compareTo(objectWithStringAndCompareTo.value);
+    }
 }

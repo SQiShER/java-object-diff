@@ -24,8 +24,6 @@ import de.danielbechler.diff.path.*;
 import org.mockito.Mock;
 import org.testng.annotations.*;
 
-import java.math.BigDecimal;
-
 import static de.danielbechler.diff.node.NodeAssertions.assertThat;
 import static java.util.Arrays.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -99,6 +97,18 @@ public class BeanDifferShould
 		assertThat(node).self().hasState(Node.State.IGNORED);
 	}
 
+    @Test
+    public void compare_bean_via_compare_to()
+    {
+        final ObjectWithCompareTo working = new ObjectWithCompareTo("foo", "ignore");
+        final ObjectWithCompareTo base = new ObjectWithCompareTo("foo", "ignore this too");
+        configuration.withCompareToOnlyType(ObjectWithCompareTo.class);
+
+        final Node node = differ.compare(Node.ROOT, Instances.of(working, base));
+
+        assertThat(node).self().isUntouched();
+    }
+
 	@Test
 	public void compare_bean_via_equals()
 	{
@@ -110,32 +120,6 @@ public class BeanDifferShould
 
 		assertThat(node).self().isUntouched();
 	}
-
-	@Test
-	public void compare_bean_via_comparable_when_same_value()
-	{
-		final BigDecimal working = new BigDecimal("1.0");
-		final BigDecimal base = new BigDecimal("1.00");
-		configuration.withComparableType(BigDecimal.class);
-
-		final Node node = differ.compare(Node.ROOT, Instances.of(working, base));
-
-		assertThat(node).self().isUntouched();
-	}
-
-	@Test
-	public void compare_bean_via_comparable_when_different_value()
-	{
-		final BigDecimal working = new BigDecimal("1.0");
-		final BigDecimal base = new BigDecimal("1.01");
-		configuration.withComparableType(BigDecimal.class);
-
-		final Node node = differ.compare(Node.ROOT, Instances.of(working, base));
-
-		assertThat(node).self().hasChanges();
-	}
-
-
 
 	@Test
 	public void compare_bean_via_introspection_and_delegate_comparison_of_properties()

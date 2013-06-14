@@ -19,6 +19,7 @@ package de.danielbechler.util;
 import org.slf4j.*;
 
 import java.lang.reflect.*;
+import java.math.BigDecimal;
 import java.net.*;
 import java.util.*;
 
@@ -96,6 +97,11 @@ public final class Classes
 				URL.class.equals(clazz) ||
 				Locale.class.equals(clazz) ||
 				Class.class.equals(clazz);
+	}
+
+	public static boolean isComparableType(final Class<?> clazz)
+	{
+		return BigDecimal.class.equals(clazz);
 	}
 
 	public static <T> T freshInstanceOf(final Class<T> clazz)
