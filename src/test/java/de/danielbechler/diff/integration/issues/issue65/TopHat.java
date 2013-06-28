@@ -17,6 +17,7 @@
 package de.danielbechler.diff.integration.issues.issue65;
 
 /** @author Daniel Bechler */
+@SuppressWarnings("UnusedDeclaration")
 public class TopHat extends Hat
 {
 	private int height;

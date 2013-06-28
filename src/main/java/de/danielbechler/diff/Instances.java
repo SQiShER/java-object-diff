@@ -184,11 +184,12 @@ class Instances
 
 	public Class<?> getType()
 	{
+		final Set<Class<?>> types = Classes.typesOf(working, base, fresh);
 		if (sourceAccessor instanceof TypeAwareAccessor)
 		{
-			return ((TypeAwareAccessor) sourceAccessor).getType();
+			final Class<?> sharedType = Classes.mostSpecificSharedType(types);
+			return sharedType != null ? sharedType : ((TypeAwareAccessor) sourceAccessor).getType();
 		}
-		final Set<Class<?>> types = Classes.typesOf(working, base, fresh);
 		if (types.isEmpty())
 		{
 			return null;

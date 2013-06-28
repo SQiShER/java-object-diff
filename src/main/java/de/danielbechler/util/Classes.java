@@ -18,6 +18,7 @@ package de.danielbechler.util;
 
 import org.slf4j.*;
 
+import java.io.*;
 import java.lang.reflect.*;
 import java.net.*;
 import java.util.*;
@@ -51,13 +52,6 @@ public final class Classes
 
 	public static boolean isPrimitiveNumericType(final Class<?> clazz)
 	{
-//		numericTypes.add(Character.class);
-//		numericTypes.add(Byte.class);
-//		numericTypes.add(Short.class);
-//		numericTypes.add(Integer.class);
-//		numericTypes.add(Long.class);
-//		numericTypes.add(Float.class);
-//		numericTypes.add(Double.class);
 		return PRIMITIVE_NUMERIC_TYPES.contains(clazz);
 	}
 
@@ -158,4 +152,74 @@ public final class Classes
 		return matching;
 	}
 
+	/**
+	 * This method will not extract the interfaces of the given types, since there is no way to determine, which
+	 * interface is the most specific one (due to their compositional nature). However, if one or more interfaces
+	 * are given as type, they will be considered as most specific shared type.
+	 *
+	 * @return The most specific class (or interface) shared by all given types.
+	 */
+	public static Class<?> mostSpecificSharedType(final Collection<Class<?>> types)
+	{
+		final Collection<Class<?>> potentiallySharedTypes = superclassesOf(types);
+		potentiallySharedTypes.addAll(types);
+
+		final Collection<Class<?>> sharedTypes = new TreeSet<Class<?>>(new ClassComparator());
+		for (final Class<?> potentiallySharedType : potentiallySharedTypes)
+		{
+			int matches = 0;
+			for (final Class<?> type : types)
+			{
+				if (potentiallySharedType.isAssignableFrom(type))
+				{
+					matches++;
+				}
+			}
+			if (matches == types.size())
+			{
+				sharedTypes.add(potentiallySharedType);
+			}
+		}
+		if (sharedTypes.isEmpty())
+		{
+			return null;
+		}
+		return sharedTypes.iterator().next();
+	}
+
+	private static Collection<Class<?>> superclassesOf(final Iterable<Class<?>> types)
+	{
+		final Collection<Class<?>> superclasses = new HashSet<Class<?>>();
+		for (final Class<?> type : types)
+		{
+			Class<?> superclass = type.getSuperclass();
+			while (superclass != null && superclass != Object.class)
+			{
+				superclasses.add(superclass);
+				superclass = superclass.getSuperclass();
+			}
+		}
+		return superclasses;
+	}
+
+	private static class ClassComparator implements Comparator<Class<?>>, Serializable
+	{
+		private static final long serialVersionUID = 56568941407903459L;
+
+		public int compare(final Class<?> o1, final Class<?> o2)
+		{
+			if (o1.isAssignableFrom(o2))
+			{
+				return 1;
+			}
+			else if (o2.isAssignableFrom(o1))
+			{
+				return -1;
+			}
+			else
+			{
+				return 0;
+			}
+		}
+	}
 }

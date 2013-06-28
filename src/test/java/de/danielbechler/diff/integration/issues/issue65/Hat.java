@@ -17,6 +17,7 @@
 package de.danielbechler.diff.integration.issues.issue65;
 
 /** @author Daniel Bechler */
+@SuppressWarnings("UnusedDeclaration")
 public class Hat
 {
 	private int size;

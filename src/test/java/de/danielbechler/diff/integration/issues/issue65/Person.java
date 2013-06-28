@@ -17,13 +17,13 @@
 package de.danielbechler.diff.integration.issues.issue65;
 
 /** @author Daniel Bechler */
+@SuppressWarnings("UnusedDeclaration")
 public class Person
 {
 	private Hat hat;
 
 	public Person(final Hat hat)
 	{
-		super();
 		this.hat = hat;
 	}
 
