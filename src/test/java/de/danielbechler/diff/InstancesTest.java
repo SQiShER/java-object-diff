@@ -20,9 +20,7 @@ import de.danielbechler.diff.accessor.*;
 import org.testng.annotations.*;
 
 import java.lang.reflect.*;
-import java.util.*;
 
-import static de.danielbechler.diff.extension.AssertionsExtensions.*;
 import static de.danielbechler.diff.extension.MockitoExtensions.*;
 import static org.fest.assertions.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -30,36 +28,6 @@ import static org.mockito.Mockito.*;
 /** @author Daniel Bechler */
 public class InstancesTest
 {
-	@Test(expectedExceptions = IllegalArgumentException.class)
-	public void testGetTypeThrowsExceptionForIncompatibleTypes() throws Exception
-	{
-		new Instances(RootAccessor.getInstance(), "foo", 1, null).getType();
-	}
-
-	@Test
-	public void testGetTypeReturnsCollectionTypeForDifferentCollectionImplementations() throws Exception
-	{
-		final Instances instances = new Instances(RootAccessor.getInstance(), new ArrayList<Object>(), new LinkedHashSet(), null);
-		final Class<?> type = instances.getType();
-		assertThat(type == Collection.class);
-	}
-
-	@Test
-	public void testGetTypeReturnsMapTypeForDifferentMapImplementations() throws Exception
-	{
-		final Instances instances = new Instances(RootAccessor.getInstance(), new HashMap<Object, Object>(), new TreeMap<Object, Object>(), null);
-		final Class<?> type = instances.getType();
-		assertThat(type == Map.class);
-	}
-
-	@Test
-	public void testGetTypeReturnsTypeOfTypeAwareAccessor() throws Exception
-	{
-		final TypeAwareAccessor typeAwareAccessor = mockTypeAwareAccessorOfType(Long.class);
-		final Instances instances = new Instances(typeAwareAccessor, 0, 0, 0);
-		assertThat(instances.getType()).is(ofType(Long.class));
-	}
-
 	private static <T> TypeAwareAccessor mockTypeAwareAccessorOfType(final Class<T> clazz)
 	{
 		final TypeAwareAccessor typeAwareAccessor = mock(TypeAwareAccessor.class);

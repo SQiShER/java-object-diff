@@ -182,13 +182,22 @@ class Instances
 		return working == null && base == null;
 	}
 
+	private Class<?> tryToGetTypeFromSourceAccessor()
+	{
+		if (sourceAccessor instanceof TypeAwareAccessor)
+		{
+			return ((TypeAwareAccessor) sourceAccessor).getType();
+		}
+		return null;
+	}
+
 	public Class<?> getType()
 	{
 		final Set<Class<?>> types = Classes.typesOf(working, base, fresh);
-		if (sourceAccessor instanceof TypeAwareAccessor)
+		final Class<?> sourceAccessorType = tryToGetTypeFromSourceAccessor();
+		if (Classes.isPrimitiveType(sourceAccessorType))
 		{
-			final Class<?> sharedType = Classes.mostSpecificSharedType(types);
-			return sharedType != null ? sharedType : ((TypeAwareAccessor) sourceAccessor).getType();
+			return sourceAccessorType;
 		}
 		if (types.isEmpty())
 		{
@@ -200,7 +209,6 @@ class Instances
 		}
 		if (types.size() > 1)
 		{
-//
 // 			The following lines could be added if more precise type resolution is required:
 //
 //			if (Classes.allAssignableFrom(SortedSet.class, types))
@@ -237,6 +245,15 @@ class Instances
 			}
 			else
 			{
+				final Class<?> sharedType = Classes.mostSpecificSharedType(types);
+				if (sharedType != null)
+				{
+					return sharedType;
+				}
+				else if (sourceAccessorType != null)
+				{
+					return sourceAccessorType;
+				}
 				// special handling for beans and arrays should go here
 			}
 		}

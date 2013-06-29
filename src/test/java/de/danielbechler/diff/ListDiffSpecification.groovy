@@ -18,6 +18,7 @@ package de.danielbechler.diff
 
 import de.danielbechler.diff.path.CollectionElement
 import de.danielbechler.diff.visitor.PrintingVisitor
+import spock.lang.Ignore
 import spock.lang.Specification
 
 /**
@@ -32,6 +33,7 @@ class ListDiffSpecification extends Specification
     objectDiffer = ObjectDifferFactory.getInstance();
   }
 
+  @Ignore
   def "detects position switch"()
   {
     de.danielbechler.diff.node.Node node;
