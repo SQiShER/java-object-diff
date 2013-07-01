@@ -118,6 +118,7 @@
                         <include>**/*Test.java</include>
                         <include>**/*Should.java</include>
                         <include>**/*Spec.java</include>
+                        <include>**/*Specification.java</include>
                     </includes>
                 </configuration>
                 <executions>
@@ -206,18 +207,6 @@
                                 <source>src/test/groovy</source>
                             </sources>
                         </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.easyb</groupId>
-                <artifactId>maven-easyb-plugin</artifactId>
-                <version>1.4</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
                     </execution>
                 </executions>
             </plugin>
