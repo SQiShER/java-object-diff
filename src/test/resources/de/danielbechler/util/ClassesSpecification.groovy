@@ -15,15 +15,18 @@
  */
 
 package de.danielbechler.util
+
 import spock.lang.Specification
+import spock.lang.Unroll
 
 import java.util.concurrent.ConcurrentSkipListMap
+
 /**
  * @author Daniel Bechler
  */
 class ClassesSpecification extends Specification
 {
-//  @Unroll
+  @Unroll
   def "Classes.mostSpecificSharedType should return #expectedResult for #types"()
   {
     expect:

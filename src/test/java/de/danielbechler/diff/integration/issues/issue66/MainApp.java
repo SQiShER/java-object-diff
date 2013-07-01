@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.danielbechler.diff.integration.issues.issue65;
+package de.danielbechler.diff.integration.issues.issue66;
 
 import de.danielbechler.diff.*;
 import de.danielbechler.diff.node.*;

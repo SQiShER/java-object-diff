@@ -14,31 +14,30 @@
  * limitations under the License.
  */
 
-package de.danielbechler.diff.integration.issues.issue65;
+package de.danielbechler.diff.integration.issues.issue66;
 
 /** @author Daniel Bechler */
 @SuppressWarnings("UnusedDeclaration")
-public class TopHat extends Hat
+public class Hat
 {
-	private int height;
+	private int size;
 
-	public TopHat()
+	public Hat()
 	{
 	}
 
-	public TopHat(final int height, final int size)
+	public Hat(final int size)
 	{
-		super(size);
-		this.height = height;
+		this.size = size;
 	}
 
-	public int getHeight()
+	public int getSize()
 	{
-		return height;
+		return size;
 	}
 
-	public void setHeight(final int height)
+	public void setSize(final int size)
 	{
-		this.height = height;
+		this.size = size;
 	}
 }
