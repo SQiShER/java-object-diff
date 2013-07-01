@@ -15,7 +15,9 @@
   ~ limitations under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>org.sonatype.oss</groupId>
@@ -27,7 +29,7 @@
     <groupId>de.danielbechler</groupId>
     <artifactId>java-object-diff</artifactId>
     <name>Java Object Diff</name>
-    <version>0.12</version>
+    <version>0.12-SNAPSHOT</version>
 
     <developers>
         <developer>
@@ -94,7 +96,7 @@
             <plugin>
                 <artifactId>maven-release-plugin</artifactId>
                 <configuration>
-                    <scmCommentPrefix />
+                    <scmCommentPrefix/>
                 </configuration>
             </plugin>
             <plugin>
