@@ -24,6 +24,8 @@ import org.mockito.invocation.*;
 import org.mockito.stubbing.*;
 import org.testng.annotations.*;
 
+import java.math.BigDecimal;
+
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.*;
@@ -98,6 +100,35 @@ public class ConfigurationTest
 		assertThat(configuration.isIgnored(node), is(true));
 	}
 
+    @SuppressWarnings({"unchecked"})
+    @Test
+    public void testIsCompareToOnlyWithConfiguredPropertyType() throws Exception
+    {
+        final Class aClass = ObjectWithStringAndCompareTo.class;
+        when(node.getType()).thenReturn(aClass);
+        configuration.withCompareToOnlyType(aClass);
+        assertThat(configuration.isCompareToOnly(node), is(true));
+    }
+
+    @SuppressWarnings({"unchecked"})
+    @Test
+    public void testIsCompareToOnlyWithConfiguredPropertyTypeNotComparable() throws Exception
+    {
+        final Class aClass = ObjectWithString.class;
+        when(node.getType()).thenReturn(aClass);
+        configuration.withCompareToOnlyType(aClass);
+        assertThat(configuration.isCompareToOnly(node), is(false));
+    }
+
+    @SuppressWarnings({"unchecked"})
+    @Test
+    public void testIsCompareToOnlyWithComparableType() throws Exception
+    {
+        final Class aClass = BigDecimal.class;
+        when(node.getType()).thenReturn(aClass);
+        assertThat(configuration.isCompareToOnly(node), is(true));
+    }
+
 	@Test
 	public void testIsEqualsOnlyWithConfiguredPropertyPath() throws Exception
 	{
@@ -143,13 +174,6 @@ public class ConfigurationTest
 	}
 
 	@Test
-	public void testIsIntrospectibleWithEqualsOnlyNodeReturnsFalse()
-	{
-		when(node.getType()).then(returnClass(String.class));
-		assertThat(configuration.isIntrospectible(node)).isFalse();
-	}
-
-	@Test
 	public void testIsIntrospectibleWithUntouchedNonEqualsOnlyNodeReturnsFalse()
 	{
 		when(node.getType()).then(returnClass(ObjectWithString.class));
@@ -189,7 +213,7 @@ public class ConfigurationTest
 		assertThat(configuration.isIntrospectible(node)).isFalse();
 	}
 
-	@SuppressWarnings({"TypeMayBeWeakened"})
+    @SuppressWarnings({"TypeMayBeWeakened"})
 	private static <T> Answer<Class<T>> returnClass(final Class<T> aClass)
 	{
 		return new Answer<Class<T>>()

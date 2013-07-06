@@ -25,6 +25,7 @@ import de.danielbechler.util.Collections;
 import java.util.*;
 
 import static de.danielbechler.util.Objects.*;
+import static de.danielbechler.util.Comparables.*;
 
 /** @author Daniel Bechler */
 @SuppressWarnings({"UnusedDeclaration"})
@@ -172,7 +173,12 @@ class Instances
 		return isEqual(base, working);
 	}
 
-	public boolean areSame()
+    public boolean areEqualByComparison()
+	{
+		return isEqualByComparison((Comparable) base, (Comparable) working);
+	}
+
+    public boolean areSame()
 	{
 		return working == base;
 	}

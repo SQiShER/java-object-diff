@@ -14,29 +14,25 @@
  * limitations under the License.
  */
 
-package de.danielbechler.diff;
-
-import de.danielbechler.diff.node.*;
+package de.danielbechler.util;
 
 /** @author Daniel Bechler */
-interface NodeInspector
+public class Comparables
 {
-	boolean isIgnored(Node node);
+	private Comparables()
+	{
+	}
 
-	boolean isIncluded(Node node);
-
-	boolean isExcluded(Node node);
-
-    boolean isCompareToOnly(Node node);
-
-	boolean isEqualsOnly(Node node);
-
-	boolean isReturnable(Node node);
-
-	/**
-	 * @return Returns <code>true</code> if the object represented by the given node should be compared via
-	 *         introspection. It must always return </code><code>false</code> if {@link
-	 *         #isEqualsOnly(de.danielbechler.diff.node.Node)} returns <code>true</code>.
-	 */
-	boolean isIntrospectible(Node node);
+	public static <T extends Comparable<T>> boolean isEqualByComparison(final T a, final T b)
+	{
+		if (a != null)
+		{
+			return a.compareTo(b) == 0;
+		}
+		else if (b != null)
+		{
+			return b.compareTo(a) == 0;
+		}
+		return true;
+	}
 }
