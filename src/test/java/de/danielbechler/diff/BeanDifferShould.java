@@ -97,6 +97,18 @@ public class BeanDifferShould
 		assertThat(node).self().hasState(Node.State.IGNORED);
 	}
 
+    @Test
+    public void compare_bean_via_compare_to()
+    {
+        final ObjectWithCompareTo working = new ObjectWithCompareTo("foo", "ignore");
+        final ObjectWithCompareTo base = new ObjectWithCompareTo("foo", "ignore this too");
+        configuration.withCompareToOnlyType(ObjectWithCompareTo.class);
+
+        final Node node = differ.compare(Node.ROOT, Instances.of(working, base));
+
+        assertThat(node).self().isUntouched();
+    }
+
 	@Test
 	public void compare_bean_via_equals()
 	{

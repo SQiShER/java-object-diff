@@ -72,14 +72,18 @@ final class BeanDiffer implements Differ<Node>
 
 	private void compareUsingAppropriateMethod(final Node beanNode, final Instances instances)
 	{
-		if (nodeInspector.isIntrospectible(beanNode))
+		if (nodeInspector.isCompareToOnly(beanNode))
 		{
-			compareUsingIntrospection(beanNode, instances);
+			compareUsingCompareTo(beanNode, instances);
 		}
 		else if (nodeInspector.isEqualsOnly(beanNode))
 		{
 			compareUsingEquals(beanNode, instances);
 		}
+        else if (nodeInspector.isIntrospectible(beanNode))
+        {
+            compareUsingIntrospection(beanNode, instances);
+        }
 	}
 
 	private void compareUsingIntrospection(final Node beanNode, final Instances beanInstances)
@@ -95,6 +99,19 @@ final class BeanDiffer implements Differ<Node>
 			}
 		}
 	}
+
+    @SuppressWarnings({"MethodMayBeStatic"})
+    private void compareUsingCompareTo(final Node beanNode, final Instances instances)
+    {
+        if (instances.areEqualByComparison())
+        {
+            beanNode.setState(Node.State.UNTOUCHED);
+        }
+        else
+        {
+            beanNode.setState(Node.State.CHANGED);
+        }
+    }
 
 	@SuppressWarnings({"MethodMayBeStatic"})
 	private void compareUsingEquals(final Node beanNode, final Instances instances)
