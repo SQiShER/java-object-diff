@@ -1,58 +1,35 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Java Object Diff by SQiShER</title>
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script src="javascripts/main.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
     <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
-<script type="text/javascript">
-
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-170506-5']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-
-</script>
+    <title>java-object-diff by SQiShER</title>
   </head>
+
   <body>
+    <header>
+      <div class="inner">
+        <h1>java-object-diff</h1>
+        <h2>Framework to diff and merge Java objects</h2>
+        <a href="https://github.com/SQiShER/java-object-diff" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
 
-      <header>
-        <h1>Java Object Diff</h1>
-        <p>Framework to diff and merge Java objects</p>
-      </header>
-
-      <div id="banner">
-        <span id="logo"></span>
-
-        <a href="https://github.com/SQiShER/java-object-diff" class="button fork"><strong>View On GitHub</strong></a>
-        <div class="downloads">
-          <span>Downloads:</span>
-          <ul>
-            <li><a href="https://github.com/SQiShER/java-object-diff/zipball/master" class="button">ZIP</a></li>
-            <li><a href="https://github.com/SQiShER/java-object-diff/tarball/master" class="button">TAR</a></li>
-          </ul>
-        </div>
-      </div><!-- end banner -->
-
-    <div class="wrapper">
-      <nav>
-        <ul></ul>
-      </nav>
-      <section>
-        <h2>Introduction</h2>
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h2>
+<a name="introduction" class="anchor" href="#introduction"><span class="octicon octicon-link"></span></a>Introduction</h2>
 
 <p>Sometimes you need to figure out, how one version of an object differs from another one. One of the simplest solutions that'll cross your mind is most certainly to use reflection to scan the object for fields or getters and use them to compare the values of the different object instances. In many cases this is a perfectly valid strategy and the way to go. After all, we want to keep things simple, don't we?</p>
 
@@ -64,18 +41,20 @@
 
 <p>This library will hide all the complexities of deep object comparison behind one line of code:</p>
 
-<pre><code>Node root = ObjectDifferFactory.getInstance().compare(working, base);
+<pre><code>Node root = ObjectDifferFactory.getInstance().compare(workingObject, baseObject);
 </code></pre>
 
 <p>This generates a tree structure of the given object type and lets you traverse its nodes via visitors. Each node represents  one property (or collection item) of the underlying object and tells you exactly if and how the value differs from the base version. It also  provides accessors to read, write and remove the value from or to any given instance. This way, all you need to worry about is <strong>how to treat</strong> changes and <strong>not how to find</strong> them.</p>
 
 <p>This library has been battle-tested in a rather big project of mine, where I use it to generate <strong>activity streams</strong>, resolve database <strong>update conflics</strong>, display <strong>change logs</strong> and limit the scope of entity updates to only a <strong>subset of properties</strong>, based on the context or user permissions. It didn't let me down so far and I hope that it can help you too!</p>
 
-<h2>Getting Started</h2>
+<h2>
+<a name="getting-started" class="anchor" href="#getting-started"><span class="octicon octicon-link"></span></a>Getting Started</h2>
 
 <p>To learn how to use <strong>Java Object Diff</strong>, please have a look at the <a href="https://github.com/SQiShER/java-object-diff/wiki/Getting-Started">Starter Guide</a>.</p>
 
-<h2>Features</h2>
+<h2>
+<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h2>
 
 <ul>
 <li>Generates a graph of your object, in which each node provides information about the changes and accessors to read and write the value on any instance of the given type.</li>
@@ -86,7 +65,8 @@
 <li>Comparison can be improved and customized via annotations and/or configuration API.</li>
 <li>No annotations needed. (However, they exist for your convenience.)</li>
 <li>No runtime dependencies except for <a href="http://www.slf4j.org/">SLF4J</a>.</li>
-</ul><h2>Use Cases</h2>
+</ul><h2>
+<a name="use-cases" class="anchor" href="#use-cases"><span class="octicon octicon-link"></span></a>Use Cases</h2>
 
 <p><strong>Java Object Diff</strong> is currently used (but not limited) to...</p>
 
@@ -95,24 +75,39 @@
 <li>Visualize the differences between object versions</li>
 <li>Automatically resolve conflicts on conflicting database updates</li>
 <li>Detect and persist only properties that were actually changed</li>
-</ul><h2>How to Improve</h2>
-
-<ul>
-<li>Performance has not been a hight priority so far, so there is still some room for improvement.</li>
-<li>Object comparison is very strict. Objects with different types cannot be compared, even when they share the same interface.</li>
-<li>It should be possible to apply the annotations to fields and not only to methods, to allow for some advanced merging techniques.</li>
-<li>It would be great to integrate a text-based diff algorithm for regular strings.</li>
-<li>Some out-out-of-the-box Mergers would be nice (e.g. <code>LeftToRightMerger</code>, <code>NonConflictingMerger</code>, etc.)</li>
-<li>Needs more documentation and could use some more tests.</li>
-</ul><h2>Known Issues and Limitations</h2>
+</ul><h2>
+<a name="known-issues-and-limitations" class="anchor" href="#known-issues-and-limitations"><span class="octicon octicon-link"></span></a>Known Issues and Limitations</h2>
 
 <p>Please refer to the <a href="https://github.com/SQiShER/java-object-diff/issues?state=open">Issue Tracker</a> for a list of currently known limitations.</p>
-      </section>
-      <footer>
-        <p>Project maintained by <a href="https://github.com/SQiShER">SQiShER</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></small></p>
-      </footer>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/SQiShER/java-object-diff/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/SQiShER/java-object-diff/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/SQiShER/java-object-diff"></a> is maintained by <a href="https://github.com/SQiShER">SQiShER</a>.</p>
+
+          <p>This page was generated by <a href="pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
     </div>
-    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+
+            <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-170506-5");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
   </body>
 </html>
