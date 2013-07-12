@@ -1,6 +1,6 @@
 ## Introduction
 
-`java-object-diff` is a simple, yet powerful library to find differences between Java objects. It simply takes two objects and generates a tree structure representing the differences between them and their nested objects. This tree can then be traversed to extract information or apply changes to the underlying data structure.
+`java-object-diff` is a simple, yet powerful library to find differences between Java objects. It takes two objects and generates a tree structure that represents any differences between the objects and their children. This tree can then be traversed to extract more information or apply changes to the underlying data structures.
 
 ## Features
 
