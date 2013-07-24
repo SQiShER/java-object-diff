@@ -21,6 +21,7 @@ import de.danielbechler.diff.node.*;
 import de.danielbechler.util.*;
 import de.danielbechler.util.Collections;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
@@ -53,6 +54,17 @@ final class MapDiffer implements Differ<MapNode>
 		else if (nodeInspector.isEqualsOnly(mapNode))
 		{
 			if (instances.areEqual())
+			{
+				mapNode.setState(Node.State.UNTOUCHED);
+			}
+			else
+			{
+				mapNode.setState(Node.State.CHANGED);
+			}
+		}
+		else if (nodeInspector.isWithMethodEquals(mapNode)){
+			String method = nodeInspector.getWithMethodEqualsMethod(mapNode);
+			if (instances.areMethodResultEqual(method))
 			{
 				mapNode.setState(Node.State.UNTOUCHED);
 			}

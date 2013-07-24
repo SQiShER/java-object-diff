@@ -20,6 +20,7 @@ import de.danielbechler.diff.annotation.*;
 import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.path.*;
 import de.danielbechler.util.*;
+import groovy.lang.Tuple;
 
 import java.util.*;
 
@@ -77,8 +78,10 @@ public class Configuration implements NodeInspector
 	private final Collection<PropertyPath> includedProperties = new HashSet<PropertyPath>(10);
 	private final Collection<PropertyPath> excludedProperties = new HashSet<PropertyPath>(10);
 	private final Collection<PropertyPath> equalsOnlyProperties = new LinkedHashSet<PropertyPath>(10);
+	private final Collection<MethodEqualPropertyPathAndMethod> methodEqualProperties = new LinkedHashSet<MethodEqualPropertyPathAndMethod>(10);
     private final Collection<Class<?>> compareToOnlyTypes = new LinkedHashSet<Class<?>>(10);
 	private final Collection<Class<?>> equalsOnlyTypes = new LinkedHashSet<Class<?>>(10);
+	private final Collection<MethodEqualClassAndMethod> methodEqualTypes = new LinkedHashSet<MethodEqualClassAndMethod>(10);
 	private boolean returnUnchangedNodes = false;
 	private boolean returnIgnoredNodes = false;
 	private boolean returnCircularNodes = true;
@@ -124,7 +127,7 @@ public class Configuration implements NodeInspector
 		this.excludedProperties.add(propertyPath);
 		return this;
 	}
-
+	
     public Configuration withCompareToOnlyType(final Class<?> type)
     {
         this.compareToOnlyTypes.add(type);
@@ -143,12 +146,22 @@ public class Configuration implements NodeInspector
 		return this;
 	}
 
+	public Configuration withMethodEqualsProperty(final PropertyPath propertyPath, final String methodName) {
+		this.methodEqualProperties.add(new MethodEqualPropertyPathAndMethod(propertyPath, methodName));
+		return this;
+	}
+	
+	public Configuration withMethodEqualsProperty(MethodEqualPropertyPathAndMethod propertyPathEqualsMethod) {
+		this.methodEqualProperties.add(propertyPathEqualsMethod);
+		return this;
+	}
+	
 	public Configuration withIgnoredNodes()
 	{
 		this.returnIgnoredNodes = true;
 		return this;
 	}
-
+	
 	public Configuration withoutIgnoredNodes()
 	{
 		this.returnIgnoredNodes = false;
@@ -309,6 +322,57 @@ public class Configuration implements NodeInspector
 		}
 		return false;
 	}
+	
+	public boolean isWithMethodEquals(Node node){
+		return getWithMethodEqualsMethod(node) != null;
+	}
+	
+	public String getWithMethodEqualsMethod(Node node){
+		final Class<?> propertyType = node.getType();
+		if (propertyType != null)
+		{
+			ObjectDiffMethodEqualsType annotation = propertyType.getAnnotation(ObjectDiffMethodEqualsType.class);
+			if (annotation != null)
+			{
+				return annotation.method();
+			}
+			
+			MethodEqualClassAndMethod applicable = findMethodEqualPropertyForClass(propertyType);
+			if (applicable != null)
+			{
+				return applicable.getMethod();
+			}
+		}
+		if (node.isWithMethodEquals())
+		{
+			return node.getWithMethodEqualsMethod();
+		}
+		MethodEqualPropertyPathAndMethod applicable = findMethodEqualPropertyForPath(node.getPropertyPath());
+		if (applicable != null)
+		{
+			return applicable.getMethod();
+		}
+		return null;
+	}
+	
+	private MethodEqualClassAndMethod findMethodEqualPropertyForClass(Class<?> clazz){
+		for(MethodEqualClassAndMethod propertyPathEqualsMethod: methodEqualTypes){
+			if(clazz.equals(propertyPathEqualsMethod.getClazz())){
+				return propertyPathEqualsMethod;
+			}
+		}
+		return null;
+			
+	}
+	
+	private MethodEqualPropertyPathAndMethod findMethodEqualPropertyForPath(PropertyPath propertyPath){
+		for(MethodEqualPropertyPathAndMethod propertyPathEqualsMethod: methodEqualProperties){
+			if(propertyPath.equals(propertyPathEqualsMethod.getPropertyPath())){
+				return propertyPathEqualsMethod;
+			}
+		}
+		return null;
+	}
 
 	public boolean isReturnable(final Node node)
 	{
@@ -347,4 +411,5 @@ public class Configuration implements NodeInspector
 		}
 		return true;
 	}
+
 }

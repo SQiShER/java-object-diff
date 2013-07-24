@@ -51,4 +51,6 @@ public @interface ObjectDiffProperty
 	 * @return The categories for this property.
 	 */
 	public String[] categories() default {};
+	
+	public String methodEqual() default "";
 }

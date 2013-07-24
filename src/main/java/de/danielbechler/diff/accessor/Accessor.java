@@ -24,4 +24,5 @@ public interface Accessor extends PropertyDescriptor
 	void set(Object target, Object value);
 
 	void unset(Object target);
+
 }

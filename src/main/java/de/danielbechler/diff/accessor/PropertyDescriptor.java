@@ -30,4 +30,9 @@ public interface PropertyDescriptor
 	boolean isIgnored();
 
 	boolean isEqualsOnly();
+	
+
+	boolean isWithMethodEquals();
+
+	String getWithMethodEqualsMethod();
 }

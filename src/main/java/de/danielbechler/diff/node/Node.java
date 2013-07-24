@@ -201,4 +201,8 @@ public interface Node extends CanonicalAccessor
 
 	<T extends Annotation> T getPropertyAnnotation(Class<T> annotationClass);
 
+	boolean isWithMethodEquals();
+
+	String getWithMethodEqualsMethod();
+
 }

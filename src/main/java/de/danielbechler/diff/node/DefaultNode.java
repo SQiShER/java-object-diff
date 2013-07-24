@@ -317,6 +317,14 @@ public class DefaultNode implements Node
 	{
 		return state == State.IGNORED || accessor.isIgnored();
 	}
+	
+	public boolean isWithMethodEquals() {
+		return accessor.isWithMethodEquals();
+	}
+
+	public String getWithMethodEqualsMethod() {
+		return accessor.getWithMethodEqualsMethod();
+	}
 
 	public final Set<String> getCategories()
 	{
@@ -474,4 +482,5 @@ public class DefaultNode implements Node
 	{
 		this.circleStartNode = circleStartNode;
 	}
+
 }
