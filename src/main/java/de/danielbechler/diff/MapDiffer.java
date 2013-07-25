@@ -21,7 +21,6 @@ import de.danielbechler.diff.node.*;
 import de.danielbechler.util.*;
 import de.danielbechler.util.Collections;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**

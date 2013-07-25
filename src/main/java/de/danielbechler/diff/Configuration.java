@@ -20,7 +20,6 @@ import de.danielbechler.diff.annotation.*;
 import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.path.*;
 import de.danielbechler.util.*;
-import groovy.lang.Tuple;
 
 import java.util.*;
 
