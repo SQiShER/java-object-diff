@@ -5,8 +5,8 @@ import java.util.List;
 
 import de.danielbechler.diff.Configuration;
 import de.danielbechler.diff.ObjectDifferFactory;
+import de.danielbechler.diff.annotation.ObjectDiffMethodEqualsType;
 import de.danielbechler.diff.annotation.ObjectDiffProperty;
-import de.danielbechler.diff.example.IgnoreExample.User;
 import de.danielbechler.diff.node.Node;
 import de.danielbechler.diff.path.PropertyPath;
 import de.danielbechler.diff.visitor.PrintingVisitor;
@@ -18,17 +18,15 @@ class MethodEqualExample {
 
 	public static void main(final String[] args)
 	{
-		List<Object> baseItems = new ArrayList<Object>();
-		baseItems.add("baseitem");
-		final EncompassingClass base = new EncompassingClass(baseItems);
-		List<Object> workingItems = new ArrayList<Object>();
-		workingItems.add("workingitem");
-		final EncompassingClass working = new EncompassingClass(workingItems);
+		PropertyClass prop = new PropertyClass("1", "2");
+		final EncompassingClass base = new EncompassingClass(prop);
+		PropertyClass prop2 = new PropertyClass("1", "3");
+		final EncompassingClass working = new EncompassingClass(prop2);
 
 		final Configuration configuration = new Configuration();
 
-		// (Option 1) Causes the ObjectDiffer to use the method "size" on the 'items' property of the root object
-		configuration.withMethodEqualsProperty(PropertyPath.buildWith("items"), "size");
+		// (Option 1) Causes the ObjectDiffer to compare using the method "getProp1" on the 'prop' property of the root object
+		configuration.withMethodEqualsProperty(PropertyPath.buildWith("prop"), "getProp1");
 
 		final Node node = ObjectDifferFactory.getInstance(configuration).compare(working, base);
 
@@ -37,24 +35,42 @@ class MethodEqualExample {
 		// Output with ignore: 
 		//	Property at path '/' has not changed
 		// Output without ignore: 
-		//	Property at path '/items[workingitem]' has been added => [ workingitem ]
-		//	Property at path '/items[baseitem]' with value [ baseitem ] has been removed
+		// Property at path '/prop/prop2' has changed from [ 2 ] to [ 3 ]
 	}
 
 	public static class EncompassingClass
 	{
-		private final List<Object> items;
+		private final PropertyClass prop;
 
-		public EncompassingClass(final List<Object> items)
+		public EncompassingClass(final PropertyClass prop)
 		{
-			this.items = items;
+			this.prop = prop;
 		}
 
-		/* (Option 2) This annotation causes the ObjectDiffer to always ignore this property */
-		@ObjectDiffProperty(methodEqual = "size")
-		public List<Object> getItems()
+		/* (Option 2) This annotation causes the ObjectDiffer to use getProp1 method to compare */
+		//@ObjectDiffProperty(methodEqual = "getProp1")
+		public PropertyClass getProp() {
+			return prop;
+		}
+	}
+	
+	/* (Option 3) This annotation causes the ObjectDiffer to use getProp1 method to compare */
+	//@ObjectDiffMethodEqualsType(method="getProp1")
+	public static class PropertyClass
+	{
+		private String prop1;
+		private String prop2;
+		
+		public PropertyClass(String prop1, String prop2)
 		{
-			return items;
+			this.prop1 = prop1;
+			this.prop2 = prop2;
+		}
+		public String getProp1() {
+			return prop1;
+		}
+		public String getProp2() {
+			return prop2;
 		}
 	}
 

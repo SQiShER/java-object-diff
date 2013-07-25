@@ -1,11 +1,11 @@
 package de.danielbechler.diff.path;
 
-public class MethodEqualPropertyPathAndMethod {
+public class PropertyPathAndMethod {
 	private PropertyPath propertyPath;
 	private String method;
 	
-	public MethodEqualPropertyPathAndMethod(){}
-	public MethodEqualPropertyPathAndMethod(PropertyPath propertyPath, String method){
+	public PropertyPathAndMethod(){}
+	public PropertyPathAndMethod(PropertyPath propertyPath, String method){
 		this.propertyPath = propertyPath;
 		this.method = method;
 	}

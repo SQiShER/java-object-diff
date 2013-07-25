@@ -24,6 +24,8 @@ import org.testng.annotations.*;
 
 import java.util.*;
 
+import static de.danielbechler.diff.node.Node.State.CHANGED;
+import static de.danielbechler.diff.node.Node.State.UNTOUCHED;
 import static java.util.Arrays.*;
 import static java.util.Collections.*;
 import static org.mockito.Mockito.*;
@@ -117,6 +119,26 @@ public class CollectionDifferShould
 		when(instances.areEqual()).thenReturn(true);
 		compare();
 		verify(collectionNode).setState(Node.State.UNTOUCHED);
+	}
+	
+	@Test
+	public void detect_no_change_when_comparing_using_with_method_equals_and_result_is_same()
+	{
+		when(nodeInspector.isWithMethodEquals(collectionNode)).thenReturn(true);
+		when(nodeInspector.getWithMethodEqualsMethod(collectionNode)).thenReturn("somemethod");
+		when(instances.areMethodResultEqual("somemethod")).thenReturn(true);
+		compare();
+		verify(collectionNode).setState(Node.State.UNTOUCHED);
+	}
+	
+	@Test
+	public void detect_change_when_comparing_using_with_method_equals_and_result_is_different()
+	{
+		when(nodeInspector.isWithMethodEquals(collectionNode)).thenReturn(true);
+		when(nodeInspector.getWithMethodEqualsMethod(collectionNode)).thenReturn("somemethod");
+		when(instances.areMethodResultEqual("somemethod")).thenReturn(false);
+		compare();
+		verify(collectionNode).setState(CHANGED);
 	}
 
 	@Test

@@ -1,9 +1,9 @@
 package de.danielbechler.diff.path;
 
-public class MethodEqualClassAndMethod {
+public class ClassAndMethod {
 	private Class<?> clazz;
 	private String method;
-	public MethodEqualClassAndMethod(Class<?> clazz, String method){
+	public ClassAndMethod(Class<?> clazz, String method){
 		this.clazz = clazz;
 		this.method = method;
 	}

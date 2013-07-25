@@ -91,6 +91,30 @@ public class MapDifferShould
 	}
 
 	@Test
+	public void detect_no_change_when_comparing_using_with_method_equals_and_result_is_same()
+	{
+		when(nodeInspector.isWithMethodEquals(internalNode)).thenReturn(true);
+		when(nodeInspector.getWithMethodEqualsMethod(internalNode)).thenReturn("somemethod");
+		when(instances.areMethodResultEqual("somemethod")).thenReturn(true);
+
+		node = compare(working, base);
+
+		verify(node).setState(UNTOUCHED);
+	}
+	
+	@Test
+	public void detect_change_when_comparing_using_with_method_equals_and_result_is_different()
+	{
+		when(nodeInspector.isWithMethodEquals(internalNode)).thenReturn(true);
+		when(nodeInspector.getWithMethodEqualsMethod(internalNode)).thenReturn("somemethod");
+		when(instances.areMethodResultEqual("somemethod")).thenReturn(false);
+
+		node = compare(working, base);
+
+		verify(node).setState(CHANGED);
+	}
+	
+	@Test
 	public void detect_addition()
 	{
 		when(instances.hasBeenAdded()).thenReturn(true);
