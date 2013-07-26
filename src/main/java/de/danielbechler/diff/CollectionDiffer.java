@@ -61,9 +61,9 @@ final class CollectionDiffer implements Differ<CollectionNode>
 				collectionNode.setState(Node.State.CHANGED);
 			}
 		}
-		else if (nodeInspector.isWithMethodEquals(collectionNode)){
-			String method = nodeInspector.getWithMethodEqualsMethod(collectionNode);
-			if (collectionInstances.areMethodResultEqual(method))
+		else if (nodeInspector.hasEqualsOnlyValueProviderMethod(collectionNode)){
+			String method = nodeInspector.getEqualsOnlyValueProviderMethod(collectionNode);
+			if (collectionInstances.areMethodResultsEqual(method))
 			{
 				collectionNode.setState(Node.State.UNTOUCHED);
 			}

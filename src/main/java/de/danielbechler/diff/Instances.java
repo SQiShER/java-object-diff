@@ -173,7 +173,7 @@ class Instances
 		return isEqual(base, working);
 	}
 	
-	public boolean areMethodResultEqual(String method) {
+	public boolean areMethodResultsEqual(String method) {
 		try {
 			Object baseMethodResult = base.getClass().getMethod(method).invoke(base);
 			Object workingMethodResult = working.getClass().getMethod(method).invoke(working);
@@ -294,5 +294,4 @@ class Instances
 			return PropertyPath.createBuilder().withRoot().build();
 		}
 	}
-
 }

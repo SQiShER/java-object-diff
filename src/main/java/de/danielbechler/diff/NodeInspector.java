@@ -31,8 +31,9 @@ interface NodeInspector
 
 	boolean isEqualsOnly(Node node);
 	
-	boolean isWithMethodEquals(Node node);
-	String getWithMethodEqualsMethod(Node node);
+	boolean hasEqualsOnlyValueProviderMethod(Node node);
+	
+	String getEqualsOnlyValueProviderMethod(Node node);
 
 	boolean isReturnable(Node node);
 

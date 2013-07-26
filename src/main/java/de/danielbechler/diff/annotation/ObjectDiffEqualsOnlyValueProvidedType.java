@@ -10,6 +10,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Inherited
 @ObjectDiffAnnotation
-public @interface ObjectDiffMethodEqualsType {
+public @interface ObjectDiffEqualsOnlyValueProvidedType {
 	public String method();
 }

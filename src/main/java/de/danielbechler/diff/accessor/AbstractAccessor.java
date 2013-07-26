@@ -24,7 +24,7 @@ public abstract class AbstractAccessor implements Accessor
 	private Set<String> categories = new TreeSet<String>();
 	private boolean equalsOnly;
 	private boolean ignored;
-	private String withMethodEqualsMethod;
+	private String equalsOnlyValueProviderMethod;
 
 	public final Set<String> getCategories()
 	{
@@ -56,16 +56,16 @@ public abstract class AbstractAccessor implements Accessor
 		this.ignored = ignored;
 	}
 	
-	public boolean isWithMethodEquals(){
-		return this.withMethodEqualsMethod != null && !this.withMethodEqualsMethod.equals("");
+	public boolean hasEqualsOnlyValueProviderMethod(){
+		return this.equalsOnlyValueProviderMethod != null && !this.equalsOnlyValueProviderMethod.equals("");
 	}
 
-	public void setWithMethodEqualsMethod(String withMethodEqualsMethod) {
-		this.withMethodEqualsMethod = withMethodEqualsMethod;
+	public void setEqualsOnlyValueProviderMethod(String equalsOnlyValueProviderMethod) {
+		this.equalsOnlyValueProviderMethod = equalsOnlyValueProviderMethod;
 	}
 	
-	public String getWithMethodEqualsMethod(){
-		return withMethodEqualsMethod;
+	public String getEqualsOnlyValueProviderMethod(){
+		return equalsOnlyValueProviderMethod;
 	}
 
 }

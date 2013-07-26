@@ -24,8 +24,6 @@ import de.danielbechler.diff.path.*;
 import org.mockito.Mock;
 import org.testng.annotations.*;
 
-import static de.danielbechler.diff.node.Node.State.CHANGED;
-import static de.danielbechler.diff.node.Node.State.UNTOUCHED;
 import static de.danielbechler.diff.node.NodeAssertions.assertThat;
 import static java.util.Arrays.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -124,13 +122,13 @@ public class BeanDifferShould
 	}
 	
 	@Test
-	public void detect_no_change_when_comparing_using_with_method_equals_and_result_is_same()
+	public void detect_no_change_when_comparing_using_with_equals_only_value_provider_method_and_result_is_same()
 	{
 		final ObjectWithNestedObject working = new ObjectWithNestedObject("foo");
 		working.setObject(new ObjectWithNestedObject("childid"));
 		final ObjectWithNestedObject base = new ObjectWithNestedObject("foo");
 		base.setObject(new ObjectWithNestedObject("differentchildid"));
-		configuration.withMethodEqualsProperty(PropertyPath.buildRootPath(), "getId");
+		configuration.withEqualsOnlyValueProviderMethod(PropertyPath.buildRootPath(), "getId");
 
 		final Node node = differ.compare(Node.ROOT, Instances.of(working, base));
 
@@ -138,13 +136,13 @@ public class BeanDifferShould
 	}
 	
 	@Test
-	public void detect_change_when_comparing_using_with_method_equals_and_result_is_different()
+	public void detect_change_when_comparing_using_equals_only_value_provider_method_and_result_is_different()
 	{
 		final ObjectWithNestedObject working = new ObjectWithNestedObject("foo");
 		working.setObject(new ObjectWithNestedObject("childid"));
 		final ObjectWithNestedObject base = new ObjectWithNestedObject("bar");
 		base.setObject(new ObjectWithNestedObject("differentchildid"));
-		configuration.withMethodEqualsProperty(PropertyPath.buildRootPath(), "getId");
+		configuration.withEqualsOnlyValueProviderMethod(PropertyPath.buildRootPath(), "getId");
 
 		final Node node = differ.compare(Node.ROOT, Instances.of(working, base));
 

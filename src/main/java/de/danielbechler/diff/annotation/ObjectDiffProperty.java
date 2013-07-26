@@ -52,5 +52,5 @@ public @interface ObjectDiffProperty
 	 */
 	public String[] categories() default {};
 	
-	public String methodEqual() default "";
+	public String equalsOnlyValueProviderMethod() default "";
 }

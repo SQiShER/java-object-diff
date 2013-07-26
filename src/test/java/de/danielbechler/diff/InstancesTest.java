@@ -123,7 +123,7 @@ public class InstancesTest
 	}
 
 	@Test
-	public void testMethodResultNotEqual() throws Exception
+	public void testMethodResultEqualNotEqual() throws Exception
 	{
 		final Method readMethod = getClass().getDeclaredMethod("getTestValue");
 		final PropertyAccessor accessor = new PropertyAccessor("testValue", readMethod, null);
@@ -132,11 +132,11 @@ public class InstancesTest
 		ObjectWithString base = new ObjectWithString("string2");
 		
 		final Instances instances = new Instances(accessor, working, base, null);
-		assertThat(instances.areMethodResultEqual("getValue")).isFalse();
+		assertThat(instances.areMethodResultsEqual("getValue")).isFalse();
 	}
 	
 	@Test
-	public void testMethodResultEqual() throws Exception
+	public void testMethodResultEqualIsEqual() throws Exception
 	{
 		final Method readMethod = getClass().getDeclaredMethod("getTestValue");
 		final PropertyAccessor accessor = new PropertyAccessor("testValue", readMethod, null);
@@ -145,7 +145,7 @@ public class InstancesTest
 		ObjectWithString base = new ObjectWithString("string");
 		
 		final Instances instances = new Instances(accessor, working, base, null);
-		assertThat(instances.areMethodResultEqual("getValue")).isTrue();
+		assertThat(instances.areMethodResultsEqual("getValue")).isTrue();
 	}
 	
 	@Test
@@ -159,7 +159,7 @@ public class InstancesTest
 		
 		final Instances instances = new Instances(accessor, working, base, null);
 		try {
-			instances.areMethodResultEqual("invalid");
+			instances.areMethodResultsEqual("invalid");
 			fail("no exception thrown");
 		}
 		catch(RuntimeException e){

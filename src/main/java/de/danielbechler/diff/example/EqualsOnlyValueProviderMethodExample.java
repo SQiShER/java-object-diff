@@ -1,18 +1,13 @@
 package de.danielbechler.diff.example;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.danielbechler.diff.Configuration;
 import de.danielbechler.diff.ObjectDifferFactory;
-import de.danielbechler.diff.annotation.ObjectDiffMethodEqualsType;
-import de.danielbechler.diff.annotation.ObjectDiffProperty;
 import de.danielbechler.diff.node.Node;
 import de.danielbechler.diff.path.PropertyPath;
 import de.danielbechler.diff.visitor.PrintingVisitor;
 
-class MethodEqualExample {
-	private MethodEqualExample()
+class EqualsOnlyValueProviderMethodExample {
+	private EqualsOnlyValueProviderMethodExample()
 	{
 	}
 
@@ -26,7 +21,7 @@ class MethodEqualExample {
 		final Configuration configuration = new Configuration();
 
 		// (Option 1) Causes the ObjectDiffer to compare using the method "getProp1" on the 'prop' property of the root object
-		configuration.withMethodEqualsProperty(PropertyPath.buildWith("prop"), "getProp1");
+		configuration.withEqualsOnlyValueProviderMethod(PropertyPath.buildWith("prop"), "getProp1");
 
 		final Node node = ObjectDifferFactory.getInstance(configuration).compare(working, base);
 
@@ -48,14 +43,14 @@ class MethodEqualExample {
 		}
 
 		/* (Option 2) This annotation causes the ObjectDiffer to use getProp1 method to compare */
-		//@ObjectDiffProperty(methodEqual = "getProp1")
+		//@ObjectDiffProperty(equalsOnlyValueProviderMethod = "getProp1")
 		public PropertyClass getProp() {
 			return prop;
 		}
 	}
 	
 	/* (Option 3) This annotation causes the ObjectDiffer to use getProp1 method to compare */
-	//@ObjectDiffMethodEqualsType(method="getProp1")
+	//@ObjectDiffEqualsOnlyValueProvidedType(method="getProp1")
 	public static class PropertyClass
 	{
 		private String prop1;
