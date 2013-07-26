@@ -317,6 +317,14 @@ public class DefaultNode implements Node
 	{
 		return state == State.IGNORED || accessor.isIgnored();
 	}
+	
+	public boolean hasEqualsOnlyValueProviderMethod() {
+		return accessor.hasEqualsOnlyValueProviderMethod();
+	}
+
+	public String getEqualsOnlyValueProviderMethod() {
+		return accessor.getEqualsOnlyValueProviderMethod();
+	}
 
 	public final Set<String> getCategories()
 	{

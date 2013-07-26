@@ -63,7 +63,7 @@ public class ObjectDifferIntegrationTests
 		NodeAssertions.assertThat(node).self().hasState(Node.State.UNTOUCHED);
 		NodeAssertions.assertThat(node).self().hasNoChildren();
 	}
-
+	
 	public void testCompareCollectionWithAddedItem() throws Exception
 	{
 		final Collection<String> working = new LinkedList<String>(asList("foo"));
@@ -319,5 +319,103 @@ public class ObjectDifferIntegrationTests
 										   .withRoot()
 										   .withCollectionItem(new ObjectWithHashCodeAndEquals("foo"))
 										   .build()).hasState(Node.State.ADDED);
+	}
+	
+	public void testCompareBeanWithEqualsOnlyValueProviderMethodOnGetCollectionPropertyNoChangeInMethodResult()
+	{
+		List<String> forWorking = new ArrayList<String>();
+		forWorking.add("one");
+		List<String> forBase = new ArrayList<String>();
+		forBase.add("uno");
+		final ObjectWithMethodEqualsOnlyValueProviderMethodOnGetCollection working = new ObjectWithMethodEqualsOnlyValueProviderMethodOnGetCollection(forWorking);
+		final ObjectWithMethodEqualsOnlyValueProviderMethodOnGetCollection base = new ObjectWithMethodEqualsOnlyValueProviderMethodOnGetCollection(forBase);
+
+		final Node node = objectDiffer.compare(working, base);
+
+		NodeAssertions.assertThat(node).self().hasState(Node.State.UNTOUCHED);
+		NodeAssertions.assertThat(node).self().hasNoChildren();
+	}
+	
+	public void testCompareBeanWithEqualOnlyValueProviderMethodOnGetCollectionPropertyWithChangeInMethodResult()
+	{
+		List<String> forWorking = new ArrayList<String>();
+		forWorking.add("one");
+		forWorking.add("two");
+		List<String> forBase = new ArrayList<String>();
+		forBase.add("uno");
+		final ObjectWithMethodEqualsOnlyValueProviderMethodOnGetCollection working = new ObjectWithMethodEqualsOnlyValueProviderMethodOnGetCollection(forWorking);
+		final ObjectWithMethodEqualsOnlyValueProviderMethodOnGetCollection base = new ObjectWithMethodEqualsOnlyValueProviderMethodOnGetCollection(forBase);
+
+		final Node node = objectDiffer.compare(working, base);
+		
+		NodeAssertions.assertThat(node).self().hasState(Node.State.CHANGED);
+		assertThat(node)
+		.child(PropertyPath.buildWith("collection"))
+		.hasState(Node.State.CHANGED);
+	}
+	
+	public void testCompareBeanWithEqualsOnlyValueProviderMethodOnGetObjectPropertyNoChangeInMethodResult()
+	{
+		ObjectWithNestedObject forWorking = new ObjectWithNestedObject("childid");
+		forWorking.setObject(new ObjectWithNestedObject("grandchildid"));
+		ObjectWithNestedObject forBase = new ObjectWithNestedObject("childid");
+		forBase.setObject(new ObjectWithNestedObject("differentgrandchildid"));
+		final ObjectWithMethodEqualsOnlyValueProviderMethodOnGetNestedObject working = new ObjectWithMethodEqualsOnlyValueProviderMethodOnGetNestedObject("id", forWorking);
+		final ObjectWithMethodEqualsOnlyValueProviderMethodOnGetNestedObject base = new ObjectWithMethodEqualsOnlyValueProviderMethodOnGetNestedObject("id", forBase);
+
+		final Node node = objectDiffer.compare(working, base);
+
+		NodeAssertions.assertThat(node).self().hasState(Node.State.UNTOUCHED);
+		NodeAssertions.assertThat(node).self().hasNoChildren();
+	}
+	
+	public void testCompareBeanWithEqualsOnlyValueProviderMethodOnGetObjectPropertyWithChangeInMethodResult()
+	{
+		ObjectWithNestedObject forWorking = new ObjectWithNestedObject("childid");
+		forWorking.setObject(new ObjectWithNestedObject("grandchildid"));
+		ObjectWithNestedObject forBase = new ObjectWithNestedObject("differentchildid");
+		forBase.setObject(new ObjectWithNestedObject("differentgrandchildid"));
+		final ObjectWithMethodEqualsOnlyValueProviderMethodOnGetNestedObject working = new ObjectWithMethodEqualsOnlyValueProviderMethodOnGetNestedObject("id", forWorking);
+		final ObjectWithMethodEqualsOnlyValueProviderMethodOnGetNestedObject base = new ObjectWithMethodEqualsOnlyValueProviderMethodOnGetNestedObject("id", forBase);
+
+		final Node node = objectDiffer.compare(working, base);
+
+		NodeAssertions.assertThat(node).self().hasState(Node.State.CHANGED);
+		assertThat(node)
+		.child(PropertyPath.buildWith("object"))
+		.hasState(Node.State.CHANGED);
+	}
+	
+	public void testCompareBeanWithEqualsOnlyValueProviderMethodOnGetMapPropertyNoChangeInMethodResult()
+	{
+		Map<String, String> forWorking = new HashMap<String, String>();
+		forWorking.put("key1", "val1");
+		Map<String, String> forBase = new HashMap<String, String>();
+		forBase.put("keyone", "valone");
+		final ObjectWithMethodEqualsOnlyValueProviderMethodOnGetMap working = new ObjectWithMethodEqualsOnlyValueProviderMethodOnGetMap(forWorking);
+		final ObjectWithMethodEqualsOnlyValueProviderMethodOnGetMap base = new ObjectWithMethodEqualsOnlyValueProviderMethodOnGetMap(forBase);
+
+		final Node node = objectDiffer.compare(working, base);
+
+		NodeAssertions.assertThat(node).self().hasState(Node.State.UNTOUCHED);
+		NodeAssertions.assertThat(node).self().hasNoChildren();
+	}
+	
+	public void testCompareBeanWithEqualsOnlyValueProviderMethodOnGetMapPropertyWithChangeInMethodResult()
+	{
+		Map<String, String> forWorking = new HashMap<String, String>();
+		forWorking.put("key1", "val1");
+		forWorking.put("key2", "val2");
+		Map<String, String> forBase = new HashMap<String, String>();
+		forBase.put("keyone", "valone");
+		final ObjectWithMethodEqualsOnlyValueProviderMethodOnGetMap working = new ObjectWithMethodEqualsOnlyValueProviderMethodOnGetMap(forWorking);
+		final ObjectWithMethodEqualsOnlyValueProviderMethodOnGetMap base = new ObjectWithMethodEqualsOnlyValueProviderMethodOnGetMap(forBase);
+
+		final Node node = objectDiffer.compare(working, base);
+		
+		NodeAssertions.assertThat(node).self().hasState(Node.State.CHANGED);
+		assertThat(node)
+		.child(PropertyPath.buildWith("map"))
+		.hasState(Node.State.CHANGED);
 	}
 }
