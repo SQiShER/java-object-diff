@@ -120,6 +120,34 @@ public class BeanDifferShould
 
 		assertThat(node).self().isUntouched();
 	}
+	
+	@Test
+	public void detect_no_change_when_comparing_using_with_equals_only_value_provider_method_and_result_is_same()
+	{
+		final ObjectWithNestedObject working = new ObjectWithNestedObject("foo");
+		working.setObject(new ObjectWithNestedObject("childid"));
+		final ObjectWithNestedObject base = new ObjectWithNestedObject("foo");
+		base.setObject(new ObjectWithNestedObject("differentchildid"));
+		configuration.withEqualsOnlyValueProviderMethod(PropertyPath.buildRootPath(), "getId");
+
+		final Node node = differ.compare(Node.ROOT, Instances.of(working, base));
+
+		assertThat(node).self().isUntouched();
+	}
+	
+	@Test
+	public void detect_change_when_comparing_using_equals_only_value_provider_method_and_result_is_different()
+	{
+		final ObjectWithNestedObject working = new ObjectWithNestedObject("foo");
+		working.setObject(new ObjectWithNestedObject("childid"));
+		final ObjectWithNestedObject base = new ObjectWithNestedObject("bar");
+		base.setObject(new ObjectWithNestedObject("differentchildid"));
+		configuration.withEqualsOnlyValueProviderMethod(PropertyPath.buildRootPath(), "getId");
+
+		final Node node = differ.compare(Node.ROOT, Instances.of(working, base));
+
+		assertThat(node).self().hasChanges();
+	}
 
 	@Test
 	public void compare_bean_via_introspection_and_delegate_comparison_of_properties()

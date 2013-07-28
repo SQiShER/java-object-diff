@@ -30,4 +30,8 @@ public interface PropertyDescriptor
 	boolean isIgnored();
 
 	boolean isEqualsOnly();
+
+	boolean hasEqualsOnlyValueProviderMethod();
+
+	String getEqualsOnlyValueProviderMethod();
 }
