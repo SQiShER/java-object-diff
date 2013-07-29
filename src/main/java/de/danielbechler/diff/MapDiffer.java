@@ -61,6 +61,17 @@ final class MapDiffer implements Differ<MapNode>
 				mapNode.setState(Node.State.CHANGED);
 			}
 		}
+		else if (nodeInspector.hasEqualsOnlyValueProviderMethod(mapNode)){
+			String method = nodeInspector.getEqualsOnlyValueProviderMethod(mapNode);
+			if (instances.areMethodResultsEqual(method))
+			{
+				mapNode.setState(Node.State.UNTOUCHED);
+			}
+			else
+			{
+				mapNode.setState(Node.State.CHANGED);
+			}
+		}
 		else if (instances.hasBeenAdded())
 		{
 			compareEntries(mapNode, instances, instances.getWorking(Map.class).keySet());

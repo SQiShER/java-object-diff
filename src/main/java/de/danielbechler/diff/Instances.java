@@ -172,6 +172,19 @@ class Instances
 	{
 		return isEqual(base, working);
 	}
+	
+	public boolean areMethodResultsEqual(String method) {
+		try {
+			Object baseMethodResult = base.getClass().getMethod(method).invoke(base);
+			Object workingMethodResult = working.getClass().getMethod(method).invoke(working);
+			if(baseMethodResult == null){
+				return workingMethodResult == null;
+			}
+			return baseMethodResult.equals(workingMethodResult);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
     public boolean areEqualByComparison()
 	{

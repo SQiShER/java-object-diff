@@ -49,6 +49,17 @@ final class BeanDiffer implements Differ<Node>
 		{
 			beanNode.setState(Node.State.IGNORED);
 		}
+		else if (nodeInspector.hasEqualsOnlyValueProviderMethod(beanNode)){
+			String method = nodeInspector.getEqualsOnlyValueProviderMethod(beanNode);
+			if (instances.areMethodResultsEqual(method))
+			{
+				beanNode.setState(Node.State.UNTOUCHED);
+			}
+			else
+			{
+				beanNode.setState(Node.State.CHANGED);
+			}
+		}
 		else if (instances.areNull() || instances.areSame())
 		{
 			beanNode.setState(Node.State.UNTOUCHED);
