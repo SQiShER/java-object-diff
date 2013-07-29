@@ -114,6 +114,7 @@
                     <enableAssertions>true</enableAssertions>
                     <includes>
                         <include>**/*Test.java</include>
+                        <include>**/*IntegrationTests.java</include>
                         <include>**/*Should.java</include>
                         <include>**/*Spec.java</include>
                         <include>**/*Specification.java</include>
