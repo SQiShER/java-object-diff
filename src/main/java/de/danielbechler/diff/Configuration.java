@@ -77,7 +77,7 @@ public class Configuration implements NodeInspector
 	private final Collection<PropertyPath> includedProperties = new HashSet<PropertyPath>(10);
 	private final Collection<PropertyPath> excludedProperties = new HashSet<PropertyPath>(10);
 	private final Collection<PropertyPath> equalsOnlyProperties = new LinkedHashSet<PropertyPath>(10);
-    private final Collection<Class<?>> compareToOnlyTypes = new LinkedHashSet<Class<?>>(10);
+	private final Collection<Class<?>> compareToOnlyTypes = new LinkedHashSet<Class<?>>(10);
 	private final Collection<Class<?>> equalsOnlyTypes = new LinkedHashSet<Class<?>>(10);
 	private boolean returnUnchangedNodes = false;
 	private boolean returnIgnoredNodes = false;
@@ -125,11 +125,11 @@ public class Configuration implements NodeInspector
 		return this;
 	}
 
-    public Configuration withCompareToOnlyType(final Class<?> type)
-    {
-        this.compareToOnlyTypes.add(type);
-        return this;
-    }
+	public Configuration withCompareToOnlyType(final Class<?> type)
+	{
+		this.compareToOnlyTypes.add(type);
+		return this;
+	}
 
 	public Configuration withEqualsOnlyType(final Class<?> type)
 	{
@@ -248,6 +248,16 @@ public class Configuration implements NodeInspector
 		{
 			return true;
 		}
+		else
+		{
+			for (final PropertyPath includedProperty : includedProperties)
+			{
+				if (includedProperty.isParentOf(node.getPropertyPath()))
+				{
+					return true;
+				}
+			}
+		}
 		return false;
 	}
 
@@ -264,22 +274,22 @@ public class Configuration implements NodeInspector
 		return false;
 	}
 
-    public boolean isCompareToOnly(final Node node)
-    {
-        final Class<?> propertyType = node.getType();
-        if (propertyType != null)
-        {
-            if (compareToOnlyTypes.contains(propertyType) && Comparable.class.isAssignableFrom(propertyType))
-            {
-                return true;
-            }
-            if (Classes.isComparableType(propertyType))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
+	public boolean isCompareToOnly(final Node node)
+	{
+		final Class<?> propertyType = node.getType();
+		if (propertyType != null)
+		{
+			if (compareToOnlyTypes.contains(propertyType) && Comparable.class.isAssignableFrom(propertyType))
+			{
+				return true;
+			}
+			if (Classes.isComparableType(propertyType))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 
 	public boolean isEqualsOnly(final Node node)
 	{
@@ -335,7 +345,7 @@ public class Configuration implements NodeInspector
 		return true;
 	}
 
-    public boolean isIntrospectible(final Node node)
+	public boolean isIntrospectible(final Node node)
 	{
 		if (node.isAdded())
 		{

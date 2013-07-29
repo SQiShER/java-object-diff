@@ -42,6 +42,10 @@ public class Collections
 
 	public static <T> boolean containsAny(final Iterable<T> haystack, final Iterable<T> needles)
 	{
+		if (haystack == null || needles == null)
+		{
+			return false;
+		}
 		for (final T straw : haystack)
 		{
 			for (final T needle : needles)
