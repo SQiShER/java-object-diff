@@ -109,6 +109,7 @@ public class StandardIntrospector implements de.danielbechler.diff.introspect.In
 		if (annotation != null)
 		{
 			propertyAccessor.setEqualsOnly(true);
+			propertyAccessor.setEqualsOnlyValueProviderMethod(annotation.valueProviderMethod());
 		}
 	}
 }

@@ -19,6 +19,7 @@ package de.danielbechler.diff;
 import de.danielbechler.diff.node.*;
 
 /** @author Daniel Bechler */
+@SuppressWarnings("SpellCheckingInspection")
 interface NodeInspector
 {
 	boolean isIgnored(Node node);
@@ -27,13 +28,9 @@ interface NodeInspector
 
 	boolean isExcluded(Node node);
 
-    boolean isCompareToOnly(Node node);
+	boolean isCompareToOnly(Node node);
 
 	boolean isEqualsOnly(Node node);
-	
-	boolean hasEqualsOnlyValueProviderMethod(Node node);
-	
-	String getEqualsOnlyValueProviderMethod(Node node);
 
 	boolean isReturnable(Node node);
 
@@ -43,4 +40,14 @@ interface NodeInspector
 	 *         #isEqualsOnly(de.danielbechler.diff.node.Node)} returns <code>true</code>.
 	 */
 	boolean isIntrospectible(Node node);
+
+	/*
+	 * TODO
+	 * Find a way to move the folloing methods out of here. I'd prefer if the equalsOnlyProvider would
+	 * be hidden a little bit deeper (e.g. the PropertyAccessor), so Differs don't need to worry about this.
+	 */
+
+	boolean hasEqualsOnlyValueProviderMethod(Node node);
+
+	String getEqualsOnlyValueProviderMethod(Node node);
 }

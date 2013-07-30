@@ -78,7 +78,7 @@ public class Configuration implements NodeInspector
 	private final Collection<PropertyPath> excludedProperties = new HashSet<PropertyPath>(10);
 	private final Collection<PropertyPath> equalsOnlyProperties = new LinkedHashSet<PropertyPath>(10);
 	private final Collection<PropertyPathAndMethod> equalsOnlyValueProviderMethods = new LinkedHashSet<PropertyPathAndMethod>(10);
-    private final Collection<Class<?>> compareToOnlyTypes = new LinkedHashSet<Class<?>>(10);
+	private final Collection<Class<?>> compareToOnlyTypes = new LinkedHashSet<Class<?>>(10);
 	private final Collection<Class<?>> equalsOnlyTypes = new LinkedHashSet<Class<?>>(10);
 	private final Collection<ClassAndMethod> equalsOnlyValueProviderTypes = new LinkedHashSet<ClassAndMethod>(10);
 	private boolean returnUnchangedNodes = false;
@@ -126,12 +126,12 @@ public class Configuration implements NodeInspector
 		this.excludedProperties.add(propertyPath);
 		return this;
 	}
-	
-    public Configuration withCompareToOnlyType(final Class<?> type)
-    {
-        this.compareToOnlyTypes.add(type);
-        return this;
-    }
+
+	public Configuration withCompareToOnlyType(final Class<?> type)
+	{
+		this.compareToOnlyTypes.add(type);
+		return this;
+	}
 
 	public Configuration withEqualsOnlyType(final Class<?> type)
 	{
@@ -145,22 +145,25 @@ public class Configuration implements NodeInspector
 		return this;
 	}
 
-	public Configuration withEqualsOnlyValueProviderMethod(final PropertyPath propertyPath, final String methodName) {
+	public Configuration withEqualsOnlyValueProviderMethod(final PropertyPath propertyPath,
+														   final String methodName)
+	{
 		this.equalsOnlyValueProviderMethods.add(new PropertyPathAndMethod(propertyPath, methodName));
 		return this;
 	}
-	
-	public Configuration withEqualsOnlyValueProviderMethod(PropertyPathAndMethod propertyPathEqualsMethod) {
+
+	public Configuration withEqualsOnlyValueProviderMethod(final PropertyPathAndMethod propertyPathEqualsMethod)
+	{
 		this.equalsOnlyValueProviderMethods.add(propertyPathEqualsMethod);
 		return this;
 	}
-	
+
 	public Configuration withIgnoredNodes()
 	{
 		this.returnIgnoredNodes = true;
 		return this;
 	}
-	
+
 	public Configuration withoutIgnoredNodes()
 	{
 		this.returnIgnoredNodes = false;
@@ -331,22 +334,24 @@ public class Configuration implements NodeInspector
 		}
 		return false;
 	}
-	
-	public boolean hasEqualsOnlyValueProviderMethod(Node node){
-		return getEqualsOnlyValueProviderMethod(node) != null;
+
+	public boolean hasEqualsOnlyValueProviderMethod(final Node node)
+	{
+		return Strings.hasText(getEqualsOnlyValueProviderMethod(node));
 	}
-	
-	public String getEqualsOnlyValueProviderMethod(Node node){
+
+	public String getEqualsOnlyValueProviderMethod(final Node node)
+	{
 		final Class<?> propertyType = node.getType();
 		if (propertyType != null)
 		{
-			ObjectDiffEqualsOnlyValueProvidedType annotation = propertyType.getAnnotation(ObjectDiffEqualsOnlyValueProvidedType.class);
+			final ObjectDiffEqualsOnlyType annotation = propertyType.getAnnotation(ObjectDiffEqualsOnlyType.class);
 			if (annotation != null)
 			{
-				return annotation.method();
+				return annotation.valueProviderMethod();
 			}
-			
-			ClassAndMethod applicable = findEqualsOnlyValueProviderMethodForClass(propertyType);
+
+			final ClassAndMethod applicable = findEqualsOnlyValueProviderMethodForClass(propertyType);
 			if (applicable != null)
 			{
 				return applicable.getMethod();
@@ -356,27 +361,33 @@ public class Configuration implements NodeInspector
 		{
 			return node.getEqualsOnlyValueProviderMethod();
 		}
-		PropertyPathAndMethod applicable = findEqualsOnlyValueProviderMethodForPath(node.getPropertyPath());
+		final PropertyPathAndMethod applicable = findEqualsOnlyValueProviderMethodForPath(node.getPropertyPath());
 		if (applicable != null)
 		{
 			return applicable.getMethod();
 		}
 		return null;
 	}
-	
-	private ClassAndMethod findEqualsOnlyValueProviderMethodForClass(Class<?> clazz){
-		for(ClassAndMethod propertyPathEqualsOnValueProviderType: equalsOnlyValueProviderTypes){
-			if(clazz.equals(propertyPathEqualsOnValueProviderType.getClazz())){
+
+	private ClassAndMethod findEqualsOnlyValueProviderMethodForClass(final Class<?> clazz)
+	{
+		for (final ClassAndMethod propertyPathEqualsOnValueProviderType : equalsOnlyValueProviderTypes)
+		{
+			if (clazz.equals(propertyPathEqualsOnValueProviderType.getClazz()))
+			{
 				return propertyPathEqualsOnValueProviderType;
 			}
 		}
 		return null;
-			
+
 	}
-	
-	private PropertyPathAndMethod findEqualsOnlyValueProviderMethodForPath(PropertyPath propertyPath){
-		for(PropertyPathAndMethod propertyPathEqualsOnValueProviderMethod: equalsOnlyValueProviderMethods){
-			if(propertyPath.equals(propertyPathEqualsOnValueProviderMethod.getPropertyPath())){
+
+	private PropertyPathAndMethod findEqualsOnlyValueProviderMethodForPath(final PropertyPath propertyPath)
+	{
+		for (final PropertyPathAndMethod propertyPathEqualsOnValueProviderMethod : equalsOnlyValueProviderMethods)
+		{
+			if (propertyPath.equals(propertyPathEqualsOnValueProviderMethod.getPropertyPath()))
+			{
 				return propertyPathEqualsOnValueProviderMethod;
 			}
 		}

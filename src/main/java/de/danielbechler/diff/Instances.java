@@ -24,8 +24,8 @@ import de.danielbechler.util.Collections;
 
 import java.util.*;
 
-import static de.danielbechler.util.Objects.*;
 import static de.danielbechler.util.Comparables.*;
+import static de.danielbechler.util.Objects.*;
 
 /** @author Daniel Bechler */
 @SuppressWarnings({"UnusedDeclaration"})
@@ -172,32 +172,39 @@ class Instances
 	{
 		return isEqual(base, working);
 	}
-	
-	public boolean areMethodResultsEqual(String method) {
-		try {
-			if(base == null && working == null){
+
+	public boolean areMethodResultsEqual(final String method)
+	{
+		try
+		{
+			if (base == null && working == null)
+			{
 				return true;
 			}
-			if(base == null && working != null || base != null && working == null){
+			if (base == null || working == null)
+			{
 				return false;
 			}
-			Object baseMethodResult = base.getClass().getMethod(method).invoke(base);
-			Object workingMethodResult = working.getClass().getMethod(method).invoke(working);
-			if(baseMethodResult == null){
+			final Object baseMethodResult = base.getClass().getMethod(method).invoke(base);
+			final Object workingMethodResult = working.getClass().getMethod(method).invoke(working);
+			if (baseMethodResult == null)
+			{
 				return workingMethodResult == null;
 			}
 			return baseMethodResult.equals(workingMethodResult);
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			throw new RuntimeException(e);
 		}
 	}
 
-    public boolean areEqualByComparison()
+	public boolean areEqualByComparison()
 	{
 		return isEqualByComparison((Comparable) base, (Comparable) working);
 	}
 
-    public boolean areSame()
+	public boolean areSame()
 	{
 		return working == base;
 	}

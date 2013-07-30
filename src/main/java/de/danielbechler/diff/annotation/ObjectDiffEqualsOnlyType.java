@@ -25,4 +25,12 @@ import java.lang.annotation.*;
 @ObjectDiffAnnotation
 public @interface ObjectDiffEqualsOnlyType
 {
+	/**
+	 * The name of a method of the annotated type. The value returned by this method will be used for the equals
+	 * check instead of the annotated object itself. This allows to provide alternative equality checks (e.g.
+	 * comparing a List type by size, by calling <code>size()</code>.) The method should have no parameters.
+	 *
+	 * @return The name of a method providing a different object for the equals check.
+	 */
+	String valueProviderMethod() default "";
 }

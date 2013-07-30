@@ -55,17 +55,19 @@ public abstract class AbstractAccessor implements Accessor
 	{
 		this.ignored = ignored;
 	}
-	
-	public boolean hasEqualsOnlyValueProviderMethod(){
-		return this.equalsOnlyValueProviderMethod != null && !this.equalsOnlyValueProviderMethod.equals("");
+
+	public boolean hasEqualsOnlyValueProviderMethod()
+	{
+		return equalsOnlyValueProviderMethod != null && !equalsOnlyValueProviderMethod.equals("");
 	}
 
-	public void setEqualsOnlyValueProviderMethod(String equalsOnlyValueProviderMethod) {
+	public void setEqualsOnlyValueProviderMethod(final String equalsOnlyValueProviderMethod)
+	{
 		this.equalsOnlyValueProviderMethod = equalsOnlyValueProviderMethod;
 	}
-	
-	public String getEqualsOnlyValueProviderMethod(){
+
+	public String getEqualsOnlyValueProviderMethod()
+	{
 		return equalsOnlyValueProviderMethod;
 	}
-
 }
