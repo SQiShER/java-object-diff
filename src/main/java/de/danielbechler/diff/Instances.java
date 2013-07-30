@@ -175,6 +175,12 @@ class Instances
 	
 	public boolean areMethodResultsEqual(String method) {
 		try {
+			if(base == null && working == null){
+				return true;
+			}
+			if(base == null && working != null || base != null && working == null){
+				return false;
+			}
 			Object baseMethodResult = base.getClass().getMethod(method).invoke(base);
 			Object workingMethodResult = working.getClass().getMethod(method).invoke(working);
 			if(baseMethodResult == null){
