@@ -158,6 +158,18 @@ public class Configuration implements NodeInspector
 		return this;
 	}
 
+	public Configuration withEqualsOnlyValueProviderMethod(final Class<?> type, final String method)
+	{
+		this.equalsOnlyValueProviderTypes.add(new ClassAndMethod(type, method));
+		return this;
+	}
+
+	public Configuration withEqualsOnlyValueProviderMethod(final ClassAndMethod classAndMethod)
+	{
+		this.equalsOnlyValueProviderTypes.add(classAndMethod);
+		return this;
+	}
+
 	public Configuration withIgnoredNodes()
 	{
 		this.returnIgnoredNodes = true;
