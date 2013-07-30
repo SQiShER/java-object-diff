@@ -149,6 +149,19 @@ public class InstancesTest
 	}
 	
 	@Test
+	public void testMethodResultEqualOneNull() throws Exception
+	{
+		final Method readMethod = getClass().getDeclaredMethod("getTestValue");
+		final PropertyAccessor accessor = new PropertyAccessor("testValue", readMethod, null);
+		
+		ObjectWithString working = new ObjectWithString("string");
+		ObjectWithString base = null;
+		
+		final Instances instances = new Instances(accessor, working, base, null);
+		assertThat(instances.areMethodResultsEqual("getValue")).isFalse();
+	}
+	
+	@Test
 	public void testMethodResultEqualInvalidMethod() throws Exception
 	{
 		final Method readMethod = getClass().getDeclaredMethod("getTestValue");
