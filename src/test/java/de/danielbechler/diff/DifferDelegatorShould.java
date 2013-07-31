@@ -49,6 +49,7 @@ public class DifferDelegatorShould
 		initMocks(this);
 
 		when(circularReferenceDetectorFactory.create()).thenReturn(circularReferenceDetector);
+		when(differFactory.getConfiguration()).thenReturn(new Configuration());
 
 		differDelegator = new DifferDelegator(differFactory, circularReferenceDetectorFactory);
 	}

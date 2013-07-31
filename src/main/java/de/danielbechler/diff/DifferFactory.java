@@ -53,4 +53,8 @@ public class DifferFactory
 			return new BeanDiffer(delegator, configuration);
 		}
 	}
+
+	public Configuration getConfiguration() {
+		return configuration;
+	}
 }
