@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.spockframework:spock-core:0.7-groovy-1.8">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/spockframework/spock-core/0.7-groovy-1.8/spock-core-0.7-groovy-1.8.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/spockframework/spock-core/0.7-groovy-1.8/spock-core-0.7-groovy-1.8-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/spockframework/spock-core/0.7-groovy-1.8/spock-core-0.7-groovy-1.8-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

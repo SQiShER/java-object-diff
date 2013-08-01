@@ -1,0 +1,60 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="java-object-diff [install]" type="MavenRunConfiguration" factoryName="Maven" singleton="true">
+    <MavenSettings>
+      <option name="myGeneralSettings">
+        <MavenGeneralSettings>
+          <option name="alwaysUpdateSnapshots" value="false" />
+          <option name="checksumPolicy" value="FAIL" />
+          <option name="failureBehavior" value="FAST" />
+          <option name="localRepository" value="" />
+          <option name="mavenHome" value="" />
+          <option name="nonRecursive" value="false" />
+          <option name="outputLevel" value="INFO" />
+          <option name="pluginUpdatePolicy" value="DO_NOT_UPDATE" />
+          <option name="printErrorStackTraces" value="false" />
+          <option name="usePluginRegistry" value="false" />
+          <option name="userSettingsFile" value="" />
+          <option name="workOffline" value="false" />
+        </MavenGeneralSettings>
+      </option>
+      <option name="myRunnerSettings">
+        <MavenRunnerSettings>
+          <option name="jreName" value="1.6" />
+          <option name="mavenProperties">
+            <map>
+              <entry key="performRelease" value="true" />
+            </map>
+          </option>
+          <option name="runMavenInBackground" value="true" />
+          <option name="skipTests" value="false" />
+          <option name="vmOptions" value="" />
+        </MavenRunnerSettings>
+      </option>
+      <option name="myRunnerParameters">
+        <MavenRunnerParameters>
+          <option name="profiles">
+            <set />
+          </option>
+          <option name="goals">
+            <list>
+              <option value="install" />
+            </list>
+          </option>
+          <option name="profilesMap">
+            <map>
+              <entry key="ramdisk" value="true" />
+            </map>
+          </option>
+          <option name="resolveToWorkspace" value="false" />
+          <option name="workingDirPath" value="$PROJECT_DIR$" />
+        </MavenRunnerParameters>
+      </option>
+    </MavenSettings>
+    <RunnerSettings RunnerId="Profile ">
+      <option name="myExternalizedOptions" value="&#10;snapshots-dir=&#10;additional-options2=onexit\=snapshot&#10;" />
+    </RunnerSettings>
+    <RunnerSettings RunnerId="Run" />
+    <ConfigurationWrapper RunnerId="Run" />
+    <method />
+  </configuration>
+</component>
