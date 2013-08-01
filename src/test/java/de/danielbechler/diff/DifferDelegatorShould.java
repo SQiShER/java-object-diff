@@ -17,6 +17,7 @@
 package de.danielbechler.diff;
 
 import de.danielbechler.diff.accessor.*;
+import de.danielbechler.diff.accessor.exception.*;
 import de.danielbechler.diff.mock.*;
 import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.path.*;
@@ -40,6 +41,10 @@ public class DifferDelegatorShould
 	private CircularReferenceDetectorFactory circularReferenceDetectorFactory;
 	@Mock
 	private CircularReferenceDetector circularReferenceDetector;
+	@Mock
+	private ExceptionListener exceptionListener;
+	@Mock
+	private Configuration configuration;
 	private Instances instances;
 	private DifferDelegator differDelegator;
 
@@ -49,16 +54,16 @@ public class DifferDelegatorShould
 		initMocks(this);
 
 		when(circularReferenceDetectorFactory.create()).thenReturn(circularReferenceDetector);
-		when(differFactory.getConfiguration()).thenReturn(new Configuration());
+		when(configuration.getExceptionListener()).thenReturn(exceptionListener);
 
-		differDelegator = new DifferDelegator(differFactory, circularReferenceDetectorFactory);
+		differDelegator = new DifferDelegator(differFactory, circularReferenceDetectorFactory, configuration);
 	}
 
 	@SuppressWarnings("unchecked")
 	private void given_the_delegated_node_is_circular(final PropertyPath circularStartPath)
 	{
 		instances = mock(Instances.class);
-		differDelegator = new DifferDelegator(differFactory, circularReferenceDetectorFactory)
+		differDelegator = new DifferDelegator(differFactory, circularReferenceDetectorFactory, configuration)
 		{
 			@Override
 			protected void rememberInstances(final Node parentNode, final Instances instances)
@@ -90,6 +95,16 @@ public class DifferDelegatorShould
 		final Node node = differDelegator.delegate(Node.ROOT, instances);
 
 		assertThat(node.getState()).isEqualTo(Node.State.CIRCULAR);
+	}
+
+	@Test
+	public void pass_node_to_onCircularReferenceException_method_of_the_exceptionListener_if_the_delegated_node_is_circular() throws Exception
+	{
+		given_the_delegated_node_is_circular(PropertyPath.buildRootPath());
+
+		final Node node = differDelegator.delegate(Node.ROOT, instances);
+
+		verify(exceptionListener).onCircularReferenceException(node);
 	}
 
 	@Test(expectedExceptions = IllegalStateException.class)

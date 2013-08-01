@@ -51,8 +51,10 @@ public class ObjectDiffer
 
 	ObjectDiffer(final Configuration configuration)
 	{
+		final DifferFactory differFactory = new DifferFactory(configuration);
+		final CircularReferenceDetectorFactory circularReferenceDetectorFactory = newCircularReferenceDetectorFactory(configuration);
+		this.delegator = new DifferDelegator(differFactory, circularReferenceDetectorFactory, configuration);
 		this.configuration = configuration;
-		this.delegator = new DifferDelegator(new DifferFactory(configuration), newCircularReferenceDetectorFactory(configuration));
 	}
 
 	/**

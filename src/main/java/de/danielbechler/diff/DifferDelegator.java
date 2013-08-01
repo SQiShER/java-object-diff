@@ -28,16 +28,20 @@ class DifferDelegator
 {
 	private final DifferFactory differFactory;
 	private final CircularReferenceDetectorFactory circularReferenceDetectorFactory;
+	private final Configuration configuration;
 	private CircularReferenceDetector workingCircularReferenceDetector;
 	private CircularReferenceDetector baseCircularReferenceDetector;
 
 	public DifferDelegator(final DifferFactory differFactory,
-						   final CircularReferenceDetectorFactory circularReferenceDetectorFactory)
+						   final CircularReferenceDetectorFactory circularReferenceDetectorFactory,
+						   final Configuration configuration)
 	{
 		Assert.notNull(differFactory, "differFactory");
 		Assert.notNull(circularReferenceDetectorFactory, "circularReferenceDetectorFactory");
+		Assert.notNull(configuration, "configuration");
 		this.differFactory = differFactory;
 		this.circularReferenceDetectorFactory = circularReferenceDetectorFactory;
+		this.configuration = configuration;
 		resetInstanceMemory();
 	}
 
@@ -75,7 +79,7 @@ class DifferDelegator
 		catch (CircularReferenceException e)
 		{
 			node = newCircularNode(parentNode, instances, e.getPropertyPath());
-			differFactory.getConfiguration().getExceptionListener().onCircularReferenceException(node);
+			configuration.getExceptionListener().onCircularReferenceException(node);
 		}
 		if (parentNode == null)
 		{

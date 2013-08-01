@@ -16,8 +16,7 @@
 
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.accessor.exception.DefaultExceptionListener;
-import de.danielbechler.diff.accessor.exception.ExceptionListener;
+import de.danielbechler.diff.accessor.exception.*;
 import de.danielbechler.diff.annotation.*;
 import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.path.*;
@@ -90,18 +89,17 @@ public class Configuration implements NodeInspector
 	private boolean returnChildrenOfRemovedNodes = false;
 	private CircularReferenceMatchingMode circularReferenceMatchingMode = CircularReferenceMatchingMode.EQUALITY_OPERATOR;
 	private PrimitiveDefaultValueMode treatPrimitivesAs = PrimitiveDefaultValueMode.UNASSIGNED;
-	/** Handler for recoverable exceptional states. */
-	private ExceptionListener exceptionListener = new DefaultExceptionListener(); 
+	private ExceptionListener exceptionListener = new DefaultExceptionListener();
 
 	/**
 	 * Sets handler for recoverable exceptional states.
-	 * 
-	 * @param exceptionListener
-	 *            Handler for recoverable exceptional states.
+	 *
+	 * @param exceptionListener Handler for recoverable exceptional states.
+	 *
 	 * @return Modified configuration object.
 	 */
-	public Configuration withExceptionListener(
-			final ExceptionListener exceptionListener) {
+	public Configuration withExceptionListener(final ExceptionListener exceptionListener)
+	{
 		this.exceptionListener = exceptionListener;
 		return this;
 	}
@@ -461,10 +459,9 @@ public class Configuration implements NodeInspector
 		return true;
 	}
 
-	/**
-	 * @return Handler for recoverable exceptional states.
-	 */
-	public ExceptionListener getExceptionListener() {
+	/** @return Handler for recoverable exceptional states. */
+	public ExceptionListener getExceptionListener()
+	{
 		return exceptionListener;
 	}
 }
