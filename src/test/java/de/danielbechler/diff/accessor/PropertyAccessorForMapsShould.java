@@ -16,7 +16,9 @@
 
 package de.danielbechler.diff.accessor;
 
+import de.danielbechler.diff.Configuration;
 import de.danielbechler.diff.mock.*;
+
 import org.testng.annotations.*;
 
 import java.lang.reflect.*;
@@ -54,7 +56,7 @@ public class PropertyAccessorForMapsShould
 		{
 			writeMethod = ObjectWithMap.class.getMethod("setMap", Map.class);
 		}
-		return new PropertyAccessor("map", readMethod, writeMethod);
+		return new PropertyAccessor("map", readMethod, writeMethod, new Configuration());
 	}
 
 	@Test

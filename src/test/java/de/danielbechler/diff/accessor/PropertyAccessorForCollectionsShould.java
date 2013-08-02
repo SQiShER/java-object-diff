@@ -16,7 +16,9 @@
 
 package de.danielbechler.diff.accessor;
 
+import de.danielbechler.diff.Configuration;
 import de.danielbechler.diff.mock.*;
+
 import org.testng.annotations.*;
 
 import java.lang.reflect.*;
@@ -56,7 +58,7 @@ public class PropertyAccessorForCollectionsShould
 		{
 			writeMethod = aClass.getMethod("setCollection", Collection.class);
 		}
-		return new PropertyAccessor("collection", readMethod, writeMethod);
+		return new PropertyAccessor("collection", readMethod, writeMethod, new Configuration());
 	}
 
 	@Test

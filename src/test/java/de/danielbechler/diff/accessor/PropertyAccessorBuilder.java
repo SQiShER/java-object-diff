@@ -18,6 +18,8 @@ package de.danielbechler.diff.accessor;
 
 import java.lang.reflect.*;
 
+import de.danielbechler.diff.Configuration;
+
 /** @author Daniel Bechler */
 public final class PropertyAccessorBuilder
 {
@@ -38,6 +40,7 @@ public final class PropertyAccessorBuilder
 		private Class<?> propertyType;
 		private Class<?> targetType;
 		private boolean readOnly;
+		private Configuration configuration = new Configuration();
 
 		public ReadOnly property(final String name, final Class<?> type)
 		{
@@ -66,7 +69,7 @@ public final class PropertyAccessorBuilder
 				{
 					writeMethod = targetType.getDeclaredMethod(name("set"), propertyType);
 				}
-				return new PropertyAccessor(propertyName, readMethod, writeMethod);
+				return new PropertyAccessor(propertyName, readMethod, writeMethod, configuration);
 			}
 			catch (NoSuchMethodException e)
 			{
@@ -77,6 +80,12 @@ public final class PropertyAccessorBuilder
 		private String name(final String prefix)
 		{
 			return prefix + Character.toUpperCase(propertyName.charAt(0)) + propertyName.substring(1);
+		}
+		
+		public Buildable configuration(final Configuration configuration)
+		{
+			this.configuration = configuration;
+			return this;
 		}
 	}
 

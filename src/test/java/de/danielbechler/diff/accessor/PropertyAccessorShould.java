@@ -16,10 +16,12 @@
 
 package de.danielbechler.diff.accessor;
 
+import de.danielbechler.diff.Configuration;
 import de.danielbechler.diff.accessor.exception.*;
 import de.danielbechler.diff.annotation.*;
 import de.danielbechler.diff.mock.*;
 import de.danielbechler.diff.path.*;
+
 import org.testng.annotations.*;
 
 import java.lang.annotation.*;
@@ -64,7 +66,7 @@ public class PropertyAccessorShould
 		final ObjectWithStringAndUnsupportedWriteMethod target = new ObjectWithStringAndUnsupportedWriteMethod("foo");
 		final Method readMethod = target.getClass().getMethod("getValue");
 		final Method writeMethod = target.getClass().getMethod("setValue", String.class);
-		accessor = new PropertyAccessor("value", readMethod, writeMethod);
+		accessor = new PropertyAccessor("value", readMethod, writeMethod, new Configuration());
 		accessor.set(target, "bar");
 	}
 

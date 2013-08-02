@@ -16,9 +16,10 @@
 
 package de.danielbechler.diff.accessor;
 
-import de.danielbechler.diff.accessor.exception.*;
+import de.danielbechler.diff.Configuration;
 import de.danielbechler.diff.path.*;
 import de.danielbechler.util.*;
+
 import org.slf4j.*;
 
 import java.lang.annotation.*;
@@ -34,8 +35,9 @@ public class PropertyAccessor extends AbstractAccessor implements TypeAwareAcces
 	private final Class<?> type;
 	private final Method readMethod;
 	private final Method writeMethod;
+	private final Configuration configuration;
 
-	public PropertyAccessor(final String propertyName, final Method readMethod, final Method writeMethod)
+	public PropertyAccessor(final String propertyName, final Method readMethod, final Method writeMethod, final Configuration configuration)
 	{
 		Assert.notNull(propertyName, "propertyName");
 		Assert.notNull(readMethod, "readMethod");
@@ -43,6 +45,7 @@ public class PropertyAccessor extends AbstractAccessor implements TypeAwareAcces
 		this.readMethod = makeAccessible(readMethod);
 		this.writeMethod = makeAccessible(writeMethod);
 		this.type = this.readMethod.getReturnType();
+		this.configuration = configuration;
 	}
 
 	private static Method makeAccessible(final Method method)
@@ -86,12 +89,7 @@ public class PropertyAccessor extends AbstractAccessor implements TypeAwareAcces
 		}
 		catch (Exception e)
 		{
-			logFailedSet(value);
-
-			final PropertyWriteException ex = new PropertyWriteException(e);
-			ex.setPropertyName(propertyName);
-			ex.setTargetType(getType());
-			throw ex;
+			configuration.getExceptionListener().onPropertyWriteException(getType(), propertyName, value, e);
 		}
 	}
 
@@ -166,10 +164,7 @@ public class PropertyAccessor extends AbstractAccessor implements TypeAwareAcces
 		}
 		catch (Exception e)
 		{
-			final PropertyReadException ex = new PropertyReadException(e);
-			ex.setPropertyName(propertyName);
-			ex.setTargetType(target.getClass());
-			throw ex;
+			return configuration.getExceptionListener().onPropertyReadException(getType(), propertyName, e);
 		}
 	}
 
