@@ -1,19 +1,20 @@
 package de.danielbechler.diff.mock;
 
-import de.danielbechler.diff.annotation.ObjectDiffProperty;
+import de.danielbechler.diff.annotation.*;
 
-public class ObjectWithMethodEqualsOnlyValueProviderMethodOnGetNestedObject extends ObjectWithNestedObject {
-	public ObjectWithMethodEqualsOnlyValueProviderMethodOnGetNestedObject(String id){
-		super(id);
-	}
-	public ObjectWithMethodEqualsOnlyValueProviderMethodOnGetNestedObject(String id, ObjectWithNestedObject object){
+public class ObjectWithMethodEqualsOnlyValueProviderMethodOnGetNestedObject extends ObjectWithNestedObject
+{
+	public ObjectWithMethodEqualsOnlyValueProviderMethodOnGetNestedObject(final String id,
+																		  final ObjectWithNestedObject object)
+	{
 		super(id);
 		setObject(object);
 	}
 
-	@ObjectDiffProperty(equalsOnlyValueProviderMethod = "getId")
+	@ObjectDiffProperty(equalsOnly = true, equalsOnlyValueProviderMethod = "getId")
 	@Override
-	public ObjectWithNestedObject getObject() {
+	public ObjectWithNestedObject getObject()
+	{
 		return super.getObject();
 	}
 }

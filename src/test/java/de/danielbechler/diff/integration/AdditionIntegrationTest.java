@@ -18,10 +18,9 @@ package de.danielbechler.diff.integration;
 
 import de.danielbechler.diff.*;
 import de.danielbechler.diff.mock.*;
-import de.danielbechler.diff.node.*;
 import org.testng.annotations.*;
 
-import static de.danielbechler.diff.node.NodeAssertions.*;
+import static de.danielbechler.diff.NodeAssertions.*;
 
 /** @author Daniel Bechler */
 public class AdditionIntegrationTest
@@ -32,8 +31,8 @@ public class AdditionIntegrationTest
 		final ObjectWithString base = new ObjectWithString();
 		final ObjectWithString working = new ObjectWithString("foo");
 
-		final Node node = ObjectDifferFactory.getInstance().compare(working, base);
+		final DiffNode node = ObjectDifferBuilder.buildDefaultObjectDiffer().compare(working, base);
 
-		assertThat(node).child("value").hasState(Node.State.ADDED);
+		assertThat(node).child("value").hasState(DiffNode.State.ADDED);
 	}
 }

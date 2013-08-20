@@ -17,40 +17,39 @@
 package de.danielbechler.diff;
 
 import de.danielbechler.diff.accessor.*;
-import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.path.*;
 import de.danielbechler.util.*;
 import de.danielbechler.util.Collections;
 
+import java.lang.reflect.*;
 import java.util.*;
 
-import static de.danielbechler.util.Comparables.*;
 import static de.danielbechler.util.Objects.*;
 
 /** @author Daniel Bechler */
 @SuppressWarnings({"UnusedDeclaration"})
-class Instances
+public class Instances
 {
 	private final Accessor sourceAccessor;
 	private final Object working;
 	private final Object base;
 	private final Object fresh;
 
-	public static <T> Instances of(final Accessor sourceAccessor,
-								   final T working,
-								   final T base,
-								   final T fresh)
+	static <T> Instances of(final Accessor sourceAccessor,
+							final T working,
+							final T base,
+							final T fresh)
 	{
 		return new Instances(sourceAccessor, working, base, fresh);
 	}
 
-	public static <T> Instances of(final Accessor sourceAccessor, final T working, final T base)
+	static <T> Instances of(final Accessor sourceAccessor, final T working, final T base)
 	{
 		final Object fresh = (working != null) ? Classes.freshInstanceOf(working.getClass()) : null;
 		return new Instances(sourceAccessor, working, base, fresh);
 	}
 
-	public static <T> Instances of(final T working, final T base)
+	static <T> Instances of(final T working, final T base)
 	{
 		final Object fresh = (working != null) ? Classes.freshInstanceOf(working.getClass()) : null;
 		return new Instances(RootAccessor.getInstance(), working, base, fresh);
@@ -72,6 +71,27 @@ class Instances
 	public Accessor getSourceAccessor()
 	{
 		return sourceAccessor;
+	}
+
+	public Instances access(final String methodName)
+	{
+		Assert.hasText(methodName, "methodName");
+		final Class<?> type = getType();
+		if (type != null)
+		{
+			try
+			{
+				final Method method = type.getMethod(methodName);
+				method.setAccessible(true);
+				final PropertyAccessor accessor = new PropertyAccessor(methodName, method, null);
+				return new Instances(accessor, accessor.get(working), accessor.get(base), accessor.get(fresh));
+			}
+			catch (NoSuchMethodException e)
+			{
+				throw Exceptions.escalate(type.getName(), e);
+			}
+		}
+		return null;
 	}
 
 	public Instances access(final Accessor accessor)
@@ -173,37 +193,6 @@ class Instances
 		return isEqual(base, working);
 	}
 
-	public boolean areMethodResultsEqual(final String method)
-	{
-		try
-		{
-			if (base == null && working == null)
-			{
-				return true;
-			}
-			if (base == null || working == null)
-			{
-				return false;
-			}
-			final Object baseMethodResult = base.getClass().getMethod(method).invoke(base);
-			final Object workingMethodResult = working.getClass().getMethod(method).invoke(working);
-			if (baseMethodResult == null)
-			{
-				return workingMethodResult == null;
-			}
-			return baseMethodResult.equals(workingMethodResult);
-		}
-		catch (Exception e)
-		{
-			throw new RuntimeException(e);
-		}
-	}
-
-	public boolean areEqualByComparison()
-	{
-		return isEqualByComparison((Comparable) base, (Comparable) working);
-	}
-
 	public boolean areSame()
 	{
 		return working == base;
@@ -293,18 +282,18 @@ class Instances
 				"Instances must either be null or have the exact same type.");
 	}
 
-	public PropertyPath getPropertyPath(final Node parentNode)
+	public NodePath getPropertyPath(final DiffNode parentNode)
 	{
 		if (parentNode != null)
 		{
-			return PropertyPath.createBuilder()
-							   .withPropertyPath(parentNode.getPropertyPath())
-							   .withElement(sourceAccessor.getPathElement())
-							   .build();
+			return NodePath.createBuilder()
+						   .withPropertyPath(parentNode.getPath())
+						   .withElement(sourceAccessor.getPathElement())
+						   .build();
 		}
 		else
 		{
-			return PropertyPath.createBuilder().withRoot().build();
+			return NodePath.createBuilder().withRoot().build();
 		}
 	}
 }

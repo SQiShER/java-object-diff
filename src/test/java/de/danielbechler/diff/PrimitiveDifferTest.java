@@ -17,7 +17,6 @@
 package de.danielbechler.diff;
 
 import de.danielbechler.diff.accessor.*;
-import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.path.*;
 import org.mockito.Mock;
 import org.mockito.internal.debugging.*;
@@ -26,11 +25,9 @@ import org.testng.annotations.*;
 import java.util.ArrayList;
 import java.util.*;
 
-import static de.danielbechler.diff.Configuration.*;
-import static de.danielbechler.diff.Configuration.PrimitiveDefaultValueMode.*;
+import static de.danielbechler.diff.NodeAssertions.*;
+import static de.danielbechler.diff.PrimitiveDefaultValueMode.*;
 import static de.danielbechler.diff.extension.MockitoExtensions.*;
-import static de.danielbechler.diff.node.Node.State.*;
-import static de.danielbechler.diff.node.NodeAssertions.*;
 import static java.util.Arrays.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.*;
@@ -38,18 +35,26 @@ import static org.mockito.MockitoAnnotations.*;
 /** @author Daniel Bechler */
 public class PrimitiveDifferTest
 {
-	private PrimitiveDiffer differ;
-	private Configuration configuration;
-	@Mock private DifferDelegator differDelegator;
-	@Mock private TypeAwareAccessor accessor;
+	private PrimitiveDiffer primitiveDiffer;
+
+	@Mock
+	private DifferDispatcher differDispatcher;
+	@Mock
+	private TypeAwareAccessor accessor;
+	@Mock
+	private PrimitiveDefaultValueModeResolver primitiveDefaultValueModeResolver;
+	private Instances instances;
 
 	@BeforeMethod
 	public void setUp()
 	{
 		initMocks(this);
-		configuration = new Configuration();
-		configuration.treatPrimitiveDefaultValuesAs(UNASSIGNED);
-		differ = new PrimitiveDiffer(configuration);
+	}
+
+	private void given_primitiveDiffer_with_defaultValueMode(final PrimitiveDefaultValueMode mode)
+	{
+		when(primitiveDefaultValueModeResolver.resolvePrimitiveDefaultValueMode(any(DiffNode.class))).thenReturn(mode);
+		primitiveDiffer = new PrimitiveDiffer(primitiveDefaultValueModeResolver);
 	}
 
 	@Test(dataProvider = "removals")
@@ -58,18 +63,19 @@ public class PrimitiveDifferTest
 																final Object working,
 																final Object fresh) throws Exception
 	{
-		final Instances instances = whenInstancesAre(type, base, working, fresh);
+		given_primitiveDiffer_with_defaultValueMode(UNASSIGNED);
+		given_instances(type, base, working, fresh);
 
-		final Node node = differ.compare(Node.ROOT, instances);
+		final DiffNode node = primitiveDiffer.compare(DiffNode.ROOT, instances);
 
-		assertThat(node).self().hasState(REMOVED);
+		assertThat(node).self().hasState(DiffNode.State.REMOVED);
 
 	}
 
 	@AfterMethod
 	public void tearDown()
 	{
-		new MockitoDebuggerImpl().printInvocations(differDelegator, accessor);
+		new MockitoDebuggerImpl().printInvocations(differDispatcher, accessor);
 	}
 
 	@Test(dataProvider = "changes")
@@ -78,11 +84,12 @@ public class PrimitiveDifferTest
 																final Object working,
 																final Object fresh) throws Exception
 	{
-		final Instances instances = whenInstancesAre(type, base, working, fresh);
+		given_primitiveDiffer_with_defaultValueMode(UNASSIGNED);
+		given_instances(type, base, working, fresh);
 
-		final Node node = differ.compare(Node.ROOT, instances);
+		final DiffNode node = primitiveDiffer.compare(DiffNode.ROOT, instances);
 
-		assertThat(node).self().hasState(CHANGED);
+		assertThat(node).self().hasState(DiffNode.State.CHANGED);
 	}
 
 	@Test(dataProvider = "additions")
@@ -91,11 +98,12 @@ public class PrimitiveDifferTest
 															  final Object working,
 															  final Object fresh) throws Exception
 	{
-		final Instances instances = whenInstancesAre(type, base, working, fresh);
+		given_primitiveDiffer_with_defaultValueMode(UNASSIGNED);
+		given_instances(type, base, working, fresh);
 
-		final Node node = differ.compare(Node.ROOT, instances);
+		final DiffNode node = primitiveDiffer.compare(DiffNode.ROOT, instances);
 
-		assertThat(node).self().hasState(ADDED);
+		assertThat(node).self().hasState(DiffNode.State.ADDED);
 	}
 
 	@Test(dataProvider = "changesWhenDefaultModeIsAssigned")
@@ -104,45 +112,33 @@ public class PrimitiveDifferTest
 															  final Object working,
 															  final Object fresh) throws Exception
 	{
-		configuration.treatPrimitiveDefaultValuesAs(PrimitiveDefaultValueMode.ASSIGNED);
-		final Instances instances = whenInstancesAre(type, base, working, fresh);
+		given_primitiveDiffer_with_defaultValueMode(ASSIGNED);
+		given_instances(type, base, working, fresh);
 
-		final Node node = differ.compare(Node.ROOT, instances);
+		final DiffNode node = primitiveDiffer.compare(DiffNode.ROOT, instances);
 
-		assertThat(node).self().hasState(CHANGED);
+		assertThat(node).self().hasState(DiffNode.State.CHANGED);
 	}
 
 	@Test(dataProvider = "wrapperTypes", expectedExceptions = IllegalArgumentException.class)
 	public void testThrowsIllegalArgumentExceptionWhenNonPrimitiveTypeIsPassed(final Class<?> wrapperType) throws Exception
 	{
+		given_primitiveDiffer_with_defaultValueMode(UNASSIGNED);
+
 		when(accessor.getType()).then(returnClass(wrapperType));
 
-		differ.compare(Node.ROOT, Instances.of(accessor, "foo", "bar"));
+		primitiveDiffer.compare(DiffNode.ROOT, Instances.of(accessor, "foo", "bar"));
 	}
 
-	@Test
-	public void testIgnoresIgnorableNodes() throws Exception
-	{
-		final Instances instances = whenInstancesAre(int.class, 2, 1, 0);
-
-		configuration.withoutProperty(PropertyPath.createBuilder()
-												  .withRoot()
-												  .withPropertyName("ignored")
-												  .build());
-
-		final Node node = new PrimitiveDiffer(configuration).compare(Node.ROOT, instances);
-
-		assertThat(node).self().hasState(IGNORED);
-	}
-
-	private Instances whenInstancesAre(final Class<?> type,
-									   final Object base,
-									   final Object working,
-									   final Object fresh)
+	private Instances given_instances(final Class<?> type,
+									  final Object base,
+									  final Object working,
+									  final Object fresh)
 	{
 		when(accessor.getType()).then(returnClass(type));
 		when(accessor.getPathElement()).thenReturn(new NamedPropertyElement("ignored"));
-		return Instances.of(accessor, working, base, fresh);
+		instances = Instances.of(accessor, working, base, fresh);
+		return instances;
 	}
 
 	private static <T> Object[] instances(final Class<T> type, final T base, final T working, final T fresh)

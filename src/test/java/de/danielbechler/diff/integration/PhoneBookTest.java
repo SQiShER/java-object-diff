@@ -17,7 +17,6 @@
 package de.danielbechler.diff.integration;
 
 import de.danielbechler.diff.*;
-import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.path.*;
 import org.hamcrest.core.*;
 import org.testng.annotations.*;
@@ -46,29 +45,29 @@ public class PhoneBookTest
 		modifiedPhoneBook.getContact("Jesse", "Pinkman").setMiddleName("Bruce");
 		modifiedPhoneBook.getContact("Walter", "White").setMiddleName("Hartwell");
 
-		final ObjectDiffer objectDiffer = ObjectDifferFactory.getInstance();
-		final Node node = objectDiffer.compare(modifiedPhoneBook, phoneBook);
+		final ObjectDiffer objectDiffer = ObjectDifferBuilder.buildDefaultObjectDiffer();
+		final DiffNode node = objectDiffer.compare(modifiedPhoneBook, phoneBook);
 
 		assertThat(node.hasChanges(), is(true));
 		assertThat(node.hasChildren(), is(true));
 		assertThat(node.getChildren().size(), is(1));
 
-		final Node contactsNode = node.getChild("contacts");
+		final DiffNode contactsNode = node.getChild("contacts");
 		assertThat(contactsNode, IsNull.notNullValue());
 		assertThat(contactsNode.hasChanges(), is(true));
 
-		final Node pinkmanNode = contactsNode.getChild(new CollectionElement(jessePinkman));
+		final DiffNode pinkmanNode = contactsNode.getChild(new CollectionElement(jessePinkman));
 		assertThat(pinkmanNode.hasChanges(), is(true));
 
-		final Node middleNameNode = pinkmanNode.getChild("middleName");
+		final DiffNode middleNameNode = pinkmanNode.getChild("middleName");
 		assertThat(middleNameNode.hasChanges(), is(true));
 		assertThat(middleNameNode.canonicalGet(phoneBook), IsNull.nullValue());
 		assertThat((String) middleNameNode.canonicalGet(modifiedPhoneBook), IsEqual.equalTo("Bruce"));
 
-		final Node whiteNode = contactsNode.getChild(new CollectionElement(walterWhite));
+		final DiffNode whiteNode = contactsNode.getChild(new CollectionElement(walterWhite));
 		assertThat(whiteNode.hasChanges(), is(true));
 
-		final Node whiteMiddleNameNode = whiteNode.getChild("middleName");
+		final DiffNode whiteMiddleNameNode = whiteNode.getChild("middleName");
 		assertThat(whiteMiddleNameNode.hasChanges(), is(true));
 		assertThat(whiteMiddleNameNode.canonicalGet(phoneBook), IsNull.nullValue());
 		assertThat((String) whiteMiddleNameNode.canonicalGet(modifiedPhoneBook), IsEqual.equalTo("Hartwell"));

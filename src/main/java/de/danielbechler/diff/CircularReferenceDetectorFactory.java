@@ -19,5 +19,5 @@ package de.danielbechler.diff;
 /** @author Daniel Bechler */
 public interface CircularReferenceDetectorFactory
 {
-	CircularReferenceDetector create();
+	CircularReferenceDetector createCircularReferenceDetector();
 }

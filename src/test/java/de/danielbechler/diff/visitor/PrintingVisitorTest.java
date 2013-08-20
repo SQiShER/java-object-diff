@@ -18,7 +18,6 @@ package de.danielbechler.diff.visitor;
 
 import de.danielbechler.diff.*;
 import de.danielbechler.diff.mock.*;
-import de.danielbechler.diff.node.*;
 import org.testng.annotations.*;
 
 import static org.fest.assertions.api.Assertions.*;
@@ -29,7 +28,7 @@ public class PrintingVisitorTest
 	@Test
 	public void prints_root_node_if_unchanged_and_without_children()
 	{
-		final Node rootNode = new DefaultNode(String.class);
+		final DiffNode rootNode = new DiffNode(String.class);
 		final TestablePrintingVisitor visitor = new TestablePrintingVisitor("foo", "foo");
 		rootNode.visit(visitor);
 		final String output = visitor.getOutput();
@@ -51,7 +50,7 @@ public class PrintingVisitorTest
 		a2.setReference(b2);
 		b2.setReference(d2);
 
-		final Node rootNode = ObjectDifferFactory.getInstance().compare(a1, a2);
+		final DiffNode rootNode = ObjectDifferBuilder.buildDefaultObjectDiffer().compare(a1, a2);
 		final TestablePrintingVisitor visitor = new TestablePrintingVisitor(a1, a2);
 		rootNode.visit(visitor);
 		final String output = visitor.getOutput();

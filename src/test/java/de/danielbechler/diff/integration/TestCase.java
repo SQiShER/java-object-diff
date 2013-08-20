@@ -17,7 +17,6 @@
 package de.danielbechler.diff.integration;
 
 import de.danielbechler.diff.*;
-import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.visitor.*;
 
 public class TestCase
@@ -78,8 +77,8 @@ public class TestCase
 		TestIntBeanPublic base = new TestIntBeanPublic();
 		base.setValue(1);
 
-		ObjectDiffer differ = ObjectDifferFactory.getInstance();
-		final Node root = differ.compare(working, base);
+		ObjectDiffer differ = ObjectDifferBuilder.buildDefaultObjectDiffer();
+		final DiffNode root = differ.compare(working, base);
 
 		root.visit(new PrintingVisitor(working, base));
 	}
@@ -93,8 +92,8 @@ public class TestCase
 		TestIntBeanPrivate base = new TestIntBeanPrivate();
 		base.setValue(1);
 
-		ObjectDiffer differ = ObjectDifferFactory.getInstance();
-		final Node root = differ.compare(working, base);
+		ObjectDiffer differ = ObjectDifferBuilder.buildDefaultObjectDiffer();
+		final DiffNode root = differ.compare(working, base);
 
 		root.visit(new PrintingVisitor(working, base));
 	}
@@ -108,8 +107,8 @@ public class TestCase
 		TestIntBeanPublic base = new TestIntBeanPublic();
 		base.setValue(1);
 
-		ObjectDiffer differ = ObjectDifferFactory.getInstance();
-		final Node root = differ.compare(working, base);
+		ObjectDiffer differ = ObjectDifferBuilder.buildDefaultObjectDiffer();
+		final DiffNode root = differ.compare(working, base);
 
 		root.visit(new PrintingVisitor(working, base));
 	}
@@ -122,7 +121,7 @@ public class TestCase
 		System.out.println("The following comparison does not work properly (detects removal)");
 		TestCase.testIntegerFailsPublic();
 		System.out
-				.println("The following comparison works properly bewcause the class has private access (detects change)");
+			  .println("The following comparison works properly bewcause the class has private access (detects change)");
 		TestCase.testIntegerWorksPrivate();
 	}
 }

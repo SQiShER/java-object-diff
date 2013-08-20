@@ -16,19 +16,15 @@
 
 package de.danielbechler.diff.visitor;
 
-import de.danielbechler.diff.node.*;
+import de.danielbechler.diff.*;
 import de.danielbechler.util.*;
-
-import java.lang.Override;
-import java.lang.String;
-import java.lang.SuppressWarnings;
 
 /**
  * Prints the hierarchy of the object graph in a human-readable form.
  *
  * @author Daniel Bechler
  */
-public class NodeHierarchyVisitor implements Node.Visitor
+public class NodeHierarchyVisitor implements DiffNode.Visitor
 {
 	public static final int UNLIMITED = -1;
 
@@ -45,7 +41,7 @@ public class NodeHierarchyVisitor implements Node.Visitor
 		this.maxDepth = maxDepth;
 	}
 
-	public void accept(final Node node, final Visit visit)
+	public void accept(final DiffNode node, final Visit visit)
 	{
 		if (maxDepth == 0)
 		{
@@ -69,9 +65,9 @@ public class NodeHierarchyVisitor implements Node.Visitor
 		}
 	}
 
-	protected void print(final Node node, final int level)
+	protected void print(final DiffNode node, final int level)
 	{
-		final String nodeAsString = node.getPropertyPath() + " ===> " + node.toString();
+		final String nodeAsString = node.getPath() + " ===> " + node.toString();
 		final String indentedNodeString = Strings.indent(level, nodeAsString);
 		print(indentedNodeString);
 	}
@@ -82,10 +78,10 @@ public class NodeHierarchyVisitor implements Node.Visitor
 		System.out.println(text);
 	}
 
-	private static int calculateDepth(final Node node)
+	private static int calculateDepth(final DiffNode node)
 	{
 		int count = 0;
-		Node parentNode = node.getParentNode();
+		DiffNode parentNode = node.getParentNode();
 		while (parentNode != null)
 		{
 			count++;

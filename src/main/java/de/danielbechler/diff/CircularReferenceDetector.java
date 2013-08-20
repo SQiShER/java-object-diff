@@ -21,6 +21,8 @@ import de.danielbechler.util.*;
 
 import java.util.*;
 
+import static de.danielbechler.util.Objects.*;
+
 /** @author Daniel Bechler */
 class CircularReferenceDetector
 {
@@ -35,18 +37,18 @@ class CircularReferenceDetector
 
 	private static class Entry
 	{
-		private final PropertyPath propertyPath;
+		private final NodePath nodePath;
 		private final Object instance;
 
-		private Entry(final PropertyPath propertyPath, final Object instance)
+		private Entry(final NodePath nodePath, final Object instance)
 		{
-			this.propertyPath = propertyPath;
+			this.nodePath = nodePath;
 			this.instance = instance;
 		}
 
-		public PropertyPath getPropertyPath()
+		public NodePath getNodePath()
 		{
-			return propertyPath;
+			return nodePath;
 		}
 
 		public Object getInstance()
@@ -59,7 +61,13 @@ class CircularReferenceDetector
 	{
 	}
 
-	public void push(final Object instance, final PropertyPath propertyPath)
+	public CircularReferenceDetector(final ReferenceMatchingMode referenceMatchingMode)
+	{
+		Assert.notNull(referenceMatchingMode, "referenceMatchingMode");
+		this.referenceMatchingMode = referenceMatchingMode;
+	}
+
+	public void push(final Object instance, final NodePath nodePath)
 	{
 		if (instance == null)
 		{
@@ -67,9 +75,9 @@ class CircularReferenceDetector
 		}
 		if (knows(instance))
 		{
-			throw new CircularReferenceException(entryForInstance(instance).getPropertyPath());
+			throw new CircularReferenceException(entryForInstance(instance).getNodePath());
 		}
-		final Entry entry = new Entry(propertyPath, instance);
+		final Entry entry = new Entry(nodePath, instance);
 		stack.addLast(entry);
 	}
 
@@ -88,15 +96,18 @@ class CircularReferenceDetector
 
 	protected boolean isMatch(final Object anObject, final Object anotherObject)
 	{
-		if (referenceMatchingMode == ReferenceMatchingMode.EQUALS_METHOD)
-		{
-			return anotherObject != null && anObject != null && anotherObject.equals(anObject);
-		}
-		else if (referenceMatchingMode == ReferenceMatchingMode.EQUALITY_OPERATOR)
+		if (referenceMatchingMode == ReferenceMatchingMode.EQUALITY_OPERATOR)
 		{
 			return anotherObject == anObject;
 		}
-		throw new IllegalStateException("Missing reference matching mode");
+		else if (referenceMatchingMode == ReferenceMatchingMode.EQUALS_METHOD)
+		{
+			return (anotherObject == anObject) || isEqual(anObject, anotherObject);
+		}
+		else
+		{
+			throw new IllegalStateException("Missing reference matching mode");
+		}
 	}
 
 	private Entry entryForInstance(final Object instance)
@@ -143,22 +154,22 @@ class CircularReferenceDetector
 		private static final long serialVersionUID = 1L;
 
 		@SuppressWarnings("NonSerializableFieldInSerializableClass")
-		private final PropertyPath propertyPath;
+		private final NodePath nodePath;
 
-		public CircularReferenceException(final PropertyPath propertyPath)
+		public CircularReferenceException(final NodePath nodePath)
 		{
-			this.propertyPath = propertyPath;
+			this.nodePath = nodePath;
 		}
 
-		public PropertyPath getPropertyPath()
+		public NodePath getNodePath()
 		{
-			return propertyPath;
+			return nodePath;
 		}
 
 		@Override
 		public Throwable fillInStackTrace()
 		{
-			return null;
+			return this;
 		}
 	}
 

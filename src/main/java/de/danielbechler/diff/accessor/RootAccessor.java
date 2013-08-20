@@ -19,7 +19,7 @@ package de.danielbechler.diff.accessor;
 import de.danielbechler.diff.path.*;
 
 /** @author Daniel Bechler */
-public final class RootAccessor extends AbstractAccessor
+public final class RootAccessor implements Accessor
 {
 	private static final RootAccessor instance = new RootAccessor();
 

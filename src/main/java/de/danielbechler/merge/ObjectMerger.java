@@ -17,7 +17,6 @@
 package de.danielbechler.merge;
 
 import de.danielbechler.diff.*;
-import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.visitor.*;
 
 /**
@@ -33,7 +32,7 @@ public final class ObjectMerger
 
 	public ObjectMerger()
 	{
-		this.objectDiffer = ObjectDifferFactory.getInstance();
+		this.objectDiffer = ObjectDifferBuilder.buildDefaultObjectDiffer();
 	}
 
 	public ObjectMerger(final ObjectDiffer objectDiffer)
@@ -44,13 +43,13 @@ public final class ObjectMerger
 	@SuppressWarnings({"unchecked"})
 	public <T> T merge(final T modified, final T base, final T head)
 	{
-		final Node.Visitor visitor = new MergingDifferenceVisitor<T>(head, modified);
-		final Node difference = objectDiffer.compare(modified, base);
+		final DiffNode.Visitor visitor = new MergingDifferenceVisitor<T>(head, modified);
+		final DiffNode difference = objectDiffer.compare(modified, base);
 		difference.visit(visitor);
 		return head;
 	}
 
-	private static final class MergingDifferenceVisitor<T> implements Node.Visitor
+	private static final class MergingDifferenceVisitor<T> implements DiffNode.Visitor
 	{
 		private final T head;
 		private final T modified;
@@ -61,21 +60,21 @@ public final class ObjectMerger
 			this.modified = modified;
 		}
 
-		public void accept(final Node node, final Visit visit)
+		public void accept(final DiffNode node, final Visit visit)
 		{
-			if (node.getState() == Node.State.ADDED)
+			if (node.getState() == DiffNode.State.ADDED)
 			{
 				node.canonicalSet(head, node.canonicalGet(modified));
 			}
-			else if (node.getState() == Node.State.REMOVED)
+			else if (node.getState() == DiffNode.State.REMOVED)
 			{
 				node.canonicalUnset(head);
 			}
-			else if (node.getState() == Node.State.UNTOUCHED)
+			else if (node.getState() == DiffNode.State.UNTOUCHED)
 			{
 				// not touched - nothing to do
 			}
-			else if (node.getState() == Node.State.CHANGED)
+			else if (node.getState() == DiffNode.State.CHANGED)
 			{
 				if (node.hasChildren())
 				{

@@ -17,7 +17,6 @@
 package de.danielbechler.diff.example;
 
 import de.danielbechler.diff.*;
-import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.visitor.*;
 
 /** @author Daniel Bechler */
@@ -78,12 +77,12 @@ class SimpleNodeExample
 	{
 		final Person bruceWayne = new Person("Bruce", "Wayne");
 		final Person batman = new Person("Batman", null);
-		final Node rootNode = ObjectDifferFactory.getInstance().compare(batman, bruceWayne);
+		final DiffNode rootNode = ObjectDifferBuilder.buildDefaultObjectDiffer().compare(batman, bruceWayne);
 		rootNode.visit(new NodeHierarchyVisitor(10));
 		rootNode.visit(new PrintingVisitor(batman, bruceWayne)
 		{
 			@Override
-			protected boolean filter(final Node node)
+			protected boolean filter(final DiffNode node)
 			{
 				return true;
 			}

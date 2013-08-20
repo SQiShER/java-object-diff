@@ -1,16 +1,17 @@
 package de.danielbechler.diff.mock;
 
-import java.util.Collection;
+import de.danielbechler.diff.annotation.*;
 
-import de.danielbechler.diff.annotation.ObjectDiffProperty;
+import java.util.*;
 
-public class ObjectWithMethodEqualsOnlyValueProviderMethodOnGetCollection extends ObjectWithCollection {
-	
-	public ObjectWithMethodEqualsOnlyValueProviderMethodOnGetCollection(Collection<String> collection){
+public class ObjectWithMethodEqualsOnlyValueProviderMethodOnGetCollection extends ObjectWithCollection
+{
+	public ObjectWithMethodEqualsOnlyValueProviderMethodOnGetCollection(final Collection<String> collection)
+	{
 		super(collection);
 	}
-	
-	@ObjectDiffProperty(equalsOnlyValueProviderMethod = "size")
+
+	@ObjectDiffProperty(equalsOnly = true, equalsOnlyValueProviderMethod = "size")
 	@Override
 	public Collection<String> getCollection()
 	{

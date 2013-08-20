@@ -1,6 +1,6 @@
 package de.danielbechler.diff.accessor.exception;
 
-import de.danielbechler.diff.node.*;
+import de.danielbechler.diff.*;
 
 /**
  * Handler for recoverable exceptional states. The exception handler is notified when the library catches
@@ -13,7 +13,7 @@ public interface ExceptionListener
 	 *
 	 * @param node The node which has been detected to cause a circular reference.
 	 */
-	void onCircularReferenceException(Node node);
+	void onCircularReferenceException(DiffNode node);
 
 	/**
 	 * Called when PropertyWriteException happens.
@@ -24,7 +24,7 @@ public interface ExceptionListener
 	 *            Node of the property that we were unable to write to.
 	 * @return Resulting node.
 	 */
-	Node onPropertyWriteException(PropertyWriteException e, Node propertyNode);
+	DiffNode onPropertyWriteException(PropertyWriteException e, DiffNode propertyNode);
 
 	/**
 	 * Called when PropertyReadException happens.
@@ -35,5 +35,5 @@ public interface ExceptionListener
 	 *            Node of the property that we were unable to read.
 	 * @return Node as a result of wrong read.
 	 */
-	Node onPropertyReadException(PropertyReadException ex, Node propertyNode);
+	DiffNode onPropertyReadException(PropertyReadException ex, DiffNode propertyNode);
 }

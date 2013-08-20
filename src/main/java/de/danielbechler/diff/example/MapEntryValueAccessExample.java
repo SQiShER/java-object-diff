@@ -17,7 +17,6 @@
 package de.danielbechler.diff.example;
 
 import de.danielbechler.diff.*;
-import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.path.*;
 import de.danielbechler.diff.visitor.*;
 
@@ -41,10 +40,10 @@ class MapEntryValueAccessExample
 		working.put(23, "Shephard");
 		working.put(42, "Kwon");
 
-		final Node mapNode = ObjectDifferFactory.getInstance().compare(working, base);
-		mapNode.visitChildren(new Node.Visitor()
+		final DiffNode mapNode = ObjectDifferBuilder.buildDefaultObjectDiffer().compare(working, base);
+		mapNode.visitChildren(new DiffNode.Visitor()
 		{
-			public void accept(final Node node, final Visit visit)
+			public void accept(final DiffNode node, final Visit visit)
 			{
 				final Object key = ((MapElement) node.getPathElement()).getKey();
 				//                 ^^^ I do not encourage this, but currently it's the only way

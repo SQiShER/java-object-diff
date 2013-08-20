@@ -17,6 +17,7 @@
 package de.danielbechler.diff.introspect;
 
 import de.danielbechler.diff.accessor.*;
+import de.danielbechler.diff.comparison.*;
 import de.danielbechler.diff.mock.*;
 import de.danielbechler.diff.path.*;
 import de.danielbechler.util.*;
@@ -41,24 +42,25 @@ public class StandardIntrospectorTest
 	@Test
 	public void testIntrospectWithEqualsOnlyPropertyType() throws Exception
 	{
-		final Iterable<Accessor> accessors = introspector.introspect(ObjectWithEqualsOnlyPropertyType.class);
+		final Iterable<PropertyAwareAccessor> accessors = introspector.introspect(ObjectWithEqualsOnlyPropertyType.class);
 		assertThat(accessors.iterator().hasNext(), Is.is(true));
-		assertThat(accessors.iterator().next().isEqualsOnly(), Is.is(true));
+		final PropertyAwareAccessor propertyAwareAccessor = accessors.iterator().next();
+		assertThat(propertyAwareAccessor.getComparisonStrategy(), IsInstanceOf.instanceOf(EqualsOnlyComparisonStrategy.class));
 	}
 
 	@Test
 	public void testIntrospectWithPropertyAnnotations()
 	{
-		final Iterable<Accessor> accessors = introspector.introspect(ObjectWithPropertyAnnotations.class);
-		for (final Accessor accessor : accessors)
+		final Iterable<PropertyAwareAccessor> accessors = introspector.introspect(ObjectWithPropertyAnnotations.class);
+		for (final PropertyAwareAccessor accessor : accessors)
 		{
 			if (accessor.getPathElement().equals(new NamedPropertyElement("ignored")))
 			{
-				assertThat(accessor.isIgnored(), Is.is(true));
+				assertThat(accessor.isExcluded(), Is.is(true));
 			}
 			else if (accessor.getPathElement().equals(new NamedPropertyElement("equalsOnly")))
 			{
-				assertThat(accessor.isEqualsOnly(), Is.is(true));
+				assertThat(accessor.getComparisonStrategy(), IsInstanceOf.instanceOf(EqualsOnlyComparisonStrategy.class));
 			}
 			else if (accessor.getPathElement().equals(new NamedPropertyElement("categorized")))
 			{
@@ -67,8 +69,8 @@ public class StandardIntrospectorTest
 			}
 			else if (accessor.getPathElement().equals(new NamedPropertyElement("item")))
 			{
-				assertThat(accessor.isEqualsOnly(), Is.is(false));
-				assertThat(accessor.isIgnored(), Is.is(false));
+				assertThat(accessor.getComparisonStrategy(), IsNull.nullValue());
+				assertThat(accessor.isExcluded(), Is.is(false));
 				assertThat(accessor.getCategories().isEmpty(), Is.is(true));
 			}
 			else if (accessor.getPathElement().equals(new NamedPropertyElement("key")))
@@ -89,11 +91,10 @@ public class StandardIntrospectorTest
 	@Test
 	public void testIntrospectWithInheritedPropertyAnnotations()
 	{
-		final Iterable<Accessor> accessors =
-				introspector.introspect(ObjectWithInheritedPropertyAnnotation.class);
-		final Accessor accessor = accessors.iterator().next();
+		final Iterable<PropertyAwareAccessor> accessors = introspector.introspect(ObjectWithInheritedPropertyAnnotation.class);
+		final PropertyAwareAccessor accessor = accessors.iterator().next();
 		assertThat((NamedPropertyElement) accessor.getPathElement(), IsEqual.equalTo(new NamedPropertyElement("value")));
-		assertThat(accessor.isIgnored(), Is.is(true));
+		assertThat(accessor.isExcluded(), Is.is(true));
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)

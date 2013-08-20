@@ -16,13 +16,13 @@
 
 package de.danielbechler.diff.visitor;
 
-import de.danielbechler.diff.node.*;
+import de.danielbechler.diff.*;
 import de.danielbechler.diff.path.*;
 import de.danielbechler.util.*;
 
 /** @author Daniel Bechler */
 @SuppressWarnings({"MethodMayBeStatic"})
-public class PrintingVisitor implements Node.Visitor
+public class PrintingVisitor implements DiffNode.Visitor
 {
 	private final Object working;
 	private final Object base;
@@ -33,7 +33,7 @@ public class PrintingVisitor implements Node.Visitor
 		this.working = working;
 	}
 
-	public void accept(final Node node, final Visit visit)
+	public void accept(final DiffNode node, final Visit visit)
 	{
 		if (filter(node))
 		{
@@ -42,7 +42,7 @@ public class PrintingVisitor implements Node.Visitor
 		}
 	}
 
-	protected boolean filter(final Node node)
+	protected boolean filter(final DiffNode node)
 	{
 		return (node.isRootNode() && !node.hasChanges())
 				|| (node.hasChanges() && node.getChildren().isEmpty());
@@ -53,11 +53,11 @@ public class PrintingVisitor implements Node.Visitor
 		System.out.println(text);
 	}
 
-	protected String differenceToString(final Node node, final Object base, final Object modified)
+	protected String differenceToString(final DiffNode node, final Object base, final Object modified)
 	{
-		final PropertyPath propertyPath = node.getPropertyPath();
+		final NodePath nodePath = node.getPath();
 		final String stateMessage = translateState(node.getState(), node.canonicalGet(base), node.canonicalGet(modified));
-		final String propertyMessage = String.format("Property at path '%s' %s", propertyPath, stateMessage);
+		final String propertyMessage = String.format("Property at path '%s' %s", nodePath, stateMessage);
 		final StringBuilder stringBuilder = new StringBuilder();
 		stringBuilder.append(propertyMessage);
 		if (node.isCircular())
@@ -67,31 +67,31 @@ public class PrintingVisitor implements Node.Visitor
 		return stringBuilder.toString();
 	}
 
-	private String translateState(final Node.State state, final Object base, final Object modified)
+	private String translateState(final DiffNode.State state, final Object base, final Object modified)
 	{
-		if (state == Node.State.IGNORED)
+		if (state == DiffNode.State.IGNORED)
 		{
 			return "has been ignored";
 		}
-		else if (state == Node.State.CHANGED)
+		else if (state == DiffNode.State.CHANGED)
 		{
 			return String.format("has changed from [ %s ] to [ %s ]",
 					Strings.toSingleLineString(base),
 					Strings.toSingleLineString(modified));
 		}
-		else if (state == Node.State.ADDED)
+		else if (state == DiffNode.State.ADDED)
 		{
 			return String.format("has been added => [ %s ]", Strings.toSingleLineString(modified));
 		}
-		else if (state == Node.State.REMOVED)
+		else if (state == DiffNode.State.REMOVED)
 		{
 			return String.format("with value [ %s ] has been removed", Strings.toSingleLineString(base));
 		}
-		else if (state == Node.State.UNTOUCHED)
+		else if (state == DiffNode.State.UNTOUCHED)
 		{
 			return "has not changed";
 		}
-		else if (state == Node.State.CIRCULAR)
+		else if (state == DiffNode.State.CIRCULAR)
 		{
 			return "has already been processed at another position. (Circular reference!)";
 		}

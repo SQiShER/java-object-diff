@@ -36,7 +36,7 @@ public class ObjectWithPropertyAnnotations extends ObjectWithHashCodeAndEquals
 		super(key, value);
 	}
 
-	@ObjectDiffProperty(ignore = true)
+	@ObjectDiffProperty(excluded = true)
 	public String getIgnored()
 	{
 		return ignored;

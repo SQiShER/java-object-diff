@@ -17,50 +17,102 @@
 package de.danielbechler.diff;
 
 import de.danielbechler.diff.accessor.*;
-import de.danielbechler.diff.accessor.exception.DefaultExceptionListener;
+import de.danielbechler.diff.comparison.*;
 import de.danielbechler.diff.introspect.*;
-import de.danielbechler.diff.mock.*;
-import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.path.*;
-
+import org.fest.assertions.api.*;
 import org.mockito.Mock;
+import org.mockito.invocation.*;
+import org.mockito.stubbing.*;
 import org.testng.annotations.*;
 
-import static de.danielbechler.diff.node.NodeAssertions.assertThat;
-import static java.util.Arrays.*;
+import java.util.*;
+
+import static de.danielbechler.diff.NodeAssertions.assertThat;
+import static de.danielbechler.diff.NodeMatchers.*;
+import static de.danielbechler.diff.path.NodePath.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.*;
 
 /** @author Daniel Bechler */
-// TODO Use mocked NodeInspector instead of actual implementation of Configuration
 public class BeanDifferShould
 {
-	private BeanDiffer differ;
-	private Configuration configuration;
+	private BeanDiffer beanDiffer;
 
-	@Mock private DifferDelegator delegator;
-	@Mock private Introspector introspector;
-	@Mock private Accessor accessor;
-	@Mock private Node node;
-	@Mock private BeanPropertyComparisonDelegator beanPropertyComparer;
-	@Mock private DefaultNodeFactory defaultNodeFactory;
-	@Mock private Instances instances;
+	@Mock
+	private DifferDispatcher differDispatcher;
+	@Mock
+	private Introspector introspector;
+	@Mock
+	private Instances instances;
+	@Mock
+	private IsIntrospectableResolver introspectableResolver;
+	@Mock
+	private IsReturnableResolver returnableResolver;
+	@Mock
+	private ComparisonStrategyResolver comparisonStrategyResolver;
+	@Mock
+	private ComparisonStrategy comparisonStrategy;
 
 	@BeforeMethod
 	public void setUp()
 	{
 		initMocks(this);
-		configuration = new Configuration();
-		differ = new BeanDiffer(delegator, configuration, configuration.getExceptionListener());
-		differ.setIntrospector(introspector);
+
+		when(instances.getSourceAccessor()).thenReturn(RootAccessor.getInstance());
+		when(instances.getType()).then(new Answer<Object>()
+		{
+			public Object answer(final InvocationOnMock invocation) throws Throwable
+			{
+				return String.class;
+			}
+		});
+		when(introspector.introspect(any(Class.class))).thenReturn(Collections.<PropertyAwareAccessor>emptyList());
+
+		beanDiffer = new BeanDiffer(differDispatcher, introspector, introspectableResolver, returnableResolver, comparisonStrategyResolver);
+	}
+
+	@DataProvider
+	public static Object[][] acceptableTypes()
+	{
+		return new Object[][] {
+				new Class[] {String.class},
+				new Class[] {Object.class},
+				new Class[] {Number.class},
+				new Class[] {Date.class},
+		};
+	}
+
+	@DataProvider
+	public static Object[][] rejectableTypes()
+	{
+		return new Object[][] {
+				new Class[] {int.class},
+				new Class[] {int[].class},
+				new Class[] {boolean.class}
+		};
+	}
+
+	@Test(dataProvider = "acceptableTypes")
+	public void accept_all_object_types(final Class<?> type)
+	{
+		Assertions.assertThat(beanDiffer.accepts(type)).isTrue();
+	}
+
+	@Test(dataProvider = "rejectableTypes")
+	public void reject_primitive_types(final Class<?> type)
+	{
+		Assertions.assertThat(beanDiffer.accepts(type)).isFalse();
 	}
 
 	@Test
 	public void return_untouched_node_if_working_and_base_are_null()
 	{
-		final Node node = differ.compare(Node.ROOT, Instances.of(null, null));
+		when(instances.areNull()).thenReturn(true);
+
+		final DiffNode node = beanDiffer.compare(DiffNode.ROOT, instances);
 
 		assertThat(node).self().isUntouched();
 	}
@@ -68,130 +120,139 @@ public class BeanDifferShould
 	@Test
 	public void return_added_node_if_working_is_not_null_and_base_is()
 	{
-		final Node node = differ.compare(Node.ROOT, Instances.of("foo", null));
+		when(instances.hasBeenAdded()).thenReturn(true);
 
-		assertThat(node.getState(), is(Node.State.ADDED));
+		final DiffNode node = beanDiffer.compare(DiffNode.ROOT, instances);
+
+		assertThat(node.getState(), is(DiffNode.State.ADDED));
 	}
 
 	@Test
 	public void return_removed_node_if_working_is_null_and_base_is_not()
 	{
-		final Node node = differ.compare(Node.ROOT, Instances.of(null, "foo"));
+		when(instances.hasBeenRemoved()).thenReturn(true);
 
-		assertThat(node.getState(), is(Node.State.REMOVED));
+		final DiffNode node = beanDiffer.compare(DiffNode.ROOT, instances);
+
+		assertThat(node.getState(), is(DiffNode.State.REMOVED));
 	}
 
 	@Test
 	public void return_untouched_node_if_working_and_base_are_the_same_instance()
 	{
-		final Node node = differ.compare(Node.ROOT, Instances.of("foo", "foo"));
+		when(instances.areNull()).thenReturn(true);
+
+		final DiffNode node = beanDiffer.compare(DiffNode.ROOT, instances);
 
 		assertThat(node).self().isUntouched();
 	}
 
 	@Test
-	public void ignore_ignored_properties()
+	public void compare_via_comparisonStrategy_if_present()
 	{
-		configuration.withoutProperty(PropertyPath.buildRootPath());
+		when(comparisonStrategyResolver.resolveComparisonStrategy(node(buildRootPath()))).thenReturn(comparisonStrategy);
 
-		final Node node = differ.compare(Node.ROOT, Instances.of("foo", "bar"));
+		beanDiffer.compare(DiffNode.ROOT, instances);
 
-		assertThat(node).self().hasState(Node.State.IGNORED);
-	}
-
-    @Test
-    public void compare_bean_via_compare_to()
-    {
-        final ObjectWithCompareTo working = new ObjectWithCompareTo("foo", "ignore");
-        final ObjectWithCompareTo base = new ObjectWithCompareTo("foo", "ignore this too");
-        configuration.withCompareToOnlyType(ObjectWithCompareTo.class);
-
-        final Node node = differ.compare(Node.ROOT, Instances.of(working, base));
-
-        assertThat(node).self().isUntouched();
-    }
-
-	@Test
-	public void compare_bean_via_equals()
-	{
-		final ObjectWithHashCodeAndEquals working = new ObjectWithHashCodeAndEquals("foo", "ignore");
-		final ObjectWithHashCodeAndEquals base = new ObjectWithHashCodeAndEquals("foo", "ignore this too");
-		configuration.withEqualsOnlyProperty(PropertyPath.buildRootPath());
-
-		final Node node = differ.compare(Node.ROOT, Instances.of(working, base));
-
-		assertThat(node).self().isUntouched();
-	}
-	
-	@Test
-	public void detect_no_change_when_comparing_using_with_equals_only_value_provider_method_and_result_is_same()
-	{
-		final ObjectWithNestedObject working = new ObjectWithNestedObject("foo");
-		working.setObject(new ObjectWithNestedObject("childid"));
-		final ObjectWithNestedObject base = new ObjectWithNestedObject("foo");
-		base.setObject(new ObjectWithNestedObject("differentchildid"));
-		configuration.withEqualsOnlyValueProviderMethod(PropertyPath.buildRootPath(), "getId");
-
-		final Node node = differ.compare(Node.ROOT, Instances.of(working, base));
-
-		assertThat(node).self().isUntouched();
-	}
-	
-	@Test
-	public void detect_change_when_comparing_using_equals_only_value_provider_method_and_result_is_different()
-	{
-		final ObjectWithNestedObject working = new ObjectWithNestedObject("foo");
-		working.setObject(new ObjectWithNestedObject("childid"));
-		final ObjectWithNestedObject base = new ObjectWithNestedObject("bar");
-		base.setObject(new ObjectWithNestedObject("differentchildid"));
-		configuration.withEqualsOnlyValueProviderMethod(PropertyPath.buildRootPath(), "getId");
-
-		final Node node = differ.compare(Node.ROOT, Instances.of(working, base));
-
-		assertThat(node).self().hasChanges();
+		verify(comparisonStrategy).compare(node(buildRootPath()), same(instances));
 	}
 
 	@Test
-	public void compare_bean_via_introspection_and_delegate_comparison_of_properties()
+	public void compare_via_introspector_if_introspectable()
 	{
-		final Class<Object> beanType = Object.class;
-		final Accessor propertyAccessor = mock(Accessor.class);
-		final Instances beanInstances = mock(Instances.class);
-		final DefaultNode beanNode = mock(DefaultNode.class);
-		final DefaultNode propertyNode = mock(DefaultNode.class);
-		final BeanPropertyComparisonDelegator beanPropertyComparer = mock(BeanPropertyComparisonDelegator.class);
-		final DefaultNodeFactory defaultNodeFactory = mock(DefaultNodeFactory.class);
-		final Configuration configuration = mock(Configuration.class);
-		final DifferDelegator delegator = mock(DifferDelegator.class);
-		final Introspector introspector = mock(Introspector.class);
+		when(introspectableResolver.isIntrospectable(node(buildRootPath()))).thenReturn(true);
 
-		when(defaultNodeFactory.createNode(Node.ROOT, beanInstances)).thenReturn(beanNode);
-		when(configuration.isIntrospectible(beanNode)).thenReturn(true);
-		when(configuration.getExceptionListener()).thenReturn(new DefaultExceptionListener());
-		doReturn(beanType).when(beanInstances).getType();
-		when(introspector.introspect(beanType)).thenReturn(asList(propertyAccessor));
-		when(beanPropertyComparer.compare(beanNode, beanInstances, propertyAccessor)).thenReturn(propertyNode);
-		when(configuration.isReturnable(propertyNode)).thenReturn(true);
+		beanDiffer.compare(DiffNode.ROOT, instances);
 
-		differ = new BeanDiffer(delegator, configuration, configuration.getExceptionListener());
-		differ.setIntrospector(introspector);
-		differ.setBeanPropertyComparisonDelegator(beanPropertyComparer);
-		differ.setDefaultNodeFactory(defaultNodeFactory);
+		verify(introspector).introspect(instances.getType());
+	}
 
-		final Node node = differ.compare(Node.ROOT, beanInstances);
+	@Test
+	public void delegate_comparison_of_properties_when_comparing_via_introspector()
+	{
+		given_root_node_is_introspectable();
+		final PropertyAwareAccessor propertyAccessor = given_introspector_returns_PropertyAccessor("foo");
+		final DiffNode propertyNode = given_DifferDispatcher_returns_Node_for_PropertyAccessor(propertyAccessor);
+		given_Node_is_returnable(propertyNode);
 
-		verify(node).addChild(propertyNode);
+		final DiffNode node = beanDiffer.compare(DiffNode.ROOT, instances);
+
+		Assertions.assertThat(node.getChild("foo")).isSameAs(propertyNode);
+	}
+
+	@Test
+	public void do_not_add_property_nodes_to_bean_node_if_they_are_not_returnable()
+	{
+		given_root_node_is_introspectable();
+		final PropertyAwareAccessor propertyAccessor = given_introspector_returns_PropertyAccessor("foo");
+		final DiffNode propertyNode = given_DifferDispatcher_returns_Node_for_PropertyAccessor(propertyAccessor);
+		given_Node_is_not_returnable(propertyNode);
+
+		final DiffNode node = beanDiffer.compare(DiffNode.ROOT, instances);
+
+		Assertions.assertThat(node.getChildren()).isEmpty();
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
-	public void fail_construction_without_delegator()
+	public void fail_construction_without_DifferDispatcher()
 	{
-		new BeanDiffer(null, configuration, configuration.getExceptionListener());
+		new BeanDiffer(null, introspector, introspectableResolver, returnableResolver, comparisonStrategyResolver);
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
-	public void fail_construction_without_configuration()
+	public void fail_construction_without_Introspector()
 	{
-		new BeanDiffer(delegator, null, new DefaultExceptionListener());
+		new BeanDiffer(differDispatcher, null, introspectableResolver, returnableResolver, comparisonStrategyResolver);
+	}
+
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void fail_construction_without_introspectableResolver()
+	{
+		new BeanDiffer(differDispatcher, introspector, null, returnableResolver, comparisonStrategyResolver);
+	}
+
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void fail_construction_without_returnableResolver()
+	{
+		new BeanDiffer(differDispatcher, introspector, introspectableResolver, null, comparisonStrategyResolver);
+	}
+
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void fail_construction_without_comparisonStrategyResolver()
+	{
+		new BeanDiffer(differDispatcher, introspector, introspectableResolver, returnableResolver, null);
+	}
+
+	private void given_Node_is_returnable(final DiffNode node)
+	{
+		doReturn(true).when(returnableResolver).isReturnable(node);
+	}
+
+	private void given_Node_is_not_returnable(final DiffNode node)
+	{
+		doReturn(false).when(returnableResolver).isReturnable(node);
+	}
+
+	private DiffNode given_DifferDispatcher_returns_Node_for_PropertyAccessor(final PropertyAwareAccessor propertyAccessor)
+	{
+		final DiffNode propertyNode = new DiffNode(propertyAccessor, String.class);
+		doReturn(propertyNode).when(differDispatcher)
+				.dispatch(any(DiffNode.class), any(Instances.class), same(propertyAccessor));
+		return propertyNode;
+	}
+
+	private void given_root_node_is_introspectable()
+	{
+		doReturn(true).when(introspectableResolver).isIntrospectable(node(buildRootPath()));
+	}
+
+	private PropertyAwareAccessor given_introspector_returns_PropertyAccessor(final String propertyName)
+	{
+		final NamedPropertyElement propertyElement = new NamedPropertyElement(propertyName);
+		final PropertyAwareAccessor propertyAccessor = mock(PropertyAwareAccessor.class);
+		when(propertyAccessor.getPathElement()).thenReturn(propertyElement);
+		final Set<PropertyAwareAccessor> propertyAccessors = Collections.singleton(propertyAccessor);
+		when(introspector.introspect(any(Class.class))).thenReturn(propertyAccessors);
+		return propertyAccessor;
 	}
 }

@@ -18,13 +18,12 @@ package de.danielbechler.diff.integration.graph;
 
 import de.danielbechler.diff.*;
 import de.danielbechler.diff.mock.*;
-import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.path.*;
 import de.danielbechler.diff.visitor.*;
 import org.fest.assertions.api.*;
 import org.testng.annotations.*;
 
-import static de.danielbechler.diff.node.NodeAssertions.*;
+import static de.danielbechler.diff.NodeAssertions.*;
 
 /** @author Daniel Bechler */
 public class CircularReferenceIntegrationTest
@@ -42,10 +41,10 @@ public class CircularReferenceIntegrationTest
 		baseA.setReference(baseB);
 		baseB.setReference(baseA);
 
-		final Node root = ObjectDifferFactory.getInstance().compare(workingA, baseA);
+		final DiffNode root = ObjectDifferBuilder.buildDefaultObjectDiffer().compare(workingA, baseA);
 		assertThat(root).child("reference", "reference").isCircular();
 		assertThat(root).child("reference", "reference")
-				.hasCircularStartPathEqualTo(PropertyPath.buildRootPath());
+				.hasCircularStartPathEqualTo(NodePath.buildRootPath());
 
 		Assertions.assertThat(root.canonicalGet(workingA))
 				  .isSameAs(root.getChild("reference").getChild("reference").canonicalGet(workingA));
@@ -70,9 +69,9 @@ public class CircularReferenceIntegrationTest
 		baseB.setReference(baseC);
 		baseC.setReference(baseA);
 
-		final ObjectDiffer objectDiffer = ObjectDifferFactory.getInstance();
+		final ObjectDiffer objectDiffer = ObjectDifferBuilder.buildDefaultObjectDiffer();
 //		objectDiffer.getConfiguration().withoutCircularNodes();
-		final Node root = objectDiffer.compare(workingA, baseA);
+		final DiffNode root = objectDiffer.compare(workingA, baseA);
 		root.visit(new PrintingVisitor(workingA, baseA));
 		assertThat(root).child("reference", "reference", "reference").isCircular();
 	}

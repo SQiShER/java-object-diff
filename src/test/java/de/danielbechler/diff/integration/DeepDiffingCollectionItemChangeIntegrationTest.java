@@ -18,14 +18,13 @@ package de.danielbechler.diff.integration;
 
 import de.danielbechler.diff.*;
 import de.danielbechler.diff.mock.*;
-import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.path.*;
 import de.danielbechler.diff.visitor.*;
 import org.testng.annotations.*;
 
 import java.util.*;
 
-import static de.danielbechler.diff.node.NodeAssertions.*;
+import static de.danielbechler.diff.NodeAssertions.*;
 
 /** @author Daniel Bechler */
 public class DeepDiffingCollectionItemChangeIntegrationTest
@@ -36,20 +35,22 @@ public class DeepDiffingCollectionItemChangeIntegrationTest
 		final Map<String, ObjectWithString> base = Collections.emptyMap();
 		final Map<String, ObjectWithString> working = Collections.singletonMap("foo", new ObjectWithString("bar"));
 
-		final ObjectDiffer differ = ObjectDifferFactory.getInstance();
-		differ.getConfiguration().withChildrenOfAddedNodes();
-		final Node node = differ.compare(working, base);
+		final ObjectDifferBuilder objectDifferBuilder = ObjectDifferBuilder.startBuilding();
+		objectDifferBuilder.configure().introspection().includeChildrenOfNodeWithState(DiffNode.State.ADDED);
+		final ObjectDiffer differ = objectDifferBuilder.build();
+
+		final DiffNode node = differ.compare(working, base);
 
 		node.visit(new NodeHierarchyVisitor());
 
-		assertThat(node).child(PropertyPath.createBuilder()
-										   .withRoot()
-										   .withMapKey("foo")).hasState(Node.State.ADDED);
+		assertThat(node).child(NodePath.createBuilder()
+									   .withRoot()
+									   .withMapKey("foo")).hasState(DiffNode.State.ADDED);
 
-		assertThat(node).child(PropertyPath.createBuilder()
-										   .withRoot()
-										   .withMapKey("foo")
-										   .withPropertyName("value")).hasState(Node.State.ADDED);
+		assertThat(node).child(NodePath.createBuilder()
+									   .withRoot()
+									   .withMapKey("foo")
+									   .withPropertyName("value")).hasState(DiffNode.State.ADDED);
 	}
 
 	@Test

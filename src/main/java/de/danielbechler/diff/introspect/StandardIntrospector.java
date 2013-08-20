@@ -18,12 +18,12 @@ package de.danielbechler.diff.introspect;
 
 import de.danielbechler.diff.accessor.*;
 import de.danielbechler.diff.annotation.*;
+import de.danielbechler.diff.comparison.*;
 import de.danielbechler.util.*;
 import de.danielbechler.util.Collections;
 
 import java.beans.*;
 import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.*;
 import java.util.*;
 
@@ -34,7 +34,7 @@ import java.util.*;
  */
 public class StandardIntrospector implements de.danielbechler.diff.introspect.Introspector
 {
-	public Iterable<Accessor> introspect(final Class<?> type)
+	public Iterable<PropertyAwareAccessor> introspect(final Class<?> type)
 	{
 		Assert.notNull(type, "type");
 		try
@@ -47,10 +47,10 @@ public class StandardIntrospector implements de.danielbechler.diff.introspect.In
 		}
 	}
 
-	private Iterable<Accessor> internalIntrospect(final Class<?> type) throws IntrospectionException
+	private Iterable<PropertyAwareAccessor> internalIntrospect(final Class<?> type) throws IntrospectionException
 	{
 		final PropertyDescriptor[] descriptors = getBeanInfo(type).getPropertyDescriptors();
-		final Collection<Accessor> accessors = new ArrayList<Accessor>(descriptors.length);
+		final Collection<PropertyAwareAccessor> accessors = new ArrayList<PropertyAwareAccessor>(descriptors.length);
 		for (final PropertyDescriptor descriptor : descriptors)
 		{
 			final PropertyAccessor accessor = handlePropertyDescriptor(descriptor);
@@ -91,25 +91,47 @@ public class StandardIntrospector implements de.danielbechler.diff.introspect.In
 		return descriptor.getName().equals("class") || descriptor.getReadMethod() == null;
 	}
 
-	private static void handleObjectDiffPropertyAnnotation(final Method readMethod, final PropertyAccessor propertyAccessor)
+	private static void handleObjectDiffPropertyAnnotation(final Method readMethod,
+														   final PropertyAccessor propertyAccessor)
 	{
 		final ObjectDiffProperty annotation = readMethod.getAnnotation(ObjectDiffProperty.class);
 		if (annotation != null)
 		{
-			propertyAccessor.setEqualsOnly(annotation.equalsOnly());
-			propertyAccessor.setIgnored(annotation.ignore());
+			if (annotation.equalsOnly())
+			{
+				final EqualsOnlyComparisonStrategy comparisonStrategy;
+				if (Strings.hasText(annotation.equalsOnlyValueProviderMethod()))
+				{
+					comparisonStrategy = new EqualsOnlyComparisonStrategy(annotation.equalsOnlyValueProviderMethod());
+				}
+				else
+				{
+					comparisonStrategy = new EqualsOnlyComparisonStrategy();
+				}
+				propertyAccessor.setComparisonStrategy(comparisonStrategy);
+			}
+			propertyAccessor.setExcluded(annotation.excluded());
 			propertyAccessor.setCategories(Collections.setOf(annotation.categories()));
-			propertyAccessor.setEqualsOnlyValueProviderMethod(annotation.equalsOnlyValueProviderMethod());
 		}
 	}
 
-	private static void handleEqualsOnlyTypeAnnotation(final Method readMethod, final PropertyAccessor propertyAccessor)
+	private static void handleEqualsOnlyTypeAnnotation(final Method readMethod,
+													   final PropertyAccessor propertyAccessor)
 	{
-		final ObjectDiffEqualsOnlyType annotation = readMethod.getReturnType().getAnnotation(ObjectDiffEqualsOnlyType.class);
+		final ObjectDiffEqualsOnlyType annotation = readMethod.getReturnType()
+															  .getAnnotation(ObjectDiffEqualsOnlyType.class);
 		if (annotation != null)
 		{
-			propertyAccessor.setEqualsOnly(true);
-			propertyAccessor.setEqualsOnlyValueProviderMethod(annotation.valueProviderMethod());
+			final EqualsOnlyComparisonStrategy comparisonStrategy;
+			if (Strings.hasText(annotation.valueProviderMethod()))
+			{
+				comparisonStrategy = new EqualsOnlyComparisonStrategy(annotation.valueProviderMethod());
+			}
+			else
+			{
+				comparisonStrategy = new EqualsOnlyComparisonStrategy();
+			}
+			propertyAccessor.setComparisonStrategy(comparisonStrategy);
 		}
 	}
 }

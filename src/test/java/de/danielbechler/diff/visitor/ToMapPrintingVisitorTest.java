@@ -16,7 +16,7 @@
 
 package de.danielbechler.diff.visitor;
 
-import de.danielbechler.diff.node.*;
+import de.danielbechler.diff.*;
 import de.danielbechler.diff.path.*;
 import org.testng.annotations.*;
 
@@ -42,10 +42,10 @@ public class ToMapPrintingVisitorTest
 	@Test
 	public void testGetMessages_returns_map_with_accepted_messages() throws Exception
 	{
-		final Node node = new DefaultNode(String.class);
-		node.setState(Node.State.CHANGED);
+		final DiffNode node = new DiffNode(String.class);
+		node.setState(DiffNode.State.CHANGED);
 		node.visit(visitor);
-		assertThat(visitor.getMessages()).hasSize(1).containsKey(PropertyPath.buildRootPath());
+		assertThat(visitor.getMessages()).hasSize(1).containsKey(NodePath.buildRootPath());
 	}
 
 	@Test
@@ -57,11 +57,11 @@ public class ToMapPrintingVisitorTest
 	@Test
 	public void testGetMessages_returns_modifiable_map_when_messages_exist() throws Exception
 	{
-		final Node node = new DefaultNode(String.class);
-		node.setState(Node.State.CHANGED);
+		final DiffNode node = new DiffNode(String.class);
+		node.setState(DiffNode.State.CHANGED);
 		node.visit(visitor);
 		assertThat(visitor.getMessages()).hasSize(1);
-		visitor.getMessages().put(PropertyPath.buildWith("foo"), "bar");
+		visitor.getMessages().put(NodePath.buildWith("foo"), "bar");
 		assertThat(visitor.getMessages()).hasSize(2);
 	}
 
@@ -69,35 +69,35 @@ public class ToMapPrintingVisitorTest
 	public void testGetMessages_returns_modifiable_map_when_no_messages_exist() throws Exception
 	{
 		assertThat(visitor.getMessages()).hasSize(0);
-		visitor.getMessages().put(PropertyPath.buildWith("foo"), "bar");
+		visitor.getMessages().put(NodePath.buildWith("foo"), "bar");
 		assertThat(visitor.getMessages()).hasSize(1);
 	}
 
 	@Test
 	public void testGetMessage_returns_message_when_message_present() throws Exception
 	{
-		final Node node = new DefaultNode(String.class);
-		node.setState(Node.State.CHANGED);
+		final DiffNode node = new DiffNode(String.class);
+		node.setState(DiffNode.State.CHANGED);
 		node.visit(visitor);
-		final PropertyPath path = PropertyPath.buildRootPath();
+		final NodePath path = NodePath.buildRootPath();
 		assertThat(visitor.getMessage(path)).isNotEmpty();
 	}
 
 	@Test
 	public void testGetMessage_returns_null_when_message_absend() throws Exception
 	{
-		final Node node = new DefaultNode(String.class);
-		node.setState(Node.State.CHANGED);
+		final DiffNode node = new DiffNode(String.class);
+		node.setState(DiffNode.State.CHANGED);
 		node.visit(visitor);
-		final PropertyPath path = PropertyPath.buildWith("doesn't-exist");
+		final NodePath path = NodePath.buildWith("doesn't-exist");
 		assertThat(visitor.getMessage(path)).isNull();
 	}
 
 	@Test
 	public void testHasMessages_returns_true_when_messages_exist() throws Exception
 	{
-		final Node node = new DefaultNode(String.class);
-		node.setState(Node.State.CHANGED);
+		final DiffNode node = new DiffNode(String.class);
+		node.setState(DiffNode.State.CHANGED);
 		node.visit(visitor);
 		assertThat(visitor.hasMessages()).isTrue();
 	}
@@ -111,10 +111,10 @@ public class ToMapPrintingVisitorTest
 	@Test
 	public void testGetMessagesAsString_returns_line_break_separated_list_of_messages_when_messages_exist() throws Exception
 	{
-		final Node node = new DefaultNode(String.class);
-		node.setState(Node.State.CHANGED);
+		final DiffNode node = new DiffNode(String.class);
+		node.setState(DiffNode.State.CHANGED);
 		node.visit(visitor);
-		assertThat(visitor.getMessagesAsString()).isEqualTo(visitor.getMessage(PropertyPath.buildRootPath()) + "\n");
+		assertThat(visitor.getMessagesAsString()).isEqualTo(visitor.getMessage(NodePath.buildRootPath()) + "\n");
 	}
 
 	@Test
@@ -126,10 +126,10 @@ public class ToMapPrintingVisitorTest
 	@Test
 	public void testToString_is_analogous_to_getMessagesAsString() throws Exception
 	{
-		final Node node = new DefaultNode(String.class);
-		node.setState(Node.State.CHANGED);
+		final DiffNode node = new DiffNode(String.class);
+		node.setState(DiffNode.State.CHANGED);
 		node.visit(visitor);
-		assertThat(visitor.toString()).isEqualTo(visitor.getMessage(PropertyPath.buildRootPath()) + "\n");
+		assertThat(visitor.toString()).isEqualTo(visitor.getMessage(NodePath.buildRootPath()) + "\n");
 	}
 
 	@Test

@@ -17,6 +17,7 @@
 package de.danielbechler.diff.accessor;
 
 import de.danielbechler.diff.accessor.exception.*;
+import de.danielbechler.diff.comparison.*;
 import de.danielbechler.diff.path.*;
 import de.danielbechler.util.*;
 import org.slf4j.*;
@@ -26,7 +27,7 @@ import java.lang.reflect.*;
 import java.util.*;
 
 /** @author Daniel Bechler */
-public class PropertyAccessor extends AbstractAccessor implements TypeAwareAccessor
+public class PropertyAccessor implements PropertyAwareAccessor, Accessor
 {
 	private static final Logger logger = LoggerFactory.getLogger(PropertyAccessor.class);
 
@@ -34,6 +35,9 @@ public class PropertyAccessor extends AbstractAccessor implements TypeAwareAcces
 	private final Class<?> type;
 	private final Method readMethod;
 	private final Method writeMethod;
+	private Set<String> categories = new TreeSet<String>();
+	private boolean excluded;
+	private ComparisonStrategy comparisonStrategy;
 
 	public PropertyAccessor(final String propertyName, final Method readMethod, final Method writeMethod)
 	{
@@ -45,11 +49,40 @@ public class PropertyAccessor extends AbstractAccessor implements TypeAwareAcces
 		this.type = this.readMethod.getReturnType();
 	}
 
+	public final Set<String> getCategories()
+	{
+		return categories;
+	}
+
+	public final void setCategories(final Set<String> categories)
+	{
+		this.categories = categories;
+	}
+
+	public boolean isExcluded()
+	{
+		return excluded;
+	}
+
+	public void setExcluded(final boolean excluded)
+	{
+		this.excluded = excluded;
+	}
+
+	public ComparisonStrategy getComparisonStrategy()
+	{
+		return comparisonStrategy;
+	}
+
+	public void setComparisonStrategy(final ComparisonStrategy comparisonStrategy)
+	{
+		this.comparisonStrategy = comparisonStrategy;
+	}
+
 	private static Method makeAccessible(final Method method)
 	{
 		if (method != null)
 		{
-			// I'm not sure, why I suddenly need this, but since I integrated the standard Java Introspector, I do.
 			method.setAccessible(true);
 		}
 		return method;

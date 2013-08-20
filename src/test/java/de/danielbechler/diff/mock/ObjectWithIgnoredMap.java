@@ -23,7 +23,7 @@ import java.util.*;
 /** @author Daniel Bechler */
 public class ObjectWithIgnoredMap extends ObjectWithMap
 {
-	@ObjectDiffProperty(ignore = true)
+	@ObjectDiffProperty(excluded = true)
 	@Override
 	public Map<String, String> getMap()
 	{

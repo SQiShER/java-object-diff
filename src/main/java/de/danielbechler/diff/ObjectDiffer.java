@@ -16,9 +16,7 @@
 
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.node.*;
-
-import static de.danielbechler.diff.Configuration.CircularReferenceMatchingMode.*;
+import de.danielbechler.diff.accessor.*;
 
 /**
  * This is the entry point for all comparisons. It determines the type of the given objects and passes them to
@@ -28,33 +26,11 @@ import static de.danielbechler.diff.Configuration.CircularReferenceMatchingMode.
  */
 public class ObjectDiffer
 {
-	private static final CircularReferenceDetectorFactory CIRCULAR_REFERENCE_DETECTOR_WITH_EQUALITY_OPERATOR_FACTORY = new CircularReferenceDetectorFactory()
-	{
-		public CircularReferenceDetector create()
-		{
-			final CircularReferenceDetector circularReferenceDetector = new CircularReferenceDetector();
-			circularReferenceDetector.setReferenceMatchingMode(CircularReferenceDetector.ReferenceMatchingMode.EQUALITY_OPERATOR);
-			return circularReferenceDetector;
-		}
-	};
-	private static final CircularReferenceDetectorFactory CIRCULAR_REFERENCE_DETECTOR_WITH_EQUALS_METHOD_FACTORY = new CircularReferenceDetectorFactory()
-	{
-		public CircularReferenceDetector create()
-		{
-			final CircularReferenceDetector circularReferenceDetector = new CircularReferenceDetector();
-			circularReferenceDetector.setReferenceMatchingMode(CircularReferenceDetector.ReferenceMatchingMode.EQUALS_METHOD);
-			return circularReferenceDetector;
-		}
-	};
-	private final Configuration configuration;
-	private final DifferDelegator delegator;
+	private final DifferDispatcher dispatcher;
 
-	ObjectDiffer(final Configuration configuration)
+	ObjectDiffer(final DifferDispatcher differDispatcher)
 	{
-		final DifferFactory differFactory = new DifferFactory(configuration);
-		final CircularReferenceDetectorFactory circularReferenceDetectorFactory = newCircularReferenceDetectorFactory(configuration);
-		this.delegator = new DifferDelegator(differFactory, circularReferenceDetectorFactory, configuration);
-		this.configuration = configuration;
+		this.dispatcher = differDispatcher;
 	}
 
 	/**
@@ -67,32 +43,8 @@ public class ObjectDiffer
 	 *
 	 * @return A node representing the differences between the given objects.
 	 */
-	public <T> Node compare(final T working, final T base)
+	public <T> DiffNode compare(final T working, final T base)
 	{
-		return delegator.delegate(Node.ROOT, Instances.of(working, base));
-	}
-
-	/**
-	 * @deprecated The configuration will become an immutable object created by the configuration builder. The
-	 *             only way to configure an ObjectDiffer is by creating a new instance via {@link
-	 *             ObjectDifferFactory}. Therefore there will be no need for this getter anymore.
-	 */
-	@Deprecated
-	public Configuration getConfiguration()
-	{
-		return configuration;
-	}
-
-	private static CircularReferenceDetectorFactory newCircularReferenceDetectorFactory(final Configuration configuration)
-	{
-		if (configuration.getCircularReferenceMatchingMode() == EQUALS_METHOD)
-		{
-			return CIRCULAR_REFERENCE_DETECTOR_WITH_EQUALS_METHOD_FACTORY;
-		}
-		else if (configuration.getCircularReferenceMatchingMode() == EQUALITY_OPERATOR)
-		{
-			return CIRCULAR_REFERENCE_DETECTOR_WITH_EQUALITY_OPERATOR_FACTORY;
-		}
-		throw new IllegalStateException();
+		return dispatcher.dispatch(DiffNode.ROOT, Instances.of(working, base), RootAccessor.getInstance());
 	}
 }

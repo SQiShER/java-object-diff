@@ -16,35 +16,35 @@
 
 package de.danielbechler.diff.visitor;
 
-import de.danielbechler.diff.node.*;
+import de.danielbechler.diff.*;
 import de.danielbechler.util.*;
 
 /** @author Daniel Bechler */
 public class StateFilteringVisitor extends AbstractFilteringVisitor
 {
-	private final Node.State state;
+	private final DiffNode.State state;
 
-	public StateFilteringVisitor(final Node.State state)
+	public StateFilteringVisitor(final DiffNode.State state)
 	{
 		Assert.notNull(state, "state");
 		this.state = state;
 	}
 
 	@Override
-	protected boolean accept(final Node node)
+	protected boolean accept(final DiffNode node)
 	{
 		return node.getState() == state;
 	}
 
 	@Override
-	protected void onAccept(final Node node, final Visit visit)
+	protected void onAccept(final DiffNode node, final Visit visit)
 	{
 		super.onAccept(node, visit);
 		visit.dontGoDeeper();
 	}
 
 	@Override
-	protected void onDismiss(final Node node, final Visit visit)
+	protected void onDismiss(final DiffNode node, final Visit visit)
 	{
 		super.onDismiss(node, visit);
 		visit.dontGoDeeper();

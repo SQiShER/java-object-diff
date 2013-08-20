@@ -16,13 +16,11 @@
 
 package de.danielbechler.diff.integration.graph;
 
-import de.danielbechler.diff.Configuration;
 import de.danielbechler.diff.*;
 import de.danielbechler.diff.mock.*;
-import de.danielbechler.diff.node.*;
 import org.testng.annotations.*;
 
-import static de.danielbechler.diff.Configuration.CircularReferenceMatchingMode.*;
+import static de.danielbechler.diff.CircularReferenceMatchingMode.*;
 
 /** @author Daniel Bechler */
 public class CircularReferenceDetectionBasedOnEqualsTest
@@ -32,10 +30,12 @@ public class CircularReferenceDetectionBasedOnEqualsTest
 	@BeforeMethod
 	public void setUp() throws Exception
 	{
-		final Configuration configuration = new Configuration();
-		configuration.withChildrenOfAddedNodes();
-		configuration.matchCircularReferencesUsing(EQUALS_METHOD);
-		objectDiffer = ObjectDifferFactory.getInstance(configuration);
+		final ObjectDifferBuilder configuration = ObjectDifferBuilder.startBuilding();
+		configuration.configure().introspection().includeChildrenOfNodeWithState(DiffNode.State.ADDED);
+		configuration.configure()
+					 .circularReferenceHandling()
+					 .matchCircularReferencesUsing(EQUALS_METHOD);
+		objectDiffer = configuration.build();
 	}
 
 	@Test
@@ -43,7 +43,7 @@ public class CircularReferenceDetectionBasedOnEqualsTest
 	{
 		final ObjectWithNestedObject object = new ObjectWithNestedObject("foo");
 		object.setObject(object);
-		final Node node = objectDiffer.compare(object, null);
+		final DiffNode node = objectDiffer.compare(object, null);
 		NodeAssertions.assertThat(node).child("object").isCircular();
 	}
 
@@ -51,7 +51,7 @@ public class CircularReferenceDetectionBasedOnEqualsTest
 	public void detectsCircularReference_whenEncounteringDifferentButEqualObjectsTwice() throws Exception
 	{
 		final ObjectWithNestedObject object = new ObjectWithNestedObject("foo", new ObjectWithNestedObject("foo"));
-		final Node node = objectDiffer.compare(object, null);
+		final DiffNode node = objectDiffer.compare(object, null);
 		NodeAssertions.assertThat(node).child("object").isCircular();
 	}
 }

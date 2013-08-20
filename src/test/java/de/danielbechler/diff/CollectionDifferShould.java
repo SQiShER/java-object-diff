@@ -17,186 +17,213 @@
 package de.danielbechler.diff;
 
 import de.danielbechler.diff.accessor.*;
-import de.danielbechler.diff.node.*;
+import de.danielbechler.diff.comparison.*;
+import de.danielbechler.diff.path.*;
 import org.fest.assertions.api.*;
-import org.mockito.*;
+import org.mockito.Mock;
 import org.testng.annotations.*;
 
 import java.util.*;
 
-import static de.danielbechler.diff.node.Node.State.CHANGED;
-import static java.util.Arrays.*;
-import static java.util.Collections.*;
+import static de.danielbechler.diff.NodeMatchers.*;
+import static org.fest.assertions.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.mockito.MockitoAnnotations.*;
 
 /** @author Daniel Bechler */
 public class CollectionDifferShould
 {
-	private CollectionDiffer collectionDiffer;
+	@Mock
+	private ComparisonStrategyResolver comparisonStrategyResolver;
+	@Mock
+	private ComparisonStrategy comparisonStrategy;
+	@Mock
+	private DifferDispatcher differDispatcher;
+	@Mock
+	private Instances instances;
 
-	@Mock private NodeInspector nodeInspector;
-	@Mock private DifferDelegator delegator;
-	@Mock private CollectionNodeFactory collectionNodeFactory;
-	@Mock private CollectionNode collectionNode;
-	@Mock private Node collectionItemNode;
-	@Mock private Instances instances;
-	@Mock private Instances itemInstances;
-	@Mock private CollectionItemAccessorFactory collectionItemAccessorFactory;
+	private CollectionDiffer collectionDiffer;
+	private DiffNode node;
+	private Collection<String> baseCollection;
+	private Collection<String> workingCollection;
 
 	@BeforeMethod
 	public void setUp() throws Exception
 	{
-		MockitoAnnotations.initMocks(this);
-		collectionDiffer = new CollectionDiffer(delegator, nodeInspector);
-		collectionDiffer.setCollectionNodeFactory(collectionNodeFactory);
-		collectionDiffer.setCollectionItemAccessorFactory(collectionItemAccessorFactory);
-		when(collectionNodeFactory.create(Node.ROOT, instances)).thenReturn(collectionNode);
+		initMocks(this);
+		collectionDiffer = new CollectionDiffer(differDispatcher, comparisonStrategyResolver);
+		baseCollection = new HashSet<String>();
+		workingCollection = new HashSet<String>();
+		when(instances.getSourceAccessor()).thenReturn(RootAccessor.getInstance());
+		when(instances.getBase(Collection.class)).thenReturn(baseCollection);
+		when(instances.getWorking(Collection.class)).thenReturn(workingCollection);
+	}
+
+	@Test(dataProviderClass = DifferAcceptTypeDataProvider.class, dataProvider = "collectionTypes")
+	public void accept_all_collection_types(final Class<?> type)
+	{
+		Assertions.assertThat(collectionDiffer.accepts(type))
+				  .as("accepts(" + type.getSimpleName() + ")")
+				  .isTrue();
+	}
+
+	@Test(dataProviderClass = DifferAcceptTypeDataProvider.class, dataProvider = "beanTypes")
+	public void not_accept_non_collection_types(final Class<?> type)
+	{
+		Assertions.assertThat(collectionDiffer.accepts(type))
+				  .as("accepts(" + type.getSimpleName() + ")")
+				  .isFalse();
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
-	public void fail_if_constructed_without_delegator()
+	public void fail_if_constructed_without_DifferDispatcher()
 	{
-		new CollectionDiffer(null, nodeInspector);
+		new CollectionDiffer(null, comparisonStrategyResolver);
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
-	public void fail_if_constructed_without_configuration()
+	public void fail_if_constructed_without_ComparisonStrategyResolver()
 	{
-		new CollectionDiffer(delegator, null);
+		new CollectionDiffer(differDispatcher, null);
 	}
 
 	@Test
-	public void return_untouched_node_if_base_and_working_are_the_same_instance()
+	public void return_untouched_node_when_instances_are_same()
+	{
+		given_instances_are_same();
+
+		node = collectionDiffer.compare(DiffNode.ROOT, instances);
+
+		assertThat(node).has(state(DiffNode.State.UNTOUCHED));
+	}
+
+	@Test
+	public void return_added_node_when_instance_has_been_added() throws Exception
+	{
+		given_instance_has_been_added();
+
+		node = collectionDiffer.compare(DiffNode.ROOT, instances);
+
+		assertThat(node).has(state(DiffNode.State.ADDED));
+	}
+
+	@Test
+	public void delegate_added_items_to_dispatcher_when_instance_has_been_added()
+	{
+		final String addedItem = "foo";
+		given_instance_has_been_added();
+		given_instance_has_added_item(addedItem);
+
+		node = collectionDiffer.compare(DiffNode.ROOT, instances);
+
+		verify(differDispatcher).dispatch(node(NodePath.buildRootPath()), same(instances), collectionItemAccessor(addedItem));
+		verifyNoMoreInteractions(differDispatcher);
+	}
+
+	@Test
+	public void return_removed_node_when_instance_has_been_removed() throws Exception
+	{
+		given_instance_has_been_removed();
+
+		node = collectionDiffer.compare(DiffNode.ROOT, instances);
+
+		assertThat(node).has(state(DiffNode.State.REMOVED));
+	}
+
+	@Test
+	public void delegate_removed_items_to_dispatcher_when_instance_has_been_removed()
+	{
+		final String removedItem = "foo";
+		given_instance_has_been_removed();
+		given_instance_has_removed_item(removedItem);
+
+		node = collectionDiffer.compare(DiffNode.ROOT, instances);
+
+		verify(differDispatcher).dispatch(node(NodePath.buildRootPath()), same(instances), collectionItemAccessor(removedItem));
+		verifyNoMoreInteractions(differDispatcher);
+	}
+
+	@Test
+	public void compare_using_comparison_strategy_if_available()
+	{
+		given_a_comparison_strategy_can_be_resolved();
+
+		node = collectionDiffer.compare(DiffNode.ROOT, instances);
+
+		verify(comparisonStrategy, atLeastOnce()).compare(node(NodePath.buildRootPath()), same(instances));
+	}
+
+	@Test
+	public void delegate_added_items_to_dispatcher_when_performaing_deep_comparison()
+	{
+		final String addedItem = "added";
+		given_instance_has_added_item(addedItem);
+
+		node = collectionDiffer.compare(DiffNode.ROOT, instances);
+
+		verify(differDispatcher).dispatch(node(NodePath.buildRootPath()), same(instances), collectionItemAccessor(addedItem));
+		verifyNoMoreInteractions(differDispatcher);
+	}
+
+	@Test
+	public void delegate_removed_items_to_dispatcher_when_performaing_deep_comparison()
+	{
+		final String removedItem = "removed";
+		given_instance_has_removed_item(removedItem);
+
+		node = collectionDiffer.compare(DiffNode.ROOT, instances);
+
+		verify(differDispatcher).dispatch(node(NodePath.buildRootPath()), same(instances), collectionItemAccessor(removedItem));
+		verifyNoMoreInteractions(differDispatcher);
+	}
+
+	@Test
+	public void delegate_known_items_to_dispatcher_when_performaing_deep_comparison()
+	{
+		final String knownItem = "known";
+		given_instance_has_known_item(knownItem);
+
+		node = collectionDiffer.compare(DiffNode.ROOT, instances);
+
+		verify(differDispatcher).dispatch(node(NodePath.buildRootPath()), same(instances), collectionItemAccessor(knownItem));
+		verifyNoMoreInteractions(differDispatcher);
+	}
+
+	private void given_instances_are_same()
 	{
 		when(instances.areSame()).thenReturn(true);
-		compare();
-		verify(collectionNode).setState(Node.State.UNTOUCHED);
 	}
 
-	@Test
-	public void return_added_node_if_working_is_not_null_and_base_is_null() throws Exception
+	private void given_instance_has_been_added()
 	{
 		when(instances.hasBeenAdded()).thenReturn(true);
-		when(instances.getWorking(Collection.class)).thenReturn(emptyList());
-		compare();
-		verify(collectionNode).setState(Node.State.ADDED);
 	}
 
-	@Test(dependsOnMethods = "return_added_node_if_working_is_not_null_and_base_is_null")
-	public void delegate_items_of_added_collection_to_delegator()
-	{
-		when(instances.hasBeenAdded()).thenReturn(true);
-		when(instances.getWorking(Collection.class)).thenReturn(asList("foo"));
-		when(instances.access(any(CollectionItemAccessor.class))).thenReturn(itemInstances); // TODO get rid of any
-		when(delegator.delegate(collectionNode, itemInstances)).thenReturn(collectionItemNode);
-		when(nodeInspector.isReturnable(collectionItemNode)).thenReturn(true);
-		compare();
-		verify(collectionNode).addChild(collectionItemNode);
-	}
-
-	@Test
-	public void return_ignored_node_if_property_is_ignored() throws Exception
-	{
-		when(nodeInspector.isIgnored(collectionNode)).thenReturn(true);
-		compare();
-		verify(collectionNode).setState(Node.State.IGNORED);
-	}
-
-	@Test
-	public void return_removed_node_if_working_is_null_and_base_is_not_null() throws Exception
+	private void given_instance_has_been_removed()
 	{
 		when(instances.hasBeenRemoved()).thenReturn(true);
-		when(instances.getBase(Collection.class)).thenReturn(emptyList());
-		compare();
-		verify(collectionNode).setState(Node.State.REMOVED);
 	}
 
-	@Test
-	public void compare_only_via_equals_if_equals_only_is_enabled()
+	private void given_instance_has_added_item(final String item)
 	{
-		when(nodeInspector.isEqualsOnly(collectionNode)).thenReturn(true);
-		when(instances.areEqual()).thenReturn(true);
-		compare();
-		verify(collectionNode).setState(Node.State.UNTOUCHED);
-	}
-	
-	@Test
-	public void detect_no_change_when_comparing_using_with_equals_only_value_provider_method_and_result_is_same()
-	{
-		when(nodeInspector.hasEqualsOnlyValueProviderMethod(collectionNode)).thenReturn(true);
-		when(nodeInspector.getEqualsOnlyValueProviderMethod(collectionNode)).thenReturn("somemethod");
-		when(instances.areMethodResultsEqual("somemethod")).thenReturn(true);
-		compare();
-		verify(collectionNode).setState(Node.State.UNTOUCHED);
-	}
-	
-	@Test
-	public void detect_change_when_comparing_using_with_equals_only_value_provider_method_and_result_is_different()
-	{
-		when(nodeInspector.hasEqualsOnlyValueProviderMethod(collectionNode)).thenReturn(true);
-		when(nodeInspector.getEqualsOnlyValueProviderMethod(collectionNode)).thenReturn("somemethod");
-		when(instances.areMethodResultsEqual("somemethod")).thenReturn(false);
-		compare();
-		verify(collectionNode).setState(CHANGED);
+		baseCollection.remove(item);
+		workingCollection.add(item);
 	}
 
-	@Test
-	public void detect_changes_if_equals_only_is_enabled()
+	private void given_instance_has_removed_item(final String item)
 	{
-		when(nodeInspector.isEqualsOnly(collectionNode)).thenReturn(true);
-		compare();
-		verify(collectionNode).setState(Node.State.CHANGED);
+		baseCollection.add(item);
+		workingCollection.remove(item);
 	}
 
-	private void compare()
+	private void given_instance_has_known_item(final String item)
 	{
-		final CollectionNode node = collectionDiffer.compare(Node.ROOT, instances);
-		Assertions.assertThat(node).isSameAs(collectionNode);
+		baseCollection.add(item);
+		workingCollection.add(item);
 	}
 
-	@Test
-	public void delegate_items_of_removed_collection_to_delegator()
+	private void given_a_comparison_strategy_can_be_resolved()
 	{
-		when(instances.hasBeenRemoved()).thenReturn(true);
-		when(instances.getBase(Collection.class)).thenReturn(asList("foo"));
-		when(instances.access(any(CollectionItemAccessor.class))).thenReturn(itemInstances); // TODO get rid of any
-		when(delegator.delegate(collectionNode, itemInstances)).thenReturn(collectionItemNode);
-		when(nodeInspector.isReturnable(collectionItemNode)).thenReturn(true);
-		compare();
-		verify(collectionNode).addChild(collectionItemNode);
-	}
-
-	@Test
-	public void delegate_all_items_to_delegator_on_deep_comparison()
-	{
-		when(instances.getWorking(Collection.class)).thenReturn(asList("foo", "bar"));
-		when(instances.getBase(Collection.class)).thenReturn(asList("foo", "foobar"));
-
-		final Node fooNode = whenDelegatorGetsCalledWithInstancesForItem("foo");
-		final Node barNode = whenDelegatorGetsCalledWithInstancesForItem("bar");
-		final Node foobarNode = whenDelegatorGetsCalledWithInstancesForItem("foobar");
-
-		when(nodeInspector.isReturnable(any(Node.class))).thenReturn(true);
-
-		compare();
-
-		verify(collectionNode).addChild(fooNode);
-		verify(collectionNode).addChild(barNode);
-		verify(collectionNode).addChild(foobarNode);
-		verifyNoMoreInteractions(collectionNode);
-	}
-
-	private Node whenDelegatorGetsCalledWithInstancesForItem(final String item)
-	{
-		final CollectionItemAccessor fooAccessor = mock(CollectionItemAccessor.class);
-		when(collectionItemAccessorFactory.createAccessorForItem(item)).thenReturn(fooAccessor);
-
-		final Instances fooInstances = mock(Instances.class);
-		when(instances.access(fooAccessor)).thenReturn(fooInstances);
-
-		final Node fooNode = mock(Node.class);
-		when(delegator.delegate(collectionNode, fooInstances)).thenReturn(fooNode);
-
-		return fooNode;
+		when(comparisonStrategyResolver.resolveComparisonStrategy(any(DiffNode.class))).thenReturn(comparisonStrategy);
 	}
 }

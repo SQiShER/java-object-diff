@@ -16,10 +16,10 @@
 
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.node.*;
-
 /** @author Daniel Bechler */
-interface Differ<T extends Node>
+interface Differ
 {
-	T compare(Node parentNode, Instances instances);
+	boolean accepts(Class<?> type);
+
+	DiffNode compare(DiffNode parentNode, Instances instances);
 }

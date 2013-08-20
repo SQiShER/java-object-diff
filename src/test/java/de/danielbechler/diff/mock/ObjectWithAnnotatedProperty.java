@@ -33,7 +33,7 @@ public class ObjectWithAnnotatedProperty
 	}
 
 	@ObjectDiffTest
-	@ObjectDiffProperty(ignore = true)
+	@ObjectDiffProperty(excluded = true)
 	public String getValue()
 	{
 		return value;

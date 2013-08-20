@@ -17,7 +17,7 @@
 package de.danielbechler.diff;
 
 import de.danielbechler.diff.accessor.*;
-import de.danielbechler.diff.node.*;
+import de.danielbechler.diff.comparison.*;
 import de.danielbechler.util.*;
 import de.danielbechler.util.Collections;
 
@@ -28,124 +28,112 @@ import java.util.*;
  *
  * @author Daniel Bechler
  */
-final class CollectionDiffer implements Differ<CollectionNode>
+final class CollectionDiffer implements Differ
 {
-	private final DifferDelegator delegator;
-	private final NodeInspector nodeInspector;
-	private CollectionNodeFactory collectionNodeFactory = new CollectionNodeFactory();
-	private CollectionItemAccessorFactory collectionItemAccessorFactory = new CollectionItemAccessorFactory();
+	private final DifferDispatcher differDispatcher;
+	private final ComparisonStrategyResolver comparisonStrategyResolver;
 
-	public CollectionDiffer(final DifferDelegator delegator, final NodeInspector nodeInspector)
+	public CollectionDiffer(final DifferDispatcher differDispatcher,
+							final ComparisonStrategyResolver comparisonStrategyResolver)
 	{
-		Assert.notNull(delegator, "delegator");
-		Assert.notNull(nodeInspector, "nodeInspector");
-		this.delegator = delegator;
-		this.nodeInspector = nodeInspector;
+		Assert.notNull(differDispatcher, "differDispatcher");
+		this.differDispatcher = differDispatcher;
+
+		Assert.notNull(comparisonStrategyResolver, "comparisonStrategyResolver");
+		this.comparisonStrategyResolver = comparisonStrategyResolver;
 	}
 
-	public final CollectionNode compare(final Node parentNode, final Instances collectionInstances)
+	public boolean accepts(final Class<?> type)
 	{
-		final CollectionNode collectionNode = collectionNodeFactory.create(parentNode, collectionInstances);
-		if (nodeInspector.isIgnored(collectionNode))
+		return Collection.class.isAssignableFrom(type);
+	}
+
+	public final DiffNode compare(final DiffNode parentNode, final Instances collectionInstances)
+	{
+		final DiffNode collectionNode = newNode(parentNode, collectionInstances);
+		if (collectionInstances.hasBeenAdded())
 		{
-			collectionNode.setState(Node.State.IGNORED);
-		}
-		else if (nodeInspector.isEqualsOnly(collectionNode))
-		{
-			if (collectionInstances.areEqual())
-			{
-				collectionNode.setState(Node.State.UNTOUCHED);
-			}
-			else
-			{
-				collectionNode.setState(Node.State.CHANGED);
-			}
-		}
-		else if (nodeInspector.hasEqualsOnlyValueProviderMethod(collectionNode)){
-			String method = nodeInspector.getEqualsOnlyValueProviderMethod(collectionNode);
-			if (collectionInstances.areMethodResultsEqual(method))
-			{
-				collectionNode.setState(Node.State.UNTOUCHED);
-			}
-			else
-			{
-				collectionNode.setState(Node.State.CHANGED);
-			}
-		}
-		else if (collectionInstances.hasBeenAdded())
-		{
-			compareItems(collectionNode, collectionInstances, collectionInstances.getWorking(Collection.class));
-			collectionNode.setState(Node.State.ADDED);
+			final Collection addedItems = collectionInstances.getWorking(Collection.class);
+			compareItems(collectionNode, collectionInstances, addedItems);
+			collectionNode.setState(DiffNode.State.ADDED);
 		}
 		else if (collectionInstances.hasBeenRemoved())
 		{
-			compareItems(collectionNode, collectionInstances, collectionInstances.getBase(Collection.class));
-			collectionNode.setState(Node.State.REMOVED);
+			final Collection<?> removedItems = collectionInstances.getBase(Collection.class);
+			compareItems(collectionNode, collectionInstances, removedItems);
+			collectionNode.setState(DiffNode.State.REMOVED);
 		}
 		else if (collectionInstances.areSame())
 		{
-			collectionNode.setState(Node.State.UNTOUCHED);
+			collectionNode.setState(DiffNode.State.UNTOUCHED);
 		}
 		else
 		{
-			compareItems(collectionNode, collectionInstances, addedItemsOf(collectionInstances));
-			compareItems(collectionNode, collectionInstances, removedItemsOf(collectionInstances));
-			compareItems(collectionNode, collectionInstances, knownItemsOf(collectionInstances));
+			final ComparisonStrategy comparisonStrategy = comparisonStrategyResolver.resolveComparisonStrategy(collectionNode);
+			if (comparisonStrategy == null)
+			{
+				compareInternally(collectionNode, collectionInstances);
+			}
+			else
+			{
+				compareUsingComparisonStrategy(collectionNode, collectionInstances, comparisonStrategy);
+			}
 		}
 		return collectionNode;
 	}
 
-	private void compareItems(final Node collectionNode, final Instances instances, final Iterable<?> items)
+	private static void compareUsingComparisonStrategy(final DiffNode collectionNode,
+													   final Instances collectionInstances,
+													   final ComparisonStrategy comparisonStrategy)
+	{
+		comparisonStrategy.compare(collectionNode, collectionInstances);
+	}
+
+	private void compareInternally(final DiffNode collectionNode, final Instances collectionInstances)
+	{
+		compareItems(collectionNode, collectionInstances, addedItemsOf(collectionInstances));
+		compareItems(collectionNode, collectionInstances, removedItemsOf(collectionInstances));
+		compareItems(collectionNode, collectionInstances, knownItemsOf(collectionInstances));
+	}
+
+	private static DiffNode newNode(final DiffNode parentNode, final Instances collectionInstances)
+	{
+		final Accessor accessor = collectionInstances.getSourceAccessor();
+		final Class<?> type = collectionInstances.getType();
+		return new DiffNode(parentNode, accessor, type);
+	}
+
+	private void compareItems(final DiffNode collectionNode,
+							  final Instances collectionInstances,
+							  final Iterable<?> items)
 	{
 		for (final Object item : items)
 		{
-			final Node child = compareItem(collectionNode, instances, item);
-			if (nodeInspector.isReturnable(child))
-			{
-				collectionNode.addChild(child);
-			}
+			final Accessor itemAccessor = new CollectionItemAccessor(item);
+			differDispatcher.dispatch(collectionNode, collectionInstances, itemAccessor);
 		}
 	}
 
-	private Node compareItem(final Node collectionNode,
-							 final Instances collectionInstances,
-							 final Object collectionItem)
-	{
-		final CollectionItemAccessor itemAccessor = collectionItemAccessorFactory.createAccessorForItem(collectionItem);
-		final Instances itemInstances = collectionInstances.access(itemAccessor);
-		return delegator.delegate(collectionNode, itemInstances);
-	}
-
-	@SuppressWarnings("unchecked")
 	private static Collection<?> addedItemsOf(final Instances instances)
 	{
-		return Collections.filteredCopyOf(instances.getWorking(Collection.class), instances.getBase(Collection.class));
+		final Collection<?> working = instances.getWorking(Collection.class);
+		final Collection<?> base = instances.getBase(Collection.class);
+		return Collections.filteredCopyOf(working, base);
 	}
 
-	@SuppressWarnings("unchecked")
 	private static Collection<?> removedItemsOf(final Instances instances)
 	{
-		return Collections.filteredCopyOf(instances.getBase(Collection.class), instances.getWorking(Collection.class));
+		final Collection<?> working = instances.getWorking(Collection.class);
+		final Collection<?> base = instances.getBase(Collection.class);
+		return Collections.filteredCopyOf(base, working);
 	}
 
-	@SuppressWarnings("unchecked")
 	private static Iterable<?> knownItemsOf(final Instances instances)
 	{
-		final Collection<?> changed = new ArrayList<Object>(instances.getWorking(Collection.class));
+		final Collection<?> working = instances.getWorking(Collection.class);
+		final Collection<Object> changed = new ArrayList<Object>(working);
 		changed.removeAll(addedItemsOf(instances));
 		changed.removeAll(removedItemsOf(instances));
 		return changed;
-	}
-
-	@TestOnly
-	void setCollectionNodeFactory(final CollectionNodeFactory collectionNodeFactory)
-	{
-		this.collectionNodeFactory = collectionNodeFactory;
-	}
-
-	@TestOnly
-	void setCollectionItemAccessorFactory(final CollectionItemAccessorFactory collectionItemAccessorFactory)
-	{
-		this.collectionItemAccessorFactory = collectionItemAccessorFactory;
 	}
 }

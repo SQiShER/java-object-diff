@@ -16,9 +16,9 @@
 
 package de.danielbechler.util;
 
+import de.danielbechler.diff.*;
 import de.danielbechler.diff.integration.*;
 import de.danielbechler.diff.mock.*;
-import de.danielbechler.diff.node.*;
 import org.testng.annotations.*;
 
 import java.net.*;
@@ -158,7 +158,7 @@ public class ClassesTest
 				new Object[] {Locale.class},
 				new Object[] {URI.class},
 				new Object[] {Number.class},
-				new Object[] {Node.State.class},
+				new Object[] {DiffNode.State.class},
 				new Object[] {Class.class},
 		};
 	}

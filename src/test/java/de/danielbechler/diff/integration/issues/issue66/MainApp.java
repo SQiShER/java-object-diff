@@ -17,7 +17,6 @@
 package de.danielbechler.diff.integration.issues.issue66;
 
 import de.danielbechler.diff.*;
-import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.visitor.*;
 
 public class MainApp
@@ -28,7 +27,7 @@ public class MainApp
 
 	public static void main(final String[] args)
 	{
-		final ObjectDiffer objectDiffer = ObjectDifferFactory.getInstance();
+		final ObjectDiffer objectDiffer = ObjectDifferBuilder.buildDefaultObjectDiffer();
 
 		final TopHat hat1 = new TopHat(1, 10);
 		final TopHat hat2 = new TopHat(2, 20);
@@ -36,13 +35,13 @@ public class MainApp
 		final Person p1 = new Person(hat1);
 		final Person p2 = new Person(hat2);
 
-		final Node root = objectDiffer.compare(p1, p2);
+		final DiffNode root = objectDiffer.compare(p1, p2);
 
-		root.visit(new Node.Visitor()
+		root.visit(new DiffNode.Visitor()
 		{
-			public void accept(final Node node, final Visit visit)
+			public void accept(final DiffNode node, final Visit visit)
 			{
-				System.out.print(node.getPropertyPath() + " :: ");
+				System.out.print(node.getPath() + " :: ");
 				System.out.print(node.canonicalGet(p1));
 				System.out.print(" -> ");
 				System.out.print(node.canonicalGet(p2));

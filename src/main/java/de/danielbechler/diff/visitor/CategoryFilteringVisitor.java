@@ -16,7 +16,7 @@
 
 package de.danielbechler.diff.visitor;
 
-import de.danielbechler.diff.node.*;
+import de.danielbechler.diff.*;
 import de.danielbechler.util.Collections;
 
 import java.util.*;
@@ -31,7 +31,7 @@ public abstract class CategoryFilteringVisitor extends AbstractFilteringVisitor
 	private boolean includeAllNonExcluded;
 
 	@Override
-	protected boolean accept(final Node node)
+	protected boolean accept(final DiffNode node)
 	{
 		if (isExcluded(node))
 		{
@@ -45,20 +45,20 @@ public abstract class CategoryFilteringVisitor extends AbstractFilteringVisitor
 	}
 
 	@Override
-	protected void onDismiss(final Node node, final Visit visit)
+	protected void onDismiss(final DiffNode node, final Visit visit)
 	{
 		super.onDismiss(node, visit);
 		visit.dontGoDeeper();
 	}
 
 	@SuppressWarnings({"TypeMayBeWeakened"})
-	private boolean isExcluded(final Node node)
+	private boolean isExcluded(final DiffNode node)
 	{
 		return Collections.containsAny(node.getCategories(), exclude);
 	}
 
 	@SuppressWarnings({"TypeMayBeWeakened"})
-	private boolean isIncluded(final Node node)
+	private boolean isIncluded(final DiffNode node)
 	{
 		return Collections.containsAny(node.getCategories(), include);
 	}

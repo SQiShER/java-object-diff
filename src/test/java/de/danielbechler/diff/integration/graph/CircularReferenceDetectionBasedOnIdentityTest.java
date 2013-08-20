@@ -16,13 +16,11 @@
 
 package de.danielbechler.diff.integration.graph;
 
-import de.danielbechler.diff.Configuration;
 import de.danielbechler.diff.*;
 import de.danielbechler.diff.mock.*;
-import de.danielbechler.diff.node.*;
 import org.testng.annotations.*;
 
-import static de.danielbechler.diff.Configuration.CircularReferenceMatchingMode.*;
+import static de.danielbechler.diff.CircularReferenceMatchingMode.*;
 
 /** @author Daniel Bechler */
 public class CircularReferenceDetectionBasedOnIdentityTest
@@ -32,10 +30,12 @@ public class CircularReferenceDetectionBasedOnIdentityTest
 	@BeforeMethod
 	public void setUp() throws Exception
 	{
-		final Configuration configuration = new Configuration();
-		configuration.withChildrenOfAddedNodes();
-		configuration.matchCircularReferencesUsing(EQUALITY_OPERATOR);
-		objectDiffer = ObjectDifferFactory.getInstance(configuration);
+		final ObjectDifferBuilder configuration = ObjectDifferBuilder.startBuilding();
+		configuration.configure().introspection().includeChildrenOfNodeWithState(DiffNode.State.ADDED);
+		configuration.configure()
+					 .circularReferenceHandling()
+					 .matchCircularReferencesUsing(EQUALITY_OPERATOR);
+		objectDiffer = configuration.build();
 	}
 
 	@Test
@@ -43,7 +43,7 @@ public class CircularReferenceDetectionBasedOnIdentityTest
 	{
 		final ObjectWithNestedObject object = new ObjectWithNestedObject("foo");
 		object.setObject(object);
-		final Node node = objectDiffer.compare(object, null);
+		final DiffNode node = objectDiffer.compare(object, null);
 		NodeAssertions.assertThat(node).child("object").isCircular();
 	}
 
@@ -51,7 +51,7 @@ public class CircularReferenceDetectionBasedOnIdentityTest
 	public void detectsNoCircularReference_whenEncounteringDifferentButEqualObjectsTwice() throws Exception
 	{
 		final ObjectWithNestedObject object = new ObjectWithNestedObject("foo", new ObjectWithNestedObject("foo"));
-		final Node node = objectDiffer.compare(object, null);
-		NodeAssertions.assertThat(node).child("object").hasState(Node.State.ADDED);
+		final DiffNode node = objectDiffer.compare(object, null);
+		NodeAssertions.assertThat(node).child("object").hasState(DiffNode.State.ADDED);
 	}
 }

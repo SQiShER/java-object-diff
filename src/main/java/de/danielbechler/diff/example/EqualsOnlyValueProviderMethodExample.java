@@ -1,29 +1,30 @@
 package de.danielbechler.diff.example;
 
-import de.danielbechler.diff.Configuration;
-import de.danielbechler.diff.ObjectDifferFactory;
-import de.danielbechler.diff.node.Node;
-import de.danielbechler.diff.path.PropertyPath;
-import de.danielbechler.diff.visitor.PrintingVisitor;
+import de.danielbechler.diff.*;
+import de.danielbechler.diff.path.*;
+import de.danielbechler.diff.visitor.*;
 
-class EqualsOnlyValueProviderMethodExample {
+class EqualsOnlyValueProviderMethodExample
+{
 	private EqualsOnlyValueProviderMethodExample()
 	{
 	}
 
 	public static void main(final String[] args)
 	{
-		PropertyClass prop = new PropertyClass("1", "2");
+		final PropertyClass prop = new PropertyClass("1", "2");
 		final EncompassingClass base = new EncompassingClass(prop);
-		PropertyClass prop2 = new PropertyClass("1", "3");
+		final PropertyClass prop2 = new PropertyClass("1", "3");
 		final EncompassingClass working = new EncompassingClass(prop2);
 
-		final Configuration configuration = new Configuration();
+		final ObjectDifferBuilder builder = ObjectDifferBuilder.startBuilding();
 
 		// (Option 1) Causes the ObjectDiffer to compare using the method "getProp1" on the 'prop' property of the root object
-		configuration.withEqualsOnlyValueProviderMethod(PropertyPath.buildWith("prop"), "getProp1");
+		builder.configure().comparison()
+			   .ofNode(NodePath.buildWith("prop"))
+			   .toUseEqualsMethodOfValueProvidedByMethod("getProp1");
 
-		final Node node = ObjectDifferFactory.getInstance(configuration).compare(working, base);
+		final DiffNode node = builder.build().compare(working, base);
 
 		node.visit(new PrintingVisitor(working, base));
 
@@ -44,27 +45,32 @@ class EqualsOnlyValueProviderMethodExample {
 
 		/* (Option 2) This annotation causes the ObjectDiffer to use getProp1 method to compare */
 		//@ObjectDiffProperty(equalsOnlyValueProviderMethod = "getProp1")
-		public PropertyClass getProp() {
+		public PropertyClass getProp()
+		{
 			return prop;
 		}
 	}
-	
+
 	/* (Option 3) This annotation causes the ObjectDiffer to use getProp1 method to compare */
 	//@ObjectDiffEqualsOnlyValueProvidedType(method="getProp1")
 	public static class PropertyClass
 	{
 		private String prop1;
 		private String prop2;
-		
-		public PropertyClass(String prop1, String prop2)
+
+		public PropertyClass(final String prop1, final String prop2)
 		{
 			this.prop1 = prop1;
 			this.prop2 = prop2;
 		}
-		public String getProp1() {
+
+		public String getProp1()
+		{
 			return prop1;
 		}
-		public String getProp2() {
+
+		public String getProp2()
+		{
 			return prop2;
 		}
 	}

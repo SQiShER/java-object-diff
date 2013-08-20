@@ -16,9 +16,13 @@
 
 package de.danielbechler.diff.accessor;
 
+import de.danielbechler.diff.path.*;
+
 /** @author Daniel Bechler */
-public interface Accessor extends PropertyDescriptor
+public interface Accessor
 {
+	Element getPathElement();
+
 	Object get(Object target);
 
 	void set(Object target, Object value);

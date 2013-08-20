@@ -19,8 +19,8 @@ package de.danielbechler.diff.annotation;
 import java.lang.annotation.*;
 
 /**
- * Annotation to be used on property getters in order to configure if and how they should be treated during object
- * comparison.
+ * Annotation to be used on property getters in order to configure if and how they should be treated during
+ * object comparison.
  *
  * @author Daniel Bechler
  */
@@ -35,22 +35,29 @@ public @interface ObjectDiffProperty
 	 *
 	 * @return <code>true</code> if the property should be ignored.
 	 */
-	public boolean ignore() default false;
+	public boolean excluded() default false;
 
 	/**
-	 * Causes the {@link de.danielbechler.diff.Differ Differs} to compare the object by using the {@link Object#equals(Object)}
-	 * method instead of introspection.
+	 * Causes the {@link de.danielbechler.diff.Differ Differs} to compare the object by using the {@link
+	 * Object#equals(Object)} method instead of introspection.
 	 *
 	 * @return <code>true</code> if the property should be compared via {@link Object#equals(Object)}.
 	 */
 	public boolean equalsOnly() default false;
 
 	/**
-	 * Categories will be passed along with the object node and can be used for advanced filtering of specific property groups.
+	 * Categories will be passed along with the object node and can be used for advanced filtering of specific
+	 * property groups.
 	 *
 	 * @return The categories for this property.
 	 */
 	public String[] categories() default {};
-	
+
+	/**
+	 * Can be used in conjunction with {@link #equalsOnly()} to name a method on the object that provides the
+	 * value to compare via equals.
+	 *
+	 * @return The method returning the object to use for the equals check.
+	 */
 	public String equalsOnlyValueProviderMethod() default "";
 }

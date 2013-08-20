@@ -1,15 +1,17 @@
 package de.danielbechler.diff.mock;
 
-import java.util.Map;
+import de.danielbechler.diff.annotation.*;
 
-import de.danielbechler.diff.annotation.ObjectDiffProperty;
+import java.util.*;
 
-public class ObjectWithMethodEqualsOnlyValueProviderMethodOnGetMap extends ObjectWithMap {
-	public ObjectWithMethodEqualsOnlyValueProviderMethodOnGetMap(Map<String, String> map){
+public class ObjectWithMethodEqualsOnlyValueProviderMethodOnGetMap extends ObjectWithMap
+{
+	public ObjectWithMethodEqualsOnlyValueProviderMethodOnGetMap(final Map<String, String> map)
+	{
 		super(map);
 	}
-	
-	@ObjectDiffProperty(equalsOnlyValueProviderMethod = "size")
+
+	@ObjectDiffProperty(equalsOnly = true, equalsOnlyValueProviderMethod = "size")
 	@Override
 	public Map<String, String> getMap()
 	{

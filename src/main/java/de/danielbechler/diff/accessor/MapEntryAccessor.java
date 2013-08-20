@@ -22,25 +22,19 @@ import de.danielbechler.util.*;
 import java.util.*;
 
 /** @author Daniel Bechler */
-public final class MapEntryAccessor extends AbstractAccessor
+public final class MapEntryAccessor implements Accessor
 {
-	private final List<?> referenceKeys;
-	private final int index;
+	private final Object referenceKey;
 
-	public MapEntryAccessor(final List<?> referenceKeys, final int index)
+	public MapEntryAccessor(final Object referenceKey)
 	{
-		Assert.notNull(referenceKeys, "referenceKeys");
-		if (index < 0 || index > referenceKeys.size() - 1)
-		{
-			throw new IndexOutOfBoundsException("Index " + index + " is not within the valid range of the given List");
-		}
-		this.referenceKeys = referenceKeys;
-		this.index = index;
+		Assert.notNull(referenceKey, "referenceKey");
+		this.referenceKey = referenceKey;
 	}
 
 	public Element getPathElement()
 	{
-		return new MapElement(getReferenceKey());
+		return new MapElement(referenceKey);
 	}
 
 	public void set(final Object target, final Object value)
@@ -48,7 +42,7 @@ public final class MapEntryAccessor extends AbstractAccessor
 		final Map<Object, Object> targetMap = objectToMap(target);
 		if (targetMap != null)
 		{
-			targetMap.put(getReferenceKey(), value);
+			targetMap.put(referenceKey, value);
 		}
 	}
 
@@ -57,7 +51,7 @@ public final class MapEntryAccessor extends AbstractAccessor
 		final Map<?, ?> targetMap = objectToMap(target);
 		if (targetMap != null)
 		{
-			return targetMap.get(getReferenceKey());
+			return targetMap.get(referenceKey);
 		}
 		return null;
 	}
@@ -76,17 +70,12 @@ public final class MapEntryAccessor extends AbstractAccessor
 		throw new IllegalArgumentException(object.getClass().toString());
 	}
 
-	private Object getReferenceKey()
-	{
-		return referenceKeys.get(index);
-	}
-
 	public void unset(final Object target)
 	{
 		final Map<?, ?> targetMap = objectToMap(target);
 		if (targetMap != null)
 		{
-			targetMap.remove(getReferenceKey());
+			targetMap.remove(referenceKey);
 		}
 	}
 
@@ -103,7 +92,7 @@ public final class MapEntryAccessor extends AbstractAccessor
 		{
 			return null;
 		}
-		final Object referenceKey = getReferenceKey();
+		final Object referenceKey = this.referenceKey;
 		for (final Object key : map.keySet())
 		{
 			if (key == referenceKey || key.equals(referenceKey))

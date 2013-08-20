@@ -25,7 +25,7 @@ public class ObjectWithAccessTrackingIgnoredProperty
 	private boolean value;
 	public boolean accessed;
 
-	@ObjectDiffProperty(ignore = true)
+	@ObjectDiffProperty(excluded = true)
 	public boolean getValue()
 	{
 		this.accessed = true;

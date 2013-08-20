@@ -16,57 +16,49 @@
 
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.node.*;
 import de.danielbechler.util.*;
 
-import static de.danielbechler.diff.Configuration.PrimitiveDefaultValueMode.*;
+import static de.danielbechler.diff.PrimitiveDefaultValueMode.*;
 
 /** @author Daniel Bechler */
-class PrimitiveDiffer implements Differ<DefaultNode>
+class PrimitiveDiffer implements Differ
 {
-	private final Configuration configuration;
-	private DefaultNodeFactory defaultNodeFactory = new DefaultNodeFactory();
+	private final PrimitiveDefaultValueModeResolver primitiveDefaultValueModeResolver;
 
-	public PrimitiveDiffer(final Configuration configuration)
+	public PrimitiveDiffer(final PrimitiveDefaultValueModeResolver primitiveDefaultValueModeResolver)
 	{
-		Assert.notNull(configuration, "configuration");
-		this.configuration = configuration;
+		this.primitiveDefaultValueModeResolver = primitiveDefaultValueModeResolver;
 	}
 
-	public final DefaultNode compare(final Node parentNode, final Instances instances)
+	public boolean accepts(final Class<?> type)
+	{
+		return Classes.isPrimitiveType(type);
+	}
+
+	public final DiffNode compare(final DiffNode parentNode, final Instances instances)
 	{
 		if (!instances.getType().isPrimitive())
 		{
 			throw new IllegalArgumentException("The primitive differ can only deal with primitive types.");
 		}
-		final DefaultNode node = defaultNodeFactory.createNode(parentNode, instances);
-		if (configuration.isIgnored(node))
+		final DiffNode node = new DiffNode(parentNode, instances.getSourceAccessor(), instances.getType());
+		if (shouldTreatPrimitiveDefaultsAsUnassigned(node) && instances.hasBeenAdded())
 		{
-			node.setState(Node.State.IGNORED);
+			node.setState(DiffNode.State.ADDED);
 		}
-		else if (shouldTreatPrimitiveDefaultsAsUnassigned() && instances.hasBeenAdded())
+		else if (shouldTreatPrimitiveDefaultsAsUnassigned(node) && instances.hasBeenRemoved())
 		{
-			node.setState(Node.State.ADDED);
-		}
-		else if (shouldTreatPrimitiveDefaultsAsUnassigned() && instances.hasBeenRemoved())
-		{
-			node.setState(Node.State.REMOVED);
+			node.setState(DiffNode.State.REMOVED);
 		}
 		else if (!instances.areEqual())
 		{
-			node.setState(Node.State.CHANGED);
+			node.setState(DiffNode.State.CHANGED);
 		}
 		return node;
 	}
 
-	private boolean shouldTreatPrimitiveDefaultsAsUnassigned()
+	private boolean shouldTreatPrimitiveDefaultsAsUnassigned(final DiffNode node)
 	{
-		return configuration.getPrimitiveDefaultValueMode() == UNASSIGNED;
-	}
-
-	@TestOnly
-	public void setDefaultNodeFactory(final DefaultNodeFactory defaultNodeFactory)
-	{
-		this.defaultNodeFactory = defaultNodeFactory;
+		return primitiveDefaultValueModeResolver.resolvePrimitiveDefaultValueMode(node) == UNASSIGNED;
 	}
 }

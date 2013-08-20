@@ -17,14 +17,14 @@
 package de.danielbechler.diff;
 
 import de.danielbechler.diff.accessor.*;
-import de.danielbechler.diff.node.*;
+import de.danielbechler.diff.comparison.*;
+import de.danielbechler.diff.path.*;
 import org.mockito.Mock;
 import org.testng.annotations.*;
 
 import java.util.*;
 
-import static de.danielbechler.diff.node.Node.State.*;
-import static org.fest.assertions.api.Assertions.*;
+import static de.danielbechler.diff.NodeMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.*;
 
@@ -32,88 +32,47 @@ import static org.mockito.MockitoAnnotations.*;
 public class MapDifferShould
 {
 	private MapDiffer differ;
-	private MapNode node;
+	private DiffNode node;
 	private Map<String, String> working;
 	private Map<String, String> base;
-	@Mock private DifferDelegator differDelegator;
-	@Mock private NodeInspector nodeInspector;
-	@Mock private MapNodeFactory mapNodeFactory;
-	@Mock private MapNode internalNode;
-	@Mock private Instances instances;
-	@Mock private Instances childInstances;
-	@Mock private Node childNode;
+	@Mock
+	private DifferDispatcher differDispatcher;
+	@Mock
+	private Instances instances;
+	@Mock
+	private Instances childInstances;
+	@Mock
+	private DiffNode childNode;
+	@Mock
+	private ComparisonStrategyResolver comparisonStrategyResolver;
+	@Mock
+	private IsReturnableResolver returnableResolver;
 
 	@BeforeMethod
 	public void setUp()
 	{
 		initMocks(this);
-		when(mapNodeFactory.createMapNode(Node.ROOT, instances)).thenReturn(internalNode);
-		when(instances.access(any(Accessor.class))).thenReturn(childInstances);
-		when(differDelegator.delegate(internalNode, childInstances)).thenReturn(childNode);
+		when(instances.getSourceAccessor()).thenReturn(RootAccessor.getInstance());
+		when(differDispatcher.dispatch(any(DiffNode.class), same(instances), any(Accessor.class))).thenReturn(childNode);
 
-		differ = new MapDiffer(differDelegator, nodeInspector);
-		differ.setMapNodeFactory(mapNodeFactory);
+		differ = new MapDiffer(differDispatcher, comparisonStrategyResolver, returnableResolver);
 
 		working = new HashMap<String, String>();
 		base = new HashMap<String, String>();
 	}
 
 	@Test
-	public void ignore_given_map_if_ignorable() throws Exception
+	public void should_delegate_to_comparison_strategy_if_one_is_returned_by_node_inspector()
 	{
-		when(nodeInspector.isIgnored(internalNode)).thenReturn(true);
+		when(comparisonStrategyResolver.resolveComparisonStrategy(node(NodePath.buildRootPath())))
+				.thenReturn(mock(ComparisonStrategy.class));
 
 		node = compare(working, base);
 
-		verify(node).setState(IGNORED);
+		verify(comparisonStrategyResolver, atLeast(1)).resolveComparisonStrategy(node(NodePath
+				.buildRootPath()));
 	}
 
-	@Test
-	public void detect_change_when_comparing_using_equals()
-	{
-		when(nodeInspector.isEqualsOnly(internalNode)).thenReturn(true);
-		when(instances.areEqual()).thenReturn(false);
-
-		node = compare(working, base);
-
-		verify(node).setState(CHANGED);
-	}
-
-	@Test
-	public void detect_no_change_when_comparing_using_equals()
-	{
-		when(nodeInspector.isEqualsOnly(internalNode)).thenReturn(true);
-		when(instances.areEqual()).thenReturn(true);
-
-		node = compare(working, base);
-
-		verify(node).setState(UNTOUCHED);
-	}
-
-	@Test
-	public void detect_no_change_when_comparing_using_equals_only_provider_method_and_result_is_same()
-	{
-		when(nodeInspector.hasEqualsOnlyValueProviderMethod(internalNode)).thenReturn(true);
-		when(nodeInspector.getEqualsOnlyValueProviderMethod(internalNode)).thenReturn("somemethod");
-		when(instances.areMethodResultsEqual("somemethod")).thenReturn(true);
-
-		node = compare(working, base);
-
-		verify(node).setState(UNTOUCHED);
-	}
-	
-	@Test
-	public void detect_change_when_comparing_using_with_equals_only_provider_method_and_result_is_different()
-	{
-		when(nodeInspector.hasEqualsOnlyValueProviderMethod(internalNode)).thenReturn(true);
-		when(nodeInspector.getEqualsOnlyValueProviderMethod(internalNode)).thenReturn("somemethod");
-		when(instances.areMethodResultsEqual("somemethod")).thenReturn(false);
-
-		node = compare(working, base);
-
-		verify(node).setState(CHANGED);
-	}
-	
 	@Test
 	public void detect_addition()
 	{
@@ -121,7 +80,7 @@ public class MapDifferShould
 
 		node = compare(working, base);
 
-		verify(node).setState(ADDED);
+		NodeAssertions.assertThat(node).self().hasState(DiffNode.State.ADDED);
 	}
 
 	@Test
@@ -131,29 +90,30 @@ public class MapDifferShould
 
 		node = compare(working, base);
 
-		verify(node).setState(REMOVED);
+		NodeAssertions.assertThat(node).self().hasState(DiffNode.State.REMOVED);
 	}
 
 	@Test
 	public void delegate_comparison_of_map_entries()
 	{
-		when(nodeInspector.isReturnable(childNode)).thenReturn(true);
+		when(returnableResolver.isReturnable(childNode)).thenReturn(true);
 		working.put("foo", "bar");
 
 		node = compare(working, base);
 
-		verify(node).addChild(childNode);
+		NodeAssertions.assertThat(node).self().hasChildren(1);
+//		verify(node).addChild(childNode);
 	}
 
 	@Test
 	public void not_add_child_nodes_if_they_are_not_returnable()
 	{
-		when(nodeInspector.isReturnable(childNode)).thenReturn(false);
+		when(returnableResolver.isReturnable(childNode)).thenReturn(false);
 		working.put("foo", "bar");
 
 		node = compare(working, base);
 
-		verify(node, times(0)).addChild(childNode);
+		NodeAssertions.assertThat(node).self().hasChildren(0);
 	}
 
 	@Test
@@ -163,44 +123,22 @@ public class MapDifferShould
 
 		node = compare(working, base);
 
-		verify(node).setState(UNTOUCHED);
-	}
-
-	@Test
-	public void insert_all_entries_into_the_map_node_index()
-	{
-		working.put("added", "");
-		working.put("known", "");
-		base.put("removed", "");
-		base.put("known", "");
-
-		node = compare(working, base);
-
-		verify(internalNode, times(1)).indexKey("added");
-		verify(internalNode, times(2)).indexKey("known");
-		verify(internalNode, times(1)).indexKey("removed");
+		NodeAssertions.assertThat(node).self().isUntouched();
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void fail_when_constructed_without_delegator()
 	{
-		new MapDiffer(null, nodeInspector);
+		new MapDiffer(null, comparisonStrategyResolver, returnableResolver);
 	}
 
-	@Test(expectedExceptions = IllegalArgumentException.class)
-	public void fail_when_constructed_without_node_inspector()
-	{
-		new MapDiffer(differDelegator, null);
-	}
-
-	private MapNode compare(final Map<?, ?> working, final Map<?, ?> base)
+	private DiffNode compare(final Map<?, ?> working, final Map<?, ?> base)
 	{
 		when(instances.getBase()).thenReturn(base);
 		when(instances.getBase(Map.class)).thenReturn(base);
 		when(instances.getWorking()).thenReturn(working);
 		when(instances.getWorking(Map.class)).thenReturn(working);
-		node = differ.compare(Node.ROOT, instances);
-		assertThat(node).isEqualTo(internalNode);
+		node = differ.compare(DiffNode.ROOT, instances);
 		return node;
 	}
 }

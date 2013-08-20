@@ -26,21 +26,21 @@ public class PropertyPathBuilderTest
 	@Test
 	public void testWithRoot()
 	{
-		final PropertyPath propertyPath = PropertyPath.createBuilder()
-													  .withRoot()
-													  .build();
-		assertThat(propertyPath.getElements()).containsOnly(RootElement.getInstance());
+		final NodePath nodePath = NodePath.createBuilder()
+										  .withRoot()
+										  .build();
+		assertThat(nodePath.getElements()).containsOnly(RootElement.getInstance());
 	}
 
 	@Test
 	public void testWithElement()
 	{
 		final CollectionElement element = new CollectionElement("foo");
-		final PropertyPath propertyPath = PropertyPath.createBuilder()
-													  .withRoot()
-													  .withElement(element)
-													  .build();
-		assertThat(propertyPath.getElements()).containsSequence(
+		final NodePath nodePath = NodePath.createBuilder()
+										  .withRoot()
+										  .withElement(element)
+										  .build();
+		assertThat(nodePath.getElements()).containsSequence(
 				RootElement.getInstance(),
 				element);
 	}
@@ -48,11 +48,11 @@ public class PropertyPathBuilderTest
 	@Test
 	public void testWithPropertyName()
 	{
-		final PropertyPath propertyPath = PropertyPath.createBuilder()
-													  .withRoot()
-													  .withPropertyName("foo", "bar")
-													  .build();
-		assertThat(propertyPath.getElements()).containsSequence(
+		final NodePath nodePath = NodePath.createBuilder()
+										  .withRoot()
+										  .withPropertyName("foo", "bar")
+										  .build();
+		assertThat(nodePath.getElements()).containsSequence(
 				RootElement.getInstance(),
 				new NamedPropertyElement("foo"),
 				new NamedPropertyElement("bar")
@@ -62,49 +62,49 @@ public class PropertyPathBuilderTest
 	@Test
 	public void testWithMapKey()
 	{
-		final PropertyPath propertyPath = PropertyPath.createBuilder()
-													  .withRoot()
-													  .withMapKey("foo")
-													  .build();
-		assertThat(propertyPath.getElements()).containsSequence(RootElement.getInstance(), new MapElement("foo"));
+		final NodePath nodePath = NodePath.createBuilder()
+										  .withRoot()
+										  .withMapKey("foo")
+										  .build();
+		assertThat(nodePath.getElements()).containsSequence(RootElement.getInstance(), new MapElement("foo"));
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testWithMapKey_throws_exception_when_key_is_null()
 	{
-		PropertyPath.createBuilder().withRoot().withMapKey(null).build();
+		NodePath.createBuilder().withRoot().withMapKey(null).build();
 	}
 
 	@Test
 	public void testWithCollectionItem()
 	{
-		final PropertyPath propertyPath = PropertyPath.createBuilder()
-													  .withRoot()
-													  .withCollectionItem("foo")
-													  .build();
-		assertThat(propertyPath.getElements()).containsSequence(RootElement.getInstance(), new CollectionElement("foo"));
+		final NodePath nodePath = NodePath.createBuilder()
+										  .withRoot()
+										  .withCollectionItem("foo")
+										  .build();
+		assertThat(nodePath.getElements()).containsSequence(RootElement.getInstance(), new CollectionElement("foo"));
 	}
 
 	@Test
 	public void testWithPropertyPath()
 	{
-		final PropertyPath propertyPath = PropertyPath.createBuilder()
-													  .withPropertyPath(PropertyPath
-															  .buildWith("foo"))
-													  .build();
-		assertThat(propertyPath.getElements()).containsSequence(RootElement.getInstance(), new NamedPropertyElement("foo"));
+		final NodePath nodePath = NodePath.createBuilder()
+										  .withPropertyPath(NodePath
+												  .buildWith("foo"))
+										  .build();
+		assertThat(nodePath.getElements()).containsSequence(RootElement.getInstance(), new NamedPropertyElement("foo"));
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testWithPropertyPath_throws_exception_when_property_path_is_null()
 	{
-		PropertyPath.createBuilder().withPropertyPath(null).build();
+		NodePath.createBuilder().withPropertyPath(null).build();
 	}
 
 	@Test
 	public void testBuild_with_one_root_element_should_succeed() throws Exception
 	{
-		final PropertyPath propertyPath = PropertyPath.createBuilder().withRoot().build();
-		assertThat(propertyPath.getElements()).containsOnly(RootElement.getInstance());
+		final NodePath nodePath = NodePath.createBuilder().withRoot().build();
+		assertThat(nodePath.getElements()).containsOnly(RootElement.getInstance());
 	}
 }

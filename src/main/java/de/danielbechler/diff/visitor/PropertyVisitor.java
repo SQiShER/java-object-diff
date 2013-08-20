@@ -16,29 +16,29 @@
 
 package de.danielbechler.diff.visitor;
 
-import de.danielbechler.diff.node.*;
+import de.danielbechler.diff.*;
 import de.danielbechler.diff.path.*;
 import de.danielbechler.util.*;
 
 /** @author Daniel Bechler */
-public class PropertyVisitor implements Node.Visitor
+public class PropertyVisitor implements DiffNode.Visitor
 {
-	private final PropertyPath propertyPath;
+	private final NodePath nodePath;
 
-	private Node node;
+	private DiffNode node;
 
-	public PropertyVisitor(final PropertyPath propertyPath)
+	public PropertyVisitor(final NodePath nodePath)
 	{
-		Assert.notNull(propertyPath, "propertyPath");
-		this.propertyPath = propertyPath;
+		Assert.notNull(nodePath, "propertyPath");
+		this.nodePath = nodePath;
 	}
 
-	public void accept(final Node node, final Visit visit)
+	public void accept(final DiffNode node, final Visit visit)
 	{
-		final PropertyPath differencePath = node.getPropertyPath();
-		if (propertyPath.isParentOf(differencePath))
+		final NodePath differencePath = node.getPath();
+		if (differencePath.isParentOf(nodePath))
 		{
-			if (propertyPath.equals(differencePath))
+			if (differencePath.matches(nodePath))
 			{
 				this.node = node;
 				visit.stop();
@@ -50,7 +50,7 @@ public class PropertyVisitor implements Node.Visitor
 		}
 	}
 
-	public Node getNode()
+	public DiffNode getNode()
 	{
 		return node;
 	}

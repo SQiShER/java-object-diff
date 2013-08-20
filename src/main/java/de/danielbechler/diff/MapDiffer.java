@@ -17,7 +17,6 @@
 package de.danielbechler.diff;
 
 import de.danielbechler.diff.accessor.*;
-import de.danielbechler.diff.node.*;
 import de.danielbechler.util.*;
 import de.danielbechler.util.Collections;
 
@@ -28,63 +27,48 @@ import java.util.*;
  *
  * @author Daniel Bechler
  */
-final class MapDiffer implements Differ<MapNode>
+final class MapDiffer implements Differ
 {
-	private final DifferDelegator delegator;
-	private final NodeInspector nodeInspector;
-	private MapNodeFactory mapNodeFactory = new MapNodeFactory();
+	private final DifferDispatcher differDispatcher;
+	private final ComparisonStrategyResolver comparisonStrategyResolver;
+	private final IsReturnableResolver isReturnableResolver;
 
-	public MapDiffer(final DifferDelegator delegator, final NodeInspector nodeInspector)
+	public MapDiffer(final DifferDispatcher differDispatcher,
+					 final ComparisonStrategyResolver comparisonStrategyResolver,
+					 final IsReturnableResolver returnableResolver)
 	{
-		Assert.notNull(delegator, "delegator");
-		Assert.notNull(nodeInspector, "nodeInspector");
-		this.delegator = delegator;
-		this.nodeInspector = nodeInspector;
+		Assert.notNull(differDispatcher, "differDispatcher");
+		this.differDispatcher = differDispatcher;
+		this.comparisonStrategyResolver = comparisonStrategyResolver;
+		this.isReturnableResolver = returnableResolver;
 	}
 
-	public final MapNode compare(final Node parentNode, final Instances instances)
+	public boolean accepts(final Class<?> type)
 	{
-		final MapNode mapNode = mapNodeFactory.createMapNode(parentNode, instances);
-		indexAll(mapNode, instances);
-		if (nodeInspector.isIgnored(mapNode))
-		{
-			mapNode.setState(Node.State.IGNORED);
-		}
-		else if (nodeInspector.isEqualsOnly(mapNode))
-		{
-			if (instances.areEqual())
-			{
-				mapNode.setState(Node.State.UNTOUCHED);
-			}
-			else
-			{
-				mapNode.setState(Node.State.CHANGED);
-			}
-		}
-		else if (nodeInspector.hasEqualsOnlyValueProviderMethod(mapNode)){
-			String method = nodeInspector.getEqualsOnlyValueProviderMethod(mapNode);
-			if (instances.areMethodResultsEqual(method))
-			{
-				mapNode.setState(Node.State.UNTOUCHED);
-			}
-			else
-			{
-				mapNode.setState(Node.State.CHANGED);
-			}
-		}
-		else if (instances.hasBeenAdded())
+		assert type != null;
+		return Map.class.isAssignableFrom(type);
+	}
+
+	public final DiffNode compare(final DiffNode parentNode, final Instances instances)
+	{
+		final DiffNode mapNode = new DiffNode(parentNode, instances.getSourceAccessor(), instances.getType());
+		if (instances.hasBeenAdded())
 		{
 			compareEntries(mapNode, instances, instances.getWorking(Map.class).keySet());
-			mapNode.setState(Node.State.ADDED);
+			mapNode.setState(DiffNode.State.ADDED);
 		}
 		else if (instances.hasBeenRemoved())
 		{
 			compareEntries(mapNode, instances, instances.getBase(Map.class).keySet());
-			mapNode.setState(Node.State.REMOVED);
+			mapNode.setState(DiffNode.State.REMOVED);
 		}
 		else if (instances.areSame())
 		{
-			mapNode.setState(Node.State.UNTOUCHED);
+			mapNode.setState(DiffNode.State.UNTOUCHED);
+		}
+		else if (comparisonStrategyResolver.resolveComparisonStrategy(mapNode) != null)
+		{
+			comparisonStrategyResolver.resolveComparisonStrategy(mapNode).compare(mapNode, instances);
 		}
 		else
 		{
@@ -95,42 +79,23 @@ final class MapDiffer implements Differ<MapNode>
 		return mapNode;
 	}
 
-	private static void indexAll(final MapNode node, final Instances instances)
-	{
-		indexKeys(node, instances.getWorking(Map.class));
-		indexKeys(node, instances.getBase(Map.class));
-		indexKeys(node, instances.getFresh(Map.class));
-	}
-
-	private static void indexKeys(final MapNode mapNode, final Map map)
-	{
-		if (map != null)
-		{
-			final Set<?> keys = map.keySet();
-			for (final Object key : keys)
-			{
-				mapNode.indexKey(key);
-			}
-		}
-	}
-
-	private void compareEntries(final MapNode mapNode, final Instances mapInstances, final Iterable<?> keys)
+	private void compareEntries(final DiffNode mapNode, final Instances mapInstances, final Iterable<?> keys)
 	{
 		for (final Object key : keys)
 		{
-			final Node node = compareEntry(mapNode, mapInstances, key);
-			if (nodeInspector.isReturnable(node))
+			final DiffNode node = compareEntry(mapNode, mapInstances, key);
+			if (isReturnableResolver.isReturnable(node))
 			{
 				mapNode.addChild(node);
 			}
 		}
 	}
 
-	private Node compareEntry(final MapNode mapNode, final Instances mapInstances, final Object key)
+	private DiffNode compareEntry(final DiffNode mapNode,
+								  final Instances mapInstances,
+								  final Object key)
 	{
-		final Accessor mapEntryAccessor = mapNode.accessorForKey(key);
-		final Instances mapEntryInstances = mapInstances.access(mapEntryAccessor);
-		return delegator.delegate(mapNode, mapEntryInstances);
+		return differDispatcher.dispatch(mapNode, mapInstances, new MapEntryAccessor(key));
 	}
 
 	private static Collection<?> findAddedKeys(final Instances instances)
@@ -154,11 +119,5 @@ final class MapDiffer implements Differ<MapNode>
 		changed.removeAll(findAddedKeys(instances));
 		changed.removeAll(findRemovedKeys(instances));
 		return changed;
-	}
-
-	@TestOnly
-	public void setMapNodeFactory(final MapNodeFactory mapNodeFactory)
-	{
-		this.mapNodeFactory = mapNodeFactory;
 	}
 }

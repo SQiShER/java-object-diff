@@ -18,12 +18,11 @@ package de.danielbechler.diff.integration;
 
 import de.danielbechler.diff.*;
 import de.danielbechler.diff.mock.*;
-import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.path.*;
 import de.danielbechler.diff.visitor.*;
 import org.testng.annotations.*;
 
-import static de.danielbechler.diff.node.NodeAssertions.*;
+import static de.danielbechler.diff.NodeAssertions.*;
 
 /** @author Daniel Bechler */
 public class IgnoreIntegrationTest
@@ -43,18 +42,20 @@ public class IgnoreIntegrationTest
 		modifiedObj1.setReference(modifiedObj2);
 		modifiedObj2.setReference(modifiedObj3);
 
-		final PropertyPath propertyPath = PropertyPath.buildWith("reference", "reference");
+		final NodePath nodePath = NodePath.buildWith("reference", "reference");
 
 		// verify that the node can be found when it's not excluded
-		final ObjectDiffer objectDiffer = ObjectDifferFactory.getInstance();
-		final Node verification = objectDiffer.compare(obj1, modifiedObj1);
+		ObjectDiffer objectDiffer = ObjectDifferBuilder.startBuilding().build();
+		final DiffNode verification = objectDiffer.compare(obj1, modifiedObj1);
 		verification.visit(new PrintingVisitor(obj1, modifiedObj1));
-		assertThat(verification).child(propertyPath).hasState(Node.State.CHANGED).hasChildren(1);
+		assertThat(verification).child(nodePath).hasState(DiffNode.State.CHANGED).hasChildren(1);
 
 		// verify that the node can't be found, when it's excluded
-		objectDiffer.getConfiguration().withoutProperty(propertyPath);
-		final Node node = objectDiffer.compare(obj1, modifiedObj1);
+		final ObjectDifferBuilder objectDifferBuilder = ObjectDifferBuilder.startBuilding();
+		objectDifferBuilder.configure().inclusion().toExclude().nodes(nodePath);
+		objectDiffer = objectDifferBuilder.build();
+		final DiffNode node = objectDiffer.compare(obj1, modifiedObj1);
 		node.visit(new PrintingVisitor(obj1, modifiedObj1));
-		assertThat(node).child(propertyPath).doesNotExist();
+		assertThat(node).child(nodePath).doesNotExist();
 	}
 }

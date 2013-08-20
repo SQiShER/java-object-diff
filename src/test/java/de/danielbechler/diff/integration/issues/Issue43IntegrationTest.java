@@ -1,7 +1,6 @@
 package de.danielbechler.diff.integration.issues;
 
 import de.danielbechler.diff.*;
-import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.path.*;
 import org.testng.annotations.*;
 
@@ -144,12 +143,12 @@ public class Issue43IntegrationTest
 	public void shouldDiffThings()
 	{
 		final List<String> propertyNames = asList("things", "include");
-		de.danielbechler.diff.Configuration configuration = new de.danielbechler.diff.Configuration();
+		ObjectDifferBuilder builder = ObjectDifferBuilder.startBuilding();
 		for (final String name : propertyNames)
 		{
-			final PropertyPath propertyPath = PropertyPath.buildWith(name);
-			configuration = configuration.withEqualsOnlyProperty(propertyPath)
-										 .withPropertyPath(propertyPath);
+			final NodePath nodePath = NodePath.buildWith(name);
+			builder.configure().comparison().ofNode(nodePath).toUseEqualsMethod();
+			builder.configure().inclusion().toInclude().nodes(nodePath);
 		}
 
 		final Thing thingOne = new Thing("a", "b");
@@ -157,7 +156,7 @@ public class Issue43IntegrationTest
 
 		final ThingHolder first = new ThingHolder(singleton(thingOne), "ignore", "include");
 		final ThingHolder second = new ThingHolder(singleton(thingTwo), "ignore this change", "include");
-		final Node compareResults = ObjectDifferFactory.getInstance(configuration).compare(first, second);
+		final DiffNode compareResults = builder.build().compare(first, second);
 
 		assertThat(compareResults.isChanged(), is(true));
 	}

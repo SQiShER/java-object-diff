@@ -16,7 +16,7 @@
 
 package de.danielbechler.diff.visitor;
 
-import de.danielbechler.diff.node.*;
+import de.danielbechler.diff.*;
 import de.danielbechler.diff.path.*;
 
 import java.util.*;
@@ -32,7 +32,7 @@ import java.util.*;
  */
 public class ToMapPrintingVisitor extends PrintingVisitor
 {
-	private final Map<PropertyPath, String> messages = new LinkedHashMap<PropertyPath, String>();
+	private final Map<NodePath, String> messages = new LinkedHashMap<NodePath, String>();
 
 	public ToMapPrintingVisitor(final Object working, final Object base)
 	{
@@ -45,10 +45,10 @@ public class ToMapPrintingVisitor extends PrintingVisitor
 	}
 
 	@Override
-	protected String differenceToString(final Node node, final Object base, final Object modified)
+	protected String differenceToString(final DiffNode node, final Object base, final Object modified)
 	{
 		final String text = super.differenceToString(node, base, modified);
-		messages.put(node.getPropertyPath(), text);
+		messages.put(node.getPath(), text);
 		return text;
 	}
 
@@ -57,12 +57,12 @@ public class ToMapPrintingVisitor extends PrintingVisitor
 		messages.clear();
 	}
 
-	public Map<PropertyPath, String> getMessages()
+	public Map<NodePath, String> getMessages()
 	{
 		return messages;
 	}
 
-	public String getMessage(final PropertyPath path)
+	public String getMessage(final NodePath path)
 	{
 		return messages.get(path);
 	}

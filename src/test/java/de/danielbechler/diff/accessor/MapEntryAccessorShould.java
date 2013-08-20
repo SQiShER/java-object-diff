@@ -23,7 +23,6 @@ import org.testng.annotations.*;
 
 import java.util.*;
 
-import static java.util.Arrays.*;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.*;
@@ -38,13 +37,13 @@ public class MapEntryAccessorShould
 	@BeforeMethod
 	public void setUp()
 	{
-		accessor = new MapEntryAccessor(asList("a", "b", "c"), 1);
+		accessor = new MapEntryAccessor("b");
 	}
 
-	@Test(expectedExceptions = IndexOutOfBoundsException.class)
-	public void fail_on_construction_with_invalid_index()
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void fail_on_construction_with_null_referecneKey()
 	{
-		new MapEntryAccessor(asList("foo"), 5);
+		new MapEntryAccessor(null);
 	}
 
 	@Test
@@ -99,7 +98,7 @@ public class MapEntryAccessorShould
 	public void return_the_key_object_of_the_given_map()
 	{
 		final ObjectWithIdentityAndValue referenceKey = new ObjectWithIdentityAndValue("key", "1");
-		accessor = new MapEntryAccessor(asList(referenceKey), 0);
+		accessor = new MapEntryAccessor(referenceKey);
 
 		final Map<ObjectWithIdentityAndValue, String> map = new HashMap<ObjectWithIdentityAndValue, String>();
 		final ObjectWithIdentityAndValue expectedKey = new ObjectWithIdentityAndValue("key", "2");

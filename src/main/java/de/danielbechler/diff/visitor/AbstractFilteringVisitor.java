@@ -16,27 +16,27 @@
 
 package de.danielbechler.diff.visitor;
 
-import de.danielbechler.diff.node.*;
+import de.danielbechler.diff.*;
 
 import java.util.*;
 
 /** @author Daniel Bechler */
-public abstract class AbstractFilteringVisitor implements Node.Visitor
+public abstract class AbstractFilteringVisitor implements DiffNode.Visitor
 {
-	private final Collection<Node> matches = new ArrayList<Node>(30);
+	private final Collection<DiffNode> matches = new ArrayList<DiffNode>(30);
 
-	protected abstract boolean accept(final Node node);
+	protected abstract boolean accept(final DiffNode node);
 
-	protected void onAccept(final Node node, final Visit visit)
+	protected void onAccept(final DiffNode node, final Visit visit)
 	{
 		matches.add(node);
 	}
 
-	protected void onDismiss(final Node node, final Visit visit)
+	protected void onDismiss(final DiffNode node, final Visit visit)
 	{
 	}
 
-	public void accept(final Node node, final Visit visit)
+	public void accept(final DiffNode node, final Visit visit)
 	{
 		if (accept(node))
 		{
@@ -48,7 +48,7 @@ public abstract class AbstractFilteringVisitor implements Node.Visitor
 		}
 	}
 
-	public Collection<Node> getMatches()
+	public Collection<DiffNode> getMatches()
 	{
 		return matches;
 	}

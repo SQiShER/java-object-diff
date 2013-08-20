@@ -17,8 +17,6 @@
 package de.danielbechler.diff;
 
 import de.danielbechler.diff.accessor.*;
-import de.danielbechler.diff.mock.ObjectWithString;
-
 import org.testng.annotations.*;
 
 import java.lang.reflect.*;
@@ -122,64 +120,6 @@ public class InstancesTest
 		assertThat(new Instances(RootAccessor.getInstance(), "1", "2", null).isPrimitiveType()).isFalse();
 	}
 
-	@Test
-	public void testMethodResultEqualNotEqual() throws Exception
-	{
-		final Method readMethod = getClass().getDeclaredMethod("getTestValue");
-		final PropertyAccessor accessor = new PropertyAccessor("testValue", readMethod, null);
-		
-		ObjectWithString working = new ObjectWithString("string1");
-		ObjectWithString base = new ObjectWithString("string2");
-		
-		final Instances instances = new Instances(accessor, working, base, null);
-		assertThat(instances.areMethodResultsEqual("getValue")).isFalse();
-	}
-	
-	@Test
-	public void testMethodResultEqualIsEqual() throws Exception
-	{
-		final Method readMethod = getClass().getDeclaredMethod("getTestValue");
-		final PropertyAccessor accessor = new PropertyAccessor("testValue", readMethod, null);
-		
-		ObjectWithString working = new ObjectWithString("string");
-		ObjectWithString base = new ObjectWithString("string");
-		
-		final Instances instances = new Instances(accessor, working, base, null);
-		assertThat(instances.areMethodResultsEqual("getValue")).isTrue();
-	}
-	
-	@Test
-	public void testMethodResultEqualOneNull() throws Exception
-	{
-		final Method readMethod = getClass().getDeclaredMethod("getTestValue");
-		final PropertyAccessor accessor = new PropertyAccessor("testValue", readMethod, null);
-		
-		ObjectWithString working = new ObjectWithString("string");
-		ObjectWithString base = null;
-		
-		final Instances instances = new Instances(accessor, working, base, null);
-		assertThat(instances.areMethodResultsEqual("getValue")).isFalse();
-	}
-	
-	@Test
-	public void testMethodResultEqualInvalidMethod() throws Exception
-	{
-		final Method readMethod = getClass().getDeclaredMethod("getTestValue");
-		final PropertyAccessor accessor = new PropertyAccessor("testValue", readMethod, null);
-		
-		ObjectWithString working = new ObjectWithString("string");
-		ObjectWithString base = new ObjectWithString("string");
-		
-		final Instances instances = new Instances(accessor, working, base, null);
-		try {
-			instances.areMethodResultsEqual("invalid");
-			fail("no exception thrown");
-		}
-		catch(RuntimeException e){
-			assertThat(e.getCause() instanceof NoSuchMethodException).isTrue();
-		}
-	}
-	
 	@SuppressWarnings({"MethodMayBeStatic", "UnusedDeclaration"})
 	public long getTestValue()
 	{

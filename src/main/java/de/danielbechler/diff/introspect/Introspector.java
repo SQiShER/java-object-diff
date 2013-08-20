@@ -32,5 +32,5 @@ public interface Introspector
 	 *
 	 * @return All valid accessors.
 	 */
-	Iterable<Accessor> introspect(Class<?> type);
+	Iterable<PropertyAwareAccessor> introspect(Class<?> type);
 }
