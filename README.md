@@ -51,4 +51,4 @@ This library has been battle-tested in a rather big project of mine, where I use
 * Write some tests which show that the bug was fixed or that the feature works as expected.
 * Send a pull request and bug the maintainer until it gets merged and published. :)
  
-<script id='flattrbtn'>(function(i){var f,s=document.getElementById(i);f=document.createElement('iframe');f.src='//api.flattr.com/button/view/?uid=SQiShER&url='+encodeURIComponent(document.URL);f.title='Flattr';f.height=62;f.width=55;f.style.borderWidth=0;s.parentNode.insertBefore(f,s);})('flattrbtn');</script>
+[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=SQiShER&url=https://github.com/SQiShER/java-object-diff&title=java-object-diff&language=&tags=github&category=software) 
