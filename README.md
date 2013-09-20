@@ -13,6 +13,9 @@
 * No runtime dependencies except for [SLF4J](http://www.slf4j.org/)
 * When needed, it leaves it up to you, whether you want to use declarative configuration or annotations
 
+[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=SQiShER&url=https://github.com/SQiShER/java-object-diff&title=java-object-diff&language=&tags=github&category=software) 
+[![endorse](https://api.coderwall.com/sqisher/endorsecount.png)](https://coderwall.com/sqisher)
+
 ## Getting Started
 
 To learn how to use **Java Object Diff**, please have a look at the [Starter Guide](https://github.com/SQiShER/java-object-diff/wiki/Getting-Started).
@@ -50,5 +53,3 @@ This library has been battle-tested in a rather big project of mine, where I use
 * Fork the java-object-diff repository on Github to start making your changes.
 * Write some tests which show that the bug was fixed or that the feature works as expected.
 * Send a pull request and bug the maintainer until it gets merged and published. :)
- 
-[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=SQiShER&url=https://github.com/SQiShER/java-object-diff&title=java-object-diff&language=&tags=github&category=software) 
