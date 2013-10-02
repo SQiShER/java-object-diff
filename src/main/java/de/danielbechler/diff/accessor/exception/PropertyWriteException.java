@@ -20,15 +20,22 @@ package de.danielbechler.diff.accessor.exception;
 public class PropertyWriteException extends PropertyException
 {
 	private static final long serialVersionUID = 1L;
+	private final Object newValue;
 
-	public PropertyWriteException(final Throwable cause)
+	public PropertyWriteException(final Throwable cause, final Object newValue)
 	{
 		super(cause);
+		this.newValue = newValue;
 	}
 
 	@Override
 	public String getMessage()
 	{
 		return "Error while invoking write method. ";
+	}
+
+	public Object getNewValue() 
+	{
+		return newValue;
 	}
 }

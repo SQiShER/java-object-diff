@@ -16,13 +16,16 @@
 
 package de.danielbechler.diff;
 
+import de.danielbechler.diff.accessor.exception.DefaultExceptionListener;
 import de.danielbechler.diff.mock.*;
+
 import org.mockito.Mock;
 import org.testng.annotations.*;
 
 import java.util.*;
 
 import static org.fest.assertions.api.Assertions.*;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.*;
 
 /** @author Daniel Bechler */
@@ -38,6 +41,7 @@ public class DifferFactoryShould
 	public void initDifferFactory()
 	{
 		initMocks(this);
+		when(configuration.getExceptionListener()).thenReturn(new DefaultExceptionListener());
 		differFactory = new DifferFactory(configuration);
 	}
 

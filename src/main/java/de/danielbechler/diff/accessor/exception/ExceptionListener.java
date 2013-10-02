@@ -14,4 +14,26 @@ public interface ExceptionListener
 	 * @param node The node which has been detected to cause a circular reference.
 	 */
 	void onCircularReferenceException(Node node);
+
+	/**
+	 * Called when PropertyWriteException happens.
+	 * 
+	 * @param e
+	 *            PropertyWriteException itself.
+	 * @param propertyNode
+	 *            Node of the property that we were unable to write to.
+	 * @return Resulting node.
+	 */
+	Node onPropertyWriteException(PropertyWriteException e, Node propertyNode);
+
+	/**
+	 * Called when PropertyReadException happens.
+	 * 
+	 * @param ex
+	 *            The PropertyReadException itself.
+	 * @param propertyNode
+	 *            Node of the property that we were unable to read.
+	 * @return Node as a result of wrong read.
+	 */
+	Node onPropertyReadException(PropertyReadException ex, Node propertyNode);
 }

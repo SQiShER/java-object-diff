@@ -17,6 +17,7 @@
 package de.danielbechler.diff;
 
 import de.danielbechler.diff.accessor.*;
+import de.danielbechler.diff.accessor.exception.ExceptionListener;
 import de.danielbechler.diff.introspect.*;
 import de.danielbechler.diff.node.*;
 import de.danielbechler.util.*;
@@ -34,11 +35,11 @@ final class BeanDiffer implements Differ<Node>
 	private BeanPropertyComparisonDelegator beanPropertyComparisonDelegator;
 	private DefaultNodeFactory defaultNodeFactory = new DefaultNodeFactory();
 
-	public BeanDiffer(final DifferDelegator delegator, final NodeInspector nodeInspector)
+	public BeanDiffer(final DifferDelegator delegator, final NodeInspector nodeInspector, final ExceptionListener exceptionListener)
 	{
 		Assert.notNull(delegator, "delegator");
 		Assert.notNull(nodeInspector, "configuration");
-		this.beanPropertyComparisonDelegator = new BeanPropertyComparisonDelegator(delegator, nodeInspector);
+		this.beanPropertyComparisonDelegator = new BeanPropertyComparisonDelegator(delegator, nodeInspector, exceptionListener);
 		this.nodeInspector = nodeInspector;
 	}
 
