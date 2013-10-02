@@ -16,6 +16,7 @@
 
 package de.danielbechler.diff.introspect;
 
+import de.danielbechler.diff.Configuration;
 import de.danielbechler.diff.accessor.*;
 import de.danielbechler.diff.annotation.*;
 import de.danielbechler.util.*;
@@ -34,6 +35,12 @@ import java.util.*;
  */
 public class StandardIntrospector implements de.danielbechler.diff.introspect.Introspector
 {
+	private final Configuration configuration;
+	
+	public StandardIntrospector(final Configuration configuration) {
+		this.configuration = configuration;
+	}
+
 	public Iterable<Accessor> introspect(final Class<?> type)
 	{
 		Assert.notNull(type, "type");
@@ -67,7 +74,7 @@ public class StandardIntrospector implements de.danielbechler.diff.introspect.In
 		return Introspector.getBeanInfo(type);
 	}
 
-	private static PropertyAccessor handlePropertyDescriptor(final PropertyDescriptor descriptor)
+	private PropertyAccessor handlePropertyDescriptor(final PropertyDescriptor descriptor)
 	{
 		if (shouldSkip(descriptor))
 		{
@@ -78,7 +85,7 @@ public class StandardIntrospector implements de.danielbechler.diff.introspect.In
 		final Method readMethod = descriptor.getReadMethod();
 		final Method writeMethod = descriptor.getWriteMethod();
 
-		final PropertyAccessor accessor = new PropertyAccessor(propertyName, readMethod, writeMethod);
+		final PropertyAccessor accessor = new PropertyAccessor(propertyName, readMethod, writeMethod, configuration);
 
 		handleObjectDiffPropertyAnnotation(readMethod, accessor);
 		handleEqualsOnlyTypeAnnotation(readMethod, accessor);

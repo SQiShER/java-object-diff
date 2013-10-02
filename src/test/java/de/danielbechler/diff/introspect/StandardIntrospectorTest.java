@@ -16,10 +16,12 @@
 
 package de.danielbechler.diff.introspect;
 
+import de.danielbechler.diff.Configuration;
 import de.danielbechler.diff.accessor.*;
 import de.danielbechler.diff.mock.*;
 import de.danielbechler.diff.path.*;
 import de.danielbechler.util.*;
+
 import org.hamcrest.core.*;
 import org.testng.annotations.*;
 
@@ -35,7 +37,7 @@ public class StandardIntrospectorTest
 	@BeforeMethod
 	public void setUp() throws Exception
 	{
-		introspector = new StandardIntrospector();
+		introspector = new StandardIntrospector(new Configuration());
 	}
 
 	@Test
@@ -105,7 +107,7 @@ public class StandardIntrospectorTest
 	@Test(expectedExceptions = RuntimeException.class)
 	public void testIntrospectWithSimulatedIntrospectionException() throws Exception
 	{
-		introspector = new StandardIntrospector()
+		introspector = new StandardIntrospector(new Configuration())
 		{
 			@Override
 			protected BeanInfo getBeanInfo(final Class<?> type) throws IntrospectionException

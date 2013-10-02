@@ -111,7 +111,7 @@ public class InstancesTest
 	public void testIsPrimitiveTypeReturnsPrimitiveClassForPrimitiveType() throws Exception
 	{
 		final Method readMethod = getClass().getDeclaredMethod("getTestValue");
-		final PropertyAccessor accessor = new PropertyAccessor("testValue", readMethod, null);
+		final PropertyAccessor accessor = new PropertyAccessor("testValue", readMethod, null, new Configuration());
 		final Instances instances = new Instances(accessor, 1L, 2L, 0L);
 		assertThat(instances.getType() == long.class).isTrue();
 	}
@@ -126,7 +126,7 @@ public class InstancesTest
 	public void testMethodResultEqualNotEqual() throws Exception
 	{
 		final Method readMethod = getClass().getDeclaredMethod("getTestValue");
-		final PropertyAccessor accessor = new PropertyAccessor("testValue", readMethod, null);
+		final PropertyAccessor accessor = new PropertyAccessor("testValue", readMethod, null, new Configuration());
 		
 		ObjectWithString working = new ObjectWithString("string1");
 		ObjectWithString base = new ObjectWithString("string2");
@@ -139,7 +139,7 @@ public class InstancesTest
 	public void testMethodResultEqualIsEqual() throws Exception
 	{
 		final Method readMethod = getClass().getDeclaredMethod("getTestValue");
-		final PropertyAccessor accessor = new PropertyAccessor("testValue", readMethod, null);
+		final PropertyAccessor accessor = new PropertyAccessor("testValue", readMethod, null, new Configuration());
 		
 		ObjectWithString working = new ObjectWithString("string");
 		ObjectWithString base = new ObjectWithString("string");
@@ -152,7 +152,7 @@ public class InstancesTest
 	public void testMethodResultEqualOneNull() throws Exception
 	{
 		final Method readMethod = getClass().getDeclaredMethod("getTestValue");
-		final PropertyAccessor accessor = new PropertyAccessor("testValue", readMethod, null);
+		final PropertyAccessor accessor = new PropertyAccessor("testValue", readMethod, null, new Configuration());
 		
 		ObjectWithString working = new ObjectWithString("string");
 		ObjectWithString base = null;
@@ -165,7 +165,7 @@ public class InstancesTest
 	public void testMethodResultEqualInvalidMethod() throws Exception
 	{
 		final Method readMethod = getClass().getDeclaredMethod("getTestValue");
-		final PropertyAccessor accessor = new PropertyAccessor("testValue", readMethod, null);
+		final PropertyAccessor accessor = new PropertyAccessor("testValue", readMethod, null, new Configuration());
 		
 		ObjectWithString working = new ObjectWithString("string");
 		ObjectWithString base = new ObjectWithString("string");
