@@ -17,7 +17,9 @@
 package de.danielbechler.diff;
 
 import de.danielbechler.diff.accessor.*;
+import de.danielbechler.diff.accessor.exception.DefaultExceptionListener;
 import de.danielbechler.diff.node.*;
+
 import org.mockito.Mock;
 import org.testng.annotations.*;
 
@@ -42,8 +44,8 @@ public class BeanPropertyComparisonDelegatorShould
 	protected void setUp() throws Exception
 	{
 		initMocks(this);
-
-		beanPropertyComparisonDelegator = new BeanPropertyComparisonDelegator(delegator, configuration);
+		when(configuration.getExceptionListener()).thenReturn(new DefaultExceptionListener());
+		beanPropertyComparisonDelegator = new BeanPropertyComparisonDelegator(delegator, configuration, configuration.getExceptionListener());
 		beanPropertyComparisonDelegator.setPropertyNodeFactory(propertyNodeFactory);
 	}
 
@@ -94,13 +96,13 @@ public class BeanPropertyComparisonDelegatorShould
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void fail_if_constructed_without_delegator()
 	{
-		new BeanPropertyComparisonDelegator(null, configuration);
+		new BeanPropertyComparisonDelegator(null, configuration, configuration.getExceptionListener());
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void fail_if_constructed_without_configuration()
 	{
-		new BeanPropertyComparisonDelegator(delegator, null);
+		new BeanPropertyComparisonDelegator(delegator, null, new DefaultExceptionListener());
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)

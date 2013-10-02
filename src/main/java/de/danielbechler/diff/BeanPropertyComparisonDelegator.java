@@ -17,6 +17,9 @@
 package de.danielbechler.diff;
 
 import de.danielbechler.diff.accessor.*;
+import de.danielbechler.diff.accessor.exception.ExceptionListener;
+import de.danielbechler.diff.accessor.exception.PropertyReadException;
+import de.danielbechler.diff.accessor.exception.PropertyWriteException;
 import de.danielbechler.diff.node.*;
 import de.danielbechler.util.*;
 
@@ -26,14 +29,17 @@ class BeanPropertyComparisonDelegator
 	private final DifferDelegator delegator;
 	private final NodeInspector nodeInspector;
 	private PropertyNodeFactory propertyNodeFactory = new PropertyNodeFactory();
+	private final ExceptionListener exceptionListener;
 
-	public BeanPropertyComparisonDelegator(final DifferDelegator delegator, final NodeInspector nodeInspector)
+	public BeanPropertyComparisonDelegator(final DifferDelegator delegator, final NodeInspector nodeInspector, final ExceptionListener exceptionListener)
 	{
 		Assert.notNull(delegator, "delegator");
 		Assert.notNull(nodeInspector, "nodeInspector");
+		Assert.notNull(exceptionListener, "exceptionListener");
 
 		this.delegator = delegator;
 		this.nodeInspector = nodeInspector;
+		this.exceptionListener = exceptionListener;
 	}
 
 	public Node compare(final Node beanNode, final Instances beanInstances, final Accessor propertyAccessor)
@@ -51,7 +57,13 @@ class BeanPropertyComparisonDelegator
 		}
 		else
 		{
-			return delegator.delegate(beanNode, beanInstances.access(propertyAccessor));
+			try {
+				return delegator.delegate(beanNode, beanInstances.access(propertyAccessor));
+			} catch(PropertyReadException e) {
+				return exceptionListener.onPropertyReadException(e, propertyNode);
+			} catch(PropertyWriteException e) {
+				return exceptionListener.onPropertyWriteException(e, propertyNode);
+			}
 		}
 	}
 

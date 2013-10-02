@@ -86,9 +86,7 @@ public class PropertyAccessor extends AbstractAccessor implements TypeAwareAcces
 		}
 		catch (Exception e)
 		{
-			logFailedSet(value);
-
-			final PropertyWriteException ex = new PropertyWriteException(e);
+			final PropertyWriteException ex = new PropertyWriteException(e, value);
 			ex.setPropertyName(propertyName);
 			ex.setTargetType(getType());
 			throw ex;
