@@ -1,7 +1,9 @@
 package de.danielbechler.diff.accessor.exception;
 
-import de.danielbechler.diff.node.*;
-import org.slf4j.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.danielbechler.diff.node.Node;
 
 /**
  * Handler for recoverable exceptional states which logs the warning or info messages into log. The exception
@@ -18,5 +20,16 @@ public class DefaultExceptionListener implements ExceptionListener
 				+ "Going deeper would cause an infinite loop, so I'll stop looking at "
 				+ "this instance along the current path.";
 		logger.warn(message, node.getPropertyPath());
+	}
+
+	public Node onPropertyWriteException(final PropertyWriteException ex, final Node propertyNode)
+	{
+		logger.info("Couldn't set new value '{}' for property '{}'", ex.getNewValue(), ex.getPropertyName());
+		throw ex;
+	}
+
+	public Node onPropertyReadException(final PropertyReadException ex, final Node propertyNode)
+	{
+		throw ex;
 	}
 }

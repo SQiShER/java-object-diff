@@ -50,7 +50,7 @@ public class DifferFactory
 		}
 		else
 		{
-			return new BeanDiffer(delegator, configuration);
+			return new BeanDiffer(delegator, configuration, configuration.getExceptionListener());
 		}
 	}
 

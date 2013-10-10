@@ -17,10 +17,12 @@
 package de.danielbechler.diff;
 
 import de.danielbechler.diff.accessor.*;
+import de.danielbechler.diff.accessor.exception.DefaultExceptionListener;
 import de.danielbechler.diff.introspect.*;
 import de.danielbechler.diff.mock.*;
 import de.danielbechler.diff.node.*;
 import de.danielbechler.diff.path.*;
+
 import org.mockito.Mock;
 import org.testng.annotations.*;
 
@@ -51,7 +53,7 @@ public class BeanDifferShould
 	{
 		initMocks(this);
 		configuration = new Configuration();
-		differ = new BeanDiffer(delegator, configuration);
+		differ = new BeanDiffer(delegator, configuration, configuration.getExceptionListener());
 		differ.setIntrospector(introspector);
 	}
 
@@ -165,12 +167,13 @@ public class BeanDifferShould
 
 		when(defaultNodeFactory.createNode(Node.ROOT, beanInstances)).thenReturn(beanNode);
 		when(configuration.isIntrospectible(beanNode)).thenReturn(true);
+		when(configuration.getExceptionListener()).thenReturn(new DefaultExceptionListener());
 		doReturn(beanType).when(beanInstances).getType();
 		when(introspector.introspect(beanType)).thenReturn(asList(propertyAccessor));
 		when(beanPropertyComparer.compare(beanNode, beanInstances, propertyAccessor)).thenReturn(propertyNode);
 		when(configuration.isReturnable(propertyNode)).thenReturn(true);
 
-		differ = new BeanDiffer(delegator, configuration);
+		differ = new BeanDiffer(delegator, configuration, configuration.getExceptionListener());
 		differ.setIntrospector(introspector);
 		differ.setBeanPropertyComparisonDelegator(beanPropertyComparer);
 		differ.setDefaultNodeFactory(defaultNodeFactory);
@@ -183,12 +186,12 @@ public class BeanDifferShould
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void fail_construction_without_delegator()
 	{
-		new BeanDiffer(null, configuration);
+		new BeanDiffer(null, configuration, configuration.getExceptionListener());
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void fail_construction_without_configuration()
 	{
-		new BeanDiffer(delegator, null);
+		new BeanDiffer(delegator, null, new DefaultExceptionListener());
 	}
 }
