@@ -51,4 +51,10 @@ public class DeepDiffingCollectionItemChangeIntegrationTest
 										   .withMapKey("foo")
 										   .withPropertyName("value")).hasState(Node.State.ADDED);
 	}
+
+	@Test
+	public void test_collection_with_null_item()
+	{
+		ObjectDifferFactory.getInstance().compare(Arrays.asList((String)null), Arrays.asList("foobar"));
+	}
 }

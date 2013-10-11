@@ -59,7 +59,7 @@ public class CollectionItemAccessor extends AbstractAccessor implements TypeAwar
 		}
 		for (final Object item : targetCollection)
 		{
-			if (item.equals(referenceItem))
+			if (item != null && item.equals(referenceItem))
 			{
 				return item;
 			}
