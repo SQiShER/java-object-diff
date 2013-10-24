@@ -25,14 +25,14 @@ public class Comparables
 
 	public static <T extends Comparable<T>> boolean isEqualByComparison(final T a, final T b)
 	{
-		if (a != null)
+		if (a == null && b == null)
+		{
+			return true;
+		}
+		else if (a != null && b != null)
 		{
 			return a.compareTo(b) == 0;
 		}
-		else if (b != null)
-		{
-			return b.compareTo(a) == 0;
-		}
-		return true;
+		return false;
 	}
 }
