@@ -16,8 +16,7 @@
 
 package de.danielbechler.diff.collection;
 
-import de.danielbechler.diff.accessor.*;
-import de.danielbechler.diff.path.*;
+import de.danielbechler.diff.*;
 
 import java.util.*;
 

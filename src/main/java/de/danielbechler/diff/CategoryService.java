@@ -1,7 +1,5 @@
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.path.*;
-
 import java.util.*;
 
 import static java.util.Arrays.*;

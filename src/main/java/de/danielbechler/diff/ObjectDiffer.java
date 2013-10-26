@@ -16,8 +16,6 @@
 
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.accessor.*;
-
 /**
  * This is the entry point for all comparisons. It determines the type of the given objects and passes them to
  * the appropriate {@link Differ}.

@@ -16,8 +16,31 @@
 
 package de.danielbechler.diff;
 
+import java.util.*;
+
 /** @author Daniel Bechler */
-public interface DifferProvider
+public class DifferProvider
 {
-	Differ retrieveDifferForType(Class<?> type);
+	private final List<Differ> differs = new LinkedList<Differ>();
+
+	public void push(final Differ differ)
+	{
+		differs.add(0, differ);
+	}
+
+	public Differ retrieveDifferForType(final Class<?> type)
+	{
+		if (type == null)
+		{
+			throw new IllegalArgumentException("Missing 'type'");
+		}
+		for (final Differ differ : differs)
+		{
+			if (differ.accepts(type))
+			{
+				return differ;
+			}
+		}
+		throw new IllegalStateException("Couldn't find a differ for type: " + type.getName());
+	}
 }

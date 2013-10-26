@@ -16,9 +16,7 @@
 
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.accessor.*;
-import de.danielbechler.diff.comparison.*;
-import de.danielbechler.diff.path.*;
+import de.danielbechler.diff.bean.*;
 import de.danielbechler.diff.visitor.*;
 import de.danielbechler.util.*;
 
@@ -38,7 +36,7 @@ import static java.util.Collections.*;
  *
  * @author Daniel Bechler
  */
-public final class DiffNode implements Accessor
+public class DiffNode implements Accessor
 {
 	public static final DiffNode ROOT = null;
 	private final Accessor accessor;

@@ -1,6 +1,5 @@
 package de.danielbechler.diff
 
-import de.danielbechler.diff.path.NodePath
 import spock.lang.Specification
 import spock.lang.Unroll
 

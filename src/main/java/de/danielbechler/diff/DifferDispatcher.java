@@ -16,8 +16,6 @@
 
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.accessor.*;
-import de.danielbechler.diff.path.*;
 import de.danielbechler.util.*;
 
 import static de.danielbechler.diff.CircularReferenceDetector.*;

@@ -16,8 +16,6 @@
 
 package de.danielbechler.diff
 
-import de.danielbechler.diff.accessor.RootAccessor
-import de.danielbechler.diff.accessor.TypeAwareAccessor
 import spock.lang.Specification
 import spock.lang.Unroll
 

@@ -16,8 +16,6 @@
 
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.comparison.*;
-
 /** @author Daniel Bechler */
 public interface ComparisonStrategyResolver
 {

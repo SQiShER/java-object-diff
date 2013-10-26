@@ -16,7 +16,10 @@
 
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.introspect.*;
+import de.danielbechler.diff.bean.*;
+import de.danielbechler.diff.collection.*;
+import de.danielbechler.diff.map.*;
+import de.danielbechler.diff.primitive.*;
 
 /** @author Daniel Bechler */
 public final class ObjectDifferBuilder
@@ -28,7 +31,7 @@ public final class ObjectDifferBuilder
 	private final InclusionService inclusionService = new InclusionService(categoryService);
 	private final CircularReferenceService circularReferenceService = new CircularReferenceService();
 	private final Configurable configurable = new Configurable();
-	private final Introspector introspector = new StandardIntrospector();
+	private final Introspector introspector = new StandardBeanIntrospector();
 
 	private ObjectDifferBuilder()
 	{
@@ -46,7 +49,7 @@ public final class ObjectDifferBuilder
 
 	public ObjectDiffer build()
 	{
-		final DefaultDifferProvider differProvider = new DefaultDifferProvider();
+		final DifferProvider differProvider = new DifferProvider();
 		final DifferDispatcher differDispatcher = new DifferDispatcher(differProvider, circularReferenceService, circularReferenceService, inclusionService, returnableNodeService);
 		differProvider.push(new BeanDiffer(differDispatcher, introspector, introspectionService, returnableNodeService, comparisonService));
 		differProvider.push(new CollectionDiffer(differDispatcher, comparisonService));

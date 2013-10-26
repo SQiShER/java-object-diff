@@ -16,8 +16,7 @@
 
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.accessor.*;
-import de.danielbechler.diff.path.*;
+import de.danielbechler.diff.bean.*;
 import de.danielbechler.util.*;
 import de.danielbechler.util.Collections;
 
@@ -83,7 +82,7 @@ public class Instances
 			{
 				final Method method = type.getMethod(methodName);
 				method.setAccessible(true);
-				final PropertyAccessor accessor = new PropertyAccessor(methodName, method, null);
+				final BeanPropertyAccessor accessor = new BeanPropertyAccessor(methodName, method, null);
 				return new Instances(accessor, accessor.get(working), accessor.get(base), accessor.get(fresh));
 			}
 			catch (NoSuchMethodException e)

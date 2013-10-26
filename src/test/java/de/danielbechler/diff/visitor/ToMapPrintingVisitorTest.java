@@ -17,7 +17,6 @@
 package de.danielbechler.diff.visitor;
 
 import de.danielbechler.diff.*;
-import de.danielbechler.diff.path.*;
 import org.testng.annotations.*;
 
 import static org.fest.assertions.api.Assertions.*;

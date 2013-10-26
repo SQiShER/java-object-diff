@@ -17,7 +17,6 @@
 package de.danielbechler.diff.visitor;
 
 import de.danielbechler.diff.*;
-import de.danielbechler.diff.path.*;
 import de.danielbechler.util.*;
 
 /** @author Daniel Bechler */

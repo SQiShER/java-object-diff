@@ -27,12 +27,12 @@ import static org.mockito.Mockito.*;
 /** @author Daniel Bechler */
 public class DefaultDifferProviderShould
 {
-	private DefaultDifferProvider differProvider;
+	private DifferProvider differProvider;
 
 	@BeforeMethod
 	public void initDifferProvider()
 	{
-		differProvider = new DefaultDifferProvider();
+		differProvider = new DifferProvider();
 	}
 
 	@Test

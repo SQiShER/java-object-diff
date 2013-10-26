@@ -16,9 +16,8 @@
 
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.accessor.*;
+import de.danielbechler.diff.bean.*;
 import de.danielbechler.diff.mock.*;
-import de.danielbechler.diff.path.*;
 import org.testng.annotations.*;
 
 import static de.danielbechler.diff.NodeAssertions.*;

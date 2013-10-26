@@ -16,9 +16,7 @@
 
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.accessor.*;
 import de.danielbechler.diff.mock.*;
-import de.danielbechler.diff.path.*;
 import org.mockito.Mock;
 import org.mockito.invocation.*;
 import org.mockito.stubbing.*;

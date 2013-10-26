@@ -17,7 +17,7 @@
 package de.danielbechler.util;
 
 import de.danielbechler.diff.*;
-import de.danielbechler.diff.integration.*;
+import de.danielbechler.diff.example.phonebook.*;
 import de.danielbechler.diff.mock.*;
 import org.testng.annotations.*;
 

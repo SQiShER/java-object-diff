@@ -1,8 +1,5 @@
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.comparison.*;
-import de.danielbechler.diff.path.*;
-
 /** @author Daniel Bechler */
 public interface ComparisonConfiguration
 {

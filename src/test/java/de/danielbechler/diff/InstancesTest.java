@@ -16,12 +16,12 @@
 
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.accessor.*;
+import de.danielbechler.diff.bean.*;
 import org.testng.annotations.*;
 
 import java.lang.reflect.*;
 
-import static de.danielbechler.diff.extension.MockitoExtensions.*;
+import static de.danielbechler.diff.MockitoExtensions.*;
 import static org.fest.assertions.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -109,7 +109,7 @@ public class InstancesTest
 	public void testIsPrimitiveTypeReturnsPrimitiveClassForPrimitiveType() throws Exception
 	{
 		final Method readMethod = getClass().getDeclaredMethod("getTestValue");
-		final PropertyAccessor accessor = new PropertyAccessor("testValue", readMethod, null);
+		final BeanPropertyAccessor accessor = new BeanPropertyAccessor("testValue", readMethod, null);
 		final Instances instances = new Instances(accessor, 1L, 2L, 0L);
 		assertThat(instances.getType() == long.class).isTrue();
 	}

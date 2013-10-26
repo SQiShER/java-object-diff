@@ -16,7 +16,7 @@
 
 package de.danielbechler.diff
 
-import de.danielbechler.diff.path.CollectionElement
+import de.danielbechler.diff.collection.CollectionElement
 import de.danielbechler.diff.visitor.PrintingVisitor
 import spock.lang.Ignore
 import spock.lang.Specification

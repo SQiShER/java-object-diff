@@ -16,8 +16,9 @@
 
 package de.danielbechler.diff;
 
+import de.danielbechler.diff.collection.*;
+import de.danielbechler.diff.map.*;
 import de.danielbechler.diff.mock.*;
-import de.danielbechler.diff.path.*;
 import de.danielbechler.diff.visitor.*;
 import org.fest.assertions.api.*;
 import org.testng.annotations.*;

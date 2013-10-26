@@ -16,7 +16,7 @@
 
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.path.*;
+import de.danielbechler.diff.collection.*;
 import de.danielbechler.diff.visitor.*;
 import org.fest.assertions.api.*;
 import org.fest.assertions.core.*;

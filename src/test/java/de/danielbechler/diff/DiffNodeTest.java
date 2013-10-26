@@ -16,10 +16,9 @@
 
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.accessor.*;
+import de.danielbechler.diff.bean.*;
 import de.danielbechler.diff.collection.*;
 import de.danielbechler.diff.mock.*;
-import de.danielbechler.diff.path.*;
 import org.fest.assertions.api.*;
 import org.hamcrest.core.*;
 import org.testng.annotations.*;
@@ -35,8 +34,6 @@ import static org.mockito.MockitoAnnotations.*;
 /** @author Daniel Bechler */
 public class DiffNodeTest
 {
-	@Mock
-	private DiffNode parentNode;
 	@Mock
 	private Accessor accessor;
 
@@ -107,13 +104,12 @@ public class DiffNodeTest
 	@Test
 	public void testGetPropertyPath_with_parent_node_should_return_canonical_path()
 	{
-		final NodePath.AppendableBuilder pathBuilder = NodePath.createBuilder().withRoot();
-		when(parentNode.getPath()).thenReturn(pathBuilder.build());
+		final DiffNode parentNode = new DiffNode(RootAccessor.getInstance(), String.class);
 		when(accessor.getPathElement()).thenReturn(new NamedPropertyElement("foo"));
 
 		final DiffNode root = new DiffNode(parentNode, accessor, Object.class);
 
-		assertThat(root.getPath()).isEqualTo(pathBuilder.withPropertyName("foo").build());
+		assertThat(root.getPath()).isEqualTo(NodePath.buildWith("foo"));
 	}
 
 	@Test
@@ -144,7 +140,7 @@ public class DiffNodeTest
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testAddChild_throws_exception_when_node_is_added_to_itself() throws Exception
 	{
-		final DiffNode node = new DiffNode(parentNode, accessor, Object.class);
+		final DiffNode node = new DiffNode(null, accessor, Object.class);
 		node.addChild(node);
 	}
 
@@ -162,16 +158,18 @@ public class DiffNodeTest
 	public void testAddChild_changes_node_state_to_changed_if_changed_child_node_gets_added()
 	{
 		final DiffNode node = new DiffNode(Object.class);
-		final DiffNode nodeMock = mock(DiffNode.class);
-		when(nodeMock.hasChanges()).thenReturn(true);
-		node.addChild(nodeMock);
+		final DiffNode childNode = new DiffNode(node, accessor, String.class);
+		childNode.setState(DiffNode.State.CHANGED);
+
+		node.addChild(childNode);
+
 		NodeAssertions.assertThat(node).root().hasState(DiffNode.State.CHANGED);
 	}
 
 	@Test
 	public void testShould_return_property_annotations_of_property_accessor() throws Exception
 	{
-		final PropertyAccessor propertyAccessor = mock(PropertyAccessor.class);
+		final BeanPropertyAccessor propertyAccessor = mock(BeanPropertyAccessor.class);
 		final Annotation annotation = mock(Annotation.class);
 		when(propertyAccessor.getReadMethodAnnotations()).thenReturn(new LinkedHashSet<Annotation>(Arrays.asList(annotation)));
 		final DiffNode node = new DiffNode(propertyAccessor, Object.class);
@@ -184,7 +182,7 @@ public class DiffNodeTest
 	@Test
 	public void testShould_return_empty_set_of_property_annotations_if_accessor_is_not_property_accessor() throws Exception
 	{
-		final PropertyAccessor propertyAccessor = mock(PropertyAccessor.class);
+		final BeanPropertyAccessor propertyAccessor = mock(BeanPropertyAccessor.class);
 		final Annotation annotation = mock(Annotation.class);
 		when(propertyAccessor.getReadMethodAnnotations()).thenReturn(new LinkedHashSet<Annotation>(Arrays.asList(annotation)));
 		final DiffNode node = new DiffNode(propertyAccessor, Object.class);
@@ -197,7 +195,7 @@ public class DiffNodeTest
 	@Test
 	public void test_get_property_annotation_should_delegate_call_to_property_accessor()
 	{
-		final PropertyAccessor propertyAccessor = mock(PropertyAccessor.class);
+		final BeanPropertyAccessor propertyAccessor = mock(BeanPropertyAccessor.class);
 		when(propertyAccessor.getReadMethodAnnotation(ObjectDiffTest.class)).thenReturn(null);
 
 		new DiffNode(propertyAccessor, Object.class).getPropertyAnnotation(ObjectDiffTest.class);

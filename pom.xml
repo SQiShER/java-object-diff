@@ -15,7 +15,8 @@
   ~ limitations under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>org.sonatype.oss</groupId>
@@ -94,7 +95,7 @@
             <plugin>
                 <artifactId>maven-release-plugin</artifactId>
                 <configuration>
-                    <scmCommentPrefix />
+                    <scmCommentPrefix/>
                 </configuration>
             </plugin>
             <plugin>
@@ -114,7 +115,7 @@
                     <enableAssertions>true</enableAssertions>
                     <includes>
                         <include>**/*Test.java</include>
-                        <include>**/*IntegrationTests.java</include>
+                        <!--<include>**/*IntegrationTests.java</include>-->
                         <include>**/*Should.java</include>
                         <include>**/*Spec.java</include>
                         <include>**/*Specification.java</include>
@@ -135,6 +136,41 @@
                         <phase>test</phase>
                         <goals>
                             <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <junitArtifactName>none:none</junitArtifactName>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.16</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                    <includes>
+                        <include>**/*IT.java</include>
+                        <include>**/*ITCase.java</include>
+                        <include>**/*ITSpec.java</include>
+                    </includes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                        <configuration>
+                            <testNGArtifactName>none:none</testNGArtifactName>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>integration-test-testng</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
                         </goals>
                         <configuration>
                             <junitArtifactName>none:none</junitArtifactName>
@@ -196,17 +232,29 @@
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>add-test-source</id>
+                        <id>add-integration-test-source</id>
                         <phase>generate-test-sources</phase>
                         <goals>
                             <goal>add-test-source</goal>
                         </goals>
                         <configuration>
                             <sources>
-                                <source>src/test/groovy</source>
+                                <source>src/integration-test/java</source>
                             </sources>
                         </configuration>
                     </execution>
+                    <!--<execution>-->
+                    <!--<id>add-test-source</id>-->
+                    <!--<phase>generate-test-sources</phase>-->
+                    <!--<goals>-->
+                    <!--<goal>add-test-source</goal>-->
+                    <!--</goals>-->
+                    <!--<configuration>-->
+                    <!--<sources>-->
+                    <!--<source>src/test/groovy</source>-->
+                    <!--</sources>-->
+                    <!--</configuration>-->
+                    <!--</execution>-->
                 </executions>
             </plugin>
         </plugins>
