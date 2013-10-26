@@ -30,7 +30,7 @@ public class Strings
 
 	public static boolean hasText(final String s)
 	{
-		return s != null && s.trim().length() > 0;
+		return s != null && !s.trim().isEmpty();
 	}
 
 	public static boolean isEmpty(final String s)
@@ -40,7 +40,7 @@ public class Strings
 
 	public static String capitalize(final String s)
 	{
-		if (s != null && s.length() > 0)
+		if (s != null && !s.isEmpty())
 		{
 			final char[] chars = s.toCharArray();
 			chars[0] = Character.toUpperCase(chars[0]);

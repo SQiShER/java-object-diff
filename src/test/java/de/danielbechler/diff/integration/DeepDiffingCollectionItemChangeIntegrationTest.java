@@ -56,6 +56,7 @@ public class DeepDiffingCollectionItemChangeIntegrationTest
 	@Test
 	public void test_collection_with_null_item()
 	{
-		ObjectDifferFactory.getInstance().compare(Arrays.asList((String)null), Arrays.asList("foobar"));
+		ObjectDifferBuilder.buildDefaultObjectDiffer()
+						   .compare(Arrays.asList((String) null), Arrays.asList("foobar"));
 	}
 }

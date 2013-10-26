@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.danielbechler.diff.accessor;
+package de.danielbechler.diff.collection;
 
 import de.danielbechler.diff.mock.*;
 import de.danielbechler.diff.path.*;

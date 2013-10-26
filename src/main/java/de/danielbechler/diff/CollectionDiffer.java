@@ -17,6 +17,7 @@
 package de.danielbechler.diff;
 
 import de.danielbechler.diff.accessor.*;
+import de.danielbechler.diff.collection.*;
 import de.danielbechler.diff.comparison.*;
 import de.danielbechler.util.*;
 import de.danielbechler.util.Collections;

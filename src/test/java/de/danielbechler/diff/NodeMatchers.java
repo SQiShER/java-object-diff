@@ -17,6 +17,7 @@
 package de.danielbechler.diff;
 
 import de.danielbechler.diff.accessor.*;
+import de.danielbechler.diff.collection.*;
 import de.danielbechler.diff.path.*;
 import org.fest.assertions.core.*;
 import org.mockito.*;

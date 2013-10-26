@@ -17,7 +17,7 @@
 package de.danielbechler.diff;
 
 /** @author Daniel Bechler */
-interface Differ
+public interface Differ
 {
 	boolean accepts(Class<?> type);
 

@@ -16,20 +16,12 @@
 
 package de.danielbechler.diff.accessor;
 
-import de.danielbechler.diff.comparison.*;
-
 import java.lang.annotation.*;
 import java.util.*;
 
 /** @author Daniel Bechler */
-public interface PropertyAwareAccessor extends TypeAwareAccessor
+public interface PropertyAwareAccessor extends TypeAwareAccessor, CategoryAwareAccessor, ComparisonStrategyAwareAccessor, ExclusionAwareAccessor
 {
-	Set<String> getCategories();
-
-	boolean isExcluded();
-
-	ComparisonStrategy getComparisonStrategy();
-
 	Set<Annotation> getReadMethodAnnotations();
 
 	<T extends Annotation> T getReadMethodAnnotation(Class<T> annotationClass);

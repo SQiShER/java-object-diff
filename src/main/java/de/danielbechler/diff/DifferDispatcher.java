@@ -23,8 +23,7 @@ import de.danielbechler.util.*;
 import static de.danielbechler.diff.CircularReferenceDetector.*;
 
 /** @author Daniel Bechler */
-@SuppressWarnings("MethodMayBeStatic")
-class DifferDispatcher
+public class DifferDispatcher
 {
 	private final DifferProvider differProvider;
 	private final CircularReferenceDetectorFactory circularReferenceDetectorFactory;
@@ -87,7 +86,7 @@ class DifferDispatcher
 		final Instances accessedInstances = parentInstances.access(accessor);
 		if (accessedInstances.areNull())
 		{
-			return newDefaultNode(parentNode, accessedInstances, accessedInstances.getType());
+			return new DiffNode(parentNode, accessedInstances.getSourceAccessor(), accessedInstances.getType());
 		}
 		else
 		{
@@ -123,7 +122,7 @@ class DifferDispatcher
 		return node;
 	}
 
-	private DiffNode findNodeMatchingPropertyPath(final DiffNode node, final NodePath nodePath)
+	private static DiffNode findNodeMatchingPropertyPath(final DiffNode node, final NodePath nodePath)
 	{
 		if (node == null)
 		{
@@ -136,16 +135,9 @@ class DifferDispatcher
 		return findNodeMatchingPropertyPath(node.getParentNode(), nodePath);
 	}
 
-	private static DiffNode newDefaultNode(final DiffNode parentNode,
-										   final Instances instances,
-										   final Class<?> type)
-	{
-		return new DiffNode(parentNode, instances.getSourceAccessor(), type);
-	}
-
-	private DiffNode newCircularNode(final DiffNode parentNode,
-									 final Instances instances,
-									 final NodePath circleStartPath)
+	private static DiffNode newCircularNode(final DiffNode parentNode,
+											final Instances instances,
+											final NodePath circleStartPath)
 	{
 		final DiffNode node = new DiffNode(parentNode, instances.getSourceAccessor(), instances.getType());
 		node.setState(DiffNode.State.CIRCULAR);

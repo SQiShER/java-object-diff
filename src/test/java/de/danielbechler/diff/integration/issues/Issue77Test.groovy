@@ -16,7 +16,7 @@
 
 package de.danielbechler.diff.integration.issues
 
-import de.danielbechler.diff.ObjectDifferFactory
+import de.danielbechler.diff.ObjectDifferBuilder
 import spock.lang.Specification
 
 /**
@@ -27,7 +27,7 @@ class Issue77Test extends Specification
   def "NullPointerException on null unsafe Comparable implementations"()
   {
     expect:
-    ObjectDifferFactory.getInstance().compare(new SomeObject(BigDecimal.ONE), new SomeObject(null));
+    ObjectDifferBuilder.buildDefaultObjectDiffer().compare(new SomeObject(BigDecimal.ONE), new SomeObject(null));
   }
 
   class SomeObject
