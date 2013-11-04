@@ -51,7 +51,7 @@ public final class ObjectDifferBuilder
 	{
 		final DifferProvider differProvider = new DifferProvider();
 		final DifferDispatcher differDispatcher = new DifferDispatcher(differProvider, circularReferenceService, circularReferenceService, inclusionService, returnableNodeService);
-		differProvider.push(new BeanDiffer(differDispatcher, introspector, introspectionService, returnableNodeService, comparisonService));
+		differProvider.push(new BeanDiffer(differDispatcher, introspectionService, returnableNodeService, comparisonService, introspectionService));
 		differProvider.push(new CollectionDiffer(differDispatcher, comparisonService));
 		differProvider.push(new MapDiffer(differDispatcher, comparisonService, returnableNodeService));
 		differProvider.push(new PrimitiveDiffer(comparisonService));

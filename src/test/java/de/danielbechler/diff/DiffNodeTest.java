@@ -18,6 +18,7 @@ package de.danielbechler.diff;
 
 import de.danielbechler.diff.bean.*;
 import de.danielbechler.diff.collection.*;
+import de.danielbechler.diff.helper.*;
 import de.danielbechler.diff.mock.*;
 import org.fest.assertions.api.*;
 import org.hamcrest.core.*;

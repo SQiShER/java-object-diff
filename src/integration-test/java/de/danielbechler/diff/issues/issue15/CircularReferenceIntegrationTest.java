@@ -22,7 +22,7 @@ import de.danielbechler.diff.visitor.*;
 import org.fest.assertions.api.*;
 import org.testng.annotations.*;
 
-import static de.danielbechler.diff.NodeAssertions.*;
+import static de.danielbechler.diff.helper.NodeAssertions.*;
 
 /** @author Daniel Bechler */
 public class CircularReferenceIntegrationTest

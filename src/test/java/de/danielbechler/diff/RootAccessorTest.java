@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package de.danielbechler.diff.accessor;
+package de.danielbechler.diff;
 
-import de.danielbechler.diff.*;
 import org.testng.annotations.*;
 
 import static org.hamcrest.MatcherAssert.*;

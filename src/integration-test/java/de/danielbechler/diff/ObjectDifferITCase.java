@@ -17,6 +17,7 @@
 package de.danielbechler.diff;
 
 import de.danielbechler.diff.collection.*;
+import de.danielbechler.diff.helper.*;
 import de.danielbechler.diff.map.*;
 import de.danielbechler.diff.mock.*;
 import de.danielbechler.diff.visitor.*;
@@ -26,13 +27,13 @@ import org.testng.annotations.*;
 import java.util.ArrayList;
 import java.util.*;
 
-import static de.danielbechler.diff.NodeAssertions.*;
-import static de.danielbechler.diff.TestGroups.*;
+import static de.danielbechler.diff.helper.NodeAssertions.*;
+import static de.danielbechler.diff.helper.TestGroups.*;
 import static java.util.Arrays.*;
 
 /** @author Daniel Bechler */
 @Test(groups = TestGroups.INTEGRATION)
-public class ObjectDifferIntegrationTests
+public class ObjectDifferITCase
 {
 	private ObjectDiffer objectDiffer;
 

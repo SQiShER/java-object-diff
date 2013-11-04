@@ -3,6 +3,12 @@ package de.danielbechler.diff;
 /** @author Daniel Bechler */
 public interface ComparisonConfiguration
 {
+	Of ofNode(NodePath nodePath);
+
+	Of ofType(Class<?> type);
+
+	OfPrimitiveTypes ofPrimitiveTypes();
+
 	public interface Of
 	{
 		ComparisonConfiguration toUse(ComparisonStrategy comparisonStrategy);
@@ -18,10 +24,4 @@ public interface ComparisonConfiguration
 	{
 		ComparisonConfiguration toTreatDefaultValuesAs(PrimitiveDefaultValueMode primitiveDefaultValueMode);
 	}
-
-	Of ofNode(NodePath nodePath);
-
-	Of ofType(Class<?> type);
-
-	OfPrimitiveTypes ofPrimitiveTypes();
 }

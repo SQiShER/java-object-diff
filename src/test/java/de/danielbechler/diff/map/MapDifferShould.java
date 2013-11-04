@@ -17,12 +17,13 @@
 package de.danielbechler.diff.map;
 
 import de.danielbechler.diff.*;
+import de.danielbechler.diff.helper.*;
 import org.mockito.Mock;
 import org.testng.annotations.*;
 
 import java.util.*;
 
-import static de.danielbechler.diff.NodeMatchers.*;
+import static de.danielbechler.diff.helper.NodeMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.*;
 

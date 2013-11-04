@@ -6,7 +6,7 @@ import spock.lang.Unroll
 /**
  * @author Daniel Bechler
  */
-class NodePathValueHolderSpec extends Specification
+class NodePathValueHolderTest extends Specification
 {
   def "should allow creation of new instances"()
   {

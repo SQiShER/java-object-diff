@@ -30,20 +30,17 @@ public final class BeanDiffer implements Differ
 	private final IsIntrospectableResolver isIntrospectableResolver;
 	private final IsReturnableResolver isReturnableResolver;
 	private final ComparisonStrategyResolver comparisonStrategyResolver;
-	private final Introspector introspector;
+	private final IntrospectorResolver introspectorResolver;
 	private final DifferDispatcher differDispatcher;
 
 	public BeanDiffer(final DifferDispatcher differDispatcher,
-					  final Introspector introspector,
 					  final IsIntrospectableResolver introspectableResolver,
 					  final IsReturnableResolver returnableResolver,
-					  final ComparisonStrategyResolver comparisonStrategyResolver)
+					  final ComparisonStrategyResolver comparisonStrategyResolver,
+					  final IntrospectorResolver introspectorResolver)
 	{
 		Assert.notNull(differDispatcher, "differDispatcher");
 		this.differDispatcher = differDispatcher;
-
-		Assert.notNull(introspector, "introspector");
-		this.introspector = introspector;
 
 		Assert.notNull(introspectableResolver, "introspectableResolver");
 		this.isIntrospectableResolver = introspectableResolver;
@@ -53,6 +50,9 @@ public final class BeanDiffer implements Differ
 
 		Assert.notNull(comparisonStrategyResolver, "comparisonStrategyResolver");
 		this.comparisonStrategyResolver = comparisonStrategyResolver;
+
+		Assert.notNull(introspectorResolver, "introspectorResolver");
+		this.introspectorResolver = introspectorResolver;
 	}
 
 	public boolean accepts(final Class<?> type)
@@ -105,6 +105,7 @@ public final class BeanDiffer implements Differ
 	private void compareUsingIntrospection(final DiffNode beanNode, final Instances beanInstances)
 	{
 		final Class<?> beanType = beanInstances.getType();
+		final Introspector introspector = introspectorResolver.introspectorForNode(beanNode);
 		final Iterable<PropertyAwareAccessor> propertyAccessors = introspector.introspect(beanType);
 		for (final PropertyAwareAccessor propertyAccessor : propertyAccessors)
 		{

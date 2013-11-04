@@ -3,7 +3,19 @@ package de.danielbechler.diff;
 /** @author Daniel Bechler */
 public interface IntrospectionConfiguration
 {
-	IntrospectionConfiguration includeChildrenOfNodeWithState(DiffNode.State state);
+	IntrospectionConfiguration setDefaultIntrospector(Introspector introspector);
 
-	IntrospectionConfiguration excludeChildrenOfNodeWithState(DiffNode.State state);
+	Of ofType(Class<?> type);
+
+	Of ofNode(NodePath path);
+
+	public static interface Of
+	{
+		IntrospectionConfiguration toUse(Introspector introspector);
+
+		IntrospectionConfiguration toBeEnabled();
+
+		IntrospectionConfiguration toBeDisabled();
+	}
+
 }

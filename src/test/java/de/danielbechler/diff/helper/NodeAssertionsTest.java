@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package de.danielbechler.diff;
+package de.danielbechler.diff.helper;
 
+import de.danielbechler.diff.*;
 import de.danielbechler.diff.bean.*;
 import de.danielbechler.diff.mock.*;
 import org.testng.annotations.*;
 
-import static de.danielbechler.diff.NodeAssertions.*;
+import static de.danielbechler.diff.helper.NodeAssertions.*;
 import static org.mockito.Mockito.*;
 
 /** @author Daniel Bechler */

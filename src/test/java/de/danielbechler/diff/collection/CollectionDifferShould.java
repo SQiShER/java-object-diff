@@ -22,7 +22,7 @@ import org.testng.annotations.*;
 
 import java.util.*;
 
-import static de.danielbechler.diff.NodeMatchers.*;
+import static de.danielbechler.diff.helper.NodeMatchers.*;
 import static org.fest.assertions.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.*;

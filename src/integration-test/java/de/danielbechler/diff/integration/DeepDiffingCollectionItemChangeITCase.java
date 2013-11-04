@@ -23,7 +23,7 @@ import org.testng.annotations.*;
 
 import java.util.*;
 
-import static de.danielbechler.diff.NodeAssertions.*;
+import static de.danielbechler.diff.helper.NodeAssertions.*;
 
 /** @author Daniel Bechler */
 public class DeepDiffingCollectionItemChangeITCase
@@ -35,7 +35,6 @@ public class DeepDiffingCollectionItemChangeITCase
 		final Map<String, ObjectWithString> working = Collections.singletonMap("foo", new ObjectWithString("bar"));
 
 		final ObjectDifferBuilder objectDifferBuilder = ObjectDifferBuilder.startBuilding();
-		objectDifferBuilder.configure().introspection().includeChildrenOfNodeWithState(DiffNode.State.ADDED);
 		final ObjectDiffer differ = objectDifferBuilder.build();
 
 		final DiffNode node = differ.compare(working, base);

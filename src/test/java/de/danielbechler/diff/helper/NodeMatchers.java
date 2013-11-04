@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package de.danielbechler.diff;
+package de.danielbechler.diff.helper;
 
+import de.danielbechler.diff.*;
 import de.danielbechler.diff.collection.*;
 import org.fest.assertions.core.*;
 import org.mockito.*;

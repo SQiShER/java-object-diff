@@ -21,7 +21,7 @@ import org.testng.annotations.*;
 
 import java.lang.reflect.*;
 
-import static de.danielbechler.diff.MockitoExtensions.*;
+import static de.danielbechler.diff.helper.MockitoExtensions.*;
 import static org.fest.assertions.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

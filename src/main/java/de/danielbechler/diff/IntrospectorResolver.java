@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Daniel Bechler
+ * Copyright 2013 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,21 +16,8 @@
 
 package de.danielbechler.diff;
 
-import org.fest.assertions.core.*;
-
 /** @author Daniel Bechler */
-public class AssertionsExtensions
+public interface IntrospectorResolver
 {
-	public static Condition<Class<?>> ofType(final Class<Long> aClass)
-	{
-		return new Condition<Class<?>>()
-		{
-			@Override
-			public boolean matches(final Class<?> value)
-			{
-				return aClass.equals(value);
-			}
-		};
-	}
-
+	Introspector introspectorForNode(DiffNode node);
 }

@@ -1,60 +1,124 @@
 package de.danielbechler.diff;
 
+import de.danielbechler.diff.bean.*;
+import de.danielbechler.util.*;
+
 import java.util.*;
 
 /** @author Daniel Bechler */
-class IntrospectionService implements IntrospectionConfiguration, IsIntrospectableResolver
+class IntrospectionService implements IntrospectionConfiguration, IsIntrospectableResolver, IntrospectorResolver
 {
-	private final Map<DiffNode.State, Boolean> suppressIntrospectionSettings;
+	private final Map<Class<?>, Introspector> typeIntrospectorMap = new HashMap<Class<?>, Introspector>();
+	private final Map<Class<?>, IntrospectionMode> typeIntrospectionModeMap = new HashMap<Class<?>, IntrospectionMode>();
+	private final NodePathValueHolder<Introspector> nodePathIntrospectorHolder = new NodePathValueHolder<Introspector>();
+	private final NodePathValueHolder<IntrospectionMode> nodePathIntrospectionModeHolder = new NodePathValueHolder<IntrospectionMode>();
+	private Introspector defaultIntrospector = new StandardBeanIntrospector();
 
-	public IntrospectionService()
+	public enum IntrospectionMode
 	{
-		this.suppressIntrospectionSettings = new EnumMap<DiffNode.State, Boolean>(DiffNode.State.class);
-		this.suppressIntrospectionSettings.put(DiffNode.State.IGNORED, false);
-		this.suppressIntrospectionSettings.put(DiffNode.State.UNTOUCHED, false);
-		this.suppressIntrospectionSettings.put(DiffNode.State.CIRCULAR, true);
-		this.suppressIntrospectionSettings.put(DiffNode.State.ADDED, true);
-		this.suppressIntrospectionSettings.put(DiffNode.State.REMOVED, true);
-		this.suppressIntrospectionSettings.put(DiffNode.State.CHANGED, false);
+		ENABLED,
+		DISABLED
 	}
 
 	public boolean isIntrospectable(final DiffNode node)
 	{
-		if (isIntrospectableType(node.getType()))
+		final Class<?> nodeType = node.getType();
+		if (nodeType == null)
 		{
-			return true;
+			return false;
 		}
-		if (isIntrospectableState(node.getState()))
+		else if (isPrimitiveTypeEnumOrArray(nodeType))
 		{
-			return true;
+			return false;
 		}
-		return false;
+		else if (nodePathIntrospectionModeHolder.valueForNodePath(node.getPath()) == IntrospectionMode.DISABLED)
+		{
+			return false;
+		}
+		else if (typeIntrospectionModeMap.get(nodeType) == IntrospectionMode.DISABLED)
+		{
+			return false;
+		}
+		return true;
 	}
 
-	private static boolean isIntrospectableType(final Class<?> nodeType)
+	public Introspector introspectorForNode(final DiffNode node)
 	{
-		return nodeType != null && !nodeType.isPrimitive() && !nodeType.isArray();
-	}
-
-	private boolean isIntrospectableState(final DiffNode.State state)
-	{
-		final Boolean suppressed = suppressIntrospectionSettings.get(state);
-		if (suppressed != null)
+		final Introspector typeIntrospector = typeIntrospectorMap.get(node.getType());
+		if (typeIntrospector != null)
 		{
-			return !suppressed;
+			return typeIntrospector;
 		}
-		return false;
+
+		final Introspector nodePathIntrospector = nodePathIntrospectorHolder.valueForNodePath(node.getPath());
+		if (nodePathIntrospector != null)
+		{
+			return nodePathIntrospector;
+		}
+
+		return defaultIntrospector;
 	}
 
-	public IntrospectionConfiguration includeChildrenOfNodeWithState(final DiffNode.State state)
+	private static boolean isPrimitiveTypeEnumOrArray(final Class<?> nodeType)
 	{
-		suppressIntrospectionSettings.put(state, false);
+		return Classes.isPrimitiveType(nodeType)
+				|| Classes.isPrimitiveWrapperType(nodeType)
+				|| nodeType.isEnum()
+				|| nodeType.isArray();
+	}
+
+	public IntrospectionConfiguration setDefaultIntrospector(final Introspector introspector)
+	{
+		Assert.notNull(introspector, "The default introspector must not be null");
+		defaultIntrospector = introspector;
 		return this;
 	}
 
-	public IntrospectionConfiguration excludeChildrenOfNodeWithState(final DiffNode.State state)
+	public Of ofType(final Class<?> type)
 	{
-		suppressIntrospectionSettings.put(state, true);
-		return this;
+		return new Of()
+		{
+			public IntrospectionConfiguration toUse(final Introspector introspector)
+			{
+				typeIntrospectorMap.put(type, introspector);
+				return IntrospectionService.this;
+			}
+
+			public IntrospectionConfiguration toBeEnabled()
+			{
+				typeIntrospectionModeMap.put(type, IntrospectionMode.ENABLED);
+				return IntrospectionService.this;
+			}
+
+			public IntrospectionConfiguration toBeDisabled()
+			{
+				typeIntrospectionModeMap.put(type, IntrospectionMode.DISABLED);
+				return IntrospectionService.this;
+			}
+		};
+	}
+
+	public Of ofNode(final NodePath path)
+	{
+		return new Of()
+		{
+			public IntrospectionConfiguration toUse(final Introspector introspector)
+			{
+				nodePathIntrospectorHolder.put(path, introspector);
+				return IntrospectionService.this;
+			}
+
+			public IntrospectionConfiguration toBeEnabled()
+			{
+				nodePathIntrospectionModeHolder.put(path, IntrospectionMode.ENABLED);
+				return IntrospectionService.this;
+			}
+
+			public IntrospectionConfiguration toBeDisabled()
+			{
+				nodePathIntrospectionModeHolder.put(path, IntrospectionMode.DISABLED);
+				return IntrospectionService.this;
+			}
+		};
 	}
 }

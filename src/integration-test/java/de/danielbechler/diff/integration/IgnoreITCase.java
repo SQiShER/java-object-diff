@@ -21,7 +21,7 @@ import de.danielbechler.diff.mock.*;
 import de.danielbechler.diff.visitor.*;
 import org.testng.annotations.*;
 
-import static de.danielbechler.diff.NodeAssertions.*;
+import static de.danielbechler.diff.helper.NodeAssertions.*;
 
 /** @author Daniel Bechler */
 public class IgnoreITCase

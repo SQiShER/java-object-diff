@@ -20,7 +20,7 @@ import org.slf4j.*;
 
 import java.io.*;
 import java.lang.reflect.*;
-import java.math.BigDecimal;
+import java.math.*;
 import java.net.*;
 import java.util.*;
 
@@ -81,16 +81,50 @@ public final class Classes
 
 	public static boolean isSimpleType(final Class<?> clazz)
 	{
-		return isPrimitiveType(clazz) ||
-				isPrimitiveWrapperType(clazz) ||
-				clazz.isEnum() ||
-				CharSequence.class.isAssignableFrom(clazz) ||
-				Number.class.isAssignableFrom(clazz) ||
-				Date.class.isAssignableFrom(clazz) ||
-				URI.class.equals(clazz) ||
-				URL.class.equals(clazz) ||
-				Locale.class.equals(clazz) ||
-				Class.class.equals(clazz);
+		if (clazz != null)
+		{
+			if (isPrimitiveType(clazz))
+			{
+				return true;
+			}
+			else if (isPrimitiveWrapperType(clazz))
+			{
+				return true;
+			}
+			else if (clazz.isEnum())
+			{
+				return true;
+			}
+			else if (CharSequence.class.isAssignableFrom(clazz))
+			{
+				return true;
+			}
+			else if (Number.class.isAssignableFrom(clazz))
+			{
+				return true;
+			}
+			else if (Date.class.isAssignableFrom(clazz))
+			{
+				return true;
+			}
+			else if (URI.class.equals(clazz))
+			{
+				return true;
+			}
+			else if (URL.class.equals(clazz))
+			{
+				return true;
+			}
+			else if (Locale.class.equals(clazz))
+			{
+				return true;
+			}
+			else if (Class.class.equals(clazz))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public static boolean isComparableType(final Class<?> clazz)

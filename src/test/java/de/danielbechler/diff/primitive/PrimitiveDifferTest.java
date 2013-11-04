@@ -26,10 +26,10 @@ import org.testng.annotations.*;
 import java.util.ArrayList;
 import java.util.*;
 
-import static de.danielbechler.diff.MockitoAnswers.*;
-import static de.danielbechler.diff.MockitoExtensions.*;
-import static de.danielbechler.diff.NodeAssertions.*;
 import static de.danielbechler.diff.PrimitiveDefaultValueMode.*;
+import static de.danielbechler.diff.helper.MockitoAnswers.*;
+import static de.danielbechler.diff.helper.MockitoExtensions.*;
+import static de.danielbechler.diff.helper.NodeAssertions.*;
 import static java.util.Arrays.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.*;

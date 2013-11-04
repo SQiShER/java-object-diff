@@ -24,7 +24,7 @@ import static DiffNode.ROOT
 /**
  * @author Daniel Bechler
  */
-class CategoryServiceSpec extends Specification
+class CategoryServiceTest extends Specification
 {
   def categoryService = new CategoryService()
   def accessor = Mock(PropertyAwareAccessor)

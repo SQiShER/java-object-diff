@@ -14,25 +14,23 @@
  * limitations under the License.
  */
 
-package de.danielbechler.diff.integration;
+package de.danielbechler.diff.helper;
 
-import de.danielbechler.diff.*;
-import de.danielbechler.diff.mock.*;
-import org.testng.annotations.*;
-
-import static de.danielbechler.diff.helper.NodeAssertions.*;
+import org.fest.assertions.core.*;
 
 /** @author Daniel Bechler */
-public class AdditionIntegrationITCase
+public class AssertionsExtensions
 {
-	@Test
-	public void detects_change_from_null_to_object_referenct_as_addition() throws Exception
+	public static Condition<Class<?>> ofType(final Class<Long> aClass)
 	{
-		final ObjectWithString base = new ObjectWithString();
-		final ObjectWithString working = new ObjectWithString("foo");
-
-		final DiffNode node = ObjectDifferBuilder.buildDefaultObjectDiffer().compare(working, base);
-
-		assertThat(node).child("value").hasState(DiffNode.State.ADDED);
+		return new Condition<Class<?>>()
+		{
+			@Override
+			public boolean matches(final Class<?> value)
+			{
+				return aClass.equals(value);
+			}
+		};
 	}
+
 }

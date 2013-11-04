@@ -1,4 +1,4 @@
-package de.danielbechler.diff;
+package de.danielbechler.diff.helper;
 
 import org.mockito.invocation.*;
 import org.mockito.stubbing.*;

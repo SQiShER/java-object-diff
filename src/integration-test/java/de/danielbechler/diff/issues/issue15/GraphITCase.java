@@ -17,11 +17,12 @@
 package de.danielbechler.diff.issues.issue15;
 
 import de.danielbechler.diff.*;
+import de.danielbechler.diff.helper.*;
 import de.danielbechler.diff.visitor.*;
 import org.testng.annotations.*;
 
-import static de.danielbechler.diff.NodeAssertions.assertThat;
 import static de.danielbechler.diff.NodePath.*;
+import static de.danielbechler.diff.helper.NodeAssertions.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 /**

@@ -14,13 +14,27 @@
  * limitations under the License.
  */
 
-package de.danielbechler.diff;
+package de.danielbechler.diff.helper;
 
-public final class TestGroups
+import org.mockito.invocation.*;
+import org.mockito.stubbing.*;
+
+/** @author Daniel Bechler */
+public class MockitoExtensions
 {
-	public static final String INTEGRATION = "integration";
-
-	private TestGroups()
+	private MockitoExtensions()
 	{
 	}
+
+	public static <T> Answer<Class<T>> returnClass(final Class<T> clazz)
+	{
+		return new Answer<Class<T>>()
+		{
+			public Class<T> answer(final InvocationOnMock invocation) throws Throwable
+			{
+				return clazz;
+			}
+		};
+	}
+
 }

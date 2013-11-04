@@ -17,6 +17,7 @@
 package de.danielbechler.diff.issues.issue15;
 
 import de.danielbechler.diff.*;
+import de.danielbechler.diff.helper.*;
 import de.danielbechler.diff.mock.*;
 import org.testng.annotations.*;
 
@@ -31,7 +32,6 @@ public class CircularReferenceDetectionBasedOnIdentityTest
 	public void setUp() throws Exception
 	{
 		final ObjectDifferBuilder configuration = ObjectDifferBuilder.startBuilding();
-		configuration.configure().introspection().includeChildrenOfNodeWithState(DiffNode.State.ADDED);
 		configuration.configure()
 					 .circularReferenceHandling()
 					 .matchCircularReferencesUsing(EQUALITY_OPERATOR);

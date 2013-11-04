@@ -1,6 +1,7 @@
 package de.danielbechler.diff.issues.issue70;
 
 import de.danielbechler.diff.*;
+import de.danielbechler.diff.helper.*;
 import de.danielbechler.diff.visitor.*;
 import org.testng.annotations.*;
 
