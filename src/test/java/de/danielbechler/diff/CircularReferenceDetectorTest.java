@@ -33,8 +33,7 @@ public class CircularReferenceDetectorTest
 	@BeforeMethod
 	public void setUp()
 	{
-		circularReferenceDetector = new CircularReferenceDetector();
-		circularReferenceDetector.setReferenceMatchingMode(CircularReferenceDetector.ReferenceMatchingMode.EQUALITY_OPERATOR);
+		circularReferenceDetector = new CircularReferenceDetector(CircularReferenceDetector.ReferenceMatchingMode.EQUALITY_OPERATOR);
 	}
 
 	@Test
@@ -118,7 +117,7 @@ public class CircularReferenceDetectorTest
 	@Test
 	public void knowsEqualObject_whenReferenceMatchingModeIsSetToEqualsMethod()
 	{
-		circularReferenceDetector.setReferenceMatchingMode(CircularReferenceDetector.ReferenceMatchingMode.EQUALS_METHOD);
+		circularReferenceDetector = new CircularReferenceDetector(CircularReferenceDetector.ReferenceMatchingMode.EQUALS_METHOD);
 		circularReferenceDetector.push(new ObjectWithString("foo"), NodePath.buildRootPath());
 		assertThat(circularReferenceDetector.knows(new ObjectWithString("foo"))).isTrue();
 	}
@@ -126,7 +125,7 @@ public class CircularReferenceDetectorTest
 	@Test
 	public void removesEqualObject_whenReferenceMatchingModeIsSetToEqualsMethod()
 	{
-		circularReferenceDetector.setReferenceMatchingMode(CircularReferenceDetector.ReferenceMatchingMode.EQUALS_METHOD);
+		circularReferenceDetector = new CircularReferenceDetector(CircularReferenceDetector.ReferenceMatchingMode.EQUALS_METHOD);
 		circularReferenceDetector.push(new ObjectWithString("foo"), NodePath.buildRootPath());
 		circularReferenceDetector.remove(new ObjectWithString("foo"));
 		assertThat(circularReferenceDetector.size()).isEqualTo(0);
@@ -135,7 +134,7 @@ public class CircularReferenceDetectorTest
 	@Test(expectedExceptions = CircularReferenceDetector.CircularReferenceException.class)
 	public void throwsException_onAttemptToPushEqualObject_whenReferenceMatchingModeIsSetToEqualsMethod()
 	{
-		circularReferenceDetector.setReferenceMatchingMode(CircularReferenceDetector.ReferenceMatchingMode.EQUALS_METHOD);
+		circularReferenceDetector = new CircularReferenceDetector(CircularReferenceDetector.ReferenceMatchingMode.EQUALS_METHOD);
 		circularReferenceDetector.push(new ObjectWithString("foo"), NodePath.buildRootPath());
 		circularReferenceDetector.push(new ObjectWithString("foo"), NodePath.buildRootPath());
 	}

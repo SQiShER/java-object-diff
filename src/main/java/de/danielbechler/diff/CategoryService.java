@@ -34,7 +34,7 @@ class CategoryService implements CategoryConfiguration, CategoryResolver
 
 	private Collection<String> categoriesFromTypeConfiguration(final DiffNode node)
 	{
-		final Class<?> nodeType = node.getType();
+		final Class<?> nodeType = node.getValueType();
 		if (nodeType != null)
 		{
 			final String[] categories = typeCategories.get(nodeType);
@@ -48,11 +48,7 @@ class CategoryService implements CategoryConfiguration, CategoryResolver
 
 	private static Collection<String> categoriesFromNode(final DiffNode node)
 	{
-		if (node.getCategories() != null)
-		{
-			return node.getCategories();
-		}
-		return emptySet();
+		return node.getCategories();
 	}
 
 	public Of ofNode(final NodePath nodePath)

@@ -21,13 +21,19 @@ public final class RootElement extends Element
 {
 	private static final RootElement instance = new RootElement();
 
-	private RootElement()
+	RootElement()
 	{
 	}
 
 	public static RootElement getInstance()
 	{
 		return instance;
+	}
+
+	@Override
+	public String toHumanReadableString()
+	{
+		return "";
 	}
 
 	@Override
@@ -48,11 +54,5 @@ public final class RootElement extends Element
 	public int hashCode()
 	{
 		return 0;
-	}
-
-	@Override
-	public String toString()
-	{
-		return "";
 	}
 }

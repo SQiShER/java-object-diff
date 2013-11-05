@@ -38,6 +38,12 @@ public final class MapElement extends Element
 	}
 
 	@Override
+	public String toHumanReadableString()
+	{
+		return "{" + Strings.toSingleLineString(key) + "}";
+	}
+
+	@Override
 	public boolean equals(final Object o)
 	{
 		if (this == o)
@@ -63,11 +69,5 @@ public final class MapElement extends Element
 	public int hashCode()
 	{
 		return key != null ? key.hashCode() : 0;
-	}
-
-	@Override
-	public String toString()
-	{
-		return "{" + Strings.toSingleLineString(key) + "}";
 	}
 }

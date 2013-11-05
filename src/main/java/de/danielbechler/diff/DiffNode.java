@@ -66,6 +66,11 @@ public class DiffNode implements Accessor
 		this(ROOT, RootAccessor.getInstance(), valueType);
 	}
 
+	public DiffNode()
+	{
+		this(ROOT, RootAccessor.getInstance(), null);
+	}
+
 	/** @return The state of this node. */
 	public State getState()
 	{
@@ -154,7 +159,7 @@ public class DiffNode implements Accessor
 	}
 
 	/** @return Returns the type of the property represented by this node, or null if unavailable. */
-	public Class<?> getType()
+	public Class<?> getValueType()
 	{
 		if (valueType != null)
 		{
@@ -168,8 +173,8 @@ public class DiffNode implements Accessor
 	}
 
 	/**
-	 * Allows for explicit type definition. However, if the accessor is TypeAware, {@link #getType()} will always
-	 * return the type returned by the accessor.
+	 * Allows for explicit type definition. However, if the accessor is TypeAware, {@link #getValueType()} will
+	 * always return the type returned by the accessor.
 	 *
 	 * @param aClass The type of the value represented by this node.
 	 */
@@ -365,20 +370,18 @@ public class DiffNode implements Accessor
 
 	public ComparisonStrategy getComparisonStrategy()
 	{
-		if (accessor instanceof PropertyAwareAccessor)
+		if (accessor instanceof ComparisonStrategyAwareAccessor)
 		{
-			final PropertyAwareAccessor propertyAwareAccessor = (PropertyAwareAccessor) accessor;
-			return propertyAwareAccessor.getComparisonStrategy();
+			return ((ComparisonStrategyAwareAccessor) accessor).getComparisonStrategy();
 		}
 		return null;
 	}
 
 	public boolean isExcluded()
 	{
-		if (accessor instanceof PropertyAwareAccessor)
+		if (accessor instanceof ExclusionAwareAccessor)
 		{
-			final PropertyAwareAccessor propertyAwareAccessor = (PropertyAwareAccessor) accessor;
-			return propertyAwareAccessor.isExcluded();
+			return ((ExclusionAwareAccessor) accessor).isExcluded();
 		}
 		return false;
 	}
@@ -390,13 +393,13 @@ public class DiffNode implements Accessor
 		{
 			categories.addAll(parentNode.getCategories());
 		}
-		if (accessor instanceof PropertyAwareAccessor)
+		if (accessor instanceof CategoryAwareAccessor)
 		{
-			final PropertyAwareAccessor propertyAwareAccessor = (PropertyAwareAccessor) accessor;
-			final Set<String> propertyAwareAccessorCategories = propertyAwareAccessor.getCategories();
-			if (propertyAwareAccessorCategories != null)
+			final CategoryAwareAccessor categoryAwareAccessor = (CategoryAwareAccessor) accessor;
+			final Set<String> categoriesFromAccessor = categoryAwareAccessor.getCategories();
+			if (categoriesFromAccessor != null)
 			{
-				categories.addAll(propertyAwareAccessorCategories);
+				categories.addAll(categoriesFromAccessor);
 			}
 		}
 		return categories;
@@ -479,9 +482,9 @@ public class DiffNode implements Accessor
 		sb.append("(");
 		sb.append("state=");
 		sb.append(getState().toString());
-		if (getType() != null)
+		if (getValueType() != null)
 		{
-			sb.append(", type=").append(getType().getCanonicalName());
+			sb.append(", type=").append(getValueType().getCanonicalName());
 		}
 		if (getChildren().size() == 1)
 		{

@@ -56,10 +56,6 @@ class CircularReferenceDetector
 		}
 	}
 
-	public CircularReferenceDetector()
-	{
-	}
-
 	public CircularReferenceDetector(final ReferenceMatchingMode referenceMatchingMode)
 	{
 		Assert.notNull(referenceMatchingMode, "referenceMatchingMode");
@@ -140,12 +136,6 @@ class CircularReferenceDetector
 	public int size()
 	{
 		return stack.size();
-	}
-
-	public void setReferenceMatchingMode(final ReferenceMatchingMode referenceMatchingMode)
-	{
-		Assert.notNull(referenceMatchingMode, "referenceMatchingMode");
-		this.referenceMatchingMode = referenceMatchingMode;
 	}
 
 	public static class CircularReferenceException extends RuntimeException

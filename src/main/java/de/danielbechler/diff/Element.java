@@ -24,6 +24,8 @@ package de.danielbechler.diff;
  */
 public abstract class Element
 {
+	public abstract String toHumanReadableString();
+
 	/**
 	 * Must be implemented in a way so that this element can be distinguished from the other ones.
 	 *
@@ -47,5 +49,8 @@ public abstract class Element
 	 *
 	 * @return A string representation of this element for debug purposes.
 	 */
-	public abstract String toString();
+	public final String toString()
+	{
+		return toHumanReadableString();
+	}
 }

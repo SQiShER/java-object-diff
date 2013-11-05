@@ -94,6 +94,15 @@ class CategoryServiceTest extends Specification
     categoryService.resolveCategories(node) == ["B"] as Set
   }
 
+  def "resolveCategories: should return empty Set if no category is defined"()
+  {
+    given:
+    node = new DiffNode()
+
+    expect:
+    categoryService.resolveCategories(node) == [] as Set
+  }
+
   class Alliance
   {
   }

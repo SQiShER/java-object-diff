@@ -136,18 +136,18 @@ class InclusionService implements InclusionConfiguration, IsIgnoredResolver
 
 	private boolean isIncludedByType(final DiffNode node)
 	{
-		if (node.getType() != null)
+		if (node.getValueType() != null)
 		{
-			return typeInclusions.get(node.getType()) == INCLUDED;
+			return typeInclusions.get(node.getValueType()) == INCLUDED;
 		}
 		return false;
 	}
 
 	private boolean isExcludedByType(final DiffNode node)
 	{
-		if (node.getType() != null)
+		if (node.getValueType() != null)
 		{
-			return typeInclusions.get(node.getType()) == EXCLUDED;
+			return typeInclusions.get(node.getValueType()) == EXCLUDED;
 		}
 		return false;
 	}

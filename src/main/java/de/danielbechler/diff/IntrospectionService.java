@@ -22,7 +22,7 @@ class IntrospectionService implements IntrospectionConfiguration, IsIntrospectab
 
 	public boolean isIntrospectable(final DiffNode node)
 	{
-		final Class<?> nodeType = node.getType();
+		final Class<?> nodeType = node.getValueType();
 		if (nodeType == null)
 		{
 			return false;
@@ -44,7 +44,7 @@ class IntrospectionService implements IntrospectionConfiguration, IsIntrospectab
 
 	public Introspector introspectorForNode(final DiffNode node)
 	{
-		final Introspector typeIntrospector = typeIntrospectorMap.get(node.getType());
+		final Introspector typeIntrospector = typeIntrospectorMap.get(node.getValueType());
 		if (typeIntrospector != null)
 		{
 			return typeIntrospector;

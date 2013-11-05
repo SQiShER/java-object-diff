@@ -20,39 +20,48 @@ import org.testng.annotations.*;
 
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.core.Is.*;
+import static org.hamcrest.core.IsEqual.*;
 import static org.hamcrest.core.IsInstanceOf.*;
 import static org.hamcrest.core.IsSame.*;
 
 /** @author Daniel Bechler */
 public class RootAccessorTest
 {
-	private final Accessor accessor = RootAccessor.getInstance();
+	private Object target;
 
-	@Test
-	public void testGet() throws Exception
+	@BeforeMethod
+	public void setUpTargetObject()
 	{
-		final Object root = new Object();
-		assertThat(accessor.get(root), sameInstance(root));
-	}
-
-	@Test(expectedExceptions = UnsupportedOperationException.class)
-	public void testSet() throws Exception
-	{
-		final Object original = new Object();
-		final Object replacement = new Object();
-		accessor.set(original, replacement);
-	}
-
-	@Test(expectedExceptions = UnsupportedOperationException.class)
-	public void testUnset() throws Exception
-	{
-		final Object original = new Object();
-		accessor.unset(original);
+		target = new Object();
 	}
 
 	@Test
-	public void testToPathElement() throws Exception
+	public void get_should_return_target_object()
 	{
-		assertThat(accessor.getPathElement(), is(instanceOf(RootElement.class)));
+		assertThat(RootAccessor.getInstance().get(target), sameInstance(target));
+	}
+
+	@Test(expectedExceptions = UnsupportedOperationException.class)
+	public void set_should_not_be_supported()
+	{
+		RootAccessor.getInstance().set(target, new Object());
+	}
+
+	@Test(expectedExceptions = UnsupportedOperationException.class)
+	public void unset_should_not_be_supported()
+	{
+		RootAccessor.getInstance().unset(target);
+	}
+
+	@Test
+	public void getPathElement_should_return_RootElement()
+	{
+		assertThat(RootAccessor.getInstance().getPathElement(), is(instanceOf(RootElement.class)));
+	}
+
+	@Test
+	public void toString_should_return_human_readable_string()
+	{
+		assertThat(RootAccessor.getInstance().toString(), is(equalTo("root element")));
 	}
 }

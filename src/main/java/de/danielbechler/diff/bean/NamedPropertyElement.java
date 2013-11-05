@@ -36,6 +36,12 @@ public final class NamedPropertyElement extends Element
 	}
 
 	@Override
+	public String toHumanReadableString()
+	{
+		return propertyName;
+	}
+
+	@Override
 	public boolean equals(final Object o)
 	{
 		if (this == o)
@@ -61,11 +67,5 @@ public final class NamedPropertyElement extends Element
 	public int hashCode()
 	{
 		return propertyName.hashCode();
-	}
-
-	@Override
-	public String toString()
-	{
-		return propertyName;
 	}
 }

@@ -92,7 +92,7 @@ public class NodeMatchers
 				{
 					return false;
 				}
-				if (expectedTypeHint != null && expectedTypeHint != node.getType())
+				if (expectedTypeHint != null && expectedTypeHint != node.getValueType())
 				{
 					return false;
 				}

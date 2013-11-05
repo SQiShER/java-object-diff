@@ -38,6 +38,12 @@ public final class CollectionElement extends Element
 	}
 
 	@Override
+	public String toHumanReadableString()
+	{
+		return "[" + Strings.toSingleLineString(item) + "]";
+	}
+
+	@Override
 	public boolean equals(final Object o)
 	{
 		if (this == o)
@@ -63,11 +69,5 @@ public final class CollectionElement extends Element
 	public int hashCode()
 	{
 		return item != null ? item.hashCode() : 0;
-	}
-
-	@Override
-	public String toString()
-	{
-		return "[" + Strings.toSingleLineString(item) + "]";
 	}
 }

@@ -38,17 +38,17 @@ class ComparisonService implements ComparisonConfiguration, ComparisonStrategyRe
 			return comparisonStrategy;
 		}
 
-		if (typeComparisonStrategyMap.containsKey(node.getType()))
+		if (typeComparisonStrategyMap.containsKey(node.getValueType()))
 		{
-			return typeComparisonStrategyMap.get(node.getType());
+			return typeComparisonStrategyMap.get(node.getValueType());
 		}
 
-		if (Classes.isComparableType(node.getType()))
+		if (Classes.isComparableType(node.getValueType()))
 		{
 			return new ComparableComparisonStrategy();
 		}
 
-		if (Classes.isSimpleType(node.getType()))
+		if (Classes.isSimpleType(node.getValueType()))
 		{
 			return new EqualsOnlyComparisonStrategy();
 		}
