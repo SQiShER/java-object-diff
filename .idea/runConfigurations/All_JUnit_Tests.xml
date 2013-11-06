@@ -7,7 +7,7 @@
     <option name="PACKAGE_NAME" value="de.danielbechler" />
     <option name="MAIN_CLASS_NAME" value="" />
     <option name="METHOD_NAME" value="" />
-    <option name="TEST_OBJECT" value="package" />
+    <option name="TEST_OBJECT" value="directory" />
     <option name="VM_PARAMETERS" value="" />
     <option name="PARAMETERS" value="" />
     <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
@@ -17,6 +17,7 @@
       <value defaultName="wholeProject" />
     </option>
     <envs />
+    <dir value="$PROJECT_DIR$/src/test/java" />
     <patterns>
       <pattern testClass="*Specification" />
     </patterns>
