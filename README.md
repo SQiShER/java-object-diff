@@ -1,5 +1,4 @@
-[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=SQiShER&url=https://github.com/SQiShER/java-object-diff&title=java-object-diff&language=&tags=github&category=software) 
-[![endorse](https://api.coderwall.com/sqisher/endorsecount.png)](https://coderwall.com/sqisher)
+<a href='https://pledgie.com/campaigns/23224'><img alt='Click here to lend your support to: java-object-diff and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/23224.png?skin_name=chrome' border='0' ></a>
 
 ## Introduction
 
