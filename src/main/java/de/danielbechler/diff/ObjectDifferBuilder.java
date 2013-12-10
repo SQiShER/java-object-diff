@@ -16,87 +16,74 @@
 
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.bean.*;
-import de.danielbechler.diff.collection.*;
-import de.danielbechler.diff.map.*;
-import de.danielbechler.diff.primitive.*;
+import de.danielbechler.diff.bean.BeanDiffer;
+import de.danielbechler.diff.collection.CollectionDiffer;
+import de.danielbechler.diff.map.MapDiffer;
+import de.danielbechler.diff.primitive.PrimitiveDiffer;
 
-/** @author Daniel Bechler */
-public final class ObjectDifferBuilder
-{
-	private final CategoryService categoryService = new CategoryService();
-	private final ComparisonService comparisonService = new ComparisonService();
-	private final ReturnableNodeService returnableNodeService = new ReturnableNodeService();
-	private final IntrospectionService introspectionService = new IntrospectionService();
-	private final InclusionService inclusionService = new InclusionService(categoryService);
-	private final CircularReferenceService circularReferenceService = new CircularReferenceService();
-	private final Configurable configurable = new Configurable();
-	private final Introspector introspector = new StandardBeanIntrospector();
+/**
+ * @author Daniel Bechler
+ */
+public final class ObjectDifferBuilder {
+    private final CategoryService categoryService = new CategoryService();
+    private final ComparisonService comparisonService = new ComparisonService();
+    private final ReturnableNodeService returnableNodeService = new ReturnableNodeService();
+    private final IntrospectionService introspectionService = new IntrospectionService();
+    private final InclusionService inclusionService = new InclusionService(categoryService);
+    private final CircularReferenceService circularReferenceService = new CircularReferenceService();
+    private final Configurable configurable = new Configurable();
 
-	private ObjectDifferBuilder()
-	{
-	}
+    private ObjectDifferBuilder() {
+    }
 
-	public static ObjectDiffer buildDefaultObjectDiffer()
-	{
-		return startBuilding().build();
-	}
+    public static ObjectDiffer buildDefaultObjectDiffer() {
+        return startBuilding().build();
+    }
 
-	public static ObjectDifferBuilder startBuilding()
-	{
-		return new ObjectDifferBuilder();
-	}
+    public static ObjectDifferBuilder startBuilding() {
+        return new ObjectDifferBuilder();
+    }
 
-	public ObjectDiffer build()
-	{
-		final DifferProvider differProvider = new DifferProvider();
-		final DifferDispatcher differDispatcher = new DifferDispatcher(differProvider, circularReferenceService, circularReferenceService, inclusionService, returnableNodeService);
-		differProvider.push(new BeanDiffer(differDispatcher, introspectionService, returnableNodeService, comparisonService, introspectionService));
-		differProvider.push(new CollectionDiffer(differDispatcher, comparisonService));
-		differProvider.push(new MapDiffer(differDispatcher, comparisonService, returnableNodeService));
-		differProvider.push(new PrimitiveDiffer(comparisonService));
-		return new ObjectDiffer(differDispatcher);
-	}
+    public ObjectDiffer build() {
+        final DifferProvider differProvider = new DifferProvider();
+        final DifferDispatcher differDispatcher = new DifferDispatcher(differProvider, circularReferenceService, circularReferenceService, inclusionService, returnableNodeService);
+        differProvider.push(new BeanDiffer(differDispatcher, introspectionService, returnableNodeService, comparisonService, introspectionService));
+        differProvider.push(new CollectionDiffer(differDispatcher, comparisonService));
+        differProvider.push(new MapDiffer(differDispatcher, comparisonService, returnableNodeService));
+        differProvider.push(new PrimitiveDiffer(comparisonService));
+        return new ObjectDiffer(differDispatcher);
+    }
 
-	public final Configurable configure()
-	{
-		return configurable;
-	}
+    public final Configurable configure() {
+        return configurable;
+    }
 
-	public class Configurable
-	{
-		private Configurable()
-		{
-		}
+    public class Configurable {
+        private Configurable() {
+        }
 
-		public ReturnableNodeConfiguration filtering()
-		{
-			return returnableNodeService;
-		}
+        public ReturnableNodeConfiguration filtering() {
+            return returnableNodeService;
+        }
 
-		public IntrospectionConfiguration introspection()
-		{
-			return introspectionService;
-		}
+        public IntrospectionConfiguration introspection() {
+            return introspectionService;
+        }
 
-		public CircularReferenceConfiguration circularReferenceHandling()
-		{
-			return circularReferenceService;
-		}
+        public CircularReferenceConfiguration circularReferenceHandling() {
+            return circularReferenceService;
+        }
 
-		public InclusionConfiguration inclusion()
-		{
-			return inclusionService;
-		}
+        public InclusionConfiguration inclusion() {
+            return inclusionService;
+        }
 
-		public ComparisonConfiguration comparison()
-		{
-			return comparisonService;
-		}
+        public ComparisonConfiguration comparison() {
+            return comparisonService;
+        }
 
-		public CategoryConfiguration categories()
-		{
-			return categoryService;
-		}
-	}
+        public CategoryConfiguration categories() {
+            return categoryService;
+        }
+    }
 }
