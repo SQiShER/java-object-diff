@@ -59,4 +59,4 @@ I put a lot of effort into this project and I really enjoy working on it. Howeve
 
 <a href='https://pledgie.com/campaigns/23224'><img alt='Click here to lend your support to: java-object-diff and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/23224.png?skin_name=chrome' border='0' ></a>
 
-Bitcoin: <a href="bitcoin:19kRmHJ4qMnYCY6rnY6kCf96Prj6WGxisk">19kRmHJ4qMnYCY6rnY6kCf96Prj6WGxisk</a>
+Bitcoin: `19kRmHJ4qMnYCY6rnY6kCf96Prj6WGxisk`
