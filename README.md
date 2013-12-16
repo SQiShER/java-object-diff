@@ -58,3 +58,5 @@ This library has been battle-tested in a rather big project of mine, where I use
 I put a lot of effort into this project and I really enjoy working on it. However, I do all of the work in my spare time, of which I don’t have very much. Unfortunately. If you’d like to support this project, how about you buy me a beer by clicking the Pledgie button down below? Alternatively you could send me a nice tweet, write a blog post, tell your friends or star the project. I'm basically happy about everything that keeps the morale up and shows me the effort is appreciated and my time well spent.
 
 <a href='https://pledgie.com/campaigns/23224'><img alt='Click here to lend your support to: java-object-diff and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/23224.png?skin_name=chrome' border='0' ></a>
+
+Bitcoin: [19kRmHJ4qMnYCY6rnY6kCf96Prj6WGxisk](bitcoin:19kRmHJ4qMnYCY6rnY6kCf96Prj6WGxisk)
