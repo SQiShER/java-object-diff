@@ -17,10 +17,12 @@
 package de.danielbechler.diff.map;
 
 import de.danielbechler.diff.*;
-import de.danielbechler.util.*;
+import de.danielbechler.util.Assert;
 import de.danielbechler.util.Collections;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Used to find differences between {@link Map Maps}
@@ -29,24 +31,23 @@ import java.util.*;
  */
 public final class MapDiffer implements Differ
 {
-	private final DifferDispatcher differDispatcher;
 	private final ComparisonStrategyResolver comparisonStrategyResolver;
-	private final IsReturnableResolver isReturnableResolver;
+	private final DifferDispatcher differDispatcher;
 
-	public MapDiffer(final DifferDispatcher differDispatcher,
-					 final ComparisonStrategyResolver comparisonStrategyResolver,
-					 final IsReturnableResolver returnableResolver)
+	public MapDiffer(final DifferDispatcher differDispatcher, final ComparisonStrategyResolver comparisonStrategyResolver)
 	{
 		Assert.notNull(differDispatcher, "differDispatcher");
 		this.differDispatcher = differDispatcher;
 		this.comparisonStrategyResolver = comparisonStrategyResolver;
-		this.isReturnableResolver = returnableResolver;
 	}
 
 	public boolean accepts(final Class<?> type)
 	{
-		assert type != null;
-		return Map.class.isAssignableFrom(type);
+		if (type != null)
+		{
+			return Map.class.isAssignableFrom(type);
+		}
+		return false;
 	}
 
 	public final DiffNode compare(final DiffNode parentNode, final Instances instances)
@@ -83,19 +84,8 @@ public final class MapDiffer implements Differ
 	{
 		for (final Object key : keys)
 		{
-			final DiffNode node = compareEntry(mapNode, mapInstances, key);
-			if (isReturnableResolver.isReturnable(node))
-			{
-				mapNode.addChild(node);
-			}
+			differDispatcher.dispatch(mapNode, mapInstances, new MapEntryAccessor(key));
 		}
-	}
-
-	private DiffNode compareEntry(final DiffNode mapNode,
-								  final Instances mapInstances,
-								  final Object key)
-	{
-		return differDispatcher.dispatch(mapNode, mapInstances, new MapEntryAccessor(key));
 	}
 
 	private static Collection<?> findAddedKeys(final Instances instances)

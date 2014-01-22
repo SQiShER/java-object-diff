@@ -16,10 +16,11 @@
 
 package de.danielbechler.diff.map;
 
-import de.danielbechler.diff.*;
-import de.danielbechler.util.*;
+import de.danielbechler.diff.Accessor;
+import de.danielbechler.diff.Element;
+import de.danielbechler.util.Assert;
 
-import java.util.*;
+import java.util.Map;
 
 /** @author Daniel Bechler */
 public final class MapEntryAccessor implements Accessor
@@ -101,5 +102,33 @@ public final class MapEntryAccessor implements Accessor
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public boolean equals(Object o)
+	{
+		if (this == o)
+		{
+			return true;
+		}
+		if (o == null || getClass() != o.getClass())
+		{
+			return false;
+		}
+
+		MapEntryAccessor that = (MapEntryAccessor) o;
+
+		if (referenceKey != null ? !referenceKey.equals(that.referenceKey) : that.referenceKey != null)
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return referenceKey != null ? referenceKey.hashCode() : 0;
 	}
 }
