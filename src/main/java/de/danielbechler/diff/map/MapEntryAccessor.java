@@ -22,7 +22,9 @@ import de.danielbechler.util.Assert;
 
 import java.util.Map;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 public final class MapEntryAccessor implements Accessor
 {
 	private final Object referenceKey;
@@ -31,59 +33,6 @@ public final class MapEntryAccessor implements Accessor
 	{
 		Assert.notNull(referenceKey, "referenceKey");
 		this.referenceKey = referenceKey;
-	}
-
-	public Element getPathElement()
-	{
-		return new MapElement(referenceKey);
-	}
-
-	public void set(final Object target, final Object value)
-	{
-		final Map<Object, Object> targetMap = objectToMap(target);
-		if (targetMap != null)
-		{
-			targetMap.put(referenceKey, value);
-		}
-	}
-
-	public Object get(final Object target)
-	{
-		final Map<?, ?> targetMap = objectToMap(target);
-		if (targetMap != null)
-		{
-			return targetMap.get(referenceKey);
-		}
-		return null;
-	}
-
-	private static Map<Object, Object> objectToMap(final Object object)
-	{
-		if (object == null)
-		{
-			return null;
-		}
-		if (object instanceof Map)
-		{
-			//noinspection unchecked
-			return (Map<Object, Object>) object;
-		}
-		throw new IllegalArgumentException(object.getClass().toString());
-	}
-
-	public void unset(final Object target)
-	{
-		final Map<?, ?> targetMap = objectToMap(target);
-		if (targetMap != null)
-		{
-			targetMap.remove(referenceKey);
-		}
-	}
-
-	@Override
-	public String toString()
-	{
-		return "map key " + getPathElement();
 	}
 
 	public Object getKey(final Map<?, ?> target)
@@ -105,7 +54,13 @@ public final class MapEntryAccessor implements Accessor
 	}
 
 	@Override
-	public boolean equals(Object o)
+	public int hashCode()
+	{
+		return referenceKey.hashCode();
+	}
+
+	@Override
+	public boolean equals(final Object o)
 	{
 		if (this == o)
 		{
@@ -115,20 +70,59 @@ public final class MapEntryAccessor implements Accessor
 		{
 			return false;
 		}
-
-		MapEntryAccessor that = (MapEntryAccessor) o;
-
-		if (referenceKey != null ? !referenceKey.equals(that.referenceKey) : that.referenceKey != null)
-		{
-			return false;
-		}
-
-		return true;
+		return referenceKey.equals(((MapEntryAccessor) o).referenceKey);
 	}
 
 	@Override
-	public int hashCode()
+	public String toString()
 	{
-		return referenceKey != null ? referenceKey.hashCode() : 0;
+		return "map key " + getPathElement();
+	}
+
+	public Element getPathElement()
+	{
+		return new MapElement(referenceKey);
+	}
+
+	public Object get(final Object target)
+	{
+		final Map<?, ?> targetMap = objectToMap(target);
+		if (targetMap != null)
+		{
+			return targetMap.get(referenceKey);
+		}
+		return null;
+	}
+
+	public void set(final Object target, final Object value)
+	{
+		final Map<Object, Object> targetMap = objectToMap(target);
+		if (targetMap != null)
+		{
+			targetMap.put(referenceKey, value);
+		}
+	}
+
+	public void unset(final Object target)
+	{
+		final Map<?, ?> targetMap = objectToMap(target);
+		if (targetMap != null)
+		{
+			targetMap.remove(referenceKey);
+		}
+	}
+
+	private static Map<Object, Object> objectToMap(final Object object)
+	{
+		if (object == null)
+		{
+			return null;
+		}
+		if (object instanceof Map)
+		{
+			//noinspection unchecked
+			return (Map<Object, Object>) object;
+		}
+		throw new IllegalArgumentException(object.getClass().toString());
 	}
 }

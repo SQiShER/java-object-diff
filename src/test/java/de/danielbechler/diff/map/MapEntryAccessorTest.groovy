@@ -20,7 +20,9 @@ import de.danielbechler.diff.mock.ObjectWithIdentityAndValue
 import spock.lang.Shared
 import spock.lang.Specification
 
-/** @author Daniel Bechler              */
+/**
+ * @author Daniel Bechler
+ */
 class MapEntryAccessorTest extends Specification {
 
     @Shared
@@ -155,5 +157,31 @@ class MapEntryAccessorTest extends Specification {
 
         then:
         notThrown Throwable
+    }
+
+    def "equals should work as expected"() {
+        given:
+        def accessor = new MapEntryAccessor("a")
+
+        expect:
+        accessor.equals(otherAccessor) == expectedResult
+
+        and: "make sure the same instance is always equal"
+        accessor.equals(accessor)
+
+        where:
+        otherAccessor             || expectedResult
+        null                      || false
+        "foo"                     || false
+        new MapEntryAccessor("b") || false
+        new MapEntryAccessor("a") || true
+    }
+
+    def "hashCode should equal hashCode of referenceKey"() {
+        setup:
+        def referenceKey = "foo"
+
+        expect:
+        new MapEntryAccessor(referenceKey).hashCode() == referenceKey.hashCode()
     }
 }
