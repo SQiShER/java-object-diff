@@ -16,7 +16,7 @@
 
 package de.danielbechler.util;
 
-import java.util.*;
+import java.util.Collection;
 
 /** @author Daniel Bechler */
 public class Assert
@@ -41,7 +41,6 @@ public class Assert
 
 	public static void notNull(final Object object, final String name)
 	{
-		notEmpty(name, "name");
 		if (object == null)
 		{
 			throw new IllegalArgumentException("'" + name + "' must not be null");
@@ -50,7 +49,6 @@ public class Assert
 
 	public static void notEmpty(final Collection<?> collection, final String name)
 	{
-		notEmpty(name, "name");
 		if (Collections.isEmpty(collection))
 		{
 			throw new IllegalArgumentException("'" + name + "' must not be null or empty");
