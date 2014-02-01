@@ -24,7 +24,9 @@ import java.lang.annotation.*;
 import java.lang.reflect.*;
 import java.util.*;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 public class BeanPropertyAccessor implements PropertyAwareAccessor, Accessor
 {
 	private static final Logger logger = LoggerFactory.getLogger(BeanPropertyAccessor.class);
@@ -45,6 +47,55 @@ public class BeanPropertyAccessor implements PropertyAwareAccessor, Accessor
 		this.readMethod = makeAccessible(readMethod);
 		this.writeMethod = makeAccessible(writeMethod);
 		this.type = this.readMethod.getReturnType();
+	}
+
+	private static Method makeAccessible(final Method method)
+	{
+		if (method != null)
+		{
+			method.setAccessible(true);
+		}
+		return method;
+	}
+
+	private static boolean tryToReplaceCollectionContent(final Collection<Object> target,
+														 final Collection<Object> value)
+	{
+		if (target == null)
+		{
+			return false;
+		}
+		try
+		{
+			target.clear();
+			target.addAll(value);
+			return true;
+		}
+		catch (final Exception unmodifiable)
+		{
+			logger.debug("Failed to replace content of existing Collection", unmodifiable);
+			return false;
+		}
+	}
+
+	private static boolean tryToReplaceMapContent(final Map<Object, Object> target,
+												  final Map<Object, Object> value)
+	{
+		if (target == null)
+		{
+			return false;
+		}
+		try
+		{
+			target.clear();
+			target.putAll(value);
+			return true;
+		}
+		catch (final Exception unmodifiable)
+		{
+			logger.debug("Failed to replace content of existing Map", unmodifiable);
+			return false;
+		}
 	}
 
 	public final Set<String> getCategories()
@@ -75,15 +126,6 @@ public class BeanPropertyAccessor implements PropertyAwareAccessor, Accessor
 	public void setComparisonStrategy(final ComparisonStrategy comparisonStrategy)
 	{
 		this.comparisonStrategy = comparisonStrategy;
-	}
-
-	private static Method makeAccessible(final Method method)
-	{
-		if (method != null)
-		{
-			method.setAccessible(true);
-		}
-		return method;
 	}
 
 	public void set(final Object target, final Object value)
@@ -143,46 +185,6 @@ public class BeanPropertyAccessor implements PropertyAwareAccessor, Accessor
 		logFailedSet(value);
 	}
 
-	private static boolean tryToReplaceCollectionContent(final Collection<Object> target,
-														 final Collection<Object> value)
-	{
-		if (target == null)
-		{
-			return false;
-		}
-		try
-		{
-			target.clear();
-			target.addAll(value);
-			return true;
-		}
-		catch (Exception unmodifiable)
-		{
-			logger.debug("Failed to replace content of existing Collection", unmodifiable);
-			return false;
-		}
-	}
-
-	private static boolean tryToReplaceMapContent(final Map<Object, Object> target,
-												  final Map<Object, Object> value)
-	{
-		if (target == null)
-		{
-			return false;
-		}
-		try
-		{
-			target.clear();
-			target.putAll(value);
-			return true;
-		}
-		catch (Exception unmodifiable)
-		{
-			logger.debug("Failed to replace content of existing Map", unmodifiable);
-			return false;
-		}
-	}
-
 	public Object get(final Object target)
 	{
 		if (target == null)
@@ -193,7 +195,7 @@ public class BeanPropertyAccessor implements PropertyAwareAccessor, Accessor
 		{
 			return readMethod.invoke(target);
 		}
-		catch (Exception e)
+		catch (final Exception e)
 		{
 			final BeanPropertyReadException ex = new BeanPropertyReadException(e);
 			ex.setPropertyName(propertyName);
@@ -222,7 +224,9 @@ public class BeanPropertyAccessor implements PropertyAwareAccessor, Accessor
 		return new NamedPropertyElement(this.propertyName);
 	}
 
-	/** @return The annotations of the getter used to access this property. */
+	/**
+	 * @return The annotations of the getter used to access this property.
+	 */
 	public Set<Annotation> getReadMethodAnnotations()
 	{
 		return new LinkedHashSet<Annotation>(Arrays.asList(readMethod.getAnnotations()));

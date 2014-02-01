@@ -18,9 +18,11 @@ package de.danielbechler.diff;
 
 import de.danielbechler.util.*;
 
-import static de.danielbechler.util.Objects.*;
+import static de.danielbechler.util.Objects.isEqual;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 public class EqualsOnlyComparisonStrategy implements ComparisonStrategy
 {
 	private final String equalsValueProviderMethod;
@@ -63,5 +65,10 @@ public class EqualsOnlyComparisonStrategy implements ComparisonStrategy
 	public boolean hasValueProviderMethod()
 	{
 		return equalsValueProviderMethod != null;
+	}
+
+	public String getEqualsValueProviderMethod()
+	{
+		return equalsValueProviderMethod;
 	}
 }

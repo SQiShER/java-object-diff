@@ -17,6 +17,7 @@
 package de.danielbechler.diff.bean;
 
 import de.danielbechler.diff.*;
+import de.danielbechler.diff.annotation.*;
 import de.danielbechler.diff.mock.*;
 import de.danielbechler.util.*;
 import org.hamcrest.core.*;
@@ -24,9 +25,13 @@ import org.testng.annotations.*;
 
 import java.beans.*;
 
-import static org.hamcrest.MatcherAssert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsInstanceOf.instanceOf;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 public class StandardBeanIntrospectorTest
 {
 	private StandardBeanIntrospector introspector;
@@ -41,9 +46,32 @@ public class StandardBeanIntrospectorTest
 	public void testIntrospectWithEqualsOnlyPropertyType() throws Exception
 	{
 		final Iterable<PropertyAwareAccessor> accessors = introspector.introspect(ObjectWithEqualsOnlyPropertyType.class);
-		assertThat(accessors.iterator().hasNext(), Is.is(true));
+		assertThat(accessors.iterator().hasNext(), is(true));
 		final PropertyAwareAccessor propertyAwareAccessor = accessors.iterator().next();
-		assertThat(propertyAwareAccessor.getComparisonStrategy(), IsInstanceOf.instanceOf(EqualsOnlyComparisonStrategy.class));
+		assertThat(propertyAwareAccessor.getComparisonStrategy(), instanceOf(EqualsOnlyComparisonStrategy.class));
+	}
+
+	@Test
+	public void testIntrospectWithEqualsOnlyPropertyTypeAndValueProviderMethod() throws Exception
+	{
+		final Object object = new Object()
+		{
+			public ObjectWithObjectDiffEqualsOnlyTypeAnnotationAndValueProviderMethod getValue()
+			{
+				return null;
+			}
+		};
+
+		final Iterable<PropertyAwareAccessor> accessors = introspector.introspect(object.getClass());
+		assertThat(accessors.iterator().hasNext(), is(true));
+
+		final PropertyAwareAccessor propertyAwareAccessor = accessors.iterator().next();
+
+		final ComparisonStrategy comparisonStrategy = propertyAwareAccessor.getComparisonStrategy();
+		assertThat(comparisonStrategy, is(instanceOf(EqualsOnlyComparisonStrategy.class)));
+
+		final EqualsOnlyComparisonStrategy equalsOnlyComparisonStrategy = (EqualsOnlyComparisonStrategy) comparisonStrategy;
+		assertThat(equalsOnlyComparisonStrategy.getEqualsValueProviderMethod(), is(IsEqual.equalTo("foo")));
 	}
 
 	@Test
@@ -54,22 +82,22 @@ public class StandardBeanIntrospectorTest
 		{
 			if (accessor.getPathElement().equals(new NamedPropertyElement("ignored")))
 			{
-				assertThat(accessor.isExcluded(), Is.is(true));
+				assertThat(accessor.isExcluded(), is(true));
 			}
 			else if (accessor.getPathElement().equals(new NamedPropertyElement("equalsOnly")))
 			{
-				assertThat(accessor.getComparisonStrategy(), IsInstanceOf.instanceOf(EqualsOnlyComparisonStrategy.class));
+				assertThat(accessor.getComparisonStrategy(), instanceOf(EqualsOnlyComparisonStrategy.class));
 			}
 			else if (accessor.getPathElement().equals(new NamedPropertyElement("categorized")))
 			{
-				assertThat(accessor.getCategories().size(), Is.is(1));
+				assertThat(accessor.getCategories().size(), is(1));
 				assertThat(accessor.getCategories(), IsEqual.equalTo(Collections.setOf("foo")));
 			}
 			else if (accessor.getPathElement().equals(new NamedPropertyElement("item")))
 			{
 				assertThat(accessor.getComparisonStrategy(), IsNull.nullValue());
-				assertThat(accessor.isExcluded(), Is.is(false));
-				assertThat(accessor.getCategories().isEmpty(), Is.is(true));
+				assertThat(accessor.isExcluded(), is(false));
+				assertThat(accessor.getCategories().isEmpty(), is(true));
 			}
 			else if (accessor.getPathElement().equals(new NamedPropertyElement("key")))
 			{
@@ -92,7 +120,7 @@ public class StandardBeanIntrospectorTest
 		final Iterable<PropertyAwareAccessor> accessors = introspector.introspect(ObjectWithInheritedPropertyAnnotation.class);
 		final PropertyAwareAccessor accessor = accessors.iterator().next();
 		assertThat((NamedPropertyElement) accessor.getPathElement(), IsEqual.equalTo(new NamedPropertyElement("value")));
-		assertThat(accessor.isExcluded(), Is.is(true));
+		assertThat(accessor.isExcluded(), is(true));
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
@@ -113,5 +141,10 @@ public class StandardBeanIntrospectorTest
 			}
 		};
 		introspector.introspect(ObjectWithString.class);
+	}
+
+	@ObjectDiffEqualsOnlyType(valueProviderMethod = "foo")
+	private static class ObjectWithObjectDiffEqualsOnlyTypeAnnotationAndValueProviderMethod
+	{
 	}
 }
