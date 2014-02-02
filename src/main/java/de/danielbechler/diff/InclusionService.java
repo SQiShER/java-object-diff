@@ -1,10 +1,12 @@
 package de.danielbechler.diff;
 
+import de.danielbechler.diff.bean.*;
 import de.danielbechler.util.*;
 
 import java.util.*;
 
-import static de.danielbechler.diff.Inclusion.*;
+import static de.danielbechler.diff.Inclusion.EXCLUDED;
+import static de.danielbechler.diff.Inclusion.INCLUDED;
 
 /**
  *
@@ -15,11 +17,22 @@ class InclusionService implements InclusionConfiguration, IsIgnoredResolver
 	private final NodePathValueHolder<Inclusion> nodeInclusions = NodePathValueHolder.of(Inclusion.class);
 	private final Map<Class<?>, Inclusion> typeInclusions = new HashMap<Class<?>, Inclusion>();
 	private final Map<String, Inclusion> categoryInclusions = new TreeMap<String, Inclusion>();
+	private final Map<String, Inclusion> propertyNameInclusions = new TreeMap<String, Inclusion>();
 
 	public InclusionService(final CategoryResolver categoryResolver)
 	{
 		Assert.notNull(categoryResolver, "categoryResolver");
 		this.categoryResolver = categoryResolver;
+	}
+
+	private static String getNodePropertyName(final DiffNode node)
+	{
+		final Element pathElement = node.getPathElement();
+		if (pathElement instanceof NamedPropertyElement)
+		{
+			return ((NamedPropertyElement) pathElement).getPropertyName();
+		}
+		return null;
 	}
 
 	public boolean isIgnored(final DiffNode node)
@@ -47,9 +60,23 @@ class InclusionService implements InclusionConfiguration, IsIgnoredResolver
 			{
 				return true;
 			}
+			else if (isIncludedByPropertyName(node))
+			{
+				return true;
+			}
 			return false;
 		}
 		return true;
+	}
+
+	private boolean isIncludedByPropertyName(final DiffNode node)
+	{
+		final String propertyName = getNodePropertyName(node);
+		if (propertyName != null)
+		{
+			return propertyNameInclusions.get(propertyName) == INCLUDED;
+		}
+		return false;
 	}
 
 	private boolean isIncludedByCategory(final DiffNode node)
@@ -78,6 +105,21 @@ class InclusionService implements InclusionConfiguration, IsIgnoredResolver
 			{
 				return true;
 			}
+			else if (isExcludedByPropertyName(node))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@SuppressWarnings("TypeMayBeWeakened") // we don't want to weaken the type for consistency reasons
+	private boolean isExcludedByPropertyName(final DiffNode node)
+	{
+		final String propertyName = getNodePropertyName(node);
+		if (propertyName != null)
+		{
+			return propertyNameInclusions.get(propertyName) == EXCLUDED;
 		}
 		return false;
 	}
@@ -103,6 +145,10 @@ class InclusionService implements InclusionConfiguration, IsIgnoredResolver
 			return true;
 		}
 		if (categoryInclusions.containsValue(inclusion))
+		{
+			return true;
+		}
+		if (propertyNameInclusions.containsValue(inclusion))
 		{
 			return true;
 		}
@@ -194,6 +240,15 @@ class InclusionService implements InclusionConfiguration, IsIgnoredResolver
 			for (final NodePath nodePath : nodePaths)
 			{
 				nodeInclusions.put(nodePath, inclusion);
+			}
+			return this;
+		}
+
+		public To propertyNames(final String... propertyNames)
+		{
+			for (final String propertyName : propertyNames)
+			{
+				propertyNameInclusions.put(propertyName, inclusion);
 			}
 			return this;
 		}

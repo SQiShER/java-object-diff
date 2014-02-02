@@ -1,6 +1,8 @@
 package de.danielbechler.diff;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 public interface InclusionConfiguration
 {
 	To toInclude();
@@ -14,5 +16,7 @@ public interface InclusionConfiguration
 		To types(Class<?>... types);
 
 		To nodes(NodePath... nodePath);
+
+		To propertyNames(String... propertyNames);
 	}
 }

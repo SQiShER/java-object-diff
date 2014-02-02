@@ -25,7 +25,7 @@ import java.util.*;
 import java.util.Collections;
 import java.util.concurrent.atomic.*;
 
-import static java.util.Collections.*;
+import static java.util.Collections.unmodifiableSet;
 
 /**
  * Represents a part of an object. It could be the object itself, one of its properties, an item in a
@@ -71,10 +71,21 @@ public class DiffNode implements Accessor
 		this(ROOT, RootAccessor.getInstance(), null);
 	}
 
-	/** @return The state of this node. */
+	/**
+	 * @return The state of this node.
+	 */
 	public State getState()
 	{
 		return this.state;
+	}
+
+	/**
+	 * @param state The state of this node.
+	 */
+	public void setState(final State state)
+	{
+		Assert.notNull(state, "state");
+		this.state = state;
 	}
 
 	public boolean matches(final NodePath path)
@@ -103,45 +114,57 @@ public class DiffNode implements Accessor
 		return result.get();
 	}
 
-	/** Convenience method for <code>{@link #getState()} == {@link DiffNode.State#ADDED}</code> */
+	/**
+	 * Convenience method for <code>{@link #getState()} == {@link DiffNode.State#ADDED}</code>
+	 */
 	public final boolean isAdded()
 	{
 		return state == State.ADDED;
 	}
 
-	/** Convenience method for <code>{@link #getState()} == {@link DiffNode.State#CHANGED}</code> */
+	/**
+	 * Convenience method for <code>{@link #getState()} == {@link DiffNode.State#CHANGED}</code>
+	 */
 	public final boolean isChanged()
 	{
 		return state == State.CHANGED;
 	}
 
-	/** Convenience method for <code>{@link #getState()} == {@link DiffNode.State#REMOVED}</code> */
+	/**
+	 * Convenience method for <code>{@link #getState()} == {@link DiffNode.State#REMOVED}</code>
+	 */
 	public final boolean isRemoved()
 	{
 		return state == State.REMOVED;
 	}
 
-	/** Convenience method for <code>{@link #getState()} == {@link DiffNode.State#UNTOUCHED}</code> */
+	/**
+	 * Convenience method for <code>{@link #getState()} == {@link DiffNode.State#UNTOUCHED}</code>
+	 */
 	public final boolean isUntouched()
 	{
 		return state == State.UNTOUCHED;
 	}
 
-	/** Convenience method for <code>{@link #getState()} == {@link DiffNode.State#CIRCULAR}</code> */
+	/**
+	 * Convenience method for <code>{@link #getState()} == {@link DiffNode.State#CIRCULAR}</code>
+	 */
 	public boolean isCircular()
 	{
 		return state == State.CIRCULAR;
 	}
 
-	/** @return The absolute property path from the object root up to this node. */
+	/**
+	 * @return The absolute property path from the object root up to this node.
+	 */
 	public final NodePath getPath()
 	{
 		if (parentNode != null)
 		{
 			return NodePath.createBuilder()
-						   .withPropertyPath(parentNode.getPath())
-						   .withElement(accessor.getPathElement())
-						   .build();
+					.withPropertyPath(parentNode.getPath())
+					.withElement(accessor.getPathElement())
+					.build();
 		}
 		else if (accessor instanceof RootAccessor)
 		{
@@ -158,7 +181,9 @@ public class DiffNode implements Accessor
 		return accessor.getPathElement();
 	}
 
-	/** @return Returns the type of the property represented by this node, or null if unavailable. */
+	/**
+	 * @return Returns the type of the property represented by this node, or null if unavailable.
+	 */
 	public Class<?> getValueType()
 	{
 		if (valueType != null)
@@ -183,13 +208,17 @@ public class DiffNode implements Accessor
 		this.valueType = aClass;
 	}
 
-	/** @return <code>true</code> if this node has children. */
+	/**
+	 * @return <code>true</code> if this node has children.
+	 */
 	public boolean hasChildren()
 	{
 		return !children.isEmpty();
 	}
 
-	/** @return The child nodes of this node. */
+	/**
+	 * @return The child nodes of this node.
+	 */
 	public Collection<DiffNode> getChildren()
 	{
 		return children.values();
@@ -199,7 +228,6 @@ public class DiffNode implements Accessor
 	 * Retrieve a child with the given property name relative to this node.
 	 *
 	 * @param propertyName The name of the property represented by the child node.
-	 *
 	 * @return The requested child node or <code>null</code>.
 	 */
 	public DiffNode getChild(final String propertyName)
@@ -211,7 +239,6 @@ public class DiffNode implements Accessor
 	 * Retrieve a child that matches the given absolute path, starting from the current node.
 	 *
 	 * @param path The path from the object root to the requested child node.
-	 *
 	 * @return The requested child node or <code>null</code>.
 	 */
 	public DiffNode getChild(final NodePath path)
@@ -225,7 +252,6 @@ public class DiffNode implements Accessor
 	 * Retrieve a child that matches the given path element relative to this node.
 	 *
 	 * @param pathElement The path element of the child node to get.
-	 *
 	 * @return The requested child node or <code>null</code>.
 	 */
 	public DiffNode getChild(final Element pathElement)
@@ -362,7 +388,9 @@ public class DiffNode implements Accessor
 		return accessor instanceof RootAccessor;
 	}
 
-	/** Convenience method for <code>{@link #getState()} == {@link DiffNode.State#IGNORED}</code> */
+	/**
+	 * Convenience method for <code>{@link #getState()} == {@link DiffNode.State#IGNORED}</code>
+	 */
 	public final boolean isIgnored()
 	{
 		return state == State.IGNORED;
@@ -405,14 +433,9 @@ public class DiffNode implements Accessor
 		return categories;
 	}
 
-	/** @param state The state of this node. */
-	public void setState(final State state)
-	{
-		Assert.notNull(state, "state");
-		this.state = state;
-	}
-
-	/** @return The parent node, if any. */
+	/**
+	 * @return The parent node, if any.
+	 */
 	public DiffNode getParentNode()
 	{
 		return parentNode;
@@ -537,7 +560,7 @@ public class DiffNode implements Accessor
 
 	/**
 	 * @return Returns the path to the first node in the hierarchy that represents the same object instance as
-	 *         this one. (Only if {@link #isCircular()} returns <code>true</code>.
+	 * this one. (Only if {@link #isCircular()} returns <code>true</code>.
 	 */
 	public NodePath getCircleStartPath()
 	{
@@ -559,29 +582,45 @@ public class DiffNode implements Accessor
 		this.circleStartNode = circleStartNode;
 	}
 
-	/** The state of a {@link DiffNode} representing the difference between two objects. */
+	/**
+	 * The state of a {@link DiffNode} representing the difference between two objects.
+	 */
 	public enum State
 	{
-		/** The value has been added to the working object. */
+		/**
+		 * The value has been added to the working object.
+		 */
 		ADDED,
 
-		/** The value has been changed compared to the base object. */
+		/**
+		 * The value has been changed compared to the base object.
+		 */
 		CHANGED,
 
-		/** The value has been removed from the working object. */
+		/**
+		 * The value has been removed from the working object.
+		 */
 		REMOVED,
 
-		/** The value is identical between working and base */
+		/**
+		 * The value is identical between working and base
+		 */
 		UNTOUCHED,
 
-		/** Special state to mark circular references */
+		/**
+		 * Special state to mark circular references
+		 */
 		CIRCULAR,
 
-		/** The value has not been looked at and has been ignored. */
+		/**
+		 * The value has not been looked at and has been ignored.
+		 */
 		IGNORED
 	}
 
-	/** Visitor to traverse a node graph. */
+	/**
+	 * Visitor to traverse a node graph.
+	 */
 	public static interface Visitor
 	{
 		void accept(DiffNode node, Visit visit);
