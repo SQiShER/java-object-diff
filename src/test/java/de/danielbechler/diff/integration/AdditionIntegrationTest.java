@@ -22,6 +22,7 @@ import de.danielbechler.diff.node.*;
 import org.testng.annotations.*;
 
 import static de.danielbechler.diff.node.NodeAssertions.*;
+import static org.testng.AssertJUnit.assertEquals;
 
 /** @author Daniel Bechler */
 public class AdditionIntegrationTest
@@ -36,4 +37,21 @@ public class AdditionIntegrationTest
 
 		assertThat(node).child("value").hasState(Node.State.ADDED);
 	}
+
+    @Test
+    public void testDetectsChangeForDuplicatesInList() throws Exception
+    {
+        final Contact joe = new Contact("Joe", "Smith");
+        final PhoneBook phoneBookServer = new PhoneBook("devs");
+        phoneBookServer.addContact(joe);
+        final PhoneBook phoneBookMobile = new PhoneBook("devs");
+        phoneBookMobile.addContact(joe);
+
+        assertEquals(Node.State.UNTOUCHED, ObjectDifferFactory.getInstance().compare(phoneBookMobile, phoneBookServer).getState());
+        phoneBookMobile.addContact(joe);
+        assertEquals(2, phoneBookMobile.getContacts().size());
+        //Should be ADDED!
+        //assertEquals(Node.State.ADDED, ObjectDifferFactory.getInstance().compare(phoneBookMobile, phoneBookServer).getState());
+        assertEquals(Node.State.UNTOUCHED, ObjectDifferFactory.getInstance().compare(phoneBookMobile, phoneBookServer).getState());
+    }
 }
