@@ -28,79 +28,15 @@ public class Strings
 	{
 	}
 
+	@SuppressWarnings("SizeReplaceableByIsEmpty") // String.isEmpty() is a Java 1.6 feature
 	public static boolean hasText(final String s)
 	{
-		return s != null && !s.trim().isEmpty();
+		return s != null && s.trim().length() != 0;
 	}
 
 	public static boolean isEmpty(final String s)
 	{
 		return !hasText(s);
-	}
-
-	public static String capitalize(final String s)
-	{
-		if (s != null && !s.isEmpty())
-		{
-			final char[] chars = s.toCharArray();
-			chars[0] = Character.toUpperCase(chars[0]);
-			return new String(chars).intern();
-		}
-		return s;
-	}
-
-	public static String toPropertyExpression(final String s)
-	{
-		final char[] chars = s.toCharArray();
-		final StringBuilder sb = new StringBuilder();
-		char previousChar = ' ';
-		for (final char aChar : chars)
-		{
-			if (aChar != '_')
-			{
-				if (previousChar == '_')
-				{
-					sb.append(Character.toUpperCase(aChar));
-				}
-				else
-				{
-					sb.append(Character.toLowerCase(aChar));
-				}
-			}
-			previousChar = aChar;
-		}
-		return sb.toString();
-	}
-
-	/**
-	 * Converts a camel-cased character sequence (e.g. ThisIsSparta) into underscore-case (e.g. this_is_sparta).
-	 *
-	 * @param s The text to convert.
-	 *
-	 * @return A underscore-cased version of the given text.
-	 */
-	public static String toUnderscoreCase(final String s)
-	{
-		final char[] chars = s.toCharArray();
-		final StringBuilder sb = new StringBuilder();
-		char previousChar = 0;
-		for (final char aChar : chars)
-		{
-			if (Character.isUpperCase(aChar))
-			{
-				if (previousChar != 0)
-				{
-					sb.append('_');
-				}
-				sb.append(Character.toLowerCase(aChar));
-			}
-			else
-			{
-				sb.append(aChar);
-			}
-			previousChar = aChar;
-		}
-		return sb.toString();
 	}
 
 	/**
