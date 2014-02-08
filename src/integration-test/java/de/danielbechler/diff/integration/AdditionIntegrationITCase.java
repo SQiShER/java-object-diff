@@ -17,10 +17,12 @@
 package de.danielbechler.diff.integration;
 
 import de.danielbechler.diff.*;
+import de.danielbechler.diff.example.phonebook.*;
 import de.danielbechler.diff.mock.*;
 import org.testng.annotations.*;
 
-import static de.danielbechler.diff.helper.NodeAssertions.*;
+import static de.danielbechler.diff.helper.NodeAssertions.assertThat;
+import static org.testng.AssertJUnit.assertEquals;
 
 /** @author Daniel Bechler */
 public class AdditionIntegrationITCase
@@ -34,5 +36,22 @@ public class AdditionIntegrationITCase
 		final DiffNode node = ObjectDifferBuilder.buildDefaultObjectDiffer().compare(working, base);
 
 		assertThat(node).child("value").hasState(DiffNode.State.ADDED);
+	}
+
+	@Test
+	public void testDetectsChangeForDuplicatesInList() throws Exception
+	{
+		final Contact joe = new Contact("Joe", "Smith");
+		final PhoneBook phoneBookServer = new PhoneBook("devs");
+		phoneBookServer.addContact(joe);
+		final PhoneBook phoneBookMobile = new PhoneBook("devs");
+		phoneBookMobile.addContact(joe);
+
+		assertEquals(DiffNode.State.UNTOUCHED, ObjectDifferBuilder.buildDefaultObjectDiffer().compare(phoneBookMobile, phoneBookServer).getState());
+		phoneBookMobile.addContact(joe);
+		assertEquals(2, phoneBookMobile.getContacts().size());
+		//Should be ADDED!
+		//assertEquals(DiffNode.State.ADDED, ObjectDifferFactory.getInstance().compare(phoneBookMobile, phoneBookServer).getState());
+		assertEquals(DiffNode.State.UNTOUCHED, ObjectDifferBuilder.buildDefaultObjectDiffer().compare(phoneBookMobile, phoneBookServer).getState());
 	}
 }
