@@ -36,7 +36,7 @@ import static java.util.Collections.unmodifiableSet;
  *
  * @author Daniel Bechler
  */
-public class DiffNode implements Accessor
+public class DiffNode
 {
 	public static final DiffNode ROOT = null;
 	private final Accessor accessor;
