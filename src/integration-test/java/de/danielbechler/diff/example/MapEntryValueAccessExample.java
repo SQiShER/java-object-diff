@@ -44,7 +44,7 @@ class MapEntryValueAccessExample
 		working.put(23, "Shephard");
 		working.put(42, "Kwon");
 
-		final DiffNode mapNode = ObjectDifferBuilder.buildDefaultObjectDiffer().compare(working, base);
+		final DiffNode mapNode = ObjectDifferBuilder.buildDefault().compare(working, base);
 		mapNode.visitChildren(new DiffNode.Visitor()
 		{
 			public void accept(final DiffNode node, final Visit visit)

@@ -16,13 +16,16 @@
 
 package de.danielbechler.diff.visitor;
 
-import de.danielbechler.diff.*;
-import de.danielbechler.diff.mock.*;
-import org.testng.annotations.*;
+import de.danielbechler.diff.DiffNode;
+import de.danielbechler.diff.ObjectDifferBuilder;
+import de.danielbechler.diff.mock.ObjectWithCircularReference;
+import org.testng.annotations.Test;
 
-import static org.fest.assertions.api.Assertions.*;
+import static org.fest.assertions.api.Assertions.assertThat;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 public class PrintingVisitorTest
 {
 	@Test
@@ -50,7 +53,7 @@ public class PrintingVisitorTest
 		a2.setReference(b2);
 		b2.setReference(d2);
 
-		final DiffNode rootNode = ObjectDifferBuilder.buildDefaultObjectDiffer().compare(a1, a2);
+		final DiffNode rootNode = ObjectDifferBuilder.buildDefault().compare(a1, a2);
 		final TestablePrintingVisitor visitor = new TestablePrintingVisitor(a1, a2);
 		rootNode.visit(visitor);
 		final String output = visitor.getOutput();

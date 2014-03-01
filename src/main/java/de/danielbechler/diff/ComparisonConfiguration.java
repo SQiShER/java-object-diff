@@ -1,6 +1,13 @@
 package de.danielbechler.diff;
 
-/** @author Daniel Bechler */
+/**
+ * Allows to configure the way objects are compared. Sometimes introspection is just not the way to go. Let it be for
+ * performance reasons or simply because the object doesn't expose any useful properties. In those cases it's possible
+ * to define alternative comparison strategies, like using the equals method, a comparator or even a custom strategy.
+ * These settings can be made for specific nodes or entire types.
+ *
+ * @author Daniel Bechler
+ */
 public interface ComparisonConfiguration
 {
 	Of ofNode(NodePath nodePath);

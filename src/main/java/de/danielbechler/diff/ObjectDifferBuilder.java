@@ -22,6 +22,10 @@ import de.danielbechler.diff.map.MapDiffer;
 import de.danielbechler.diff.primitive.PrimitiveDiffer;
 
 /**
+ * This is the entry point of every diffing operation. It acts as a factory to get hold of an actual {@link
+ * de.danielbechler.diff.ObjectDiffer} instance and exposes a configuration API to customize its behavior to
+ * suit your needs.
+ *
  * @author Daniel Bechler
  */
 public final class ObjectDifferBuilder
@@ -38,7 +42,7 @@ public final class ObjectDifferBuilder
 	{
 	}
 
-	public static ObjectDiffer buildDefaultObjectDiffer()
+	public static ObjectDiffer buildDefault()
 	{
 		return startBuilding().build();
 	}
@@ -59,6 +63,9 @@ public final class ObjectDifferBuilder
 		return new ObjectDiffer(differDispatcher);
 	}
 
+	/**
+	 * Configure the way the ObjectDiffer should behave.
+	 */
 	public final Configurable configure()
 	{
 		return configurable;
@@ -79,26 +86,42 @@ public final class ObjectDifferBuilder
 			return returnableNodeService;
 		}
 
+		/**
+		 * Allows to replace the default bean introspector with a custom implementation.
+		 */
 		public IntrospectionConfiguration introspection()
 		{
 			return introspectionService;
 		}
 
+		/**
+		 * Allows to define how the circular reference detector compares object instances.
+		 */
 		public CircularReferenceConfiguration circularReferenceHandling()
 		{
 			return circularReferenceService;
 		}
 
+		/**
+		 * Allows to in- or exclude nodes based on property name, object type, category or location in the object
+		 * graph.
+		 */
 		public InclusionConfiguration inclusion()
 		{
 			return inclusionService;
 		}
 
+		/**
+		 * Allows to configure the way objects are compared.
+		 */
 		public ComparisonConfiguration comparison()
 		{
 			return comparisonService;
 		}
 
+		/**
+		 * Allows to assign custom categories (or tags) to entire types or selected elements and properties.
+		 */
 		public CategoryConfiguration categories()
 		{
 			return categoryService;

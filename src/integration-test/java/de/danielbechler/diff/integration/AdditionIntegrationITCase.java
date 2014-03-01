@@ -16,15 +16,19 @@
 
 package de.danielbechler.diff.integration;
 
-import de.danielbechler.diff.*;
-import de.danielbechler.diff.example.phonebook.*;
-import de.danielbechler.diff.mock.*;
-import org.testng.annotations.*;
+import de.danielbechler.diff.DiffNode;
+import de.danielbechler.diff.ObjectDifferBuilder;
+import de.danielbechler.diff.example.phonebook.Contact;
+import de.danielbechler.diff.example.phonebook.PhoneBook;
+import de.danielbechler.diff.mock.ObjectWithString;
+import org.testng.annotations.Test;
 
 import static de.danielbechler.diff.helper.NodeAssertions.assertThat;
 import static org.testng.AssertJUnit.assertEquals;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 public class AdditionIntegrationITCase
 {
 	@Test
@@ -33,7 +37,7 @@ public class AdditionIntegrationITCase
 		final ObjectWithString base = new ObjectWithString();
 		final ObjectWithString working = new ObjectWithString("foo");
 
-		final DiffNode node = ObjectDifferBuilder.buildDefaultObjectDiffer().compare(working, base);
+		final DiffNode node = ObjectDifferBuilder.buildDefault().compare(working, base);
 
 		assertThat(node).child("value").hasState(DiffNode.State.ADDED);
 	}
@@ -47,11 +51,11 @@ public class AdditionIntegrationITCase
 		final PhoneBook phoneBookMobile = new PhoneBook("devs");
 		phoneBookMobile.addContact(joe);
 
-		assertEquals(DiffNode.State.UNTOUCHED, ObjectDifferBuilder.buildDefaultObjectDiffer().compare(phoneBookMobile, phoneBookServer).getState());
+		assertEquals(DiffNode.State.UNTOUCHED, ObjectDifferBuilder.buildDefault().compare(phoneBookMobile, phoneBookServer).getState());
 		phoneBookMobile.addContact(joe);
 		assertEquals(2, phoneBookMobile.getContacts().size());
 		//Should be ADDED!
 		//assertEquals(DiffNode.State.ADDED, ObjectDifferFactory.getInstance().compare(phoneBookMobile, phoneBookServer).getState());
-		assertEquals(DiffNode.State.UNTOUCHED, ObjectDifferBuilder.buildDefaultObjectDiffer().compare(phoneBookMobile, phoneBookServer).getState());
+		assertEquals(DiffNode.State.UNTOUCHED, ObjectDifferBuilder.buildDefault().compare(phoneBookMobile, phoneBookServer).getState());
 	}
 }

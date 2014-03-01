@@ -50,7 +50,7 @@ public class PhoneBookITCase
 		modifiedPhoneBook.getContact("Jesse", "Pinkman").setMiddleName("Bruce");
 		modifiedPhoneBook.getContact("Walter", "White").setMiddleName("Hartwell");
 
-		final ObjectDiffer objectDiffer = ObjectDifferBuilder.buildDefaultObjectDiffer();
+		final ObjectDiffer objectDiffer = ObjectDifferBuilder.buildDefault();
 		final DiffNode node = objectDiffer.compare(modifiedPhoneBook, phoneBook);
 
 		assertThat(node.hasChanges(), is(true));

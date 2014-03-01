@@ -16,16 +16,23 @@
 
 package de.danielbechler.diff.integration;
 
-import de.danielbechler.diff.*;
-import de.danielbechler.diff.mock.*;
-import de.danielbechler.diff.visitor.*;
-import org.testng.annotations.*;
+import de.danielbechler.diff.DiffNode;
+import de.danielbechler.diff.NodePath;
+import de.danielbechler.diff.ObjectDiffer;
+import de.danielbechler.diff.ObjectDifferBuilder;
+import de.danielbechler.diff.mock.ObjectWithString;
+import de.danielbechler.diff.visitor.NodeHierarchyVisitor;
+import org.testng.annotations.Test;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
 
-import static de.danielbechler.diff.helper.NodeAssertions.*;
+import static de.danielbechler.diff.helper.NodeAssertions.assertThat;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 public class DeepDiffingCollectionItemChangeITCase
 {
 	@Test
@@ -42,19 +49,19 @@ public class DeepDiffingCollectionItemChangeITCase
 		node.visit(new NodeHierarchyVisitor());
 
 		assertThat(node).child(NodePath.createBuilder()
-									   .withRoot()
-									   .withMapKey("foo")).hasState(DiffNode.State.ADDED);
+				.withRoot()
+				.withMapKey("foo")).hasState(DiffNode.State.ADDED);
 
 		assertThat(node).child(NodePath.createBuilder()
-									   .withRoot()
-									   .withMapKey("foo")
-									   .withPropertyName("value")).hasState(DiffNode.State.ADDED);
+				.withRoot()
+				.withMapKey("foo")
+				.withPropertyName("value")).hasState(DiffNode.State.ADDED);
 	}
 
 	@Test
 	public void test_collection_with_null_item()
 	{
-		ObjectDifferBuilder.buildDefaultObjectDiffer()
-						   .compare(Arrays.asList((String) null), Arrays.asList("foobar"));
+		ObjectDifferBuilder.buildDefault()
+				.compare(Arrays.asList((String) null), Arrays.asList("foobar"));
 	}
 }

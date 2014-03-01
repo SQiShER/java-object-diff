@@ -16,9 +16,12 @@
 
 package de.danielbechler.diff.example;
 
-import de.danielbechler.diff.*;
+import de.danielbechler.diff.DiffNode;
+import de.danielbechler.diff.ObjectDifferBuilder;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 public class RuntimeTypeResolutionExample
 {
 	private RuntimeTypeResolutionExample()
@@ -82,7 +85,7 @@ public class RuntimeTypeResolutionExample
 	{
 		final Point base = new Point(new Coordinate3D(1, 2, 3));
 		final Point working = new Point(new Coordinate3D(1, 2, 30));
-		final DiffNode node = ObjectDifferBuilder.buildDefaultObjectDiffer().compare(working, base);
+		final DiffNode node = ObjectDifferBuilder.buildDefault().compare(working, base);
 
 		assert node.getChild("coordinate").getChild("z").isChanged() :
 				"The changed 'z' coordinate should have been detected because the property type should be resolved to Coordinate3D at runtime.";

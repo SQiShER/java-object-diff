@@ -28,7 +28,7 @@ class ListDiffSpec extends Specification {
     def objectDiffer;
 
     def setup() {
-        objectDiffer = ObjectDifferBuilder.buildDefaultObjectDiffer();
+        objectDiffer = ObjectDifferBuilder.buildDefault();
     }
 
     @Ignore

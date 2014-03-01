@@ -16,15 +16,20 @@
 
 package de.danielbechler.diff.issues.issue15;
 
-import de.danielbechler.diff.*;
-import de.danielbechler.diff.mock.*;
-import de.danielbechler.diff.visitor.*;
-import org.fest.assertions.api.*;
-import org.testng.annotations.*;
+import de.danielbechler.diff.DiffNode;
+import de.danielbechler.diff.NodePath;
+import de.danielbechler.diff.ObjectDiffer;
+import de.danielbechler.diff.ObjectDifferBuilder;
+import de.danielbechler.diff.mock.ObjectWithCircularReference;
+import de.danielbechler.diff.visitor.PrintingVisitor;
+import org.fest.assertions.api.Assertions;
+import org.testng.annotations.Test;
 
-import static de.danielbechler.diff.helper.NodeAssertions.*;
+import static de.danielbechler.diff.helper.NodeAssertions.assertThat;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 public class CircularReferenceIntegrationTest
 {
 	@Test
@@ -40,15 +45,15 @@ public class CircularReferenceIntegrationTest
 		baseA.setReference(baseB);
 		baseB.setReference(baseA);
 
-		final DiffNode root = ObjectDifferBuilder.buildDefaultObjectDiffer().compare(workingA, baseA);
+		final DiffNode root = ObjectDifferBuilder.buildDefault().compare(workingA, baseA);
 		assertThat(root).child("reference", "reference").isCircular();
 		assertThat(root).child("reference", "reference")
 				.hasCircularStartPathEqualTo(NodePath.buildRootPath());
 
 		Assertions.assertThat(root.canonicalGet(workingA))
-				  .isSameAs(root.getChild("reference").getChild("reference").canonicalGet(workingA));
+				.isSameAs(root.getChild("reference").getChild("reference").canonicalGet(workingA));
 		Assertions.assertThat(root.getChild("reference").getChild("reference").getCircleStartNode())
-				  .isSameAs(root);
+				.isSameAs(root);
 	}
 
 	@Test
@@ -68,7 +73,7 @@ public class CircularReferenceIntegrationTest
 		baseB.setReference(baseC);
 		baseC.setReference(baseA);
 
-		final ObjectDiffer objectDiffer = ObjectDifferBuilder.buildDefaultObjectDiffer();
+		final ObjectDiffer objectDiffer = ObjectDifferBuilder.buildDefault();
 //		objectDiffer.getConfiguration().withoutCircularNodes();
 		final DiffNode root = objectDiffer.compare(workingA, baseA);
 		root.visit(new PrintingVisitor(workingA, baseA));

@@ -16,14 +16,18 @@
 
 package de.danielbechler.diff.example;
 
-import de.danielbechler.diff.*;
-import de.danielbechler.diff.visitor.*;
+import de.danielbechler.diff.DiffNode;
+import de.danielbechler.diff.ObjectDifferBuilder;
+import de.danielbechler.diff.visitor.NodeHierarchyVisitor;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 
-import static java.util.Arrays.*;
+import static java.util.Arrays.asList;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 class CanonicalAccessorExample
 {
 	private CanonicalAccessorExample()
@@ -41,8 +45,8 @@ class CanonicalAccessorExample
 		final Contact baseContact = new Contact("Walter White");
 		baseAddressBook.setContacts(asList(baseContact));
 
-		final DiffNode rootNode = ObjectDifferBuilder.buildDefaultObjectDiffer()
-													 .compare(workingAddressBook, baseAddressBook);
+		final DiffNode rootNode = ObjectDifferBuilder.buildDefault()
+				.compare(workingAddressBook, baseAddressBook);
 		final DiffNode contactsNode = getFirstChildOf(rootNode);
 		final DiffNode contactNode = getFirstChildOf(contactsNode);
 		final DiffNode nicknameNode = getFirstChildOf(contactNode);

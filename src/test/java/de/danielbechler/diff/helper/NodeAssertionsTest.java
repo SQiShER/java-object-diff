@@ -16,10 +16,13 @@
 
 package de.danielbechler.diff.helper;
 
-import de.danielbechler.diff.*;
-import de.danielbechler.diff.bean.*;
-import de.danielbechler.diff.mock.*;
-import org.testng.annotations.*;
+import de.danielbechler.diff.Accessor;
+import de.danielbechler.diff.DiffNode;
+import de.danielbechler.diff.NodePath;
+import de.danielbechler.diff.ObjectDifferBuilder;
+import de.danielbechler.diff.bean.BeanPropertyElement;
+import de.danielbechler.diff.mock.ObjectWithString;
+import org.testng.annotations.Test;
 
 import static de.danielbechler.diff.helper.NodeAssertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -94,7 +97,7 @@ public class NodeAssertionsTest
 	{
 		final ObjectWithString working = new ObjectWithString("foo");
 		final ObjectWithString base = new ObjectWithString("bar");
-		final DiffNode node = ObjectDifferBuilder.buildDefaultObjectDiffer().compare(working, base);
+		final DiffNode node = ObjectDifferBuilder.buildDefault().compare(working, base);
 		assertThat(node).child(NodePath.buildWith("value")).doesExist();
 	}
 
@@ -109,7 +112,7 @@ public class NodeAssertionsTest
 	{
 		final ObjectWithString working = new ObjectWithString("foo");
 		final ObjectWithString base = new ObjectWithString("bar");
-		final DiffNode node = ObjectDifferBuilder.buildDefaultObjectDiffer().compare(working, base);
+		final DiffNode node = ObjectDifferBuilder.buildDefault().compare(working, base);
 		assertThat(node).child(NodePath.createBuilder().withRoot().withPropertyName("value")).doesExist();
 	}
 

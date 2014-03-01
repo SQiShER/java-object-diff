@@ -22,31 +22,25 @@ import spock.lang.Specification
 /**
  * @author Daniel Bechler
  */
-class Issue77ITCase extends Specification
-{
-  def "NullPointerException on null unsafe Comparable implementations"()
-  {
-    expect:
-    ObjectDifferBuilder.buildDefaultObjectDiffer().compare(new SomeObject(BigDecimal.ONE), new SomeObject(null));
-  }
-
-  class SomeObject
-  {
-    BigDecimal value;
-
-    SomeObject(BigDecimal value)
-    {
-      this.value = value;
+class Issue77ITCase extends Specification {
+    def "NullPointerException on null unsafe Comparable implementations"() {
+        expect:
+        ObjectDifferBuilder.buildDefault().compare(new SomeObject(BigDecimal.ONE), new SomeObject(null));
     }
 
-    BigDecimal getValue()
-    {
-      return value
-    }
+    class SomeObject {
+        BigDecimal value;
 
-    void setValue(final BigDecimal value)
-    {
-      this.value = value
+        SomeObject(BigDecimal value) {
+            this.value = value;
+        }
+
+        BigDecimal getValue() {
+            return value
+        }
+
+        void setValue(final BigDecimal value) {
+            this.value = value
+        }
     }
-  }
 }

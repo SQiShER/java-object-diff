@@ -1,6 +1,12 @@
 package de.danielbechler.diff;
 
-/** @author Daniel Bechler */
+/**
+ * Allows to assign custom categories (or tags) to entire types or selected elements and properties. These categories
+ * come in very handy, when combined with the `InclusionConfiguration`. They make it very easy to limit the comparison
+ * to a specific subset of the object graph.
+ *
+ * @author Daniel Bechler
+ */
 public interface CategoryConfiguration
 {
 	Of ofNode(NodePath nodePath);

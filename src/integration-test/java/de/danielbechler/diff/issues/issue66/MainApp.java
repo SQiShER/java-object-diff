@@ -29,7 +29,7 @@ public class MainApp
 
 	public static void main(final String[] args)
 	{
-		final ObjectDiffer objectDiffer = ObjectDifferBuilder.buildDefaultObjectDiffer();
+		final ObjectDiffer objectDiffer = ObjectDifferBuilder.buildDefault();
 
 		final TopHat hat1 = new TopHat(1, 10);
 		final TopHat hat2 = new TopHat(2, 20);

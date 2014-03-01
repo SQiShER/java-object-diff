@@ -61,7 +61,7 @@ public class ObjectDifferITCase
 	@BeforeMethod
 	public void setUp() throws Exception
 	{
-		objectDiffer = ObjectDifferBuilder.buildDefaultObjectDiffer();
+		objectDiffer = ObjectDifferBuilder.buildDefault();
 	}
 
 	public void testCompareBeanWithIgnoredMapProperty()
@@ -96,7 +96,7 @@ public class ObjectDifferITCase
 		final Collection<String> working = new LinkedList<String>(asList("foo"));
 		final Collection<String> base = new LinkedList<String>();
 
-		final DiffNode node = ObjectDifferBuilder.buildDefaultObjectDiffer().compare(working, base);
+		final DiffNode node = ObjectDifferBuilder.buildDefault().compare(working, base);
 
 		NodeAssertions.assertThat(node).self().hasState(DiffNode.State.CHANGED);
 		NodeAssertions.assertThat(node).child(new CollectionItemElement("foo")).hasState(DiffNode.State.ADDED);
@@ -107,7 +107,7 @@ public class ObjectDifferITCase
 		final Collection<String> working = new LinkedList<String>();
 		final Collection<String> base = new LinkedList<String>(asList("foo"));
 
-		final DiffNode node = ObjectDifferBuilder.buildDefaultObjectDiffer().compare(working, base);
+		final DiffNode node = ObjectDifferBuilder.buildDefault().compare(working, base);
 
 		NodeAssertions.assertThat(node).self().hasState(DiffNode.State.CHANGED);
 		NodeAssertions.assertThat(node).child(new CollectionItemElement("foo")).hasState(DiffNode.State.REMOVED);
@@ -119,7 +119,7 @@ public class ObjectDifferITCase
 		final ObjectWithAccessTrackingIgnoredProperty working = new ObjectWithAccessTrackingIgnoredProperty();
 		final ObjectWithAccessTrackingIgnoredProperty base = new ObjectWithAccessTrackingIgnoredProperty();
 
-		ObjectDifferBuilder.buildDefaultObjectDiffer().compare(working, base);
+		ObjectDifferBuilder.buildDefault().compare(working, base);
 
 		Assertions.assertThat(working.accessed).isFalse();
 		Assertions.assertThat(base.accessed).isFalse();
@@ -147,7 +147,7 @@ public class ObjectDifferITCase
 		final Collection<String> base = new LinkedHashSet<String>(asList("one", "two"));
 		final Collection<String> working = new TreeSet<String>(asList("one", "three"));
 
-		final DiffNode node = ObjectDifferBuilder.buildDefaultObjectDiffer().compare(base, working);
+		final DiffNode node = ObjectDifferBuilder.buildDefault().compare(base, working);
 
 		NodeAssertions.assertThat(node).self().hasState(DiffNode.State.CHANGED);
 	}
@@ -158,7 +158,7 @@ public class ObjectDifferITCase
 		final List<?> working = asList(new ObjectWithIdentityAndValue("foo", "1"));
 		final List<?> base = asList(new ObjectWithIdentityAndValue("foo", "2"));
 
-		final DiffNode node = ObjectDifferBuilder.buildDefaultObjectDiffer().compare(working, base);
+		final DiffNode node = ObjectDifferBuilder.buildDefault().compare(working, base);
 
 		assertThat(node).self().hasChanges();
 		assertThat(node).child(new CollectionItemElement(new ObjectWithIdentityAndValue("foo")))
@@ -172,7 +172,7 @@ public class ObjectDifferITCase
 		final Map<String, String> working = new TreeMap<String, String>();
 		working.put("foo", "bar");
 
-		final DiffNode node = ObjectDifferBuilder.buildDefaultObjectDiffer().compare(working, base);
+		final DiffNode node = ObjectDifferBuilder.buildDefault().compare(working, base);
 
 		NodeAssertions.assertThat(node).self().hasState(DiffNode.State.ADDED);
 		NodeAssertions.assertThat(node).child(new MapKeyElement("foo")).hasState(DiffNode.State.ADDED);
@@ -185,7 +185,7 @@ public class ObjectDifferITCase
 		final Map<String, String> working = new TreeMap<String, String>();
 		working.put("foo", "bar");
 
-		final DiffNode node = ObjectDifferBuilder.buildDefaultObjectDiffer().compare(working, base);
+		final DiffNode node = ObjectDifferBuilder.buildDefault().compare(working, base);
 
 		NodeAssertions.assertThat(node).self().hasState(DiffNode.State.CHANGED);
 		NodeAssertions.assertThat(node).child(new MapKeyElement("foo")).hasState(DiffNode.State.ADDED);
@@ -199,7 +199,7 @@ public class ObjectDifferITCase
 		final Map<String, String> working = new TreeMap<String, String>();
 		working.put("foo", "bar");
 
-		final DiffNode node = ObjectDifferBuilder.buildDefaultObjectDiffer().compare(working, base);
+		final DiffNode node = ObjectDifferBuilder.buildDefault().compare(working, base);
 
 		NodeAssertions.assertThat(node).self().hasState(DiffNode.State.UNTOUCHED);
 		NodeAssertions.assertThat(node).self().hasNoChildren();
@@ -212,7 +212,7 @@ public class ObjectDifferITCase
 		base.put("foo", "bar");
 		final Map<String, String> working = null;
 
-		final DiffNode node = ObjectDifferBuilder.buildDefaultObjectDiffer().compare(working, base);
+		final DiffNode node = ObjectDifferBuilder.buildDefault().compare(working, base);
 
 		NodeAssertions.assertThat(node).self().hasState(DiffNode.State.REMOVED);
 		NodeAssertions.assertThat(node).child(new MapKeyElement("foo")).hasState(DiffNode.State.REMOVED);
@@ -231,7 +231,7 @@ public class ObjectDifferITCase
 		final Map<String, String> base = new HashMap<String, String>(1);
 		base.put("foo", null);
 
-		final DiffNode node = ObjectDifferBuilder.buildDefaultObjectDiffer().compare(working, base);
+		final DiffNode node = ObjectDifferBuilder.buildDefault().compare(working, base);
 
 		NodeAssertions.assertThat(node).self().hasState(DiffNode.State.UNTOUCHED);
 	}
@@ -244,7 +244,7 @@ public class ObjectDifferITCase
 		final Map<String, String> base = new LinkedHashMap<String, String>(modified);
 		modified.put("ping", "pong");
 
-		final DiffNode node = ObjectDifferBuilder.buildDefaultObjectDiffer().compare(modified, base);
+		final DiffNode node = ObjectDifferBuilder.buildDefault().compare(modified, base);
 
 		NodeAssertions.assertThat(node).root().hasChildren(1);
 		NodeAssertions.assertThat(node)
@@ -264,7 +264,7 @@ public class ObjectDifferITCase
 		final Map<String, String> base = new LinkedHashMap<String, String>(1);
 		base.put("foo", "woot");
 
-		final DiffNode node = ObjectDifferBuilder.buildDefaultObjectDiffer().compare(working, base);
+		final DiffNode node = ObjectDifferBuilder.buildDefault().compare(working, base);
 		NodeAssertions.assertThat(node).self().hasChildren(1);
 		NodeAssertions.assertThat(node).child(new MapKeyElement("foo")).hasState(DiffNode.State.CHANGED);
 	}
@@ -275,7 +275,7 @@ public class ObjectDifferITCase
 		final Map<String, String> base = new LinkedHashMap<String, String>(Collections.singletonMap("test", "foo"));
 		final Map<String, String> working = new TreeMap<String, String>(Collections.singletonMap("test", "bar"));
 
-		final DiffNode node = ObjectDifferBuilder.buildDefaultObjectDiffer().compare(working, base);
+		final DiffNode node = ObjectDifferBuilder.buildDefault().compare(working, base);
 
 		NodeAssertions.assertThat(node).self().hasState(DiffNode.State.CHANGED);
 	}
@@ -283,7 +283,7 @@ public class ObjectDifferITCase
 	@Test(groups = INTEGRATION)
 	public void testCompareWithDifferentStrings() throws Exception
 	{
-		final DiffNode node = ObjectDifferBuilder.buildDefaultObjectDiffer().compare("foo", "bar");
+		final DiffNode node = ObjectDifferBuilder.buildDefault().compare("foo", "bar");
 
 		assertThat(node).self().hasState(DiffNode.State.CHANGED);
 	}
@@ -291,7 +291,7 @@ public class ObjectDifferITCase
 	@Test(expectedExceptions = IllegalArgumentException.class, groups = INTEGRATION)
 	public void testCompareWithDifferentTypes()
 	{
-		ObjectDifferBuilder.buildDefaultObjectDiffer().compare("foo", 1337);
+		ObjectDifferBuilder.buildDefault().compare("foo", 1337);
 	}
 
 	@Test(groups = INTEGRATION)
@@ -315,7 +315,7 @@ public class ObjectDifferITCase
 //		when(configuration.isReturnable(any(Node.class))).thenReturn(true);
 //		when(node.hasChanges()).thenReturn(true);
 
-		final DiffNode node = ObjectDifferBuilder.buildDefaultObjectDiffer().compare(
+		final DiffNode node = ObjectDifferBuilder.buildDefault().compare(
 				new ObjectWithIdentityAndValue("a", "1"),
 				new ObjectWithIdentityAndValue("a", "2"));
 
@@ -327,7 +327,7 @@ public class ObjectDifferITCase
 	{
 		final List<ObjectWithHashCodeAndEquals> base = asList(new ObjectWithHashCodeAndEquals("foo"), new ObjectWithHashCodeAndEquals("foo"));
 		final List<ObjectWithHashCodeAndEquals> working = asList(new ObjectWithHashCodeAndEquals("foo"));
-		final DiffNode node = ObjectDifferBuilder.buildDefaultObjectDiffer().compare(working, base);
+		final DiffNode node = ObjectDifferBuilder.buildDefault().compare(working, base);
 		node.visit(new NodeHierarchyVisitor());
 		assertThat(node)
 				.child(NodePath.createBuilder()
@@ -342,7 +342,7 @@ public class ObjectDifferITCase
 	{
 		final List<ObjectWithHashCodeAndEquals> base = asList(new ObjectWithHashCodeAndEquals("foo"));
 		final List<ObjectWithHashCodeAndEquals> working = asList(new ObjectWithHashCodeAndEquals("foo"), new ObjectWithHashCodeAndEquals("foo"));
-		final DiffNode node = ObjectDifferBuilder.buildDefaultObjectDiffer().compare(working, base);
+		final DiffNode node = ObjectDifferBuilder.buildDefault().compare(working, base);
 		node.visit(new NodeHierarchyVisitor());
 		assertThat(node).child(NodePath.createBuilder()
 				.withRoot()

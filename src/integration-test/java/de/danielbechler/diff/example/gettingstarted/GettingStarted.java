@@ -16,11 +16,17 @@
 
 package de.danielbechler.diff.example.gettingstarted;
 
-import de.danielbechler.diff.*;
-import de.danielbechler.diff.example.phonebook.*;
-import de.danielbechler.diff.visitor.*;
+import de.danielbechler.diff.DiffNode;
+import de.danielbechler.diff.ObjectDiffer;
+import de.danielbechler.diff.ObjectDifferBuilder;
+import de.danielbechler.diff.example.phonebook.Contact;
+import de.danielbechler.diff.example.phonebook.PhoneBook;
+import de.danielbechler.diff.example.phonebook.PhoneNumber;
+import de.danielbechler.diff.visitor.PrintingVisitor;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 public class GettingStarted
 {
 	private GettingStarted()
@@ -35,7 +41,7 @@ public class GettingStarted
 
 	private static void helloWorldExample()
 	{
-		final ObjectDiffer objectDiffer = ObjectDifferBuilder.buildDefaultObjectDiffer();
+		final ObjectDiffer objectDiffer = ObjectDifferBuilder.buildDefault();
 
 		final String working = "Hello";
 		final String base = "World";
@@ -61,7 +67,7 @@ public class GettingStarted
 		modifiedPhoneBook.getContact("Jesse", "Pinkman").setMiddleName("Bruce");
 		modifiedPhoneBook.getContact("Walter", "White").setMiddleName("Hartwell");
 
-		final ObjectDiffer objectDiffer = ObjectDifferBuilder.buildDefaultObjectDiffer();
+		final ObjectDiffer objectDiffer = ObjectDifferBuilder.buildDefault();
 		final DiffNode root = objectDiffer.compare(modifiedPhoneBook, phoneBook);
 		final DiffNode.Visitor visitor = new PrintingVisitor(modifiedPhoneBook, phoneBook);
 		root.visit(visitor);

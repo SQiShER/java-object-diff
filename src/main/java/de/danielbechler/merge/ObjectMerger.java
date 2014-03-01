@@ -34,7 +34,7 @@ public final class ObjectMerger
 
 	public ObjectMerger()
 	{
-		this.objectDiffer = ObjectDifferBuilder.buildDefaultObjectDiffer();
+		this.objectDiffer = ObjectDifferBuilder.buildDefault();
 	}
 
 	public ObjectMerger(final ObjectDiffer objectDiffer)
