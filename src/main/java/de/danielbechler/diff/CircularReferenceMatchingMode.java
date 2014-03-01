@@ -27,9 +27,13 @@ package de.danielbechler.diff;
  */
 public enum CircularReferenceMatchingMode
 {
-	/** Compares objects using the <code>==</code> operator. */
+	/**
+	 * Compares objects using the <code>==</code> operator.
+	 */
 	EQUALITY_OPERATOR,
 
-	/** Compares objects using {@linkplain Object#equals(Object)}. */
+	/**
+	 * Compares objects using {@linkplain Object#equals(Object)}.
+	 */
 	EQUALS_METHOD
 }

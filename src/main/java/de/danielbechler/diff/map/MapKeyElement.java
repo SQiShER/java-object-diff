@@ -14,33 +14,37 @@
  * limitations under the License.
  */
 
-package de.danielbechler.diff.collection;
+package de.danielbechler.diff.map;
 
-import de.danielbechler.diff.*;
-import de.danielbechler.util.*;
+import de.danielbechler.diff.Element;
+import de.danielbechler.util.Strings;
 
-/** @author Daniel Bechler */
-public final class CollectionElement extends Element
+/**
+ * @author Daniel Bechler
+ */
+public final class MapKeyElement extends Element
 {
-	private final Object item;
+	private final Object key;
 
-	public CollectionElement(final Object item)
+	public MapKeyElement(final Object key)
 	{
-		this.item = item;
+		this.key = key;
 	}
 
-	/** @deprecated Low-level API. Don't use in production code. May be removed in future versions. */
+	/**
+	 * @deprecated Low-level API. Don't use in production code. May be removed in future versions.
+	 */
 	@SuppressWarnings({"UnusedDeclaration"})
 	@Deprecated
-	public Object getItem()
+	public Object getKey()
 	{
-		return item;
+		return key;
 	}
 
 	@Override
 	public String toHumanReadableString()
 	{
-		return "[" + Strings.toSingleLineString(item) + "]";
+		return "{" + Strings.toSingleLineString(key) + "}";
 	}
 
 	@Override
@@ -55,9 +59,9 @@ public final class CollectionElement extends Element
 			return false;
 		}
 
-		final CollectionElement that = (CollectionElement) o;
+		final MapKeyElement that = (MapKeyElement) o;
 
-		if (item != null ? !item.equals(that.item) : that.item != null)
+		if (key != null ? !key.equals(that.key) : that.key != null)
 		{
 			return false;
 		}
@@ -68,6 +72,6 @@ public final class CollectionElement extends Element
 	@Override
 	public int hashCode()
 	{
-		return item != null ? item.hashCode() : 0;
+		return key != null ? key.hashCode() : 0;
 	}
 }

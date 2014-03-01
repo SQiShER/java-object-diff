@@ -16,14 +16,18 @@
 
 package de.danielbechler.diff.visitor;
 
-import de.danielbechler.diff.*;
+import de.danielbechler.diff.DiffNode;
+import de.danielbechler.diff.Visit;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedList;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 public abstract class AbstractFilteringVisitor implements DiffNode.Visitor
 {
-	private final Collection<DiffNode> matches = new ArrayList<DiffNode>(30);
+	private final Collection<DiffNode> matches = new LinkedList<DiffNode>();
 
 	protected abstract boolean accept(final DiffNode node);
 

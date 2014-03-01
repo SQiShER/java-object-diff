@@ -16,11 +16,15 @@
 
 package de.danielbechler.diff.collection;
 
-import de.danielbechler.diff.*;
+import de.danielbechler.diff.Accessor;
+import de.danielbechler.diff.Element;
+import de.danielbechler.diff.TypeAwareAccessor;
 
-import java.util.*;
+import java.util.Collection;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 public class CollectionItemAccessor implements TypeAwareAccessor, Accessor
 {
 	private final Object referenceItem;
@@ -32,7 +36,7 @@ public class CollectionItemAccessor implements TypeAwareAccessor, Accessor
 
 	public Element getPathElement()
 	{
-		return new CollectionElement(referenceItem);
+		return new CollectionItemElement(referenceItem);
 	}
 
 	public void set(final Object target, final Object value)

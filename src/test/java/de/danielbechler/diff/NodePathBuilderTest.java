@@ -16,10 +16,10 @@
 
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.bean.*;
-import de.danielbechler.diff.collection.*;
-import de.danielbechler.diff.map.*;
-import org.testng.annotations.*;
+import de.danielbechler.diff.bean.BeanPropertyElement;
+import de.danielbechler.diff.collection.CollectionItemElement;
+import de.danielbechler.diff.map.MapKeyElement;
+import org.testng.annotations.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -40,7 +40,7 @@ public class NodePathBuilderTest
 	@Test
 	public void testWithElement()
 	{
-		final CollectionElement element = new CollectionElement("foo");
+		final CollectionItemElement element = new CollectionItemElement("foo");
 		final NodePath nodePath = NodePath.createBuilder()
 				.withRoot()
 				.withElement(element)
@@ -71,7 +71,7 @@ public class NodePathBuilderTest
 				.withRoot()
 				.withMapKey("foo")
 				.build();
-		assertThat(nodePath.getElements()).containsSequence(RootElement.getInstance(), new MapElement("foo"));
+		assertThat(nodePath.getElements()).containsSequence(RootElement.getInstance(), new MapKeyElement("foo"));
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
@@ -87,7 +87,7 @@ public class NodePathBuilderTest
 				.withRoot()
 				.withCollectionItem("foo")
 				.build();
-		assertThat(nodePath.getElements()).containsSequence(RootElement.getInstance(), new CollectionElement("foo"));
+		assertThat(nodePath.getElements()).containsSequence(RootElement.getInstance(), new CollectionItemElement("foo"));
 	}
 
 	@Test

@@ -14,33 +14,37 @@
  * limitations under the License.
  */
 
-package de.danielbechler.diff.map;
+package de.danielbechler.diff.collection;
 
-import de.danielbechler.diff.*;
-import de.danielbechler.util.*;
+import de.danielbechler.diff.Element;
+import de.danielbechler.util.Strings;
 
-/** @author Daniel Bechler */
-public final class MapElement extends Element
+/**
+ * @author Daniel Bechler
+ */
+public final class CollectionItemElement extends Element
 {
-	private final Object key;
+	private final Object item;
 
-	public MapElement(final Object key)
+	public CollectionItemElement(final Object item)
 	{
-		this.key = key;
+		this.item = item;
 	}
 
-	/** @deprecated Low-level API. Don't use in production code. May be removed in future versions. */
+	/**
+	 * @deprecated Low-level API. Don't use in production code. May be removed in future versions.
+	 */
 	@SuppressWarnings({"UnusedDeclaration"})
 	@Deprecated
-	public Object getKey()
+	public Object getItem()
 	{
-		return key;
+		return item;
 	}
 
 	@Override
 	public String toHumanReadableString()
 	{
-		return "{" + Strings.toSingleLineString(key) + "}";
+		return "[" + Strings.toSingleLineString(item) + "]";
 	}
 
 	@Override
@@ -55,9 +59,9 @@ public final class MapElement extends Element
 			return false;
 		}
 
-		final MapElement that = (MapElement) o;
+		final CollectionItemElement that = (CollectionItemElement) o;
 
-		if (key != null ? !key.equals(that.key) : that.key != null)
+		if (item != null ? !item.equals(that.item) : that.item != null)
 		{
 			return false;
 		}
@@ -68,6 +72,6 @@ public final class MapElement extends Element
 	@Override
 	public int hashCode()
 	{
-		return key != null ? key.hashCode() : 0;
+		return item != null ? item.hashCode() : 0;
 	}
 }

@@ -1,21 +1,27 @@
 package de.danielbechler.diff;
 
-import de.danielbechler.util.*;
+import de.danielbechler.util.Assert;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
-/** @author Daniel Bechler */
-public class NodePathValueHolder<T>
+/**
+ * @author Daniel Bechler
+ */
+class NodePathValueHolder<T>
 {
+	private final Map<Element, NodePathValueHolder<T>> elementValueHolders = new HashMap<Element, NodePathValueHolder<T>>();
+	private T value;
+
 	public static <T> NodePathValueHolder<T> of(final Class<T> type)
 	{
 		Assert.notNull(type, "type");
 		return new NodePathValueHolder<T>();
 	}
-
-	private final Map<Element, NodePathValueHolder<T>> elementValueHolders = new HashMap<Element, NodePathValueHolder<T>>();
-
-	private T value;
 
 	public NodePathValueHolder<T> put(final NodePath nodePath, final T value)
 	{

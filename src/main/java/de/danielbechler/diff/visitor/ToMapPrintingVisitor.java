@@ -16,9 +16,11 @@
 
 package de.danielbechler.diff.visitor;
 
-import de.danielbechler.diff.*;
+import de.danielbechler.diff.DiffNode;
+import de.danielbechler.diff.NodePath;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * This visitor generates the same output as the {@link PrintingVisitor}, but instead of printing it to

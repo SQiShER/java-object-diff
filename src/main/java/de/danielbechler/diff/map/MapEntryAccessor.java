@@ -81,7 +81,7 @@ public final class MapEntryAccessor implements Accessor
 
 	public Element getPathElement()
 	{
-		return new MapElement(referenceKey);
+		return new MapKeyElement(referenceKey);
 	}
 
 	public Object get(final Object target)

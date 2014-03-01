@@ -16,16 +16,21 @@
 
 package de.danielbechler.diff.collection;
 
-import de.danielbechler.diff.*;
-import de.danielbechler.diff.mock.*;
-import org.fest.assertions.core.*;
-import org.testng.annotations.*;
+import de.danielbechler.diff.Element;
+import de.danielbechler.diff.mock.ObjectWithIdentityAndValue;
+import org.fest.assertions.core.Condition;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 
-import static org.fest.assertions.api.Assertions.*;
+import static org.fest.assertions.api.Assertions.assertThat;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 public class CollectionItemAccessorShould
 {
 	private CollectionItemAccessor accessor;
@@ -103,7 +108,7 @@ public class CollectionItemAccessorShould
 	@Test
 	public void return_proper_path_element()
 	{
-		final CollectionElement expectedPathElement = new CollectionElement(referenceItem);
+		final CollectionItemElement expectedPathElement = new CollectionItemElement(referenceItem);
 
 		final Element actualPathElement = accessor.getPathElement();
 

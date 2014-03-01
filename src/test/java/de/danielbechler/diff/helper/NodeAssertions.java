@@ -16,13 +16,17 @@
 
 package de.danielbechler.diff.helper;
 
-import de.danielbechler.diff.*;
-import de.danielbechler.diff.collection.*;
-import de.danielbechler.diff.visitor.*;
-import org.fest.assertions.api.*;
-import org.fest.assertions.core.*;
+import de.danielbechler.diff.DiffNode;
+import de.danielbechler.diff.Element;
+import de.danielbechler.diff.NodePath;
+import de.danielbechler.diff.collection.CollectionItemElement;
+import de.danielbechler.diff.visitor.PropertyVisitor;
+import org.fest.assertions.api.Assertions;
+import org.fest.assertions.core.Condition;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 public final class NodeAssertions
 {
 	public static Syntax.SelectNode assertThat(final DiffNode node)
@@ -83,7 +87,7 @@ public final class NodeAssertions
 
 		public Syntax.AssertNode collectionChild(final Object referenceItem)
 		{
-			return child(new CollectionElement(referenceItem));
+			return child(new CollectionItemElement(referenceItem));
 		}
 
 		public Syntax.AssertNode doesExist()

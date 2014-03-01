@@ -16,13 +16,15 @@
 
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.bean.*;
-import de.danielbechler.diff.collection.*;
-import de.danielbechler.diff.map.*;
-import de.danielbechler.util.*;
+import de.danielbechler.diff.bean.BeanPropertyElement;
+import de.danielbechler.diff.collection.CollectionItemElement;
+import de.danielbechler.diff.map.MapKeyElement;
+import de.danielbechler.util.Assert;
 
-import java.util.*;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author Daniel Bechler
@@ -75,7 +77,7 @@ public final class NodePath implements Comparable<NodePath>
 			{
 				sb.append("/");
 			}
-			else if (element instanceof CollectionElement || element instanceof MapElement)
+			else if (element instanceof CollectionItemElement || element instanceof MapKeyElement)
 			{
 				sb.append(element);
 			}
@@ -209,14 +211,14 @@ public final class NodePath implements Comparable<NodePath>
 
 		public <T> AppendableBuilder withCollectionItem(final T item)
 		{
-			elements.add(new CollectionElement(item));
+			elements.add(new CollectionItemElement(item));
 			return this;
 		}
 
 		public <K> AppendableBuilder withMapKey(final K key)
 		{
 			Assert.notNull(key, "key");
-			elements.add(new MapElement(key));
+			elements.add(new MapKeyElement(key));
 			return this;
 		}
 

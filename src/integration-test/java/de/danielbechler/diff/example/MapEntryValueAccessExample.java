@@ -16,13 +16,17 @@
 
 package de.danielbechler.diff.example;
 
-import de.danielbechler.diff.*;
-import de.danielbechler.diff.map.*;
-import de.danielbechler.diff.visitor.*;
+import de.danielbechler.diff.DiffNode;
+import de.danielbechler.diff.ObjectDifferBuilder;
+import de.danielbechler.diff.Visit;
+import de.danielbechler.diff.map.MapKeyElement;
 
-import java.util.*;
+import java.util.Map;
+import java.util.TreeMap;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 class MapEntryValueAccessExample
 {
 	private MapEntryValueAccessExample()
@@ -45,7 +49,7 @@ class MapEntryValueAccessExample
 		{
 			public void accept(final DiffNode node, final Visit visit)
 			{
-				final Object key = ((MapElement) node.getPathElement()).getKey();
+				final Object key = ((MapKeyElement) node.getPathElement()).getKey();
 				//                 ^^^ I do not encourage this, but currently it's the only way
 				final Object value = node.canonicalGet(working);
 				System.out.println(key + " => " + value);

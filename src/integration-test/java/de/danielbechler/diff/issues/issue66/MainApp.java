@@ -16,8 +16,10 @@
 
 package de.danielbechler.diff.issues.issue66;
 
-import de.danielbechler.diff.*;
-import de.danielbechler.diff.visitor.*;
+import de.danielbechler.diff.DiffNode;
+import de.danielbechler.diff.ObjectDiffer;
+import de.danielbechler.diff.ObjectDifferBuilder;
+import de.danielbechler.diff.Visit;
 
 public class MainApp
 {

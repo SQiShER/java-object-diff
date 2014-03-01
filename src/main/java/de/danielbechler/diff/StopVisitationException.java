@@ -14,37 +14,22 @@
  * limitations under the License.
  */
 
-package de.danielbechler.diff.visitor;
+package de.danielbechler.diff;
 
-/** @author Daniel Bechler */
-public final class Visit
+/**
+ * @author Daniel Bechler
+ */
+final class StopVisitationException extends RuntimeException
 {
-	private enum State
+	private static final long serialVersionUID = 1L;
+
+	public StopVisitationException()
 	{
-		CONTINUE,
-		CONTINUE_BUT_DO_NOT_GO_DEEPER,
-		STOPPED
 	}
 
-	private State state = State.CONTINUE;
-
-	public void stop()
+	@Override
+	public Throwable fillInStackTrace()
 	{
-		state = State.STOPPED;
-	}
-
-	public void dontGoDeeper()
-	{
-		state = State.CONTINUE_BUT_DO_NOT_GO_DEEPER;
-	}
-
-	public boolean isStopped()
-	{
-		return state == State.STOPPED;
-	}
-
-	public boolean isAllowedToGoDeeper()
-	{
-		return state == State.CONTINUE;
+		return null;
 	}
 }

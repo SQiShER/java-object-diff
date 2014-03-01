@@ -16,11 +16,14 @@
 
 package de.danielbechler.diff.visitor;
 
-import de.danielbechler.diff.*;
-import de.danielbechler.util.*;
+import de.danielbechler.diff.DiffNode;
+import de.danielbechler.diff.NodePath;
+import de.danielbechler.diff.Visit;
+import de.danielbechler.util.Strings;
 
-/** @author Daniel Bechler */
-@SuppressWarnings({"MethodMayBeStatic"})
+/**
+ * @author Daniel Bechler
+ */
 public class PrintingVisitor implements DiffNode.Visitor
 {
 	private final Object working;

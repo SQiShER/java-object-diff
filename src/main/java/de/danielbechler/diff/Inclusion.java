@@ -16,7 +16,9 @@
 
 package de.danielbechler.diff;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 public enum Inclusion
 {
 	INCLUDED,

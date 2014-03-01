@@ -16,12 +16,16 @@
 
 package de.danielbechler.diff.visitor;
 
-import de.danielbechler.diff.*;
+import de.danielbechler.diff.DiffNode;
+import de.danielbechler.diff.Visit;
 import de.danielbechler.util.Collections;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.TreeSet;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 @SuppressWarnings("UnusedDeclaration")
 public abstract class CategoryFilteringVisitor extends AbstractFilteringVisitor
 {

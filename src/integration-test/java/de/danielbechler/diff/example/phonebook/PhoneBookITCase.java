@@ -16,15 +16,20 @@
 
 package de.danielbechler.diff.example.phonebook;
 
-import de.danielbechler.diff.*;
-import de.danielbechler.diff.collection.*;
-import org.hamcrest.core.*;
-import org.testng.annotations.*;
+import de.danielbechler.diff.DiffNode;
+import de.danielbechler.diff.ObjectDiffer;
+import de.danielbechler.diff.ObjectDifferBuilder;
+import de.danielbechler.diff.collection.CollectionItemElement;
+import org.hamcrest.core.IsEqual;
+import org.hamcrest.core.IsNull;
+import org.testng.annotations.Test;
 
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.core.Is.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 public class PhoneBookITCase
 {
 	@Test
@@ -56,7 +61,7 @@ public class PhoneBookITCase
 		assertThat(contactsNode, IsNull.notNullValue());
 		assertThat(contactsNode.hasChanges(), is(true));
 
-		final DiffNode pinkmanNode = contactsNode.getChild(new CollectionElement(jessePinkman));
+		final DiffNode pinkmanNode = contactsNode.getChild(new CollectionItemElement(jessePinkman));
 		assertThat(pinkmanNode.hasChanges(), is(true));
 
 		final DiffNode middleNameNode = pinkmanNode.getChild("middleName");
@@ -64,7 +69,7 @@ public class PhoneBookITCase
 		assertThat(middleNameNode.canonicalGet(phoneBook), IsNull.nullValue());
 		assertThat((String) middleNameNode.canonicalGet(modifiedPhoneBook), IsEqual.equalTo("Bruce"));
 
-		final DiffNode whiteNode = contactsNode.getChild(new CollectionElement(walterWhite));
+		final DiffNode whiteNode = contactsNode.getChild(new CollectionItemElement(walterWhite));
 		assertThat(whiteNode.hasChanges(), is(true));
 
 		final DiffNode whiteMiddleNameNode = whiteNode.getChild("middleName");

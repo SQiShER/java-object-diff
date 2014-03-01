@@ -16,14 +16,19 @@
 
 package de.danielbechler.diff.helper;
 
-import de.danielbechler.diff.*;
-import de.danielbechler.diff.collection.*;
-import org.fest.assertions.core.*;
-import org.mockito.*;
+import de.danielbechler.diff.Accessor;
+import de.danielbechler.diff.DiffNode;
+import de.danielbechler.diff.NodePath;
+import de.danielbechler.diff.collection.CollectionItemAccessor;
+import de.danielbechler.diff.collection.CollectionItemElement;
+import org.fest.assertions.core.Condition;
+import org.mockito.ArgumentMatcher;
 
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.argThat;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 public class NodeMatchers
 {
 	private NodeMatchers()
@@ -41,8 +46,8 @@ public class NodeMatchers
 				{
 					@SuppressWarnings("TypeMayBeWeakened")
 					final CollectionItemAccessor accessor = (CollectionItemAccessor) argument;
-					final CollectionElement collectionElement = new CollectionElement(item);
-					return accessor.getPathElement().equals(collectionElement);
+					final CollectionItemElement collectionItemElement = new CollectionItemElement(item);
+					return accessor.getPathElement().equals(collectionItemElement);
 				}
 				return false;
 			}
