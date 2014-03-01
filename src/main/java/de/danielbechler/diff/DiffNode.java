@@ -353,7 +353,7 @@ public class DiffNode
 			{
 				child.visit(visitor);
 			}
-			catch (StopVisitationException e)
+			catch (final StopVisitationException e)
 			{
 				return;
 			}
