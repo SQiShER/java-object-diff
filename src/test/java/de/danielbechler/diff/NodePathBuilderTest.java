@@ -21,17 +21,19 @@ import de.danielbechler.diff.collection.*;
 import de.danielbechler.diff.map.*;
 import org.testng.annotations.*;
 
-import static org.fest.assertions.api.Assertions.*;
+import static org.fest.assertions.api.Assertions.assertThat;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 public class NodePathBuilderTest
 {
 	@Test
 	public void testWithRoot()
 	{
 		final NodePath nodePath = NodePath.createBuilder()
-										  .withRoot()
-										  .build();
+				.withRoot()
+				.build();
 		assertThat(nodePath.getElements()).containsOnly(RootElement.getInstance());
 	}
 
@@ -40,9 +42,9 @@ public class NodePathBuilderTest
 	{
 		final CollectionElement element = new CollectionElement("foo");
 		final NodePath nodePath = NodePath.createBuilder()
-										  .withRoot()
-										  .withElement(element)
-										  .build();
+				.withRoot()
+				.withElement(element)
+				.build();
 		assertThat(nodePath.getElements()).containsSequence(
 				RootElement.getInstance(),
 				element);
@@ -52,13 +54,13 @@ public class NodePathBuilderTest
 	public void testWithPropertyName()
 	{
 		final NodePath nodePath = NodePath.createBuilder()
-										  .withRoot()
-										  .withPropertyName("foo", "bar")
-										  .build();
+				.withRoot()
+				.withPropertyName("foo", "bar")
+				.build();
 		assertThat(nodePath.getElements()).containsSequence(
 				RootElement.getInstance(),
-				new NamedPropertyElement("foo"),
-				new NamedPropertyElement("bar")
+				new BeanPropertyElement("foo"),
+				new BeanPropertyElement("bar")
 		);
 	}
 
@@ -66,9 +68,9 @@ public class NodePathBuilderTest
 	public void testWithMapKey()
 	{
 		final NodePath nodePath = NodePath.createBuilder()
-										  .withRoot()
-										  .withMapKey("foo")
-										  .build();
+				.withRoot()
+				.withMapKey("foo")
+				.build();
 		assertThat(nodePath.getElements()).containsSequence(RootElement.getInstance(), new MapElement("foo"));
 	}
 
@@ -82,9 +84,9 @@ public class NodePathBuilderTest
 	public void testWithCollectionItem()
 	{
 		final NodePath nodePath = NodePath.createBuilder()
-										  .withRoot()
-										  .withCollectionItem("foo")
-										  .build();
+				.withRoot()
+				.withCollectionItem("foo")
+				.build();
 		assertThat(nodePath.getElements()).containsSequence(RootElement.getInstance(), new CollectionElement("foo"));
 	}
 
@@ -92,10 +94,10 @@ public class NodePathBuilderTest
 	public void testWithPropertyPath()
 	{
 		final NodePath nodePath = NodePath.createBuilder()
-										  .withPropertyPath(NodePath
-												  .buildWith("foo"))
-										  .build();
-		assertThat(nodePath.getElements()).containsSequence(RootElement.getInstance(), new NamedPropertyElement("foo"));
+				.withPropertyPath(NodePath
+						.buildWith("foo"))
+				.build();
+		assertThat(nodePath.getElements()).containsSequence(RootElement.getInstance(), new BeanPropertyElement("foo"));
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)

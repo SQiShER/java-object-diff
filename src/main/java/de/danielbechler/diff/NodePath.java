@@ -24,7 +24,9 @@ import de.danielbechler.util.*;
 import java.util.*;
 import java.util.Collections;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 public final class NodePath implements Comparable<NodePath>
 {
 	private final List<Element> elements;
@@ -154,7 +156,9 @@ public final class NodePath implements Comparable<NodePath>
 		}
 	}
 
-	/** @author Daniel Bechler */
+	/**
+	 * @author Daniel Bechler
+	 */
 	@SuppressWarnings({"UnusedDeclaration"})
 	private static final class InitialBuilderImpl implements InitialBuilder
 	{
@@ -195,10 +199,10 @@ public final class NodePath implements Comparable<NodePath>
 
 		public AppendableBuilder withPropertyName(final String name, final String... names)
 		{
-			elements.add(new NamedPropertyElement(name));
+			elements.add(new BeanPropertyElement(name));
 			for (final String s : names)
 			{
-				elements.add(new NamedPropertyElement(s));
+				elements.add(new BeanPropertyElement(s));
 			}
 			return this;
 		}

@@ -80,30 +80,30 @@ public class StandardBeanIntrospectorTest
 		final Iterable<PropertyAwareAccessor> accessors = introspector.introspect(ObjectWithPropertyAnnotations.class);
 		for (final PropertyAwareAccessor accessor : accessors)
 		{
-			if (accessor.getPathElement().equals(new NamedPropertyElement("ignored")))
+			if (accessor.getPathElement().equals(new BeanPropertyElement("ignored")))
 			{
 				assertThat(accessor.isExcluded(), is(true));
 			}
-			else if (accessor.getPathElement().equals(new NamedPropertyElement("equalsOnly")))
+			else if (accessor.getPathElement().equals(new BeanPropertyElement("equalsOnly")))
 			{
 				assertThat(accessor.getComparisonStrategy(), instanceOf(EqualsOnlyComparisonStrategy.class));
 			}
-			else if (accessor.getPathElement().equals(new NamedPropertyElement("categorized")))
+			else if (accessor.getPathElement().equals(new BeanPropertyElement("categorized")))
 			{
 				assertThat(accessor.getCategories().size(), is(1));
 				assertThat(accessor.getCategories(), IsEqual.equalTo(Collections.setOf("foo")));
 			}
-			else if (accessor.getPathElement().equals(new NamedPropertyElement("item")))
+			else if (accessor.getPathElement().equals(new BeanPropertyElement("item")))
 			{
 				assertThat(accessor.getComparisonStrategy(), IsNull.nullValue());
 				assertThat(accessor.isExcluded(), is(false));
 				assertThat(accessor.getCategories().isEmpty(), is(true));
 			}
-			else if (accessor.getPathElement().equals(new NamedPropertyElement("key")))
+			else if (accessor.getPathElement().equals(new BeanPropertyElement("key")))
 			{
 				// no op
 			}
-			else if (accessor.getPathElement().equals(new NamedPropertyElement("value")))
+			else if (accessor.getPathElement().equals(new BeanPropertyElement("value")))
 			{
 				// no op
 			}
@@ -119,7 +119,7 @@ public class StandardBeanIntrospectorTest
 	{
 		final Iterable<PropertyAwareAccessor> accessors = introspector.introspect(ObjectWithInheritedPropertyAnnotation.class);
 		final PropertyAwareAccessor accessor = accessors.iterator().next();
-		assertThat((NamedPropertyElement) accessor.getPathElement(), IsEqual.equalTo(new NamedPropertyElement("value")));
+		assertThat((BeanPropertyElement) accessor.getPathElement(), IsEqual.equalTo(new BeanPropertyElement("value")));
 		assertThat(accessor.isExcluded(), is(true));
 	}
 

@@ -19,12 +19,14 @@ package de.danielbechler.diff.bean;
 import de.danielbechler.diff.*;
 import de.danielbechler.util.*;
 
-/** @author Daniel Bechler */
-public final class NamedPropertyElement extends Element
+/**
+ * @author Daniel Bechler
+ */
+public final class BeanPropertyElement extends Element
 {
 	private final String propertyName;
 
-	public NamedPropertyElement(final String propertyName)
+	public BeanPropertyElement(final String propertyName)
 	{
 		Assert.hasText(propertyName, "propertyName");
 		this.propertyName = propertyName;
@@ -53,7 +55,7 @@ public final class NamedPropertyElement extends Element
 			return false;
 		}
 
-		final NamedPropertyElement that = (NamedPropertyElement) o;
+		final BeanPropertyElement that = (BeanPropertyElement) o;
 
 		if (!propertyName.equals(that.propertyName))
 		{

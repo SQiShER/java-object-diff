@@ -16,7 +16,7 @@
 
 package de.danielbechler.diff
 
-import de.danielbechler.diff.bean.NamedPropertyElement
+import de.danielbechler.diff.bean.BeanPropertyElement
 import spock.lang.Specification
 
 /**
@@ -32,7 +32,7 @@ class InclusionServiceSpec extends Specification {
     def DiffNode node
 
     def "setup"() {
-        accessor.pathElement >> new NamedPropertyElement("foo")
+        accessor.pathElement >> new BeanPropertyElement("foo")
         rootNode = new DiffNode(RootAccessor.instance, null)
         node = new DiffNode(rootNode, accessor, null)
         categoryResolver.resolveCategories(_ as DiffNode) >> []
@@ -152,7 +152,7 @@ class InclusionServiceSpec extends Specification {
         given:
         def accessor = Mock(PropertyAwareAccessor)
         def node = new DiffNode(accessor, null)
-        accessor.pathElement >> new NamedPropertyElement("foo")
+        accessor.pathElement >> new BeanPropertyElement("foo")
 
         and:
         inclusionService.toExclude().propertyNames("foo")
@@ -165,7 +165,7 @@ class InclusionServiceSpec extends Specification {
         given:
         def accessor = Mock(PropertyAwareAccessor)
         def node = new DiffNode(accessor, null)
-        accessor.pathElement >> new NamedPropertyElement("foo")
+        accessor.pathElement >> new BeanPropertyElement("foo")
 
         and:
         inclusionService.toInclude().propertyNames("foo")

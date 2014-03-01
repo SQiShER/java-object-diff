@@ -23,10 +23,12 @@ import org.testng.annotations.*;
 import java.lang.annotation.*;
 import java.lang.reflect.*;
 
-import static java.util.Arrays.*;
-import static org.fest.assertions.api.Assertions.*;
+import static java.util.Arrays.asList;
+import static org.fest.assertions.api.Assertions.assertThat;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 public class BeanPropertyAccessorShould
 {
 	private BeanPropertyAccessor accessor;
@@ -37,9 +39,9 @@ public class BeanPropertyAccessorShould
 	public void setUp() throws Exception
 	{
 		accessor = BeanPropertyAccessorBuilder.forPropertyOf(ObjectWithHashCodeAndEquals.class)
-											  .property("value", String.class)
-											  .readOnly(false)
-											  .build();
+				.property("value", String.class)
+				.readOnly(false)
+				.build();
 //		readMethod = ObjectWithHashCodeAndEquals.class.getMethod("getValue");
 //		final Method writeMethod = ObjectWithHashCodeAndEquals.class.getMethod("setValue", String.class);
 //		accessor = new PropertyAccessor("value", readMethod, writeMethod);
@@ -70,9 +72,9 @@ public class BeanPropertyAccessorShould
 	public void assign_nothing_if_no_write_method_is_available() throws Exception
 	{
 		accessor = BeanPropertyAccessorBuilder.forPropertyOf(ObjectWithHashCodeAndEquals.class)
-											  .property("value", String.class)
-											  .readOnly(true)
-											  .build();
+				.property("value", String.class)
+				.readOnly(true)
+				.build();
 
 		accessor.set(item, "bar");
 
@@ -133,7 +135,7 @@ public class BeanPropertyAccessorShould
 	@Test
 	public void return_proper_path_element() throws Exception
 	{
-		assertThat(accessor.getPathElement()).isEqualTo(new NamedPropertyElement("value"));
+		assertThat(accessor.getPathElement()).isEqualTo(new BeanPropertyElement("value"));
 	}
 
 	@Test
@@ -152,11 +154,11 @@ public class BeanPropertyAccessorShould
 	public void returns_annotations_of_property_getter() throws Exception
 	{
 		accessor = BeanPropertyAccessorBuilder.forPropertyOf(ObjectWithAnnotatedProperty.class)
-											  .property("value", String.class)
-											  .readOnly(false)
-											  .build();
+				.property("value", String.class)
+				.readOnly(false)
+				.build();
 		final Annotation[] expectedAnnotations = ObjectWithAnnotatedProperty.class.getMethod("getValue")
-																				  .getAnnotations();
+				.getAnnotations();
 		assertThat(expectedAnnotations).hasSize(2);
 		assertThat(accessor.getReadMethodAnnotations()).containsAll(asList(expectedAnnotations));
 	}
@@ -165,11 +167,11 @@ public class BeanPropertyAccessorShould
 	public void returns_specific_annotation_of_property_getter() throws Exception
 	{
 		accessor = BeanPropertyAccessorBuilder.forPropertyOf(ObjectWithAnnotatedProperty.class)
-											  .property("value", String.class)
-											  .readOnly(false)
-											  .build();
+				.property("value", String.class)
+				.readOnly(false)
+				.build();
 		final ObjectDiffProperty expectedAnnotation = ObjectWithAnnotatedProperty.class.getMethod("getValue")
-																					   .getAnnotation(ObjectDiffProperty.class);
+				.getAnnotation(ObjectDiffProperty.class);
 		assertThat(expectedAnnotation).isNotNull();
 		final ObjectDiffProperty annotation = accessor.getReadMethodAnnotation(ObjectDiffProperty.class);
 		assertThat(annotation).isEqualTo(expectedAnnotation);
@@ -179,9 +181,9 @@ public class BeanPropertyAccessorShould
 	public void returns_null_if_specific_annotation_of_property_getter_does_not_exist() throws Exception
 	{
 		accessor = BeanPropertyAccessorBuilder.forPropertyOf(ObjectWithAnnotatedProperty.class)
-											  .property("value", String.class)
-											  .readOnly(false)
-											  .build();
+				.property("value", String.class)
+				.readOnly(false)
+				.build();
 		assertThat(accessor.getReadMethodAnnotation(Override.class)).isNull();
 	}
 }

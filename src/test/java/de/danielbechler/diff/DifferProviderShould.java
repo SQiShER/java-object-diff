@@ -22,10 +22,13 @@ import org.testng.annotations.*;
 
 import java.util.*;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-/** @author Daniel Bechler */
-public class DefaultDifferProviderShould
+/**
+ * @author Daniel Bechler
+ */
+public class DifferProviderShould
 {
 	private DifferProvider differProvider;
 

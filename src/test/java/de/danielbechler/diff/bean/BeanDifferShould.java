@@ -18,22 +18,29 @@ package de.danielbechler.diff.bean;
 
 import de.danielbechler.diff.*;
 import org.fest.assertions.api.*;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.invocation.*;
 import org.mockito.stubbing.*;
 import org.testng.annotations.*;
 
 import java.util.*;
 
-import static de.danielbechler.diff.NodePath.*;
+import static de.danielbechler.diff.NodePath.buildRootPath;
 import static de.danielbechler.diff.helper.NodeAssertions.assertThat;
-import static de.danielbechler.diff.helper.NodeMatchers.*;
+import static de.danielbechler.diff.helper.NodeMatchers.node;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.*;
-import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.*;
+import static org.hamcrest.core.Is.is;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.same;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 public class BeanDifferShould
 {
 	private BeanDiffer beanDiffer;
@@ -77,21 +84,21 @@ public class BeanDifferShould
 	@DataProvider
 	public static Object[][] acceptableTypes()
 	{
-		return new Object[][] {
-				new Class[] {String.class},
-				new Class[] {Object.class},
-				new Class[] {Number.class},
-				new Class[] {Date.class},
+		return new Object[][]{
+				new Class[]{String.class},
+				new Class[]{Object.class},
+				new Class[]{Number.class},
+				new Class[]{Date.class},
 		};
 	}
 
 	@DataProvider
 	public static Object[][] rejectableTypes()
 	{
-		return new Object[][] {
-				new Class[] {int.class},
-				new Class[] {int[].class},
-				new Class[] {boolean.class}
+		return new Object[][]{
+				new Class[]{int.class},
+				new Class[]{int[].class},
+				new Class[]{boolean.class}
 		};
 	}
 
@@ -248,7 +255,7 @@ public class BeanDifferShould
 
 	private PropertyAwareAccessor given_introspector_returns_PropertyAccessor(final String propertyName)
 	{
-		final NamedPropertyElement propertyElement = new NamedPropertyElement(propertyName);
+		final BeanPropertyElement propertyElement = new BeanPropertyElement(propertyName);
 		final PropertyAwareAccessor propertyAccessor = mock(PropertyAwareAccessor.class);
 		when(propertyAccessor.getPathElement()).thenReturn(propertyElement);
 		final Set<PropertyAwareAccessor> propertyAccessors = Collections.singleton(propertyAccessor);

@@ -221,7 +221,7 @@ public class BeanPropertyAccessor implements PropertyAwareAccessor, Accessor
 
 	public Element getPathElement()
 	{
-		return new NamedPropertyElement(this.propertyName);
+		return new BeanPropertyElement(this.propertyName);
 	}
 
 	/**

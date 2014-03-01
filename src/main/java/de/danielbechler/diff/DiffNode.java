@@ -232,7 +232,7 @@ public class DiffNode
 	 */
 	public DiffNode getChild(final String propertyName)
 	{
-		return children.get(new NamedPropertyElement(propertyName));
+		return getChild(new BeanPropertyElement(propertyName));
 	}
 
 	/**

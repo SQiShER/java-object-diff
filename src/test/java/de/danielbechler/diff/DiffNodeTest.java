@@ -29,10 +29,16 @@ import java.util.*;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.Mock;
+import static org.mockito.MockitoAnnotations.initMocks;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 public class DiffNodeTest
 {
 	@Mock
@@ -106,7 +112,7 @@ public class DiffNodeTest
 	public void testGetPropertyPath_with_parent_node_should_return_canonical_path()
 	{
 		final DiffNode parentNode = new DiffNode(RootAccessor.getInstance(), String.class);
-		when(accessor.getPathElement()).thenReturn(new NamedPropertyElement("foo"));
+		when(accessor.getPathElement()).thenReturn(new BeanPropertyElement("foo"));
 
 		final DiffNode root = new DiffNode(parentNode, accessor, Object.class);
 

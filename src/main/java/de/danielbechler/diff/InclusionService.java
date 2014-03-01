@@ -28,9 +28,9 @@ class InclusionService implements InclusionConfiguration, IsIgnoredResolver
 	private static String getNodePropertyName(final DiffNode node)
 	{
 		final Element pathElement = node.getPathElement();
-		if (pathElement instanceof NamedPropertyElement)
+		if (pathElement instanceof BeanPropertyElement)
 		{
-			return ((NamedPropertyElement) pathElement).getPropertyName();
+			return ((BeanPropertyElement) pathElement).getPropertyName();
 		}
 		return null;
 	}

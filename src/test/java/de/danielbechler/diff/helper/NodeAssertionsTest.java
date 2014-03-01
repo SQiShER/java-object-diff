@@ -21,10 +21,13 @@ import de.danielbechler.diff.bean.*;
 import de.danielbechler.diff.mock.*;
 import org.testng.annotations.*;
 
-import static de.danielbechler.diff.helper.NodeAssertions.*;
-import static org.mockito.Mockito.*;
+import static de.danielbechler.diff.helper.NodeAssertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 public class NodeAssertionsTest
 {
 	@Test
@@ -73,7 +76,7 @@ public class NodeAssertionsTest
 	public void testAssertThat_child_at_property_names_does_exist_succeeds_when_child_exists()
 	{
 		final Accessor accessor = mock(Accessor.class);
-		when(accessor.getPathElement()).thenReturn(new NamedPropertyElement("value"));
+		when(accessor.getPathElement()).thenReturn(new BeanPropertyElement("value"));
 		final DiffNode node = new DiffNode(ObjectWithString.class);
 		final DiffNode child = new DiffNode(node, accessor, String.class);
 		node.addChild(child);

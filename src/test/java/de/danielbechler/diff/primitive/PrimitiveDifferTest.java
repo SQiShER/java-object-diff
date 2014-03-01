@@ -18,23 +18,27 @@ package de.danielbechler.diff.primitive;
 
 import de.danielbechler.diff.*;
 import de.danielbechler.diff.bean.*;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.invocation.*;
 import org.mockito.stubbing.*;
 import org.testng.annotations.*;
 
-import java.util.ArrayList;
 import java.util.*;
 
-import static de.danielbechler.diff.PrimitiveDefaultValueMode.*;
-import static de.danielbechler.diff.helper.MockitoAnswers.*;
-import static de.danielbechler.diff.helper.MockitoExtensions.*;
-import static de.danielbechler.diff.helper.NodeAssertions.*;
-import static java.util.Arrays.*;
-import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.*;
+import static de.danielbechler.diff.PrimitiveDefaultValueMode.ASSIGNED;
+import static de.danielbechler.diff.PrimitiveDefaultValueMode.UNASSIGNED;
+import static de.danielbechler.diff.helper.MockitoAnswers.withType;
+import static de.danielbechler.diff.helper.MockitoExtensions.returnClass;
+import static de.danielbechler.diff.helper.NodeAssertions.assertThat;
+import static java.util.Arrays.asList;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 public class PrimitiveDifferTest
 {
 	private PrimitiveDiffer primitiveDiffer;
@@ -142,7 +146,7 @@ public class PrimitiveDifferTest
 									  final Object fresh)
 	{
 		when(accessor.getType()).then(returnClass(type));
-		when(accessor.getPathElement()).thenReturn(new NamedPropertyElement("ignored"));
+		when(accessor.getPathElement()).thenReturn(new BeanPropertyElement("ignored"));
 		instances = mock(Instances.class);
 		when(instances.getWorking()).thenReturn(working);
 		when(instances.getBase()).thenReturn(base);
@@ -154,13 +158,13 @@ public class PrimitiveDifferTest
 
 	private static <T> Object[] instances(final Class<T> type, final T base, final T working, final T fresh)
 	{
-		return new Object[] {type, base, working, fresh};
+		return new Object[]{type, base, working, fresh};
 	}
 
 	@DataProvider
 	public Object[][] additions()
 	{
-		return new Object[][] {
+		return new Object[][]{
 				instances(int.class, 0, 1, 0),
 				instances(long.class, 0L, 1L, 0L),
 				instances(float.class, 0F, 1F, 0F),
@@ -172,7 +176,7 @@ public class PrimitiveDifferTest
 	@DataProvider
 	public Object[][] removals()
 	{
-		return new Object[][] {
+		return new Object[][]{
 				instances(int.class, 1, 0, 0),
 				instances(long.class, 1L, 0L, 0L),
 				instances(float.class, 1F, 0F, 0F),
@@ -184,7 +188,7 @@ public class PrimitiveDifferTest
 	@DataProvider
 	public Object[][] changes()
 	{
-		return new Object[][] {
+		return new Object[][]{
 				instances(int.class, 1, 2, 0),
 				instances(long.class, 1L, 2L, 0L),
 				instances(float.class, 1F, 2F, 0F),
@@ -195,14 +199,14 @@ public class PrimitiveDifferTest
 	@DataProvider
 	public Object[][] wrapperTypes()
 	{
-		return new Object[][] {
-				new Object[] {Integer.class},
-				new Object[] {Long.class},
-				new Object[] {Float.class},
-				new Object[] {Double.class},
-				new Object[] {Short.class},
-				new Object[] {Byte.class},
-				new Object[] {Boolean.class},
+		return new Object[][]{
+				new Object[]{Integer.class},
+				new Object[]{Long.class},
+				new Object[]{Float.class},
+				new Object[]{Double.class},
+				new Object[]{Short.class},
+				new Object[]{Byte.class},
+				new Object[]{Boolean.class},
 		};
 	}
 
