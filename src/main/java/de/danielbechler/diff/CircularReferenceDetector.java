@@ -16,14 +16,14 @@
 
 package de.danielbechler.diff;
 
-import de.danielbechler.util.*;
+import de.danielbechler.util.Assert;
 
-import java.util.*;
+import java.util.LinkedList;
 
-import static de.danielbechler.util.Objects.*;
+import static de.danielbechler.util.Objects.isEqual;
 
 /** @author Daniel Bechler */
-class CircularReferenceDetector
+public class CircularReferenceDetector
 {
 	/**
 	 * It would be better to use <code>java.util.Deque</code> instead of the linked list, but that was first
