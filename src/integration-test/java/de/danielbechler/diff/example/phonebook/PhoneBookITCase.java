@@ -55,7 +55,7 @@ public class PhoneBookITCase
 
 		assertThat(node.hasChanges(), is(true));
 		assertThat(node.hasChildren(), is(true));
-		assertThat(node.getChildren().size(), is(1));
+		assertThat(node.childCount(), is(1));
 
 		final DiffNode contactsNode = node.getChild("contacts");
 		assertThat(contactsNode, IsNull.notNullValue());

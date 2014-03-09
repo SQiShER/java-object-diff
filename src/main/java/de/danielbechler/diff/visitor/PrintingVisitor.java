@@ -47,7 +47,7 @@ public class PrintingVisitor implements DiffNode.Visitor
 	protected boolean filter(final DiffNode node)
 	{
 		return (node.isRootNode() && !node.hasChanges())
-				|| (node.hasChanges() && node.getChildren().isEmpty());
+				|| (node.hasChanges() && !node.hasChildren());
 	}
 
 	protected void print(final String text)

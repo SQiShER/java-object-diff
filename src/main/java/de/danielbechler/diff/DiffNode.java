@@ -21,7 +21,6 @@ import de.danielbechler.diff.visitor.PropertyVisitor;
 import de.danielbechler.util.Assert;
 
 import java.lang.annotation.Annotation;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -221,12 +220,9 @@ public class DiffNode
 		return !children.isEmpty();
 	}
 
-	/**
-	 * @return The child nodes of this node.
-	 */
-	public Collection<DiffNode> getChildren()
+	public int childCount()
 	{
-		return children.values();
+		return children.size();
 	}
 
 	/**
@@ -352,7 +348,7 @@ public class DiffNode
 	 */
 	public final void visitChildren(final Visitor visitor)
 	{
-		for (final DiffNode child : getChildren())
+		for (final DiffNode child : children.values())
 		{
 			try
 			{
@@ -545,13 +541,13 @@ public class DiffNode
 		{
 			sb.append(", type=").append(getValueType().getCanonicalName());
 		}
-		if (getChildren().size() == 1)
+		if (childCount() == 1)
 		{
-			sb.append(", ").append(getChildren().size()).append(" child");
+			sb.append(", ").append(childCount()).append(" child");
 		}
-		else if (getChildren().size() > 1)
+		else if (childCount() > 1)
 		{
-			sb.append(", ").append(getChildren().size()).append(" children");
+			sb.append(", ").append(childCount()).append(" children");
 		}
 		else
 		{

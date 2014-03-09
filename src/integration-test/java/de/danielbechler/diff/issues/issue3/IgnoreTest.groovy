@@ -40,9 +40,9 @@ class IgnoreTest extends Specification {
         def result = objectDiffer.compare(working, base)
 
         then: "excluded properties should not have been diffed"
-        result.children.size() == 1
+        result.childCount() == 1
         result.getChild("barContainer") != null
-        result.getChild("barContainer").children.size() == 1
+        result.getChild("barContainer").childCount() == 1
         result.getChild("barContainer").getChild("test") != null
     }
 

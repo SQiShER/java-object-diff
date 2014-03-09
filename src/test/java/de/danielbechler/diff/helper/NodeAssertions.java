@@ -209,11 +209,11 @@ public final class NodeAssertions
 				{
 					if (count == 0)
 					{
-						return value == null || value.getChildren().isEmpty();
+						return value == null || !value.hasChildren();
 					}
 					else
 					{
-						return value != null && value.getChildren().size() == count;
+						return value != null && value.childCount() == count;
 					}
 				}
 			};

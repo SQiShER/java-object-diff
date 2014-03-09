@@ -18,7 +18,6 @@ package de.danielbechler.diff
 
 import de.danielbechler.diff.annotation.ObjectDiffProperty
 import de.danielbechler.diff.collection.CollectionItemElement
-import de.danielbechler.diff.visitor.NodeHierarchyVisitor
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import spock.lang.Specification
@@ -59,14 +58,14 @@ class InclusionAndExclusionITCase extends Specification {
 
         and: "only two contacts should have changed"
         node.getChild('contacts').changed
-        node.getChild('contacts').children.size() == 2
+        node.getChild('contacts').childCount() == 2
 
         and: "only Georges name should have changed"
-        node.getChild('contacts').getChild(new CollectionItemElement(new Contact(id: 'george'))).children.size() == 1
+        node.getChild('contacts').getChild(new CollectionItemElement(new Contact(id: 'george'))).childCount() == 1
         node.getChild('contacts').getChild(new CollectionItemElement(new Contact(id: 'george'))).getChild('name').changed
 
         and: "only Kramers number should have changed"
-        node.getChild('contacts').getChild(new CollectionItemElement(new Contact(id: 'kramer'))).children.size() == 1
+        node.getChild('contacts').getChild(new CollectionItemElement(new Contact(id: 'kramer'))).childCount() == 1
         node.getChild('contacts').getChild(new CollectionItemElement(new Contact(id: 'kramer'))).getChild('number').changed
     }
 
@@ -138,13 +137,15 @@ class InclusionAndExclusionITCase extends Specification {
         when:
         def node = builder.build().compare(working, base)
         then:
-        node.visit(new NodeHierarchyVisitor())
         node.getChild("name").changed
-        node.getChild("contacts").getChild(new CollectionItemElement(new Contact(id: "george"))).getChild("name").changed
+        and:
+        def element = new CollectionItemElement(new Contact(id: "george"))
+        node.getChild("contacts").childCount() == 1
+        node.getChild("contacts").getChild(element).getChild("name").changed
     }
 
     @EqualsAndHashCode
-    @ToString
+    @ToString(includePackage = false)
     class PhoneBook {
         def name
         def contacts = []
@@ -162,7 +163,7 @@ class InclusionAndExclusionITCase extends Specification {
     }
 
     @EqualsAndHashCode(includes = ["id"])
-    @ToString
+    @ToString(includePackage = false)
     class Contact {
         def id
         def name

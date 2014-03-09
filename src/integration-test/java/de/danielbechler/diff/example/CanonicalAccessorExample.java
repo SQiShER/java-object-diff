@@ -18,6 +18,7 @@ package de.danielbechler.diff.example;
 
 import de.danielbechler.diff.DiffNode;
 import de.danielbechler.diff.ObjectDifferBuilder;
+import de.danielbechler.diff.collection.CollectionItemElement;
 import de.danielbechler.diff.visitor.NodeHierarchyVisitor;
 
 import java.util.LinkedList;
@@ -47,9 +48,9 @@ class CanonicalAccessorExample
 
 		final DiffNode rootNode = ObjectDifferBuilder.buildDefault()
 				.compare(workingAddressBook, baseAddressBook);
-		final DiffNode contactsNode = getFirstChildOf(rootNode);
-		final DiffNode contactNode = getFirstChildOf(contactsNode);
-		final DiffNode nicknameNode = getFirstChildOf(contactNode);
+		final DiffNode contactsNode = rootNode.getChild("contacts");
+		final DiffNode contactNode = contactsNode.getChild(new CollectionItemElement(baseContact));
+		final DiffNode nicknameNode = contactNode.getChild("nickname");
 
 		rootNode.visit(new NodeHierarchyVisitor());
 
@@ -72,11 +73,6 @@ class CanonicalAccessorExample
 		assert contactsNode.get(addressBook) == contactsNode.canonicalGet(workingAddressBook);
 		assert contactNode.get(contacts) == contactNode.canonicalGet(workingAddressBook);
 		assert nicknameNode.get(contact) == nicknameNode.canonicalGet(workingAddressBook);
-	}
-
-	private static DiffNode getFirstChildOf(final DiffNode rootNode)
-	{
-		return rootNode.getChildren().iterator().next();
 	}
 
 	public static class AddressBook

@@ -16,14 +16,28 @@
 
 package de.danielbechler.diff.bean;
 
-import de.danielbechler.diff.*;
-import org.fest.assertions.api.*;
-import org.mockito.*;
-import org.mockito.invocation.*;
-import org.mockito.stubbing.*;
-import org.testng.annotations.*;
+import de.danielbechler.diff.ComparisonStrategy;
+import de.danielbechler.diff.ComparisonStrategyResolver;
+import de.danielbechler.diff.DiffNode;
+import de.danielbechler.diff.DifferDispatcher;
+import de.danielbechler.diff.Instances;
+import de.danielbechler.diff.Introspector;
+import de.danielbechler.diff.IntrospectorResolver;
+import de.danielbechler.diff.IsIntrospectableResolver;
+import de.danielbechler.diff.IsReturnableResolver;
+import de.danielbechler.diff.PropertyAwareAccessor;
+import de.danielbechler.diff.RootAccessor;
+import org.fest.assertions.api.Assertions;
+import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Set;
 
 import static de.danielbechler.diff.NodePath.buildRootPath;
 import static de.danielbechler.diff.helper.NodeAssertions.assertThat;
@@ -197,7 +211,7 @@ public class BeanDifferShould
 
 		final DiffNode node = beanDiffer.compare(DiffNode.ROOT, instances);
 
-		Assertions.assertThat(node.getChildren()).isEmpty();
+		Assertions.assertThat(node.hasChildren()).isFalse();
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)

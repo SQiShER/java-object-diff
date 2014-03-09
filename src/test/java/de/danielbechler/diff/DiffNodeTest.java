@@ -19,6 +19,7 @@ package de.danielbechler.diff;
 import de.danielbechler.diff.bean.BeanPropertyAccessor;
 import de.danielbechler.diff.bean.BeanPropertyElement;
 import de.danielbechler.diff.collection.CollectionItemAccessor;
+import de.danielbechler.diff.collection.CollectionItemElement;
 import de.danielbechler.diff.helper.NodeAssertions;
 import de.danielbechler.diff.mock.ObjectDiffTest;
 import org.fest.assertions.api.Assertions;
@@ -162,7 +163,8 @@ public class DiffNodeTest
 		final DiffNode node1 = new DiffNode(List.class);
 		final DiffNode node2 = new DiffNode(new CollectionItemAccessor("foo"), String.class);
 		node1.addChild(node2);
-		assertThat(node1.getChildren()).containsOnly(node2);
+		assertThat(node1.childCount()).isEqualTo(1);
+		assertThat(node1.getChild(new CollectionItemElement("foo"))).isSameAs(node2);
 		assertThat(node2.getParentNode()).isSameAs(node1);
 	}
 
