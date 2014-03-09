@@ -53,10 +53,8 @@ This library has been battle-tested in a rather big project of mine, where I use
 * Write some tests which show that the bug was fixed or that the feature works as expected.
 * Send a pull request and bug the maintainer until it gets merged and published. :)
  
-## Buy Me a Beer
+## Donate
 
-I put a lot of effort into this project and I really enjoy working on it. However, I do all of the work in my spare time, of which I don’t have very much. Unfortunately. If you’d like to support this project, how about you buy me a beer by clicking the Pledgie button down below? Alternatively you could send me a nice tweet, write a blog post, tell your friends or star the project. I'm basically happy about everything that keeps the morale up and shows me the effort is appreciated and my time well spent.
+If you’d like to show me some love with a small donation you can do so via  [Gittip](https://www.gittip.com/SQiShER/) or [Bitcoin](https://blockchain.info/address/19kRmHJ4qMnYCY6rnY6kCf96Prj6WGxisk).
 
-<a href='https://pledgie.com/campaigns/23224'><img alt='Click here to lend your support to: java-object-diff and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/23224.png?skin_name=chrome' border='0' ></a>
-
-Bitcoin: `19kRmHJ4qMnYCY6rnY6kCf96Prj6WGxisk`
+Alternatively you could send me a [nice tweet](https://twitter.com/SQiShER), start contributing, write a blog post about this project, tell your friends about it or simply [**star**](https://github.com/SQiShER/java-object-diff) the main repository. I'm pretty much happy about everything that shows me that someone out there is actually using this library and appreciates all the hard work that goes into its development.
