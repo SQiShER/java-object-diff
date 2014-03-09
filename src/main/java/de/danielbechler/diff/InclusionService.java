@@ -1,9 +1,11 @@
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.bean.*;
-import de.danielbechler.util.*;
+import de.danielbechler.util.Assert;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static de.danielbechler.diff.Inclusion.EXCLUDED;
 import static de.danielbechler.diff.Inclusion.INCLUDED;
@@ -23,16 +25,6 @@ class InclusionService implements InclusionConfiguration, IsIgnoredResolver
 	{
 		Assert.notNull(categoryResolver, "categoryResolver");
 		this.categoryResolver = categoryResolver;
-	}
-
-	private static String getNodePropertyName(final DiffNode node)
-	{
-		final Element pathElement = node.getPathElement();
-		if (pathElement instanceof BeanPropertyElement)
-		{
-			return ((BeanPropertyElement) pathElement).getPropertyName();
-		}
-		return null;
 	}
 
 	public boolean isIgnored(final DiffNode node)
@@ -71,7 +63,7 @@ class InclusionService implements InclusionConfiguration, IsIgnoredResolver
 
 	private boolean isIncludedByPropertyName(final DiffNode node)
 	{
-		final String propertyName = getNodePropertyName(node);
+		final String propertyName = node.getPropertyName();
 		if (propertyName != null)
 		{
 			return propertyNameInclusions.get(propertyName) == INCLUDED;
@@ -116,7 +108,7 @@ class InclusionService implements InclusionConfiguration, IsIgnoredResolver
 	@SuppressWarnings("TypeMayBeWeakened") // we don't want to weaken the type for consistency reasons
 	private boolean isExcludedByPropertyName(final DiffNode node)
 	{
-		final String propertyName = getNodePropertyName(node);
+		final String propertyName = node.getPropertyName();
 		if (propertyName != null)
 		{
 			return propertyNameInclusions.get(propertyName) == EXCLUDED;

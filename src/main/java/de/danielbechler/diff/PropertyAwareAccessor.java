@@ -16,12 +16,16 @@
 
 package de.danielbechler.diff;
 
-import java.lang.annotation.*;
-import java.util.*;
+import java.lang.annotation.Annotation;
+import java.util.Set;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 public interface PropertyAwareAccessor extends TypeAwareAccessor, CategoryAwareAccessor, ComparisonStrategyAwareAccessor, ExclusionAwareAccessor
 {
+	String getPropertyName();
+
 	Set<Annotation> getReadMethodAnnotations();
 
 	<T extends Annotation> T getReadMethodAnnotation(Class<T> annotationClass);

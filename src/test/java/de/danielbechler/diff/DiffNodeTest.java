@@ -16,16 +16,21 @@
 
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.bean.*;
-import de.danielbechler.diff.collection.*;
-import de.danielbechler.diff.helper.*;
-import de.danielbechler.diff.mock.*;
-import org.fest.assertions.api.*;
-import org.hamcrest.core.*;
-import org.testng.annotations.*;
+import de.danielbechler.diff.bean.BeanPropertyAccessor;
+import de.danielbechler.diff.bean.BeanPropertyElement;
+import de.danielbechler.diff.collection.CollectionItemAccessor;
+import de.danielbechler.diff.helper.NodeAssertions;
+import de.danielbechler.diff.mock.ObjectDiffTest;
+import org.fest.assertions.api.Assertions;
+import org.hamcrest.core.Is;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
-import java.lang.annotation.*;
-import java.util.*;
+import java.lang.annotation.Annotation;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -51,7 +56,7 @@ public class DiffNodeTest
 	}
 
 	@Test
-	public void testHasChanges_returns_false_when_untouched()
+	public void hasChanges_returns_false_when_untouched()
 	{
 		final DiffNode node = new DiffNode(String.class);
 		node.setState(DiffNode.State.UNTOUCHED);
@@ -59,7 +64,7 @@ public class DiffNodeTest
 	}
 
 	@Test
-	public void testHasChanges_returns_false_when_ignored()
+	public void hasChanges_returns_false_when_ignored()
 	{
 		final DiffNode node = new DiffNode(String.class);
 		node.setState(DiffNode.State.IGNORED);
@@ -67,7 +72,7 @@ public class DiffNodeTest
 	}
 
 	@Test
-	public void testHasChanges_returns_false_when_circular()
+	public void hasChanges_returns_false_when_circular()
 	{
 		final DiffNode node = new DiffNode(String.class);
 		node.setState(DiffNode.State.CIRCULAR);
@@ -75,7 +80,7 @@ public class DiffNodeTest
 	}
 
 	@Test
-	public void testHasChanges_returns_true_when_changed()
+	public void hasChanges_returns_true_when_changed()
 	{
 		final DiffNode node = new DiffNode(String.class);
 		node.setState(DiffNode.State.CHANGED);
@@ -83,7 +88,7 @@ public class DiffNodeTest
 	}
 
 	@Test
-	public void testHasChanges_returns_true_when_removed()
+	public void hasChanges_returns_true_when_removed()
 	{
 		final DiffNode node = new DiffNode(String.class);
 		node.setState(DiffNode.State.REMOVED);
@@ -91,7 +96,7 @@ public class DiffNodeTest
 	}
 
 	@Test
-	public void testHasChanges_returns_true_when_added()
+	public void hasChanges_returns_true_when_added()
 	{
 		final DiffNode node = new DiffNode(String.class);
 		node.setState(DiffNode.State.ADDED);
@@ -99,7 +104,7 @@ public class DiffNodeTest
 	}
 
 	@Test
-	public void testHasChanges_returns_true_when_child_has_changed()
+	public void hasChanges_returns_true_when_child_has_changed()
 	{
 		final DiffNode root = new DiffNode(List.class);
 		final DiffNode child = new DiffNode(root, new CollectionItemAccessor("foo"), String.class);
@@ -109,7 +114,7 @@ public class DiffNodeTest
 	}
 
 	@Test
-	public void testGetPropertyPath_with_parent_node_should_return_canonical_path()
+	public void getPropertyPath_with_parent_node_should_return_canonical_path()
 	{
 		final DiffNode parentNode = new DiffNode(RootAccessor.getInstance(), String.class);
 		when(accessor.getPathElement()).thenReturn(new BeanPropertyElement("foo"));
@@ -120,7 +125,7 @@ public class DiffNodeTest
 	}
 
 	@Test
-	public void testGetPropertyPath_without_parent_node_should_return_root_path()
+	public void getPropertyPath_without_parent_node_should_return_root_path()
 	{
 		final DiffNode root = new DiffNode(Object.class);
 		assertThat(root.getPath()).isEqualTo(NodePath
@@ -128,14 +133,14 @@ public class DiffNodeTest
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
-	public void testAddChild_throws_exception_when_root_node_is_passed() throws Exception
+	public void addChild_throws_exception_when_root_node_is_passed() throws Exception
 	{
 		final DiffNode root = new DiffNode(Object.class);
 		root.addChild(new DiffNode(Object.class));
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
-	public void testAddChild_throws_exception_when_passed_node_is_already_child_of_another_node() throws Exception
+	public void addChild_throws_exception_when_passed_node_is_already_child_of_another_node() throws Exception
 	{
 		final DiffNode node1 = new DiffNode(Object.class);
 		final DiffNode node2 = new DiffNode(Object.class);
@@ -145,14 +150,14 @@ public class DiffNodeTest
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
-	public void testAddChild_throws_exception_when_node_is_added_to_itself() throws Exception
+	public void addChild_throws_exception_when_node_is_added_to_itself() throws Exception
 	{
 		final DiffNode node = new DiffNode(null, accessor, Object.class);
 		node.addChild(node);
 	}
 
 	@Test
-	public void testAddChild_establishes_parent_child_relationship() throws Exception
+	public void addChild_establishes_parent_child_relationship() throws Exception
 	{
 		final DiffNode node1 = new DiffNode(List.class);
 		final DiffNode node2 = new DiffNode(new CollectionItemAccessor("foo"), String.class);
@@ -162,7 +167,7 @@ public class DiffNodeTest
 	}
 
 	@Test
-	public void testAddChild_changes_node_state_to_changed_if_changed_child_node_gets_added()
+	public void addChild_changes_node_state_to_changed_if_changed_child_node_gets_added()
 	{
 		final DiffNode node = new DiffNode(Object.class);
 		final DiffNode childNode = new DiffNode(node, accessor, String.class);
@@ -174,7 +179,7 @@ public class DiffNodeTest
 	}
 
 	@Test
-	public void testShould_return_property_annotations_of_property_accessor() throws Exception
+	public void should_return_property_annotations_of_property_accessor() throws Exception
 	{
 		final BeanPropertyAccessor propertyAccessor = mock(BeanPropertyAccessor.class);
 		final Annotation annotation = mock(Annotation.class);
@@ -187,7 +192,7 @@ public class DiffNodeTest
 	}
 
 	@Test
-	public void testShould_return_empty_set_of_property_annotations_if_accessor_is_not_property_accessor() throws Exception
+	public void should_return_empty_set_of_property_annotations_if_accessor_is_not_property_accessor() throws Exception
 	{
 		final BeanPropertyAccessor propertyAccessor = mock(BeanPropertyAccessor.class);
 		final Annotation annotation = mock(Annotation.class);
@@ -200,7 +205,7 @@ public class DiffNodeTest
 	}
 
 	@Test
-	public void test_get_property_annotation_should_delegate_call_to_property_accessor()
+	public void getPropertyAnnotation_should_delegate_call_to_property_accessor()
 	{
 		final BeanPropertyAccessor propertyAccessor = mock(BeanPropertyAccessor.class);
 		when(propertyAccessor.getReadMethodAnnotation(ObjectDiffTest.class)).thenReturn(null);
@@ -211,12 +216,66 @@ public class DiffNodeTest
 	}
 
 	@Test
-	public void test_get_property_annotation_should_return_null_if_accessor_is_not_property_accessor()
+	public void getPropertyAnnotation_should_return_null_if_accessor_is_not_property_accessor()
 	{
 		final Accessor propertyAccessor = mock(Accessor.class);
 
 		final ObjectDiffTest annotation = new DiffNode(propertyAccessor, Object.class).getPropertyAnnotation(ObjectDiffTest.class);
 
 		assertThat(annotation).isNull();
+	}
+
+	@Test
+	public void getPropertyName_returns_name_from_PropertyAwareAccessor()
+	{
+		final String expectedPropertyName = "foo";
+		final PropertyAwareAccessor accessor = mock(PropertyAwareAccessor.class);
+		when(accessor.getPropertyName()).thenReturn(expectedPropertyName);
+
+		final DiffNode diffNode = new DiffNode(accessor, Object.class);
+		final String actualPropertyName = diffNode.getPropertyName();
+
+		assertThat(actualPropertyName).isEqualTo(expectedPropertyName);
+	}
+
+	@Test
+	public void getPropertyName_returns_name_from_parentNode()
+	{
+		final String expectedPropertyName = "foo";
+
+		final PropertyAwareAccessor propertyAwareAccessor = mock(PropertyAwareAccessor.class);
+		when(propertyAwareAccessor.getPropertyName()).thenReturn(expectedPropertyName);
+
+		final DiffNode parentNodeWithPropertyAwareAccessor = new DiffNode(propertyAwareAccessor, Object.class);
+		final DiffNode node = new DiffNode(parentNodeWithPropertyAwareAccessor, mock(Accessor.class), Object.class);
+
+		assertThat(node.getPropertyName()).isEqualTo(expectedPropertyName);
+	}
+
+	@Test
+	public void getPropertyName_returns_null_when_property_name_can_not_be_resolved()
+	{
+		final DiffNode node = new DiffNode(mock(Accessor.class), Object.class);
+
+		assertThat(node.getPropertyName()).isNull();
+	}
+
+	@Test
+	public void isPropertyAware_returns_true()
+	{
+		final PropertyAwareAccessor propertyAwareAccessor = mock(PropertyAwareAccessor.class);
+		final DiffNode node = new DiffNode(propertyAwareAccessor, Object.class);
+
+		assertThat(node.isPropertyAware()).isTrue();
+	}
+
+	@Test
+	public void isPropertyAware_returns_false()
+	{
+		final Accessor notAPropertyAwareAccessor = mock(Accessor.class);
+
+		final DiffNode node = new DiffNode(notAPropertyAwareAccessor, Object.class);
+
+		assertThat(node.isPropertyAware()).isFalse();
 	}
 }

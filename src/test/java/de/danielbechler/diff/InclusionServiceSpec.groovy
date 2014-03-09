@@ -150,12 +150,12 @@ class InclusionServiceSpec extends Specification {
 
     def "isIgnored: should return 'true' when node is excluded via property name"() {
         given:
-        def accessor = Mock(PropertyAwareAccessor)
-        def node = new DiffNode(accessor, null)
-        accessor.pathElement >> new BeanPropertyElement("foo")
+        def propertyName = "foo"
+        def propertyAwareAccessor = mockPropertyAwareAccessor(propertyName)
+        def node = new DiffNode(propertyAwareAccessor, null)
 
         and:
-        inclusionService.toExclude().propertyNames("foo")
+        inclusionService.toExclude().propertyNames(propertyName)
 
         expect:
         inclusionService.isIgnored(node) == true
@@ -163,15 +163,22 @@ class InclusionServiceSpec extends Specification {
 
     def "isIgnored: should return 'false' when node is included via property name"() {
         given:
-        def accessor = Mock(PropertyAwareAccessor)
-        def node = new DiffNode(accessor, null)
-        accessor.pathElement >> new BeanPropertyElement("foo")
+        def propertyName = "foo"
+        def propertyAwareAccessor = mockPropertyAwareAccessor(propertyName)
+        def node = new DiffNode(propertyAwareAccessor, null)
 
         and:
-        inclusionService.toInclude().propertyNames("foo")
+        inclusionService.toInclude().propertyNames(propertyName)
 
         expect:
         inclusionService.isIgnored(node) == false
+    }
+
+    def mockPropertyAwareAccessor(String name) {
+        def propertyAwareAccessor = Mock(PropertyAwareAccessor)
+        propertyAwareAccessor.pathElement >> new BeanPropertyElement(name)
+        propertyAwareAccessor.propertyName >> name
+        propertyAwareAccessor
     }
 
     def "isIgnored: should return 'false' for children of included nodes"() {

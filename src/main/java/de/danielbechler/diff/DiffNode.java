@@ -16,14 +16,18 @@
 
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.bean.*;
-import de.danielbechler.diff.visitor.*;
-import de.danielbechler.util.*;
+import de.danielbechler.diff.bean.BeanPropertyElement;
+import de.danielbechler.diff.visitor.PropertyVisitor;
+import de.danielbechler.util.Assert;
 
-import java.lang.annotation.*;
-import java.util.*;
+import java.lang.annotation.Annotation;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.concurrent.atomic.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.util.Collections.unmodifiableSet;
 
@@ -39,6 +43,7 @@ import static java.util.Collections.unmodifiableSet;
 public class DiffNode
 {
 	public static final DiffNode ROOT = null;
+
 	private final Accessor accessor;
 	private final Map<Element, DiffNode> children = new LinkedHashMap<Element, DiffNode>(10);
 
@@ -383,6 +388,37 @@ public class DiffNode
 		return null;
 	}
 
+	/**
+	 * If this node represents a bean property, this method will simply return its name. Otherwise it will return the
+	 * property name of its closest bean property representing ancestor. This way intermediate nodes like those
+	 * representing collection, map or array items will be semantically tied to their container objects.
+	 * <p/>
+	 * That is especially useful for inclusion and exclusion rules. For example, when a List is explicitly included by
+	 * property name, it would be weird if the inclusion didn't also apply to its items.
+	 */
+	public String getPropertyName()
+	{
+		if (isPropertyAware())
+		{
+			return ((PropertyAwareAccessor) accessor).getPropertyName();
+		}
+		else if (parentNode != null)
+		{
+			return parentNode.getPropertyName();
+		}
+		return null;
+	}
+
+	/**
+	 * Returns <code>true</code> when this node represents a bean property and can therefore be queried for property
+	 * specific information like annotations or property types. But there will also be nodes that represent collection
+	 * items, map entries, etc. In those cases this method will return <code>false</code>.
+	 */
+	public final boolean isPropertyAware()
+	{
+		return accessor instanceof PropertyAwareAccessor;
+	}
+
 	public final boolean isRootNode()
 	{
 		return accessor instanceof RootAccessor;
@@ -446,7 +482,7 @@ public class DiffNode
 	 *
 	 * @param parentNode The parent of this node. May be null, if this is a root node.
 	 */
-	public final void setParentNode(final DiffNode parentNode)
+	protected final void setParentNode(final DiffNode parentNode)
 	{
 		if (this.parentNode != null && this.parentNode != parentNode)
 		{

@@ -18,6 +18,7 @@ package de.danielbechler.diff
 
 import de.danielbechler.diff.annotation.ObjectDiffProperty
 import de.danielbechler.diff.collection.CollectionItemElement
+import de.danielbechler.diff.visitor.NodeHierarchyVisitor
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import spock.lang.Specification
@@ -27,7 +28,7 @@ import spock.lang.Stepwise
  * Created by dbechler.
  */
 @Stepwise
-class ExclusionITCase extends Specification {
+class InclusionAndExclusionITCase extends Specification {
 
     def builder = ObjectDifferBuilder.startBuilding()
     def configurable = builder.configure()
@@ -42,8 +43,8 @@ class ExclusionITCase extends Specification {
     def working = new PhoneBook(name: "Jerry Seinfeld's Phone Book", revision: 2, contacts: [
             new Contact(id: "elaine", name: "Elaine", number: "917-555-0186"),
 
-            // George came up with a ridiculous new nickname
-            new Contact(id: "george", name: "T-Bone", number: "917-555-0102"),
+            // George has a new nickname
+            new Contact(id: "george", name: "Koko", number: "917-555-0102"),
 
             // Jerry always ended up at the Moviefone hotline until he realized Kramers new number actually ends with 5, not 6
             new Contact(id: "kramer", name: "Kramer", number: "917-555-3455")
@@ -129,6 +130,17 @@ class ExclusionITCase extends Specification {
 
         then: "the name change of the phone book should be ignored"
         node.getChild('revision') == null
+    }
+
+    def "Inclusion via property name"() {
+        given:
+        configurable.inclusion().toInclude().propertyNames('name', 'contacts')
+        when:
+        def node = builder.build().compare(working, base)
+        then:
+        node.visit(new NodeHierarchyVisitor())
+        node.getChild("name").changed
+        node.getChild("contacts").getChild(new CollectionItemElement(new Contact(id: "george"))).getChild("name").changed
     }
 
     @EqualsAndHashCode
