@@ -43,7 +43,7 @@ This library has been battle-tested in a rather big project of mine, where I use
 
 * Generate Facebook-like activity streams
 * Visualize the differences between object versions
-* Automatically resolve conflicts on conflicting database updates
+* Automatically resolve conflicts on concurrent database updates
 * Detect and persist only properties that were actually changed
 
 ## Contribute
