@@ -1,8 +1,8 @@
-[![Build Status](https://travis-ci.org/SQiShER/java-object-diff.png?branch=master)](https://travis-ci.org/SQiShER/java-object-diff)
-
 ## Introduction
 
 `java-object-diff` is a simple, yet powerful library to find differences between Java objects. It takes two objects and generates a tree structure that represents any differences between the objects and their children. This tree can then be traversed to extract more information or apply changes to the underlying data structures.
+
+[![Build Status](https://travis-ci.org/SQiShER/java-object-diff.png?branch=master)](https://travis-ci.org/SQiShER/java-object-diff)
 
 ## Features
 
@@ -46,8 +46,9 @@ This library has been battle-tested in a rather big project of mine, where I use
 * Automatically resolve conflicts on conflicting database updates
 * Detect and persist only properties that were actually changed
 
-## Contributing
+## Contribute
 
+* Make youself familiar with the [anatomy of java-object-diff](https://github.com/SQiShER/java-object-diff/wiki/The-Anatomy-of-Java-Object-Diff).
 * [Check for open issues](https://github.com/SQiShER/java-object-diff/issues) or open a fresh issue to start a discussion around a feature idea or a bug. There is a *Contributor Friendly* tag for issues that should be ideal for people who are not very familiar with the codebase yet.
 * Fork the java-object-diff repository on Github to start making your changes.
 * Write some tests which show that the bug was fixed or that the feature works as expected.
