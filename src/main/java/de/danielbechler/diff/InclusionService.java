@@ -1,5 +1,6 @@
 package de.danielbechler.diff;
 
+import de.danielbechler.diff.bean.BeanPropertyElement;
 import de.danielbechler.util.Assert;
 
 import java.util.HashMap;
@@ -63,10 +64,41 @@ class InclusionService implements InclusionConfiguration, IsIgnoredResolver
 
 	private boolean isIncludedByPropertyName(final DiffNode node)
 	{
+		if (isIncludedByOwnPropertyName(node))
+		{
+			return true;
+		}
+		else if (isIncludedByParentPropertyName(node))
+		{
+			return true;
+		}
+		return false;
+	}
+
+	private boolean isIncludedByOwnPropertyName(final DiffNode node)
+	{
 		final String propertyName = node.getPropertyName();
 		if (propertyName != null)
 		{
 			return propertyNameInclusions.get(propertyName) == INCLUDED;
+		}
+		return false;
+	}
+
+	private boolean isIncludedByParentPropertyName(final DiffNode node)
+	{
+		final List<Element> pathElements = node.getPath().getElements();
+		for (final Element element : pathElements)
+		{
+			if (element instanceof BeanPropertyElement)
+			{
+				final BeanPropertyElement beanPropertyElement = (BeanPropertyElement) element;
+				final String propertyName = beanPropertyElement.getPropertyName();
+				if (propertyName != null && propertyNameInclusions.get(propertyName) == INCLUDED)
+				{
+					return true;
+				}
+			}
 		}
 		return false;
 	}

@@ -21,12 +21,9 @@ import de.danielbechler.diff.collection.CollectionItemElement
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import spock.lang.Specification
-import spock.lang.Stepwise
-
 /**
  * Created by dbechler.
  */
-@Stepwise
 class InclusionAndExclusionITCase extends Specification {
 
     def builder = ObjectDifferBuilder.startBuilding()
@@ -131,17 +128,103 @@ class InclusionAndExclusionITCase extends Specification {
         node.getChild('revision') == null
     }
 
-    def "Inclusion via property name"() {
+    def "including an element via property name"() {
         given:
-        configurable.inclusion().toInclude().propertyNames('name', 'contacts')
+        configurable.inclusion().toInclude().propertyNames('name')
+
         when:
         def node = builder.build().compare(working, base)
+
         then:
         node.getChild("name").changed
-        and:
-        def element = new CollectionItemElement(new Contact(id: "george"))
-        node.getChild("contacts").childCount() == 1
-        node.getChild("contacts").getChild(element).getChild("name").changed
+        node.getChild("contacts") == null
+    }
+
+    def "including an element via property name includes all its children"() {
+        given:
+        configurable.inclusion().toInclude().propertyNames('contacts')
+
+        when:
+        def node = builder.build().compare(working, base)
+
+        then:
+        node.getChild('contacts').changed
+        node.getChild("contacts").childCount() == 2
+    }
+
+    def "including an element via path includes all its children"() {
+
+    }
+
+    def "including an element via category"() {
+        def includedCategory = "representation"
+
+        given: "the name property of the phonebook is part of our included category"
+        configurable.categories().ofNode(NodePath.buildWith("name")).toBe(includedCategory)
+
+        and: "the category is included"
+        configurable.inclusion().toInclude().categories(includedCategory)
+
+        when:
+        def node = builder.build().compare(working, base)
+
+        then:
+        node.getChild('name').changed
+    }
+
+    def "including an element implicitly includes its children"() {
+        given:
+        configurable.inclusion().toInclude().nodes(NodePath.buildWith('contacts'))
+
+        when:
+        def node = builder.build().compare(working, base)
+
+        then:
+        node.getChild('contacts').changed
+        node.getChild('contacts').childCount() == 2
+    }
+
+    def "including an element only works if its parent element is also included"() {
+//        configurable.inclusion().toInclude().propertyNames()
+//        configurable.inclusion().node(NodePath.buildRootPath()).toInclude().propertyNames('foo', 'bar')
+////        NOTE NodePath Element => ElementSelector?
+//        configurable.inclusion().type(Contact).toInclude().propertyNames('foo', 'bar')
+//        configurable.inclusion().type(Contact).toInclude().propertyNames('foo', 'bar')
+    }
+
+    def "children of included elements can be excluded"() {
+
+    }
+
+    def "elements can be excluded via wildcard"() {
+
+    }
+
+    def "elements can be excluded via exclude-all-but(x, y, ...) rule"() {
+
+    }
+
+    def "including an element via category only includes properties if any their parent elements is also somehow included"() {
+        def includedCategory = "representation"
+        def nodePathToKramer = NodePath.createBuilder()
+                .withRoot()
+                .withPropertyName("contacts")
+                .withCollectionItem(new Contact(id: "kramer"))
+                .build()
+
+        given:
+        configurable.categories().ofNode(NodePath.buildWith("name")).toBe(includedCategory)
+//        configurable.categories().ofNode(NodePath.buildWith("contacts")).toBe(includedCategory)
+        configurable.categories().ofNode(nodePathToKramer).toBe(includedCategory)
+
+        and: "the category is included"
+        configurable.inclusion().toInclude().categories(includedCategory)
+
+        when:
+        def node = builder.build().compare(working, base)
+
+        then:
+        node.getChild('name').changed
     }
 
     @EqualsAndHashCode
