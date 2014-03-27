@@ -79,7 +79,7 @@ public class DifferDispatcherShould
 	@Test
 	public void assign_the_circular_start_path_if_the_delegated_node_is_circular() throws Exception
 	{
-		final NodePath circularStartPath = NodePath.buildRootPath();
+		final NodePath circularStartPath = NodePath.withRoot();
 		given_the_delegated_node_is_circular(circularStartPath);
 
 		final DiffNode node = differDispatcher.dispatch(DiffNode.ROOT, instances, accessor);
@@ -90,7 +90,7 @@ public class DifferDispatcherShould
 	@Test
 	public void mark_node_as_circular_if_the_delegated_node_is_circular() throws Exception
 	{
-		given_the_delegated_node_is_circular(NodePath.buildRootPath());
+		given_the_delegated_node_is_circular(NodePath.withRoot());
 
 		final DiffNode node = differDispatcher.dispatch(DiffNode.ROOT, instances, accessor);
 
@@ -100,7 +100,7 @@ public class DifferDispatcherShould
 	@Test
 	public void pass_node_to_onCircularReferenceException_method_of_the_exceptionListener_if_the_delegated_node_is_circular() throws Exception
 	{
-		given_the_delegated_node_is_circular(NodePath.buildRootPath());
+		given_the_delegated_node_is_circular(NodePath.withRoot());
 
 		final DiffNode node = differDispatcher.dispatch(DiffNode.ROOT, instances, accessor);
 

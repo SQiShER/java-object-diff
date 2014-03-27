@@ -20,7 +20,7 @@ import de.danielbechler.diff.Accessor;
 import de.danielbechler.diff.DiffNode;
 import de.danielbechler.diff.NodePath;
 import de.danielbechler.diff.collection.CollectionItemAccessor;
-import de.danielbechler.diff.collection.CollectionItemElement;
+import de.danielbechler.diff.collection.CollectionItemElementSelector;
 import org.fest.assertions.core.Condition;
 import org.mockito.ArgumentMatcher;
 
@@ -46,8 +46,8 @@ public class NodeMatchers
 				{
 					@SuppressWarnings("TypeMayBeWeakened")
 					final CollectionItemAccessor accessor = (CollectionItemAccessor) argument;
-					final CollectionItemElement collectionItemElement = new CollectionItemElement(item);
-					return accessor.getPathElement().equals(collectionItemElement);
+					final CollectionItemElementSelector collectionItemElement = new CollectionItemElementSelector(item);
+					return accessor.getElementSelector().equals(collectionItemElement);
 				}
 				return false;
 			}

@@ -17,7 +17,7 @@
 package de.danielbechler.diff.collection;
 
 import de.danielbechler.diff.Accessor;
-import de.danielbechler.diff.Element;
+import de.danielbechler.diff.ElementSelector;
 import de.danielbechler.diff.TypeAwareAccessor;
 
 import java.util.Collection;
@@ -34,9 +34,23 @@ public class CollectionItemAccessor implements TypeAwareAccessor, Accessor
 		this.referenceItem = referenceItem;
 	}
 
-	public Element getPathElement()
+	@SuppressWarnings("unchecked")
+	private static Collection<Object> objectAsCollection(final Object object)
 	{
-		return new CollectionItemElement(referenceItem);
+		if (object == null)
+		{
+			return null;
+		}
+		else if (object instanceof Collection)
+		{
+			return (Collection<Object>) object;
+		}
+		throw new IllegalArgumentException(object.getClass().toString());
+	}
+
+	public ElementSelector getElementSelector()
+	{
+		return new CollectionItemElementSelector(referenceItem);
 	}
 
 	public void set(final Object target, final Object value)
@@ -76,20 +90,6 @@ public class CollectionItemAccessor implements TypeAwareAccessor, Accessor
 		return referenceItem != null ? referenceItem.getClass() : null;
 	}
 
-	private static Collection<Object> objectAsCollection(final Object object)
-	{
-		if (object == null)
-		{
-			return null;
-		}
-		else if (object instanceof Collection)
-		{
-			//noinspection unchecked
-			return (Collection<Object>) object;
-		}
-		throw new IllegalArgumentException(object.getClass().toString());
-	}
-
 	public void unset(final Object target)
 	{
 		final Collection targetCollection = objectAsCollection(target);
@@ -102,6 +102,6 @@ public class CollectionItemAccessor implements TypeAwareAccessor, Accessor
 	@Override
 	public String toString()
 	{
-		return "collection item " + getPathElement();
+		return "collection item " + getElementSelector();
 	}
 }

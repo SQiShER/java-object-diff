@@ -16,14 +16,19 @@
 
 package de.danielbechler.diff.integration;
 
-import de.danielbechler.diff.*;
-import de.danielbechler.diff.mock.*;
-import de.danielbechler.diff.visitor.*;
-import org.testng.annotations.*;
+import de.danielbechler.diff.DiffNode;
+import de.danielbechler.diff.NodePath;
+import de.danielbechler.diff.ObjectDiffer;
+import de.danielbechler.diff.ObjectDifferBuilder;
+import de.danielbechler.diff.mock.ObjectWithCircularReference;
+import de.danielbechler.diff.visitor.PrintingVisitor;
+import org.testng.annotations.Test;
 
-import static de.danielbechler.diff.helper.NodeAssertions.*;
+import static de.danielbechler.diff.helper.NodeAssertions.assertThat;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 public class IgnoreITCase
 {
 	@Test
@@ -41,7 +46,7 @@ public class IgnoreITCase
 		modifiedObj1.setReference(modifiedObj2);
 		modifiedObj2.setReference(modifiedObj3);
 
-		final NodePath nodePath = NodePath.buildWith("reference", "reference");
+		final NodePath nodePath = NodePath.with("reference", "reference");
 
 		// verify that the node can be found when it's not excluded
 		ObjectDiffer objectDiffer = ObjectDifferBuilder.startBuilding().build();
@@ -51,7 +56,7 @@ public class IgnoreITCase
 
 		// verify that the node can't be found, when it's excluded
 		final ObjectDifferBuilder objectDifferBuilder = ObjectDifferBuilder.startBuilding();
-		objectDifferBuilder.configure().inclusion().toExclude().nodes(nodePath);
+		objectDifferBuilder.configure().inclusion().toExclude().node(nodePath);
 		objectDiffer = objectDifferBuilder.build();
 		final DiffNode node = objectDiffer.compare(obj1, modifiedObj1);
 		node.visit(new PrintingVisitor(obj1, modifiedObj1));

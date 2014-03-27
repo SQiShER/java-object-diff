@@ -1,16 +1,21 @@
 package de.danielbechler.diff.issues.issue43;
 
-import de.danielbechler.diff.*;
-import org.testng.annotations.*;
+import de.danielbechler.diff.DiffNode;
+import de.danielbechler.diff.NodePath;
+import de.danielbechler.diff.ObjectDifferBuilder;
+import org.testng.annotations.Test;
 
-import java.util.*;
+import java.util.List;
+import java.util.Set;
 
-import static java.util.Arrays.*;
-import static java.util.Collections.*;
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.*;
+import static java.util.Arrays.asList;
+import static java.util.Collections.singleton;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
-/** https://github.com/SQiShER/java-object-diff/issues/43 */
+/**
+ * https://github.com/SQiShER/java-object-diff/issues/43
+ */
 @SuppressWarnings("ALL")
 public class Issue43ITCase
 {
@@ -145,9 +150,9 @@ public class Issue43ITCase
 		ObjectDifferBuilder builder = ObjectDifferBuilder.startBuilding();
 		for (final String name : propertyNames)
 		{
-			final NodePath nodePath = NodePath.buildWith(name);
+			final NodePath nodePath = NodePath.with(name);
 			builder.configure().comparison().ofNode(nodePath).toUseEqualsMethod();
-			builder.configure().inclusion().toInclude().nodes(nodePath);
+			builder.configure().inclusion().toInclude().node(nodePath);
 		}
 
 		final Thing thingOne = new Thing("a", "b");

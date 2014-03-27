@@ -16,16 +16,22 @@
 
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.bean.*;
-import de.danielbechler.util.*;
+import de.danielbechler.diff.bean.BeanPropertyAccessor;
+import de.danielbechler.util.Assert;
+import de.danielbechler.util.Classes;
 import de.danielbechler.util.Collections;
+import de.danielbechler.util.Exceptions;
 
-import java.lang.reflect.*;
-import java.util.*;
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 
-import static de.danielbechler.util.Objects.*;
+import static de.danielbechler.util.Objects.isEqual;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 @SuppressWarnings({"UnusedDeclaration"})
 public class Instances
 {
@@ -33,6 +39,18 @@ public class Instances
 	private final Object working;
 	private final Object base;
 	private final Object fresh;
+
+	Instances(final Accessor sourceAccessor,
+			  final Object working,
+			  final Object base,
+			  final Object fresh)
+	{
+		Assert.notNull(sourceAccessor, "sourceAccessor");
+		this.sourceAccessor = sourceAccessor;
+		this.working = working;
+		this.base = base;
+		this.fresh = fresh;
+	}
 
 	static <T> Instances of(final Accessor sourceAccessor,
 							final T working,
@@ -54,19 +72,9 @@ public class Instances
 		return new Instances(RootAccessor.getInstance(), working, base, fresh);
 	}
 
-	Instances(final Accessor sourceAccessor,
-			  final Object working,
-			  final Object base,
-			  final Object fresh)
-	{
-		Assert.notNull(sourceAccessor, "sourceAccessor");
-		this.sourceAccessor = sourceAccessor;
-		this.working = working;
-		this.base = base;
-		this.fresh = fresh;
-	}
-
-	/** @return The {@link Accessor} that has been used to get to these instances. */
+	/**
+	 * @return The {@link Accessor} that has been used to get to these instances.
+	 */
 	public Accessor getSourceAccessor()
 	{
 		return sourceAccessor;
@@ -285,14 +293,10 @@ public class Instances
 	{
 		if (parentNode != null)
 		{
-			return NodePath.createBuilder()
-						   .withPropertyPath(parentNode.getPath())
-						   .withElement(sourceAccessor.getPathElement())
-						   .build();
+			final NodePath parentPath = parentNode.getPath();
+			final ElementSelector elementSelector = sourceAccessor.getElementSelector();
+			return NodePath.startBuildingFrom(parentPath).element(elementSelector).build();
 		}
-		else
-		{
-			return NodePath.createBuilder().withRoot().build();
-		}
+		return NodePath.withRoot();
 	}
 }

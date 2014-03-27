@@ -113,7 +113,7 @@ public class CollectionDifferShould
 
 		node = collectionDiffer.compare(DiffNode.ROOT, instances);
 
-		verify(differDispatcher).dispatch(node(NodePath.buildRootPath()), same(instances), collectionItemAccessor(addedItem));
+		verify(differDispatcher).dispatch(node(NodePath.withRoot()), same(instances), collectionItemAccessor(addedItem));
 		verifyNoMoreInteractions(differDispatcher);
 	}
 
@@ -136,7 +136,7 @@ public class CollectionDifferShould
 
 		node = collectionDiffer.compare(DiffNode.ROOT, instances);
 
-		verify(differDispatcher).dispatch(node(NodePath.buildRootPath()), same(instances), collectionItemAccessor(removedItem));
+		verify(differDispatcher).dispatch(node(NodePath.withRoot()), same(instances), collectionItemAccessor(removedItem));
 		verifyNoMoreInteractions(differDispatcher);
 	}
 
@@ -147,7 +147,7 @@ public class CollectionDifferShould
 
 		node = collectionDiffer.compare(DiffNode.ROOT, instances);
 
-		verify(comparisonStrategy, atLeastOnce()).compare(node(NodePath.buildRootPath()), same(instances));
+		verify(comparisonStrategy, atLeastOnce()).compare(node(NodePath.withRoot()), same(instances));
 	}
 
 	@Test
@@ -158,7 +158,7 @@ public class CollectionDifferShould
 
 		node = collectionDiffer.compare(DiffNode.ROOT, instances);
 
-		verify(differDispatcher).dispatch(node(NodePath.buildRootPath()), same(instances), collectionItemAccessor(addedItem));
+		verify(differDispatcher).dispatch(node(NodePath.withRoot()), same(instances), collectionItemAccessor(addedItem));
 		verifyNoMoreInteractions(differDispatcher);
 	}
 
@@ -170,7 +170,7 @@ public class CollectionDifferShould
 
 		node = collectionDiffer.compare(DiffNode.ROOT, instances);
 
-		verify(differDispatcher).dispatch(node(NodePath.buildRootPath()), same(instances), collectionItemAccessor(removedItem));
+		verify(differDispatcher).dispatch(node(NodePath.withRoot()), same(instances), collectionItemAccessor(removedItem));
 		verifyNoMoreInteractions(differDispatcher);
 	}
 
@@ -182,7 +182,7 @@ public class CollectionDifferShould
 
 		node = collectionDiffer.compare(DiffNode.ROOT, instances);
 
-		verify(differDispatcher).dispatch(node(NodePath.buildRootPath()), same(instances), collectionItemAccessor(knownItem));
+		verify(differDispatcher).dispatch(node(NodePath.withRoot()), same(instances), collectionItemAccessor(knownItem));
 		verifyNoMoreInteractions(differDispatcher);
 	}
 

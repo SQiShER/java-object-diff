@@ -20,7 +20,7 @@ class EqualsOnlyValueProviderMethodExample
 
 		// (Option 1) Causes the ObjectDiffer to compare using the method "getProp1" on the 'prop' property of the root object
 		builder.configure().comparison()
-			   .ofNode(NodePath.buildWith("prop"))
+			   .ofNode(NodePath.with("prop"))
 			   .toUseEqualsMethodOfValueProvidedByMethod("getProp1");
 
 		final DiffNode node = builder.build().compare(working, base);

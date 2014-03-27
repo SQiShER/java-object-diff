@@ -39,7 +39,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
 
-import static de.danielbechler.diff.NodePath.buildRootPath;
+import static de.danielbechler.diff.NodePath.withRoot;
 import static de.danielbechler.diff.helper.NodeAssertions.assertThat;
 import static de.danielbechler.diff.helper.NodeMatchers.node;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -171,17 +171,17 @@ public class BeanDifferShould
 	@Test
 	public void compare_via_comparisonStrategy_if_present()
 	{
-		when(comparisonStrategyResolver.resolveComparisonStrategy(node(buildRootPath()))).thenReturn(comparisonStrategy);
+		when(comparisonStrategyResolver.resolveComparisonStrategy(node(withRoot()))).thenReturn(comparisonStrategy);
 
 		beanDiffer.compare(DiffNode.ROOT, instances);
 
-		verify(comparisonStrategy).compare(node(buildRootPath()), same(instances));
+		verify(comparisonStrategy).compare(node(withRoot()), same(instances));
 	}
 
 	@Test
 	public void compare_via_introspector_if_introspectable()
 	{
-		when(introspectableResolver.isIntrospectable(node(buildRootPath()))).thenReturn(true);
+		when(introspectableResolver.isIntrospectable(node(withRoot()))).thenReturn(true);
 
 		beanDiffer.compare(DiffNode.ROOT, instances);
 
@@ -264,14 +264,14 @@ public class BeanDifferShould
 
 	private void given_root_node_is_introspectable()
 	{
-		doReturn(true).when(introspectableResolver).isIntrospectable(node(buildRootPath()));
+		doReturn(true).when(introspectableResolver).isIntrospectable(node(withRoot()));
 	}
 
 	private PropertyAwareAccessor given_introspector_returns_PropertyAccessor(final String propertyName)
 	{
-		final BeanPropertyElement propertyElement = new BeanPropertyElement(propertyName);
+		final BeanPropertyElementSelector propertyElement = new BeanPropertyElementSelector(propertyName);
 		final PropertyAwareAccessor propertyAccessor = mock(PropertyAwareAccessor.class);
-		when(propertyAccessor.getPathElement()).thenReturn(propertyElement);
+		when(propertyAccessor.getElementSelector()).thenReturn(propertyElement);
 		final Set<PropertyAwareAccessor> propertyAccessors = Collections.singleton(propertyAccessor);
 		when(introspector.introspect(any(Class.class))).thenReturn(propertyAccessors);
 		return propertyAccessor;

@@ -25,7 +25,7 @@ import de.danielbechler.diff.visitor.NodeHierarchyVisitor;
 import de.danielbechler.diff.visitor.PrintingVisitor;
 import org.testng.annotations.Test;
 
-import static de.danielbechler.diff.NodePath.createBuilder;
+import static de.danielbechler.diff.NodePath.startBuilding;
 import static de.danielbechler.diff.helper.NodeAssertions.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -40,6 +40,34 @@ import static org.fest.assertions.api.Assertions.assertThat;
 public class GraphITCase
 {
 	private static final boolean PRINT_ENABLED = true;
+
+	private static DiffNode compareAndPrint(final GraphNode modified, final GraphNode base)
+	{
+		final DiffNode root = ObjectDifferBuilder.buildDefault().compare(modified, base);
+		if (PRINT_ENABLED)
+		{
+			root.visit(new PrintingVisitor(modified, base));
+		}
+		return root;
+	}
+
+	private static void establishParentChildRelationship(final GraphNode parent, final GraphNode child)
+	{
+		child.setParent(parent);
+		parent.addChild(child);
+	}
+
+	private static void establishCircularChildRelationship(final GraphNode a, final GraphNode b)
+	{
+		a.addChild(b);
+		b.addChild(a);
+	}
+
+	private static void establishCircularDirectReference(final GraphNode a, final GraphNode b)
+	{
+		a.setDirectReference(b);
+		b.setDirectReference(a);
+	}
 
 	@Test
 	public void basicNode()
@@ -94,15 +122,13 @@ public class GraphITCase
 
 		assertThat(root).root().hasChildren(1);
 		assertThat(root).child("children").hasChildren(2);
-		assertThat(root).child(createBuilder()
-				.withRoot()
-				.withPropertyName("children")
-				.withCollectionItem(a))
+		assertThat(root).child(startBuilding()
+				.propertyName("children")
+				.collectionItem(a))
 				.hasState(DiffNode.State.CHANGED);
-		assertThat(root).child(createBuilder()
-				.withRoot()
-				.withPropertyName("children")
-				.withCollectionItem(b))
+		assertThat(root).child(startBuilding()
+				.propertyName("children")
+				.collectionItem(b))
 				.hasState(DiffNode.State.CHANGED);
 	}
 
@@ -136,50 +162,44 @@ public class GraphITCase
 		 * is a parent of it, we cannot reliably test, whether the node has been changed. (added or removed
 		 * is easier, but since changed is not yet possible, that would be inconsistent)
 		 */
-		assertThat(root).child(createBuilder()
-				.withRoot()
-				.withPropertyName("children")
-				.withCollectionItem(b)
-				.withPropertyName("directReference")
-				.withPropertyName("map")
-				.withMapKey("node-b-again"))
+		assertThat(root).child(startBuilding()
+				.propertyName("children")
+				.collectionItem(b)
+				.propertyName("directReference")
+				.propertyName("map")
+				.mapKey("node-b-again"))
 				.hasState(DiffNode.State.CIRCULAR); // TODO Change circular reference detection, to allow returning the expected "REMOVED" state
 
-		assertThat(root).child(createBuilder()
-				.withRoot()
-				.withPropertyName("children")
-				.withCollectionItem(b)
-				.withPropertyName("directReference")
-				.withPropertyName("value")).hasState(DiffNode.State.CHANGED);
+		assertThat(root).child(startBuilding()
+				.propertyName("children")
+				.collectionItem(b)
+				.propertyName("directReference")
+				.propertyName("value")).hasState(DiffNode.State.CHANGED);
 
-		assertThat(root).child(createBuilder()
-				.withRoot()
-				.withPropertyName("children")
-				.withCollectionItem(b)
-				.withPropertyName("map")
-				.withMapKey("node-a")
-				.withPropertyName("map")
-				.withMapKey("node-b-again"))
+		assertThat(root).child(startBuilding()
+				.propertyName("children")
+				.collectionItem(b)
+				.propertyName("map")
+				.mapKey("node-a")
+				.propertyName("map")
+				.mapKey("node-b-again"))
 				.hasState(DiffNode.State.CIRCULAR); // TODO Change circular reference detection, to allow returning the expected "REMOVED" state
 
-		assertThat(root).child(createBuilder()
-				.withRoot()
-				.withPropertyName("children")
-				.withCollectionItem(b)
-				.withPropertyName("map")
-				.withMapKey("node-a")
-				.withPropertyName("value")).hasState(DiffNode.State.CHANGED);
+		assertThat(root).child(startBuilding()
+				.propertyName("children")
+				.collectionItem(b)
+				.propertyName("map")
+				.mapKey("node-a")
+				.propertyName("value")).hasState(DiffNode.State.CHANGED);
 
-		assertThat(root).child(createBuilder()
-				.withRoot()
-				.withPropertyName("children")
-				.withCollectionItem(b)
-				.withPropertyName("value")).hasState(DiffNode.State.CHANGED);
+		assertThat(root).child(startBuilding()
+				.propertyName("children")
+				.collectionItem(b)
+				.propertyName("value")).hasState(DiffNode.State.CHANGED);
 
-		assertThat(root).child(createBuilder()
-				.withRoot()
-				.withPropertyName("map")
-				.withMapKey("a")).hasState(DiffNode.State.CHANGED);
+		assertThat(root).child(startBuilding()
+				.propertyName("map")
+				.mapKey("a")).hasState(DiffNode.State.CHANGED);
 	}
 
 	@Test
@@ -269,17 +289,15 @@ public class GraphITCase
 
 		final DiffNode root = compareAndPrint(modified, base);
 
-		NodeAssertions.assertThat(root).child(createBuilder()
-				.withRoot()
-				.withPropertyName("children")
-				.withCollectionItem(a))
+		NodeAssertions.assertThat(root).child(startBuilding()
+				.propertyName("children")
+				.collectionItem(a))
 				.hasState(DiffNode.State.CHANGED)
 				.hasChildren(1);
 
-		NodeAssertions.assertThat(root).child(createBuilder()
-				.withRoot()
-				.withPropertyName("children")
-				.withCollectionItem(b))
+		NodeAssertions.assertThat(root).child(startBuilding()
+				.propertyName("children")
+				.collectionItem(b))
 				.hasState(DiffNode.State.CHANGED)
 				.hasChildren(1);
 	}
@@ -296,11 +314,10 @@ public class GraphITCase
 
 		final DiffNode root = compareAndPrint(modified, base);
 
-		NodeAssertions.assertThat(root).child(createBuilder()
-				.withRoot()
-				.withPropertyName("children")
-				.withCollectionItem(modifiedA)
-				.withPropertyName("value"))
+		NodeAssertions.assertThat(root).child(startBuilding()
+				.propertyName("children")
+				.collectionItem(modifiedA)
+				.propertyName("value"))
 				.hasState(DiffNode.State.CHANGED);
 	}
 
@@ -336,11 +353,10 @@ public class GraphITCase
 
 		final DiffNode root = compareAndPrint(modified, base);
 
-		assertThat(root).child(createBuilder()
-				.withRoot()
-				.withPropertyName("children")
-				.withCollectionItem(b)
-				.withPropertyName("value"))
+		assertThat(root).child(startBuilding()
+				.propertyName("children")
+				.collectionItem(b)
+				.propertyName("value"))
 				.hasState(DiffNode.State.CHANGED);
 	}
 
@@ -386,113 +402,95 @@ public class GraphITCase
 		final DiffNode root = compareAndPrint(modified, base);
 
 		NodeAssertions.assertThat(root)
-				.child(createBuilder()
-						.withRoot()
-						.withPropertyName("children")
-						.withCollectionItem(a)
-						.withPropertyName("children")
-						.withCollectionItem(aa)
-						.withPropertyName("children")
-						.withCollectionItem(ba)
-						.withPropertyName("children")
-						.withCollectionItem(baa))
+				.child(startBuilding()
+						.propertyName("children")
+						.collectionItem(a)
+						.propertyName("children")
+						.collectionItem(aa)
+						.propertyName("children")
+						.collectionItem(ba)
+						.propertyName("children")
+						.collectionItem(baa))
 				.hasState(DiffNode.State.CHANGED);
 
 		NodeAssertions.assertThat(root)
-				.child(createBuilder()
-						.withRoot()
-						.withPropertyName("children")
-						.withCollectionItem(a)
-						.withPropertyName("children")
-						.withCollectionItem(aa)
-						.withPropertyName("children")
-						.withCollectionItem(ba)
-						.withPropertyName("value"))
+				.child(startBuilding()
+						.propertyName("children")
+						.collectionItem(a)
+						.propertyName("children")
+						.collectionItem(aa)
+						.propertyName("children")
+						.collectionItem(ba)
+						.propertyName("value"))
 				.hasState(DiffNode.State.CHANGED);
 
 		NodeAssertions.assertThat(root)
-				.child(createBuilder()
-						.withRoot()
-						.withPropertyName("children")
-						.withCollectionItem(a)
-						.withPropertyName("directReference")
-						.withPropertyName("children")
-						.withCollectionItem(ba)
-						.withPropertyName("children")
-						.withCollectionItem(baa)
-						.withPropertyName("value"))
+				.child(startBuilding()
+						.propertyName("children")
+						.collectionItem(a)
+						.propertyName("directReference")
+						.propertyName("children")
+						.collectionItem(ba)
+						.propertyName("children")
+						.collectionItem(baa)
+						.propertyName("value"))
 				.hasState(DiffNode.State.CHANGED);
 
 		NodeAssertions.assertThat(root)
-				.child(createBuilder()
-						.withRoot()
-						.withPropertyName("children")
-						.withCollectionItem(a)
-						.withPropertyName("directReference")
-						.withPropertyName("children")
-						.withCollectionItem(ba)
-						.withPropertyName("value"))
+				.child(startBuilding()
+						.propertyName("children")
+						.collectionItem(a)
+						.propertyName("directReference")
+						.propertyName("children")
+						.collectionItem(ba)
+						.propertyName("value"))
 				.hasState(DiffNode.State.CHANGED);
 
 		NodeAssertions.assertThat(root)
-				.child(createBuilder()
-						.withRoot()
-						.withPropertyName("children")
-						.withCollectionItem(b)
-						.withPropertyName("children")
-						.withCollectionItem(ba)
-						.withPropertyName("children")
-						.withCollectionItem(baa)
-						.withPropertyName("value"))
+				.child(startBuilding()
+						.propertyName("children")
+						.collectionItem(b)
+						.propertyName("children")
+						.collectionItem(ba)
+						.propertyName("children")
+						.collectionItem(baa)
+						.propertyName("value"))
 				.hasState(DiffNode.State.CHANGED);
 
 		NodeAssertions.assertThat(root)
-				.child(createBuilder()
-						.withRoot()
-						.withPropertyName("children")
-						.withCollectionItem(b)
-						.withPropertyName("children")
-						.withCollectionItem(ba)
-						.withPropertyName("value"))
+				.child(startBuilding()
+						.propertyName("children")
+						.collectionItem(b)
+						.propertyName("children")
+						.collectionItem(ba)
+						.propertyName("value"))
 				.hasState(DiffNode.State.CHANGED);
 
 		NodeAssertions.assertThat(root)
-				.child(createBuilder()
-						.withRoot()
-						.withPropertyName("children")
-						.withCollectionItem(b)
-						.withPropertyName("directReference")
-						.withPropertyName("children")
-						.withCollectionItem(aa)
-						.withPropertyName("children")
-						.withCollectionItem(ba)
-						.withPropertyName("children")
-						.withCollectionItem(baa)
-						.withPropertyName("value"))
+				.child(startBuilding()
+						.propertyName("children")
+						.collectionItem(b)
+						.propertyName("directReference")
+						.propertyName("children")
+						.collectionItem(aa)
+						.propertyName("children")
+						.collectionItem(ba)
+						.propertyName("children")
+						.collectionItem(baa)
+						.propertyName("value"))
 				.hasState(DiffNode.State.CHANGED);
 
 		NodeAssertions.assertThat(root)
-				.child(createBuilder()
-						.withRoot()
-						.withPropertyName("children")
-						.withCollectionItem(b)
-						.withPropertyName("directReference")
-						.withPropertyName("children")
-						.withCollectionItem(aa)
-						.withPropertyName("children")
-						.withCollectionItem(ba)
-						.withPropertyName("value"))
+				.child(startBuilding()
+						.propertyName("children")
+						.collectionItem(b)
+						.propertyName("directReference")
+						.propertyName("children")
+						.collectionItem(aa)
+						.propertyName("children")
+						.collectionItem(ba)
+						.propertyName("value"))
 				.hasState(DiffNode.State.CHANGED);
-	}
-
-	private static DiffNode compareAndPrint(final GraphNode modified, final GraphNode base)
-	{
-		final DiffNode root = ObjectDifferBuilder.buildDefault().compare(modified, base);
-		if (PRINT_ENABLED)
-		{
-			root.visit(new PrintingVisitor(modified, base));
-		}
-		return root;
 	}
 
 	@Test
@@ -538,30 +536,11 @@ public class GraphITCase
 		node.visit(new NodeHierarchyVisitor());
 
 		NodeAssertions.assertThat(node)
-				.child(createBuilder()
-						.withRoot()
-						.withPropertyName("map")
-						.withMapKey("foo")
-						.withPropertyName("map")
-						.withMapKey("bar"))
+				.child(startBuilding()
+						.propertyName("map")
+						.mapKey("foo")
+						.propertyName("map")
+						.mapKey("bar"))
 				.isCircular();
-	}
-
-	private static void establishParentChildRelationship(final GraphNode parent, final GraphNode child)
-	{
-		child.setParent(parent);
-		parent.addChild(child);
-	}
-
-	private static void establishCircularChildRelationship(final GraphNode a, final GraphNode b)
-	{
-		a.addChild(b);
-		b.addChild(a);
-	}
-
-	private static void establishCircularDirectReference(final GraphNode a, final GraphNode b)
-	{
-		a.setDirectReference(b);
-		b.setDirectReference(a);
 	}
 }

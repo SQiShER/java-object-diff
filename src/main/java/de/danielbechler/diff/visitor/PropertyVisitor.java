@@ -39,7 +39,7 @@ public class PropertyVisitor implements DiffNode.Visitor
 	public void accept(final DiffNode node, final Visit visit)
 	{
 		final NodePath differencePath = node.getPath();
-		if (differencePath.isParentOf(nodePath))
+		if (differencePath.matches(nodePath) || differencePath.isParentOf(nodePath))
 		{
 			if (differencePath.matches(nodePath))
 			{

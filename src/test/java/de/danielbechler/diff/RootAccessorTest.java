@@ -56,7 +56,7 @@ public class RootAccessorTest
 	@Test
 	public void getPathElement_should_return_RootElement()
 	{
-		assertThat(RootAccessor.getInstance().getPathElement(), is(instanceOf(RootElement.class)));
+		assertThat(RootAccessor.getInstance().getElementSelector(), is(instanceOf(RootElementSelector.class)));
 	}
 
 	@Test

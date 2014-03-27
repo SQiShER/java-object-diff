@@ -18,11 +18,11 @@ package de.danielbechler.diff;
 
 /**
  * Serves mainly as marker class and enforces the proper implementation of hashCode(), equals() and toString()
- * for all property path elements.
+ * for all element selectors.
  *
  * @author Daniel Bechler
  */
-public abstract class Element
+public abstract class ElementSelector
 {
 	public abstract String toHumanReadableString();
 

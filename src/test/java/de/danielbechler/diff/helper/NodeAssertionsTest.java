@@ -20,7 +20,7 @@ import de.danielbechler.diff.Accessor;
 import de.danielbechler.diff.DiffNode;
 import de.danielbechler.diff.NodePath;
 import de.danielbechler.diff.ObjectDifferBuilder;
-import de.danielbechler.diff.bean.BeanPropertyElement;
+import de.danielbechler.diff.bean.BeanPropertyElementSelector;
 import de.danielbechler.diff.mock.ObjectWithString;
 import org.testng.annotations.Test;
 
@@ -79,7 +79,7 @@ public class NodeAssertionsTest
 	public void testAssertThat_child_at_property_names_does_exist_succeeds_when_child_exists()
 	{
 		final Accessor accessor = mock(Accessor.class);
-		when(accessor.getPathElement()).thenReturn(new BeanPropertyElement("value"));
+		when(accessor.getElementSelector()).thenReturn(new BeanPropertyElementSelector("value"));
 		final DiffNode node = new DiffNode(ObjectWithString.class);
 		final DiffNode child = new DiffNode(node, accessor, String.class);
 		node.addChild(child);
@@ -98,13 +98,13 @@ public class NodeAssertionsTest
 		final ObjectWithString working = new ObjectWithString("foo");
 		final ObjectWithString base = new ObjectWithString("bar");
 		final DiffNode node = ObjectDifferBuilder.buildDefault().compare(working, base);
-		assertThat(node).child(NodePath.buildWith("value")).doesExist();
+		assertThat(node).child(NodePath.with("value")).doesExist();
 	}
 
 	@Test(expectedExceptions = AssertionError.class)
 	public void testAssertThat_child_at_property_path_does_exist_fails_when_child_doesnt_exist()
 	{
-		assertThat(null).child(NodePath.buildWith("value")).doesExist();
+		assertThat(null).child(NodePath.with("value")).doesExist();
 	}
 
 	@Test
@@ -113,13 +113,13 @@ public class NodeAssertionsTest
 		final ObjectWithString working = new ObjectWithString("foo");
 		final ObjectWithString base = new ObjectWithString("bar");
 		final DiffNode node = ObjectDifferBuilder.buildDefault().compare(working, base);
-		assertThat(node).child(NodePath.createBuilder().withRoot().withPropertyName("value")).doesExist();
+		assertThat(node).child(NodePath.startBuilding().propertyName("value")).doesExist();
 	}
 
 	@Test(expectedExceptions = AssertionError.class)
 	public void testAssertThat_child_at_property_path_builder_does_exist_fails_when_child_doesnt_exist()
 	{
-		assertThat(null).child(NodePath.createBuilder().withRoot().withPropertyName("value")).doesExist();
+		assertThat(null).child(NodePath.startBuilding().propertyName("value")).doesExist();
 	}
 
 	@Test

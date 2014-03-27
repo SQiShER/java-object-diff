@@ -16,14 +16,15 @@
 
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.bean.BeanPropertyElement;
-import de.danielbechler.diff.collection.CollectionItemElement;
-import de.danielbechler.diff.map.MapKeyElement;
+import de.danielbechler.diff.bean.BeanPropertyElementSelector;
+import de.danielbechler.diff.collection.CollectionItemElementSelector;
+import de.danielbechler.diff.map.MapKeyElementSelector;
 import de.danielbechler.util.Assert;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -31,16 +32,39 @@ import java.util.List;
  */
 public final class NodePath implements Comparable<NodePath>
 {
-	private final List<Element> elements;
+	private final List<ElementSelector> elementSelectors;
 
-	private NodePath(final List<Element> elements)
+	private NodePath(final List<ElementSelector> elementSelectors)
 	{
-		this.elements = Collections.unmodifiableList(elements);
+		this.elementSelectors = Collections.unmodifiableList(elementSelectors);
 	}
 
-	public List<Element> getElements()
+	public static AppendableBuilder startBuilding()
 	{
-		return elements;
+		final List<ElementSelector> elementSelectors1 = new LinkedList<ElementSelector>();
+		elementSelectors1.add(RootElementSelector.getInstance());
+		return new AppendableBuilderImpl(elementSelectors1);
+	}
+
+	public static AppendableBuilder startBuildingFrom(final NodePath nodePath)
+	{
+		Assert.notNull(nodePath, "propertyPath");
+		return new AppendableBuilderImpl(new ArrayList<ElementSelector>(nodePath.getElementSelectors()));
+	}
+
+	public static NodePath with(final String propertyName, final String... additionalPropertyNames)
+	{
+		return startBuilding().propertyName(propertyName, additionalPropertyNames).build();
+	}
+
+	public static NodePath withRoot()
+	{
+		return startBuilding().build();
+	}
+
+	public List<ElementSelector> getElementSelectors()
+	{
+		return elementSelectors;
 	}
 
 	public boolean matches(final NodePath nodePath)
@@ -50,47 +74,56 @@ public final class NodePath implements Comparable<NodePath>
 
 	public boolean isParentOf(final NodePath nodePath)
 	{
-		final Iterator<Element> iterator1 = elements.iterator();
-		final Iterator<Element> iterator2 = nodePath.getElements().iterator();
-		while (iterator1.hasNext() && iterator2.hasNext())
+		final List<ElementSelector> otherElementSelectors = nodePath.getElementSelectors();
+		if (elementSelectors.size() < otherElementSelectors.size())
 		{
-			final Element next1 = iterator1.next();
-			final Element next2 = iterator2.next();
-			if (!next1.equals(next2))
-			{
-				return false;
-			}
+			return otherElementSelectors.subList(0, elementSelectors.size()).equals(elementSelectors);
 		}
-		return !iterator1.hasNext();
+		return false;
+	}
+
+	public boolean isChildOf(final NodePath nodePath)
+	{
+		final List<ElementSelector> otherElementSelectors = nodePath.getElementSelectors();
+		if (elementSelectors.size() > otherElementSelectors.size())
+		{
+			return elementSelectors.subList(0, otherElementSelectors.size()).equals(otherElementSelectors);
+		}
+		return false;
+	}
+
+	public ElementSelector getLastElementSelector()
+	{
+		return elementSelectors.get(elementSelectors.size() - 1);
 	}
 
 	@Override
 	public String toString()
 	{
 		final StringBuilder sb = new StringBuilder();
-		final Iterator<Element> iterator = elements.iterator();
-		Element previousElement = null;
+		final Iterator<ElementSelector> iterator = elementSelectors.iterator();
+		ElementSelector previousElementSelector = null;
 		while (iterator.hasNext())
 		{
-			final Element element = iterator.next();
-			if (element instanceof RootElement)
+			final ElementSelector elementSelector = iterator.next();
+			if (elementSelector instanceof RootElementSelector)
 			{
 				sb.append("/");
 			}
-			else if (element instanceof CollectionItemElement || element instanceof MapKeyElement)
+			else if (elementSelector instanceof CollectionItemElementSelector || elementSelector instanceof MapKeyElementSelector)
 			{
-				sb.append(element);
+				sb.append(elementSelector);
 			}
-			else if (previousElement instanceof RootElement)
+			else if (previousElementSelector instanceof RootElementSelector)
 			{
-				sb.append(element);
+				sb.append(elementSelector);
 			}
 			else
 			{
 				sb.append('/');
-				sb.append(element);
+				sb.append(elementSelector);
 			}
-			previousElement = element;
+			previousElementSelector = elementSelector;
 		}
 		return sb.toString();
 	}
@@ -109,7 +142,7 @@ public final class NodePath implements Comparable<NodePath>
 
 		final NodePath that = (NodePath) o;
 
-		if (!elements.equals(that.elements))
+		if (!elementSelectors.equals(that.elementSelectors))
 		{
 			return false;
 		}
@@ -120,27 +153,12 @@ public final class NodePath implements Comparable<NodePath>
 	@Override
 	public int hashCode()
 	{
-		return elements.hashCode();
-	}
-
-	public static InitialBuilder createBuilder()
-	{
-		return new InitialBuilderImpl();
-	}
-
-	public static NodePath buildWith(final String propertyName, final String... additionalPropertyNames)
-	{
-		return createBuilder().withRoot().withPropertyName(propertyName, additionalPropertyNames).build();
-	}
-
-	public static NodePath buildRootPath()
-	{
-		return createBuilder().withRoot().build();
+		return elementSelectors.hashCode();
 	}
 
 	public int compareTo(final NodePath that)
 	{
-		if (this.getElements().size() <= that.getElements().size())
+		if (this.getElementSelectors().size() <= that.getElementSelectors().size())
 		{
 			return -1;
 		}
@@ -148,7 +166,7 @@ public final class NodePath implements Comparable<NodePath>
 		{
 			return 0;
 		}
-		else if (this.getElements().size() > that.getElements().size())
+		else if (this.getElementSelectors().size() > that.getElementSelectors().size())
 		{
 			return 1;
 		}
@@ -158,119 +176,96 @@ public final class NodePath implements Comparable<NodePath>
 		}
 	}
 
-	/**
-	 * @author Daniel Bechler
-	 */
-	@SuppressWarnings({"UnusedDeclaration"})
-	private static final class InitialBuilderImpl implements InitialBuilder
+	public static interface AppendableBuilder
 	{
-		private InitialBuilderImpl()
-		{
-		}
+		AppendableBuilder any();
 
-		public AppendableBuilder withRoot()
-		{
-			final List<Element> elements = new ArrayList<Element>(1);
-			elements.add(RootElement.getInstance());
-			return new AppendableBuilderImpl(elements);
-		}
+		AppendableBuilder element(ElementSelector elementSelector);
 
-		public AppendableBuilder withPropertyPath(final NodePath nodePath)
-		{
-			Assert.notNull(nodePath, "propertyPath");
-			return new AppendableBuilderImpl(new ArrayList<Element>(nodePath.getElements()));
-		}
+		AppendableBuilder propertyName(String name, String... names);
+
+		<T> AppendableBuilder collectionItem(T item);
+
+		<K> AppendableBuilder mapKey(K key);
+
+		NodePath build();
 	}
 
 	private static final class AppendableBuilderImpl implements AppendableBuilder
 	{
-		private final List<Element> elements;
+		private final List<ElementSelector> elementSelectors;
 
-		public AppendableBuilderImpl(final List<Element> elements)
+		public AppendableBuilderImpl(final List<ElementSelector> elementSelectors)
 		{
-			Assert.notEmpty(elements, "elements");
-			this.elements = new ArrayList<Element>(elements);
+			Assert.notEmpty(elementSelectors, "elementSelectors");
+			this.elementSelectors = new LinkedList<ElementSelector>(elementSelectors);
 		}
 
-		public AppendableBuilder withElement(final Element element)
+		public AppendableBuilder any()
 		{
-			Assert.notNull(element, "element");
-			elements.add(element);
+			elementSelectors.add(new AnyElementSelector());
 			return this;
 		}
 
-		public AppendableBuilder withPropertyName(final String name, final String... names)
+		public AppendableBuilder element(final ElementSelector elementSelector)
 		{
-			elements.add(new BeanPropertyElement(name));
+			Assert.notNull(elementSelector, "elementSelector");
+			elementSelectors.add(elementSelector);
+			return this;
+		}
+
+		public AppendableBuilder propertyName(final String name, final String... names)
+		{
+			elementSelectors.add(new BeanPropertyElementSelector(name));
 			for (final String s : names)
 			{
-				elements.add(new BeanPropertyElement(s));
+				elementSelectors.add(new BeanPropertyElementSelector(s));
 			}
 			return this;
 		}
 
-		public <T> AppendableBuilder withCollectionItem(final T item)
+		public <T> AppendableBuilder collectionItem(final T item)
 		{
-			elements.add(new CollectionItemElement(item));
+			elementSelectors.add(new CollectionItemElementSelector(item));
 			return this;
 		}
 
-		public <K> AppendableBuilder withMapKey(final K key)
+		public <K> AppendableBuilder mapKey(final K key)
 		{
 			Assert.notNull(key, "key");
-			elements.add(new MapKeyElement(key));
+			elementSelectors.add(new MapKeyElementSelector(key));
 			return this;
 		}
 
 		public NodePath build()
 		{
-			if (elements.isEmpty())
+			if (elementSelectors.isEmpty())
 			{
 				throw new IllegalStateException("A property path cannot be empty");
 			}
-			else if (!(elements.get(0) instanceof RootElement))
+			else if (!(elementSelectors.get(0) instanceof RootElementSelector))
 			{
 				throw new IllegalStateException("A property path must start with a root element");
 			}
-			else if (elementCount(RootElement.class) > 1)
+			else if (elementCount(RootElementSelector.class) > 1)
 			{
 				throw new IllegalStateException("A property path cannot contain multiple root elements");
 			}
-			return new NodePath(elements);
+			return new NodePath(elementSelectors);
 		}
 
-		private int elementCount(final Class<? extends Element> type)
+		private int elementCount(final Class<? extends ElementSelector> type)
 		{
 			assert type != null : "Type must not be null";
 			int count = 0;
-			for (final Element element : elements)
+			for (final ElementSelector elementSelector : elementSelectors)
 			{
-				if (type.isAssignableFrom(element.getClass()))
+				if (type.isAssignableFrom(elementSelector.getClass()))
 				{
 					count++;
 				}
 			}
 			return count;
 		}
-	}
-
-	public static interface InitialBuilder
-	{
-		AppendableBuilder withPropertyPath(NodePath nodePath);
-
-		AppendableBuilder withRoot();
-	}
-
-	public static interface AppendableBuilder
-	{
-		AppendableBuilder withElement(Element element);
-
-		AppendableBuilder withPropertyName(String name, String... names);
-
-		<T> AppendableBuilder withCollectionItem(T item);
-
-		<K> AppendableBuilder withMapKey(K key);
-
-		NodePath build();
 	}
 }

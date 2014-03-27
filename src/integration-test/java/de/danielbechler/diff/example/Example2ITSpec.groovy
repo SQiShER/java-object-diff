@@ -50,7 +50,7 @@ class Example2ITSpec extends Specification {
     def "Comparing an object via equalsOnlyValueProvider (via configuration using property path)"() {
         given:
         def builder = ObjectDifferBuilder.startBuilding()
-        builder.configure().comparison().ofNode(NodePath.buildRootPath()).toUseEqualsMethodOfValueProvidedByMethod("presentationForDiffer")
+        builder.configure().comparison().ofNode(NodePath.withRoot()).toUseEqualsMethodOfValueProvidedByMethod("presentationForDiffer")
 
         def base = new PersonWithEqualsOnlyTypeAnnotation("Walter", "Walt", "White")
         def working = new PersonWithEqualsOnlyTypeAnnotation("Walter", "Heisenberg", "White")

@@ -16,9 +16,9 @@
 
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.bean.BeanPropertyElement;
-import de.danielbechler.diff.collection.CollectionItemElement;
-import de.danielbechler.diff.map.MapKeyElement;
+import de.danielbechler.diff.bean.BeanPropertyElementSelector;
+import de.danielbechler.diff.collection.CollectionItemElementSelector;
+import de.danielbechler.diff.map.MapKeyElementSelector;
 import org.testng.annotations.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -31,85 +31,68 @@ public class NodePathBuilderTest
 	@Test
 	public void testWithRoot()
 	{
-		final NodePath nodePath = NodePath.createBuilder()
-				.withRoot()
-				.build();
-		assertThat(nodePath.getElements()).containsOnly(RootElement.getInstance());
+		final NodePath nodePath = NodePath.startBuilding().build();
+		assertThat(nodePath.getElementSelectors()).containsOnly(RootElementSelector.getInstance());
 	}
 
 	@Test
 	public void testWithElement()
 	{
-		final CollectionItemElement element = new CollectionItemElement("foo");
-		final NodePath nodePath = NodePath.createBuilder()
-				.withRoot()
-				.withElement(element)
-				.build();
-		assertThat(nodePath.getElements()).containsSequence(
-				RootElement.getInstance(),
+		final CollectionItemElementSelector element = new CollectionItemElementSelector("foo");
+		final NodePath nodePath = NodePath.startBuilding().element(element).build();
+		assertThat(nodePath.getElementSelectors()).containsSequence(
+				RootElementSelector.getInstance(),
 				element);
 	}
 
 	@Test
 	public void testWithPropertyName()
 	{
-		final NodePath nodePath = NodePath.createBuilder()
-				.withRoot()
-				.withPropertyName("foo", "bar")
-				.build();
-		assertThat(nodePath.getElements()).containsSequence(
-				RootElement.getInstance(),
-				new BeanPropertyElement("foo"),
-				new BeanPropertyElement("bar")
+		final NodePath nodePath = NodePath.startBuilding().propertyName("foo", "bar").build();
+		assertThat(nodePath.getElementSelectors()).containsSequence(
+				RootElementSelector.getInstance(),
+				new BeanPropertyElementSelector("foo"),
+				new BeanPropertyElementSelector("bar")
 		);
 	}
 
 	@Test
 	public void testWithMapKey()
 	{
-		final NodePath nodePath = NodePath.createBuilder()
-				.withRoot()
-				.withMapKey("foo")
-				.build();
-		assertThat(nodePath.getElements()).containsSequence(RootElement.getInstance(), new MapKeyElement("foo"));
+		final NodePath nodePath = NodePath.startBuilding().mapKey("foo").build();
+		assertThat(nodePath.getElementSelectors()).containsSequence(RootElementSelector.getInstance(), new MapKeyElementSelector("foo"));
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testWithMapKey_throws_exception_when_key_is_null()
 	{
-		NodePath.createBuilder().withRoot().withMapKey(null).build();
+		NodePath.startBuilding().mapKey(null).build();
 	}
 
 	@Test
 	public void testWithCollectionItem()
 	{
-		final NodePath nodePath = NodePath.createBuilder()
-				.withRoot()
-				.withCollectionItem("foo")
-				.build();
-		assertThat(nodePath.getElements()).containsSequence(RootElement.getInstance(), new CollectionItemElement("foo"));
+		final NodePath nodePath = NodePath.startBuilding().collectionItem("foo").build();
+		assertThat(nodePath.getElementSelectors()).containsSequence(RootElementSelector.getInstance(), new CollectionItemElementSelector("foo"));
 	}
 
 	@Test
 	public void testWithPropertyPath()
 	{
-		final NodePath nodePath = NodePath.createBuilder()
-				.withPropertyPath(NodePath
-						.buildWith("foo"))
-				.build();
-		assertThat(nodePath.getElements()).containsSequence(RootElement.getInstance(), new BeanPropertyElement("foo"));
+		final NodePath nodePath = NodePath.startBuildingFrom(NodePath.with("foo")).build();
+		assertThat(nodePath.getElementSelectors()).containsSequence(RootElementSelector.getInstance(), new BeanPropertyElementSelector("foo"));
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testWithPropertyPath_throws_exception_when_property_path_is_null()
 	{
-		NodePath.createBuilder().withPropertyPath(null).build();
+		NodePath.startBuildingFrom(null).build();
 	}
 
 	@Test
 	public void testBuild_with_one_root_element_should_succeed() throws Exception
 	{
-		final NodePath nodePath = NodePath.createBuilder().withRoot().build();
-		assertThat(nodePath.getElements()).containsOnly(RootElement.getInstance());
+		final NodePath nodePath = NodePath.withRoot();
+		assertThat(nodePath.getElementSelectors()).containsOnly(RootElementSelector.getInstance());
 	}
 }

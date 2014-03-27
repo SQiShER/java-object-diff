@@ -16,7 +16,7 @@
 
 package de.danielbechler.diff.collection;
 
-import de.danielbechler.diff.Element;
+import de.danielbechler.diff.ElementSelector;
 import de.danielbechler.diff.mock.ObjectWithIdentityAndValue;
 import org.fest.assertions.core.Condition;
 import org.testng.annotations.BeforeMethod;
@@ -108,11 +108,11 @@ public class CollectionItemAccessorShould
 	@Test
 	public void return_proper_path_element()
 	{
-		final CollectionItemElement expectedPathElement = new CollectionItemElement(referenceItem);
+		final CollectionItemElementSelector expectedPathElement = new CollectionItemElementSelector(referenceItem);
 
-		final Element actualPathElement = accessor.getPathElement();
+		final ElementSelector actualPathElementSelector = accessor.getElementSelector();
 
-		assertThat(actualPathElement).isEqualTo(expectedPathElement);
+		assertThat(actualPathElementSelector).isEqualTo(expectedPathElement);
 	}
 
 	@Test

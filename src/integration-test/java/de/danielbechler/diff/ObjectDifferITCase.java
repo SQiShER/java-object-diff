@@ -16,10 +16,10 @@
 
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.collection.CollectionItemElement;
+import de.danielbechler.diff.collection.CollectionItemElementSelector;
 import de.danielbechler.diff.helper.NodeAssertions;
 import de.danielbechler.diff.helper.TestGroups;
-import de.danielbechler.diff.map.MapKeyElement;
+import de.danielbechler.diff.map.MapKeyElementSelector;
 import de.danielbechler.diff.mock.ObjectWithAccessTrackingIgnoredProperty;
 import de.danielbechler.diff.mock.ObjectWithCollection;
 import de.danielbechler.diff.mock.ObjectWithHashCodeAndEquals;
@@ -82,7 +82,7 @@ public class ObjectDifferITCase
 		final ObjectDifferBuilder objectDifferBuilder = ObjectDifferBuilder.startBuilding();
 		objectDifferBuilder.configure().inclusion()
 				.toExclude()
-				.nodes(NodePath.buildWith("collection"));
+				.node(NodePath.with("collection"));
 		objectDiffer = objectDifferBuilder.build();
 
 		final DiffNode node = objectDiffer.compare(working, new ObjectWithCollection());
@@ -99,7 +99,7 @@ public class ObjectDifferITCase
 		final DiffNode node = ObjectDifferBuilder.buildDefault().compare(working, base);
 
 		NodeAssertions.assertThat(node).self().hasState(DiffNode.State.CHANGED);
-		NodeAssertions.assertThat(node).child(new CollectionItemElement("foo")).hasState(DiffNode.State.ADDED);
+		NodeAssertions.assertThat(node).child(new CollectionItemElementSelector("foo")).hasState(DiffNode.State.ADDED);
 	}
 
 	public void testCompareCollectionWithRemovedItem() throws Exception
@@ -110,7 +110,7 @@ public class ObjectDifferITCase
 		final DiffNode node = ObjectDifferBuilder.buildDefault().compare(working, base);
 
 		NodeAssertions.assertThat(node).self().hasState(DiffNode.State.CHANGED);
-		NodeAssertions.assertThat(node).child(new CollectionItemElement("foo")).hasState(DiffNode.State.REMOVED);
+		NodeAssertions.assertThat(node).child(new CollectionItemElementSelector("foo")).hasState(DiffNode.State.REMOVED);
 	}
 
 	@Test(groups = TestGroups.INTEGRATION)
@@ -161,7 +161,7 @@ public class ObjectDifferITCase
 		final DiffNode node = ObjectDifferBuilder.buildDefault().compare(working, base);
 
 		assertThat(node).self().hasChanges();
-		assertThat(node).child(new CollectionItemElement(new ObjectWithIdentityAndValue("foo")))
+		assertThat(node).child(new CollectionItemElementSelector(new ObjectWithIdentityAndValue("foo")))
 				.hasState(DiffNode.State.CHANGED);
 	}
 
@@ -175,7 +175,7 @@ public class ObjectDifferITCase
 		final DiffNode node = ObjectDifferBuilder.buildDefault().compare(working, base);
 
 		NodeAssertions.assertThat(node).self().hasState(DiffNode.State.ADDED);
-		NodeAssertions.assertThat(node).child(new MapKeyElement("foo")).hasState(DiffNode.State.ADDED);
+		NodeAssertions.assertThat(node).child(new MapKeyElementSelector("foo")).hasState(DiffNode.State.ADDED);
 	}
 
 	@Test(groups = TestGroups.INTEGRATION)
@@ -188,7 +188,7 @@ public class ObjectDifferITCase
 		final DiffNode node = ObjectDifferBuilder.buildDefault().compare(working, base);
 
 		NodeAssertions.assertThat(node).self().hasState(DiffNode.State.CHANGED);
-		NodeAssertions.assertThat(node).child(new MapKeyElement("foo")).hasState(DiffNode.State.ADDED);
+		NodeAssertions.assertThat(node).child(new MapKeyElementSelector("foo")).hasState(DiffNode.State.ADDED);
 	}
 
 	@Test(groups = TestGroups.INTEGRATION)
@@ -215,7 +215,7 @@ public class ObjectDifferITCase
 		final DiffNode node = ObjectDifferBuilder.buildDefault().compare(working, base);
 
 		NodeAssertions.assertThat(node).self().hasState(DiffNode.State.REMOVED);
-		NodeAssertions.assertThat(node).child(new MapKeyElement("foo")).hasState(DiffNode.State.REMOVED);
+		NodeAssertions.assertThat(node).child(new MapKeyElementSelector("foo")).hasState(DiffNode.State.REMOVED);
 	}
 
 	/**
@@ -248,9 +248,9 @@ public class ObjectDifferITCase
 
 		NodeAssertions.assertThat(node).root().hasChildren(1);
 		NodeAssertions.assertThat(node)
-				.child(NodePath.createBuilder().withRoot().withMapKey("foo"))
+				.child(NodePath.startBuilding().mapKey("foo"))
 				.doesNotExist();
-		NodeAssertions.assertThat(node).child(NodePath.createBuilder().withRoot().withMapKey("ping"))
+		NodeAssertions.assertThat(node).child(NodePath.startBuilding().mapKey("ping"))
 				.hasState(DiffNode.State.ADDED)
 				.hasNoChildren();
 	}
@@ -266,7 +266,7 @@ public class ObjectDifferITCase
 
 		final DiffNode node = ObjectDifferBuilder.buildDefault().compare(working, base);
 		NodeAssertions.assertThat(node).self().hasChildren(1);
-		NodeAssertions.assertThat(node).child(new MapKeyElement("foo")).hasState(DiffNode.State.CHANGED);
+		NodeAssertions.assertThat(node).child(new MapKeyElementSelector("foo")).hasState(DiffNode.State.CHANGED);
 	}
 
 	@Test(groups = TestGroups.INTEGRATION)
@@ -298,7 +298,7 @@ public class ObjectDifferITCase
 	public void testCompareWithIgnoredProperty()
 	{
 		final ObjectDifferBuilder objectDifferBuilder = ObjectDifferBuilder.startBuilding();
-		objectDifferBuilder.configure().inclusion().toExclude().nodes(NodePath.buildRootPath());
+		objectDifferBuilder.configure().inclusion().toExclude().node(NodePath.withRoot());
 		objectDiffer = objectDifferBuilder.build();
 
 		final DiffNode node = objectDiffer.compare("foo", "bar");
@@ -330,9 +330,8 @@ public class ObjectDifferITCase
 		final DiffNode node = ObjectDifferBuilder.buildDefault().compare(working, base);
 		node.visit(new NodeHierarchyVisitor());
 		assertThat(node)
-				.child(NodePath.createBuilder()
-						.withRoot()
-						.withCollectionItem(new ObjectWithHashCodeAndEquals("foo"))
+				.child(NodePath.startBuilding()
+						.collectionItem(new ObjectWithHashCodeAndEquals("foo"))
 						.build())
 				.hasState(DiffNode.State.REMOVED);
 	}
@@ -344,9 +343,8 @@ public class ObjectDifferITCase
 		final List<ObjectWithHashCodeAndEquals> working = asList(new ObjectWithHashCodeAndEquals("foo"), new ObjectWithHashCodeAndEquals("foo"));
 		final DiffNode node = ObjectDifferBuilder.buildDefault().compare(working, base);
 		node.visit(new NodeHierarchyVisitor());
-		assertThat(node).child(NodePath.createBuilder()
-				.withRoot()
-				.withCollectionItem(new ObjectWithHashCodeAndEquals("foo"))
+		assertThat(node).child(NodePath.startBuilding()
+				.collectionItem(new ObjectWithHashCodeAndEquals("foo"))
 				.build()).hasState(DiffNode.State.ADDED);
 	}
 
@@ -379,7 +377,7 @@ public class ObjectDifferITCase
 
 		NodeAssertions.assertThat(node).self().hasState(DiffNode.State.CHANGED);
 		assertThat(node)
-				.child(NodePath.buildWith("collection"))
+				.child(NodePath.with("collection"))
 				.hasState(DiffNode.State.CHANGED);
 	}
 
@@ -411,7 +409,7 @@ public class ObjectDifferITCase
 
 		NodeAssertions.assertThat(node).self().hasState(DiffNode.State.CHANGED);
 		assertThat(node)
-				.child(NodePath.buildWith("object"))
+				.child(NodePath.with("object"))
 				.hasState(DiffNode.State.CHANGED);
 	}
 
@@ -444,7 +442,7 @@ public class ObjectDifferITCase
 
 		NodeAssertions.assertThat(node).self().hasState(DiffNode.State.CHANGED);
 		assertThat(node)
-				.child(NodePath.buildWith("map"))
+				.child(NodePath.with("map"))
 				.hasState(DiffNode.State.CHANGED);
 	}
 }

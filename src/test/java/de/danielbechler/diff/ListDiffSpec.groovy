@@ -16,7 +16,7 @@
 
 package de.danielbechler.diff
 
-import de.danielbechler.diff.collection.CollectionItemElement
+import de.danielbechler.diff.collection.CollectionItemElementSelector
 import de.danielbechler.diff.visitor.PrintingVisitor
 import spock.lang.Ignore
 import spock.lang.Specification
@@ -40,8 +40,8 @@ class ListDiffSpec extends Specification {
 
         then:
         node.visit(new PrintingVisitor(working, base));
-        node.getChild(new CollectionItemElement("a")).getState() == DiffNode.State.CHANGED;
-        node.getChild(new CollectionItemElement("b")).getState() == DiffNode.State.CHANGED;
+        node.getChild(new CollectionItemElementSelector("a")).getState() == DiffNode.State.CHANGED;
+        node.getChild(new CollectionItemElementSelector("b")).getState() == DiffNode.State.CHANGED;
 
         where:
         base       | working

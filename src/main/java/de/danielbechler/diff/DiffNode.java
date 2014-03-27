@@ -16,7 +16,7 @@
 
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.bean.BeanPropertyElement;
+import de.danielbechler.diff.bean.BeanPropertyElementSelector;
 import de.danielbechler.diff.visitor.PropertyVisitor;
 import de.danielbechler.util.Assert;
 
@@ -44,7 +44,7 @@ public class DiffNode
 	public static final DiffNode ROOT = null;
 
 	private final Accessor accessor;
-	private final Map<Element, DiffNode> children = new LinkedHashMap<Element, DiffNode>(10);
+	private final Map<ElementSelector, DiffNode> children = new LinkedHashMap<ElementSelector, DiffNode>(10);
 
 	private State state = State.UNTOUCHED;
 	private DiffNode parentNode;
@@ -165,24 +165,23 @@ public class DiffNode
 	{
 		if (parentNode != null)
 		{
-			return NodePath.createBuilder()
-					.withPropertyPath(parentNode.getPath())
-					.withElement(accessor.getPathElement())
+			return NodePath.startBuildingFrom(parentNode.getPath())
+					.element(accessor.getElementSelector())
 					.build();
 		}
 		else if (accessor instanceof RootAccessor)
 		{
-			return NodePath.createBuilder().withRoot().build();
+			return NodePath.withRoot();
 		}
 		else
 		{
-			return NodePath.createBuilder().withRoot().withElement(accessor.getPathElement()).build();
+			return NodePath.startBuilding().element(accessor.getElementSelector()).build();
 		}
 	}
 
-	public Element getPathElement()
+	public ElementSelector getElementSelector()
 	{
-		return accessor.getPathElement();
+		return accessor.getElementSelector();
 	}
 
 	/**
@@ -233,7 +232,7 @@ public class DiffNode
 	 */
 	public DiffNode getChild(final String propertyName)
 	{
-		return getChild(new BeanPropertyElement(propertyName));
+		return getChild(new BeanPropertyElementSelector(propertyName));
 	}
 
 	/**
@@ -252,12 +251,12 @@ public class DiffNode
 	/**
 	 * Retrieve a child that matches the given path element relative to this node.
 	 *
-	 * @param pathElement The path element of the child node to get.
+	 * @param pathElementSelector The path element of the child node to get.
 	 * @return The requested child node or <code>null</code>.
 	 */
-	public DiffNode getChild(final Element pathElement)
+	public DiffNode getChild(final ElementSelector pathElementSelector)
 	{
-		return children.get(pathElement);
+		return children.get(pathElementSelector);
 	}
 
 	/**
@@ -283,15 +282,15 @@ public class DiffNode
 					"child of another node. Adding nodes multiple times is not allowed, since it could " +
 					"cause infinite loops.");
 		}
-		final Element pathElement = node.getPathElement();
+		final ElementSelector pathElementSelector = node.getElementSelector();
 		if (node.getParentNode() == null)
 		{
 			node.setParentNode(this);
-			children.put(pathElement, node);
+			children.put(pathElementSelector, node);
 		}
 		else if (node.getParentNode() == this)
 		{
-			children.put(pathElement, node);
+			children.put(pathElementSelector, node);
 		}
 		else
 		{

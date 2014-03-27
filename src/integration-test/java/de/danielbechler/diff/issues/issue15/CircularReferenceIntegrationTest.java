@@ -48,7 +48,7 @@ public class CircularReferenceIntegrationTest
 		final DiffNode root = ObjectDifferBuilder.buildDefault().compare(workingA, baseA);
 		assertThat(root).child("reference", "reference").isCircular();
 		assertThat(root).child("reference", "reference")
-				.hasCircularStartPathEqualTo(NodePath.buildRootPath());
+				.hasCircularStartPathEqualTo(NodePath.withRoot());
 
 		Assertions.assertThat(root.canonicalGet(workingA))
 				.isSameAs(root.getChild("reference").getChild("reference").canonicalGet(workingA));

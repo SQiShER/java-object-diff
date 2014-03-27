@@ -46,26 +46,25 @@ public class CircularReferenceDetectorTest
 	@Test
 	public void testPush_adds_unknown_object_to_stack() throws Exception
 	{
-		circularReferenceDetector.push("foo", NodePath.buildRootPath());
+		circularReferenceDetector.push("foo", NodePath.withRoot());
 		assertThat(circularReferenceDetector.size(), is(1));
 	}
 
 	@Test
 	public void testPush_throws_CircularReferenceException_on_known_object() throws Exception
 	{
-		circularReferenceDetector.push("foo", NodePath.buildRootPath());
+		circularReferenceDetector.push("foo", NodePath.withRoot());
 		try
 		{
-			circularReferenceDetector.push("foo", NodePath.createBuilder()
-														  .withRoot()
-														  .withPropertyName("test")
+			circularReferenceDetector.push("foo", NodePath.startBuilding()
+														  .propertyName("test")
 														  .build());
 			Assertions.fail("Expected CircularReferenceException wasn't thrown.");
 		}
 		catch (CircularReferenceDetector.CircularReferenceException e)
 		{
 			final NodePath nodePath = e.getNodePath();
-			assertThat(nodePath).isEqualTo(NodePath.buildRootPath());
+			assertThat(nodePath).isEqualTo(NodePath.withRoot());
 		}
 	}
 
@@ -118,7 +117,7 @@ public class CircularReferenceDetectorTest
 	public void knowsEqualObject_whenReferenceMatchingModeIsSetToEqualsMethod()
 	{
 		circularReferenceDetector = new CircularReferenceDetector(CircularReferenceDetector.ReferenceMatchingMode.EQUALS_METHOD);
-		circularReferenceDetector.push(new ObjectWithString("foo"), NodePath.buildRootPath());
+		circularReferenceDetector.push(new ObjectWithString("foo"), NodePath.withRoot());
 		assertThat(circularReferenceDetector.knows(new ObjectWithString("foo"))).isTrue();
 	}
 
@@ -126,7 +125,7 @@ public class CircularReferenceDetectorTest
 	public void removesEqualObject_whenReferenceMatchingModeIsSetToEqualsMethod()
 	{
 		circularReferenceDetector = new CircularReferenceDetector(CircularReferenceDetector.ReferenceMatchingMode.EQUALS_METHOD);
-		circularReferenceDetector.push(new ObjectWithString("foo"), NodePath.buildRootPath());
+		circularReferenceDetector.push(new ObjectWithString("foo"), NodePath.withRoot());
 		circularReferenceDetector.remove(new ObjectWithString("foo"));
 		assertThat(circularReferenceDetector.size()).isEqualTo(0);
 	}
@@ -135,7 +134,7 @@ public class CircularReferenceDetectorTest
 	public void throwsException_onAttemptToPushEqualObject_whenReferenceMatchingModeIsSetToEqualsMethod()
 	{
 		circularReferenceDetector = new CircularReferenceDetector(CircularReferenceDetector.ReferenceMatchingMode.EQUALS_METHOD);
-		circularReferenceDetector.push(new ObjectWithString("foo"), NodePath.buildRootPath());
-		circularReferenceDetector.push(new ObjectWithString("foo"), NodePath.buildRootPath());
+		circularReferenceDetector.push(new ObjectWithString("foo"), NodePath.withRoot());
+		circularReferenceDetector.push(new ObjectWithString("foo"), NodePath.withRoot());
 	}
 }

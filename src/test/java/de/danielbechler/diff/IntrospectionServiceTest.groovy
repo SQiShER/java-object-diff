@@ -179,7 +179,7 @@ class IntrospectionServiceTest extends Specification
   {
     given:
     def nodeIntrospector = Mock(Introspector)
-    introspectionService.ofNode(NodePath.buildRootPath()).toUse(nodeIntrospector)
+    introspectionService.ofNode(NodePath.withRoot()).toUse(nodeIntrospector)
 
     expect:
     introspectionService.introspectorForNode(rootNode) == nodeIntrospector

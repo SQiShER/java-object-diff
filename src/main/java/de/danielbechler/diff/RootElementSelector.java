@@ -17,42 +17,42 @@
 package de.danielbechler.diff;
 
 /** @author Daniel Bechler */
-public final class RootAccessor implements Accessor
+public final class RootElementSelector extends ElementSelector
 {
-	private static final RootAccessor instance = new RootAccessor();
+	private static final RootElementSelector instance = new RootElementSelector();
 
-	public static RootAccessor getInstance()
+	RootElementSelector()
+	{
+	}
+
+	public static RootElementSelector getInstance()
 	{
 		return instance;
 	}
 
-	private RootAccessor()
+	@Override
+	public String toHumanReadableString()
 	{
-	}
-
-	public Object get(final Object target)
-	{
-		return target;
-	}
-
-	public void set(final Object target, final Object value)
-	{
-		throw new UnsupportedOperationException();
-	}
-
-	public void unset(final Object target)
-	{
-		throw new UnsupportedOperationException();
-	}
-
-	public ElementSelector getElementSelector()
-	{
-		return RootElementSelector.getInstance();
+		return "";
 	}
 
 	@Override
-	public String toString()
+	public boolean equals(final Object element)
 	{
-		return "root element";
+		if (this == element)
+		{
+			return true;
+		}
+		if (element != null && getClass().equals(element.getClass()))
+		{
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return 0;
 	}
 }

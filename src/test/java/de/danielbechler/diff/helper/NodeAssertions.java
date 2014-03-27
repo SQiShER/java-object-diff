@@ -17,9 +17,9 @@
 package de.danielbechler.diff.helper;
 
 import de.danielbechler.diff.DiffNode;
-import de.danielbechler.diff.Element;
+import de.danielbechler.diff.ElementSelector;
 import de.danielbechler.diff.NodePath;
-import de.danielbechler.diff.collection.CollectionItemElement;
+import de.danielbechler.diff.collection.CollectionItemElementSelector;
 import de.danielbechler.diff.visitor.PropertyVisitor;
 import org.fest.assertions.api.Assertions;
 import org.fest.assertions.core.Condition;
@@ -49,7 +49,7 @@ public final class NodeAssertions
 		public Syntax.AssertNode root()
 		{
 			this.selectedNode = rootNode;
-			this.nodePath = NodePath.createBuilder().withRoot().build();
+			this.nodePath = NodePath.withRoot();
 			return this;
 		}
 
@@ -77,17 +77,17 @@ public final class NodeAssertions
 
 		public Syntax.AssertNode child(final String propertyName, final String... propertyNames)
 		{
-			return child(NodePath.buildWith(propertyName, propertyNames));
+			return child(NodePath.with(propertyName, propertyNames));
 		}
 
-		public Syntax.AssertNode child(final Element pathElement)
+		public Syntax.AssertNode child(final ElementSelector pathElementSelector)
 		{
-			return child(NodePath.createBuilder().withRoot().withElement(pathElement));
+			return child(NodePath.startBuilding().element(pathElementSelector));
 		}
 
 		public Syntax.AssertNode collectionChild(final Object referenceItem)
 		{
-			return child(new CollectionItemElement(referenceItem));
+			return child(new CollectionItemElementSelector(referenceItem));
 		}
 
 		public Syntax.AssertNode doesExist()
@@ -271,7 +271,7 @@ public final class NodeAssertions
 
 			AssertNode child(String propertyName, String... propertyPathElements);
 
-			AssertNode child(Element pathElement);
+			AssertNode child(ElementSelector pathElementSelector);
 
 			AssertNode collectionChild(Object referenceItem);
 		}

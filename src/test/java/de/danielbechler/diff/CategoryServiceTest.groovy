@@ -16,7 +16,7 @@
 
 package de.danielbechler.diff
 
-import de.danielbechler.diff.bean.BeanPropertyElement
+import de.danielbechler.diff.bean.BeanPropertyElementSelector
 import spock.lang.Specification
 
 import static DiffNode.ROOT
@@ -27,13 +27,13 @@ import static DiffNode.ROOT
 class CategoryServiceTest extends Specification {
     def categoryService = new CategoryService()
     def accessor = Mock(PropertyAwareAccessor)
-    def nodePath = NodePath.buildWith("foo")
+    def nodePath = NodePath.with("foo")
     def nodeType = Alliance
     def DiffNode node
     def DiffNode rootNode
 
     def "setup"() {
-        accessor.pathElement >> new BeanPropertyElement("foo")
+        accessor.elementSelector >> new BeanPropertyElementSelector("foo")
         rootNode = new DiffNode(ROOT, RootAccessor.instance, null)
         node = new DiffNode(rootNode, accessor, nodeType)
     }
@@ -81,7 +81,7 @@ class CategoryServiceTest extends Specification {
         accessor.categories >> ["B"]
 
         and:
-        categoryService.ofNode(NodePath.buildRootPath()).toBe("A")
+        categoryService.ofNode(NodePath.withRoot()).toBe("A")
 
         expect:
         categoryService.resolveCategories(node) == ["B"] as Set

@@ -41,7 +41,7 @@ class MapEntryAccessorTest extends Specification {
 
     def "provide access to its path element"() {
         expect:
-        accessor.getPathElement() instanceof MapKeyElement
+        accessor.getElementSelector() instanceof MapKeyElementSelector
     }
 
     def "provide write access to referenced value in any map"() {

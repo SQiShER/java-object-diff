@@ -80,36 +80,36 @@ public class StandardBeanIntrospectorTest
 		final Iterable<PropertyAwareAccessor> accessors = introspector.introspect(ObjectWithPropertyAnnotations.class);
 		for (final PropertyAwareAccessor accessor : accessors)
 		{
-			if (accessor.getPathElement().equals(new BeanPropertyElement("ignored")))
+			if (accessor.getElementSelector().equals(new BeanPropertyElementSelector("ignored")))
 			{
 				assertThat(accessor.isExcluded(), is(true));
 			}
-			else if (accessor.getPathElement().equals(new BeanPropertyElement("equalsOnly")))
+			else if (accessor.getElementSelector().equals(new BeanPropertyElementSelector("equalsOnly")))
 			{
 				assertThat(accessor.getComparisonStrategy(), instanceOf(EqualsOnlyComparisonStrategy.class));
 			}
-			else if (accessor.getPathElement().equals(new BeanPropertyElement("categorized")))
+			else if (accessor.getElementSelector().equals(new BeanPropertyElementSelector("categorized")))
 			{
 				assertThat(accessor.getCategories().size(), is(1));
 				assertThat(accessor.getCategories(), IsEqual.equalTo(Collections.setOf("foo")));
 			}
-			else if (accessor.getPathElement().equals(new BeanPropertyElement("item")))
+			else if (accessor.getElementSelector().equals(new BeanPropertyElementSelector("item")))
 			{
 				assertThat(accessor.getComparisonStrategy(), IsNull.nullValue());
 				assertThat(accessor.isExcluded(), is(false));
 				assertThat(accessor.getCategories().isEmpty(), is(true));
 			}
-			else if (accessor.getPathElement().equals(new BeanPropertyElement("key")))
+			else if (accessor.getElementSelector().equals(new BeanPropertyElementSelector("key")))
 			{
 				// no op
 			}
-			else if (accessor.getPathElement().equals(new BeanPropertyElement("value")))
+			else if (accessor.getElementSelector().equals(new BeanPropertyElementSelector("value")))
 			{
 				// no op
 			}
 			else
 			{
-				org.testng.Assert.fail("Unexpected accessor: " + accessor.getPathElement());
+				org.testng.Assert.fail("Unexpected accessor: " + accessor.getElementSelector());
 			}
 		}
 	}
@@ -119,7 +119,7 @@ public class StandardBeanIntrospectorTest
 	{
 		final Iterable<PropertyAwareAccessor> accessors = introspector.introspect(ObjectWithInheritedPropertyAnnotation.class);
 		final PropertyAwareAccessor accessor = accessors.iterator().next();
-		assertThat((BeanPropertyElement) accessor.getPathElement(), IsEqual.equalTo(new BeanPropertyElement("value")));
+		assertThat((BeanPropertyElementSelector) accessor.getElementSelector(), IsEqual.equalTo(new BeanPropertyElementSelector("value")));
 		assertThat(accessor.isExcluded(), is(true));
 	}
 

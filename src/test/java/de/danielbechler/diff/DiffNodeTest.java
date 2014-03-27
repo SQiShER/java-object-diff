@@ -17,9 +17,9 @@
 package de.danielbechler.diff;
 
 import de.danielbechler.diff.bean.BeanPropertyAccessor;
-import de.danielbechler.diff.bean.BeanPropertyElement;
+import de.danielbechler.diff.bean.BeanPropertyElementSelector;
 import de.danielbechler.diff.collection.CollectionItemAccessor;
-import de.danielbechler.diff.collection.CollectionItemElement;
+import de.danielbechler.diff.collection.CollectionItemElementSelector;
 import de.danielbechler.diff.helper.NodeAssertions;
 import de.danielbechler.diff.mock.ObjectDiffTest;
 import org.fest.assertions.api.Assertions;
@@ -118,19 +118,18 @@ public class DiffNodeTest
 	public void getPropertyPath_with_parent_node_should_return_canonical_path()
 	{
 		final DiffNode parentNode = new DiffNode(RootAccessor.getInstance(), String.class);
-		when(accessor.getPathElement()).thenReturn(new BeanPropertyElement("foo"));
+		when(accessor.getElementSelector()).thenReturn(new BeanPropertyElementSelector("foo"));
 
 		final DiffNode root = new DiffNode(parentNode, accessor, Object.class);
 
-		assertThat(root.getPath()).isEqualTo(NodePath.buildWith("foo"));
+		assertThat(root.getPath()).isEqualTo(NodePath.with("foo"));
 	}
 
 	@Test
 	public void getPropertyPath_without_parent_node_should_return_root_path()
 	{
 		final DiffNode root = new DiffNode(Object.class);
-		assertThat(root.getPath()).isEqualTo(NodePath
-				.createBuilder().withRoot().build());
+		assertThat(root.getPath()).isEqualTo(NodePath.withRoot());
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
@@ -164,7 +163,7 @@ public class DiffNodeTest
 		final DiffNode node2 = new DiffNode(new CollectionItemAccessor("foo"), String.class);
 		node1.addChild(node2);
 		assertThat(node1.childCount()).isEqualTo(1);
-		assertThat(node1.getChild(new CollectionItemElement("foo"))).isSameAs(node2);
+		assertThat(node1.getChild(new CollectionItemElementSelector("foo"))).isSameAs(node2);
 		assertThat(node2.getParentNode()).isSameAs(node1);
 	}
 

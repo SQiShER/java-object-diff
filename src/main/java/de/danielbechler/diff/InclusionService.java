@@ -1,6 +1,6 @@
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.bean.BeanPropertyElement;
+import de.danielbechler.diff.bean.BeanPropertyElementSelector;
 import de.danielbechler.util.Assert;
 
 import java.util.HashMap;
@@ -17,9 +17,11 @@ import static de.danielbechler.diff.Inclusion.INCLUDED;
 class InclusionService implements InclusionConfiguration, IsIgnoredResolver
 {
 	private final CategoryResolver categoryResolver;
-	private final NodePathValueHolder<Inclusion> nodeInclusions = NodePathValueHolder.of(Inclusion.class);
+	private final ConfigNode nodeInclusions = new ConfigNode();
 	private final Map<Class<?>, Inclusion> typeInclusions = new HashMap<Class<?>, Inclusion>();
 	private final Map<String, Inclusion> categoryInclusions = new TreeMap<String, Inclusion>();
+
+	@Deprecated
 	private final Map<String, Inclusion> propertyNameInclusions = new TreeMap<String, Inclusion>();
 
 	public InclusionService(final CategoryResolver categoryResolver)
@@ -87,12 +89,12 @@ class InclusionService implements InclusionConfiguration, IsIgnoredResolver
 
 	private boolean isIncludedByParentPropertyName(final DiffNode node)
 	{
-		final List<Element> pathElements = node.getPath().getElements();
-		for (final Element element : pathElements)
+		final List<ElementSelector> pathElementSelectors = node.getPath().getElementSelectors();
+		for (final ElementSelector elementSelector : pathElementSelectors)
 		{
-			if (element instanceof BeanPropertyElement)
+			if (elementSelector instanceof BeanPropertyElementSelector)
 			{
-				final BeanPropertyElement beanPropertyElement = (BeanPropertyElement) element;
+				final BeanPropertyElementSelector beanPropertyElement = (BeanPropertyElementSelector) elementSelector;
 				final String propertyName = beanPropertyElement.getPropertyName();
 				if (propertyName != null && propertyNameInclusions.get(propertyName) == INCLUDED)
 				{
@@ -110,7 +112,7 @@ class InclusionService implements InclusionConfiguration, IsIgnoredResolver
 
 	private boolean isIncludedByPath(final DiffNode node)
 	{
-		return getInclusionByPath(node.getPath(), INCLUDED) == INCLUDED;
+		return nodeInclusions.getNodeForPath(node.getPath()).isIncluded();
 	}
 
 	private boolean isExcluded(final DiffNode node)
@@ -150,7 +152,7 @@ class InclusionService implements InclusionConfiguration, IsIgnoredResolver
 
 	private boolean isExcludedByPath(final DiffNode node)
 	{
-		return getInclusionByPath(node.getPath(), EXCLUDED) == EXCLUDED;
+		return nodeInclusions.getNodeForPath(node.getPath()).isExcluded();
 	}
 
 	private boolean isExcludedByCategory(final DiffNode node)
@@ -160,7 +162,7 @@ class InclusionService implements InclusionConfiguration, IsIgnoredResolver
 
 	private boolean hasInclusions(final Inclusion inclusion)
 	{
-		if (nodeInclusions.containsValue(inclusion))
+		if (nodeInclusions.containsInclusion(inclusion))
 		{
 			return true;
 		}
@@ -177,19 +179,6 @@ class InclusionService implements InclusionConfiguration, IsIgnoredResolver
 			return true;
 		}
 		return false;
-	}
-
-	private Inclusion getInclusionByPath(final NodePath nodePath, final Inclusion inclusion)
-	{
-		final List<Inclusion> inclusions = nodeInclusions.accumulatedValuesForNodePath(nodePath);
-		if (inclusions.contains(inclusion))
-		{
-			return inclusion;
-		}
-		else
-		{
-			return nodeInclusions.valueForNodePath(nodePath);
-		}
 	}
 
 	private boolean hasCategoryWithInclusion(final DiffNode node, final Inclusion inclusion)
@@ -259,12 +248,9 @@ class InclusionService implements InclusionConfiguration, IsIgnoredResolver
 			return this;
 		}
 
-		public To nodes(final NodePath... nodePaths)
+		public To node(final NodePath nodePath)
 		{
-			for (final NodePath nodePath : nodePaths)
-			{
-				nodeInclusions.put(nodePath, inclusion);
-			}
+			nodeInclusions.getNodeForPath(nodePath).setInclusion(inclusion);
 			return this;
 		}
 

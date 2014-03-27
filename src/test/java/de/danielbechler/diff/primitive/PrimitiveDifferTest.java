@@ -146,7 +146,7 @@ public class PrimitiveDifferTest
 									  final Object fresh)
 	{
 		when(accessor.getType()).then(returnClass(type));
-		when(accessor.getPathElement()).thenReturn(new BeanPropertyElement("ignored"));
+		when(accessor.getElementSelector()).thenReturn(new BeanPropertyElementSelector("ignored"));
 		instances = mock(Instances.class);
 		when(instances.getWorking()).thenReturn(working);
 		when(instances.getBase()).thenReturn(base);

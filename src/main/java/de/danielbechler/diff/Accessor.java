@@ -19,7 +19,7 @@ package de.danielbechler.diff;
 /** @author Daniel Bechler */
 public interface Accessor
 {
-	Element getPathElement();
+	ElementSelector getElementSelector();
 
 	Object get(Object target);
 

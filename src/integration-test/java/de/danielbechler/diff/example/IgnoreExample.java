@@ -1,10 +1,14 @@
 package de.danielbechler.diff.example;
 
-import de.danielbechler.diff.*;
-import de.danielbechler.diff.annotation.*;
-import de.danielbechler.diff.visitor.*;
+import de.danielbechler.diff.DiffNode;
+import de.danielbechler.diff.NodePath;
+import de.danielbechler.diff.ObjectDifferBuilder;
+import de.danielbechler.diff.annotation.ObjectDiffProperty;
+import de.danielbechler.diff.visitor.PrintingVisitor;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 @SuppressWarnings("UnusedDeclaration")
 class IgnoreExample
 {
@@ -20,7 +24,7 @@ class IgnoreExample
 		final ObjectDifferBuilder builder = ObjectDifferBuilder.startBuilding();
 
 		// (Option 1) Causes the ObjectDiffer to ignore the 'password' property of the root object
-		builder.configure().inclusion().toExclude().nodes(NodePath.buildWith("password"));
+		builder.configure().inclusion().toExclude().node(NodePath.with("password"));
 
 		final DiffNode node = builder.build().compare(working, base);
 

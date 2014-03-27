@@ -17,7 +17,7 @@
 package de.danielbechler.diff.map;
 
 import de.danielbechler.diff.Accessor;
-import de.danielbechler.diff.Element;
+import de.danielbechler.diff.ElementSelector;
 import de.danielbechler.util.Assert;
 
 import java.util.Map;
@@ -76,12 +76,12 @@ public final class MapEntryAccessor implements Accessor
 	@Override
 	public String toString()
 	{
-		return "map key " + getPathElement();
+		return "map key " + getElementSelector();
 	}
 
-	public Element getPathElement()
+	public ElementSelector getElementSelector()
 	{
-		return new MapKeyElement(referenceKey);
+		return new MapKeyElementSelector(referenceKey);
 	}
 
 	public Object get(final Object target)

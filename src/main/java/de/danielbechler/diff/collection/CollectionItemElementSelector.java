@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package de.danielbechler.diff.map;
+package de.danielbechler.diff.collection;
 
-import de.danielbechler.diff.Element;
+import de.danielbechler.diff.ElementSelector;
 import de.danielbechler.util.Strings;
 
 /**
  * @author Daniel Bechler
  */
-public final class MapKeyElement extends Element
+public final class CollectionItemElementSelector extends ElementSelector
 {
-	private final Object key;
+	private final Object item;
 
-	public MapKeyElement(final Object key)
+	public CollectionItemElementSelector(final Object item)
 	{
-		this.key = key;
+		this.item = item;
 	}
 
 	/**
@@ -36,15 +36,15 @@ public final class MapKeyElement extends Element
 	 */
 	@SuppressWarnings({"UnusedDeclaration"})
 	@Deprecated
-	public Object getKey()
+	public Object getItem()
 	{
-		return key;
+		return item;
 	}
 
 	@Override
 	public String toHumanReadableString()
 	{
-		return "{" + Strings.toSingleLineString(key) + "}";
+		return "[" + Strings.toSingleLineString(item) + "]";
 	}
 
 	@Override
@@ -59,9 +59,9 @@ public final class MapKeyElement extends Element
 			return false;
 		}
 
-		final MapKeyElement that = (MapKeyElement) o;
+		final CollectionItemElementSelector that = (CollectionItemElementSelector) o;
 
-		if (key != null ? !key.equals(that.key) : that.key != null)
+		if (item != null ? !item.equals(that.item) : that.item != null)
 		{
 			return false;
 		}
@@ -72,6 +72,6 @@ public final class MapKeyElement extends Element
 	@Override
 	public int hashCode()
 	{
-		return key != null ? key.hashCode() : 0;
+		return item != null ? item.hashCode() : 0;
 	}
 }

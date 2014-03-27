@@ -21,38 +21,38 @@ import spock.lang.Specification
 /**
  * @author Daniel Bechler
  */
-class RootElementTest extends Specification
+class RootElementSelectorTest extends Specification
 {
   def 'equals should be true'()
   {
     expect:
-    RootElement.instance.equals(instance)
+    RootElementSelector.instance.equals(instance)
 
     where:
-    instance << [RootElement.instance, new RootElement()]
+    instance << [RootElementSelector.instance, new RootElementSelector()]
   }
 
   def 'equals should be false'()
   {
     expect:
-    !RootElement.instance.equals(null)
+    !RootElementSelector.instance.equals(null)
   }
 
   def 'toHumanReadableString should always return empty string'()
   {
     expect:
-    RootElement.instance.toHumanReadableString() == ''
+    RootElementSelector.instance.toHumanReadableString() == ''
   }
 
   def 'getInstance should always return the same instance'()
   {
     expect:
-    RootElement.instance == RootElement.instance
+    RootElementSelector.instance == RootElementSelector.instance
   }
 
   def 'hashCode should always be 0'()
   {
     expect:
-    RootElement.instance.hashCode() == 0
+    RootElementSelector.instance.hashCode() == 0
   }
 }

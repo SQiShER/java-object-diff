@@ -48,14 +48,12 @@ public class DeepDiffingCollectionItemChangeITCase
 
 		node.visit(new NodeHierarchyVisitor());
 
-		assertThat(node).child(NodePath.createBuilder()
-				.withRoot()
-				.withMapKey("foo")).hasState(DiffNode.State.ADDED);
+		assertThat(node).child(NodePath.startBuilding()
+				.mapKey("foo")).hasState(DiffNode.State.ADDED);
 
-		assertThat(node).child(NodePath.createBuilder()
-				.withRoot()
-				.withMapKey("foo")
-				.withPropertyName("value")).hasState(DiffNode.State.ADDED);
+		assertThat(node).child(NodePath.startBuilding()
+				.mapKey("foo")
+				.propertyName("value")).hasState(DiffNode.State.ADDED);
 	}
 
 	@Test

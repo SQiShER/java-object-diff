@@ -27,7 +27,7 @@ public interface InclusionConfiguration
 
 		To types(Class<?>... types);
 
-		To nodes(NodePath... nodePath);
+		To node(NodePath nodePath);
 
 		To propertyNames(String... propertyNames);
 	}

@@ -16,7 +16,7 @@
 
 package de.danielbechler.diff
 
-import de.danielbechler.diff.bean.BeanPropertyElement
+import de.danielbechler.diff.bean.BeanPropertyElementSelector
 import spock.lang.Specification
 
 /**
@@ -27,12 +27,12 @@ class InclusionServiceSpec extends Specification {
     def categoryResolver = Mock(CategoryResolver)
     def accessor = Mock(PropertyAwareAccessor)
     def inclusionService = new InclusionService(categoryResolver)
-    def NodePath nodePath = NodePath.buildWith("foo")
+    def NodePath nodePath = NodePath.with("foo")
     def DiffNode rootNode
     def DiffNode node
 
     def "setup"() {
-        accessor.pathElement >> new BeanPropertyElement("foo")
+        accessor.elementSelector >> new BeanPropertyElementSelector("foo")
         rootNode = new DiffNode(RootAccessor.instance, null)
         node = new DiffNode(rootNode, accessor, null)
         categoryResolver.resolveCategories(_ as DiffNode) >> []
@@ -80,7 +80,7 @@ class InclusionServiceSpec extends Specification {
 
     def "isIgnored: should return 'false' if node is included via path"() {
         setup:
-        inclusionService.toInclude().nodes(nodePath)
+        inclusionService.toInclude().node(nodePath)
 
         expect:
         inclusionService.isIgnored(node) == false
@@ -119,7 +119,7 @@ class InclusionServiceSpec extends Specification {
 
     def "isIgnored: should return 'true' if node is excluded via path"() {
         setup:
-        inclusionService.toExclude().nodes(nodePath)
+        inclusionService.toExclude().node(nodePath)
 
         expect:
         inclusionService.isIgnored(node) == true
@@ -176,14 +176,14 @@ class InclusionServiceSpec extends Specification {
 
     def mockPropertyAwareAccessor(String name) {
         def propertyAwareAccessor = Mock(PropertyAwareAccessor)
-        propertyAwareAccessor.pathElement >> new BeanPropertyElement(name)
+        propertyAwareAccessor.elementSelector >> new BeanPropertyElementSelector(name)
         propertyAwareAccessor.propertyName >> name
         propertyAwareAccessor
     }
 
     def "isIgnored: should return 'false' for children of included nodes"() {
         given:
-        inclusionService.toInclude().nodes(NodePath.buildRootPath())
+        inclusionService.toInclude().node(NodePath.withRoot())
 
         expect:
         inclusionService.isIgnored(node) == false
@@ -191,7 +191,7 @@ class InclusionServiceSpec extends Specification {
 
     def "isIgnored: should return 'true' for children of excluded nodes"() {
         given:
-        inclusionService.toExclude().nodes(NodePath.buildRootPath())
+        inclusionService.toExclude().node(NodePath.withRoot())
 
         expect:
         inclusionService.isIgnored(node) == true

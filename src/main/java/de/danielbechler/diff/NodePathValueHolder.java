@@ -14,7 +14,7 @@ import java.util.Map;
  */
 class NodePathValueHolder<T>
 {
-	private final Map<Element, NodePathValueHolder<T>> elementValueHolders = new HashMap<Element, NodePathValueHolder<T>>();
+	private final Map<ElementSelector, NodePathValueHolder<T>> elementValueHolders = new HashMap<ElementSelector, NodePathValueHolder<T>>();
 	private T value;
 
 	public static <T> NodePathValueHolder<T> of(final Class<T> type)
@@ -25,36 +25,36 @@ class NodePathValueHolder<T>
 
 	public NodePathValueHolder<T> put(final NodePath nodePath, final T value)
 	{
-		put(nodePath.getElements(), value);
+		put(nodePath.getElementSelectors(), value);
 		return this;
 	}
 
-	private void put(final List<Element> nodePathElements, final T value)
+	private void put(final List<ElementSelector> elementSelectors, final T value)
 	{
-		if (nodePathElements.isEmpty())
+		if (elementSelectors.isEmpty())
 		{
 			return;
 		}
-		final Element element = nodePathElements.get(0);
-		NodePathValueHolder<T> nodePathValueHolder = elementValueHolders.get(element);
+		final ElementSelector elementSelector = elementSelectors.get(0);
+		NodePathValueHolder<T> nodePathValueHolder = valueHolderForElementSelector(elementSelector);
 		if (nodePathValueHolder == null)
 		{
 			nodePathValueHolder = new NodePathValueHolder<T>();
-			elementValueHolders.put(element, nodePathValueHolder);
+			elementValueHolders.put(elementSelector, nodePathValueHolder);
 		}
-		if (nodePathElements.size() == 1)
+		if (elementSelectors.size() == 1)
 		{
 			nodePathValueHolder.value = value;
 		}
 		else
 		{
-			final List<Element> nodePathElementsTail = new ArrayList<Element>(nodePathElements.size() - 1);
-			nodePathElementsTail.addAll(nodePathElements.subList(1, nodePathElements.size()));
+			final List<ElementSelector> nodePathElementsTail = new ArrayList<ElementSelector>(elementSelectors.size() - 1);
+			nodePathElementsTail.addAll(elementSelectors.subList(1, elementSelectors.size()));
 			nodePathValueHolder.put(nodePathElementsTail, value);
 		}
 	}
 
-	private T visit(final List<T> accumulator, final Iterator<Element> elementIterator)
+	private T visit(final List<T> accumulator, final Iterator<ElementSelector> elementIterator)
 	{
 		if (value != null)
 		{
@@ -62,29 +62,31 @@ class NodePathValueHolder<T>
 		}
 		if (elementIterator.hasNext())
 		{
-			final Element element = elementIterator.next();
-			final NodePathValueHolder<T> valueHolder = elementValueHolders.get(element);
+			final ElementSelector selector = elementIterator.next();
+			final NodePathValueHolder<T> valueHolder = valueHolderForElementSelector(selector);
 			if (valueHolder != null)
 			{
 				return valueHolder.visit(accumulator, elementIterator);
 			}
 			return null;
 		}
-		else
-		{
-			return value;
-		}
+		return value;
+	}
+
+	private NodePathValueHolder<T> valueHolderForElementSelector(final ElementSelector elementSelector)
+	{
+		return elementValueHolders.get(elementSelector);
 	}
 
 	public T valueForNodePath(final NodePath nodePath)
 	{
-		return visit(new LinkedList<T>(), nodePath.getElements().iterator());
+		return visit(new LinkedList<T>(), nodePath.getElementSelectors().iterator());
 	}
 
 	public List<T> accumulatedValuesForNodePath(final NodePath nodePath)
 	{
 		final List<T> accumulator = new LinkedList<T>();
-		visit(accumulator, nodePath.getElements().iterator());
+		visit(accumulator, nodePath.getElementSelectors().iterator());
 		return accumulator;
 	}
 
@@ -109,5 +111,61 @@ class NodePathValueHolder<T>
 			}
 			return false;
 		}
+	}
+
+	public void collect(final Collector<T> collector)
+	{
+		collect(null, collector);
+	}
+
+	private void collect(final NodePath nodePath, final Collector<T> collector)
+	{
+		if (nodePath != null && value != null)
+		{
+			collector.it(nodePath, value);
+		}
+		for (final Map.Entry<ElementSelector, NodePathValueHolder<T>> entry : elementValueHolders.entrySet())
+		{
+			final NodePath childNodePath;
+			final ElementSelector elementSelector = entry.getKey();
+			final NodePathValueHolder<T> valueHolder = entry.getValue();
+			if (elementSelector == RootElementSelector.getInstance())
+			{
+				childNodePath = NodePath.withRoot();
+			}
+			else
+			{
+				childNodePath = NodePath.startBuildingFrom(nodePath).element(elementSelector).build();
+			}
+
+			if (valueHolder != null)
+			{
+				valueHolder.collect(childNodePath, collector);
+			}
+		}
+	}
+
+	@Override
+	public String toString()
+	{
+		final StringBuilder stringBuilder = new StringBuilder();
+		collect(new Collector<T>()
+		{
+			public void it(final NodePath path, final T value)
+			{
+				stringBuilder.append(path.toString()).append(" => ").append(value).append('\n');
+			}
+		});
+		return stringBuilder.toString();
+	}
+
+	public void hasChildMatchingValue(NodePath nodePath, T inclusion)
+	{
+
+	}
+
+	public static interface Collector<T>
+	{
+		void it(NodePath path, T value);
 	}
 }

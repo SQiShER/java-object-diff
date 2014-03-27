@@ -19,11 +19,11 @@ package de.danielbechler.diff.map
 import spock.lang.Specification
 import spock.lang.Unroll
 
-class MapKeyElementTest extends Specification {
+class MapKeyElementSelectorTest extends Specification {
 
     def "should be constructable with 'null'"() {
         when:
-        new MapKeyElement(null)
+        new MapKeyElementSelector(null)
 
         then:
         notThrown(Throwable)
@@ -31,7 +31,7 @@ class MapKeyElementTest extends Specification {
 
     def "should be equal to self"() {
         setup:
-        def element = new MapKeyElement('foo')
+        def element = new MapKeyElementSelector('foo')
 
         expect:
         element.equals(element)
@@ -40,8 +40,8 @@ class MapKeyElementTest extends Specification {
     @Unroll
     def "equals should be #expected when keys are #key and #anotherKey"() {
         given:
-        def element = new MapKeyElement(key)
-        def anotherElement = new MapKeyElement(anotherKey)
+        def element = new MapKeyElementSelector(key)
+        def anotherElement = new MapKeyElementSelector(anotherKey)
 
         expect:
         element.equals(anotherElement) == expected
@@ -57,12 +57,12 @@ class MapKeyElementTest extends Specification {
 
     def "should not be equal to 'null'"() {
         expect:
-        !new MapKeyElement('foo').equals(null)
+        !new MapKeyElementSelector('foo').equals(null)
     }
 
     def "should not be equal to different types"() {
         expect:
-        !new MapKeyElement('foo').equals(2)
+        !new MapKeyElementSelector('foo').equals(2)
     }
 
     def "hashCode should equal the hashCode of the key"() {
@@ -70,17 +70,17 @@ class MapKeyElementTest extends Specification {
         def key = new Object()
 
         expect:
-        new MapKeyElement(key).hashCode() == key.hashCode()
+        new MapKeyElementSelector(key).hashCode() == key.hashCode()
     }
 
     def "hashCode should be null when key is null"() {
         expect:
-        new MapKeyElement(null).hashCode() == 0
+        new MapKeyElementSelector(null).hashCode() == 0
     }
 
     def "toString should return the same as toHumanReadableString()"() {
         setup:
-        def element = new MapKeyElement('foo')
+        def element = new MapKeyElementSelector('foo')
 
         expect:
         element.toString() == element.toHumanReadableString()
@@ -91,11 +91,11 @@ class MapKeyElementTest extends Specification {
         def key = new Object()
 
         expect:
-        new MapKeyElement(key).key.is(key)
+        new MapKeyElementSelector(key).key.is(key)
     }
 
     def "toHumanReadableString should return the string representation of the key (without line breaks)"() {
         expect:
-        new MapKeyElement("foo,\nbar").toHumanReadableString() == "{foo, \\ bar}"
+        new MapKeyElementSelector("foo,\nbar").toHumanReadableString() == "{foo, \\ bar}"
     }
 }

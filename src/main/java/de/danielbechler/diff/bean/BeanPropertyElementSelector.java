@@ -22,11 +22,11 @@ import de.danielbechler.util.*;
 /**
  * @author Daniel Bechler
  */
-public final class BeanPropertyElement extends Element
+public final class BeanPropertyElementSelector extends ElementSelector
 {
 	private final String propertyName;
 
-	public BeanPropertyElement(final String propertyName)
+	public BeanPropertyElementSelector(final String propertyName)
 	{
 		Assert.hasText(propertyName, "propertyName");
 		this.propertyName = propertyName;
@@ -55,7 +55,7 @@ public final class BeanPropertyElement extends Element
 			return false;
 		}
 
-		final BeanPropertyElement that = (BeanPropertyElement) o;
+		final BeanPropertyElementSelector that = (BeanPropertyElementSelector) o;
 
 		if (!propertyName.equals(that.propertyName))
 		{

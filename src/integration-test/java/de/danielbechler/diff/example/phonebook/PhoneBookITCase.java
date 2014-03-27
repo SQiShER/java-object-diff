@@ -19,7 +19,7 @@ package de.danielbechler.diff.example.phonebook;
 import de.danielbechler.diff.DiffNode;
 import de.danielbechler.diff.ObjectDiffer;
 import de.danielbechler.diff.ObjectDifferBuilder;
-import de.danielbechler.diff.collection.CollectionItemElement;
+import de.danielbechler.diff.collection.CollectionItemElementSelector;
 import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.IsNull;
 import org.testng.annotations.Test;
@@ -61,7 +61,7 @@ public class PhoneBookITCase
 		assertThat(contactsNode, IsNull.notNullValue());
 		assertThat(contactsNode.hasChanges(), is(true));
 
-		final DiffNode pinkmanNode = contactsNode.getChild(new CollectionItemElement(jessePinkman));
+		final DiffNode pinkmanNode = contactsNode.getChild(new CollectionItemElementSelector(jessePinkman));
 		assertThat(pinkmanNode.hasChanges(), is(true));
 
 		final DiffNode middleNameNode = pinkmanNode.getChild("middleName");
@@ -69,7 +69,7 @@ public class PhoneBookITCase
 		assertThat(middleNameNode.canonicalGet(phoneBook), IsNull.nullValue());
 		assertThat((String) middleNameNode.canonicalGet(modifiedPhoneBook), IsEqual.equalTo("Bruce"));
 
-		final DiffNode whiteNode = contactsNode.getChild(new CollectionItemElement(walterWhite));
+		final DiffNode whiteNode = contactsNode.getChild(new CollectionItemElementSelector(walterWhite));
 		assertThat(whiteNode.hasChanges(), is(true));
 
 		final DiffNode whiteMiddleNameNode = whiteNode.getChild("middleName");

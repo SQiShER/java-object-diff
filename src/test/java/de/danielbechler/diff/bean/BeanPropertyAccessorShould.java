@@ -135,7 +135,7 @@ public class BeanPropertyAccessorShould
 	@Test
 	public void return_proper_path_element() throws Exception
 	{
-		assertThat(accessor.getPathElement()).isEqualTo(new BeanPropertyElement("value"));
+		assertThat(accessor.getElementSelector()).isEqualTo(new BeanPropertyElementSelector("value"));
 	}
 
 	@Test

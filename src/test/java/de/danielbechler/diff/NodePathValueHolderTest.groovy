@@ -26,9 +26,9 @@ class NodePathValueHolderTest extends Specification
 
     where:
     nodePath                     | value
-    NodePath.buildRootPath()     | "foo1"
-    NodePath.buildWith("a")      | "foo2"
-    NodePath.buildWith("a", "b") | "foo3"
+    NodePath.withRoot()     | "foo1"
+    NodePath.with("a")      | "foo2"
+    NodePath.with("a", "b") | "foo3"
   }
 
   def "should return null for unknown paths"()
@@ -37,18 +37,18 @@ class NodePathValueHolderTest extends Specification
     def valueHolder = NodePathValueHolder.of(String)
 
     expect:
-    valueHolder.valueForNodePath(NodePath.buildWith("a")) == null
+    valueHolder.valueForNodePath(NodePath.with("a")) == null
   }
 
   def "should return accumulated values along path"()
   {
     given:
     def valueHolder = NodePathValueHolder.of(String)
-    valueHolder.put(NodePath.buildRootPath(), "foo1")
-    valueHolder.put(NodePath.buildWith("a"), "foo2")
-    valueHolder.put(NodePath.buildWith("a", "b"), "foo3")
+    valueHolder.put(NodePath.withRoot(), "foo1")
+    valueHolder.put(NodePath.with("a"), "foo2")
+    valueHolder.put(NodePath.with("a", "b"), "foo3")
 
     expect:
-    valueHolder.accumulatedValuesForNodePath(NodePath.buildWith("a", "b")) == ["foo1", "foo2", "foo3"]
+    valueHolder.accumulatedValuesForNodePath(NodePath.with("a", "b")) == ["foo1", "foo2", "foo3"]
   }
 }

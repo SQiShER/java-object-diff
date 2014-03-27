@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Daniel Bechler
+ * Copyright 2014 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,34 +16,21 @@
 
 package de.danielbechler.diff;
 
-/** @author Daniel Bechler */
-public final class RootElement extends Element
+/**
+ * Created by Daniel Bechler.
+ */
+public final class AnyElementSelector extends ElementSelector
 {
-	private static final RootElement instance = new RootElement();
-
-	RootElement()
-	{
-	}
-
-	public static RootElement getInstance()
-	{
-		return instance;
-	}
-
 	@Override
 	public String toHumanReadableString()
 	{
-		return "";
+		return "*";
 	}
 
 	@Override
-	public boolean equals(final Object element)
+	public boolean equals(final Object obj)
 	{
-		if (this == element)
-		{
-			return true;
-		}
-		if (element != null && getClass().equals(element.getClass()))
+		if (obj != null && obj instanceof AnyElementSelector)
 		{
 			return true;
 		}
