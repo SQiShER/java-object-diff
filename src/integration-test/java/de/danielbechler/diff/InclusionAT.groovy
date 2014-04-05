@@ -134,7 +134,7 @@ class InclusionAT extends Specification {
 		  node.childCount() == 0
 	}
 
-	def 'including an element implicitly excludes all others'() {
+	def 'including an element implicitly excludes its siblings'() {
 		given:
 		  objectDifferBuilder.configure().inclusion().toInclude().propertyNames('artist')
 		when:
