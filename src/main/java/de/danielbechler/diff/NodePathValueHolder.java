@@ -11,7 +11,10 @@ import java.util.Map;
 
 /**
  * @author Daniel Bechler
+ * @see de.danielbechler.diff.ConfigNode
+ * @deprecated The ConfigNode provides a much more powerful way to store values for NodePaths.
  */
+@Deprecated
 class NodePathValueHolder<T>
 {
 	private final Map<ElementSelector, NodePathValueHolder<T>> elementValueHolders = new HashMap<ElementSelector, NodePathValueHolder<T>>();

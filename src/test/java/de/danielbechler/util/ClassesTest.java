@@ -16,18 +16,33 @@
 
 package de.danielbechler.util;
 
-import de.danielbechler.diff.*;
-import de.danielbechler.diff.example.phonebook.*;
-import de.danielbechler.diff.mock.*;
-import org.testng.annotations.*;
+import de.danielbechler.diff.DiffNode;
+import de.danielbechler.diff.example.phonebook.Contact;
+import de.danielbechler.diff.example.phonebook.PhoneBook;
+import de.danielbechler.diff.example.phonebook.PhoneNumber;
+import de.danielbechler.diff.mock.ObjectWithExceptionThrowingDefaultConstructor;
+import de.danielbechler.diff.mock.ObjectWithPrivateDefaultConstructor;
+import de.danielbechler.diff.mock.ObjectWithString;
+import de.danielbechler.diff.mock.ObjectWithoutDefaultConstructor;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
-import java.net.*;
-import java.text.*;
-import java.util.*;
+import java.net.URI;
+import java.net.URL;
+import java.text.Collator;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Scanner;
 
-import static org.fest.assertions.api.Assertions.*;
+import static org.fest.assertions.api.Assertions.assertThat;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 public class ClassesTest
 {
 	@Test
@@ -101,65 +116,65 @@ public class ClassesTest
 	@Test
 	public void testFreshInstanceOfReturnsNullWhenNoClassIsGiven()
 	{
-		assertThat(Classes.freshInstanceOf(null)).isNull();
+		assertThat((Object) Classes.freshInstanceOf(null)).isNull();
 	}
 
 	@DataProvider
 	public Object[][] wrapperTypes()
 	{
-		return new Object[][] {
-				new Object[] {Integer.class},
-				new Object[] {Short.class},
-				new Object[] {Character.class},
-				new Object[] {Long.class},
-				new Object[] {Boolean.class},
-				new Object[] {Byte.class},
-				new Object[] {Float.class},
-				new Object[] {Double.class},
+		return new Object[][]{
+				new Object[]{Integer.class},
+				new Object[]{Short.class},
+				new Object[]{Character.class},
+				new Object[]{Long.class},
+				new Object[]{Boolean.class},
+				new Object[]{Byte.class},
+				new Object[]{Float.class},
+				new Object[]{Double.class},
 		};
 	}
 
 	@DataProvider
 	public Object[][] complexTypes()
 	{
-		return new Object[][] {
-				new Object[] {Contact.class},
-				new Object[] {PhoneBook.class},
-				new Object[] {PhoneNumber.class},
-				new Object[] {Scanner.class},
-				new Object[] {Collator.class},
+		return new Object[][]{
+				new Object[]{Contact.class},
+				new Object[]{PhoneBook.class},
+				new Object[]{PhoneNumber.class},
+				new Object[]{Scanner.class},
+				new Object[]{Collator.class},
 		};
 	}
 
 	@DataProvider
 	public Object[][] simpleTypes()
 	{
-		return new Object[][] {
-				new Object[] {int.class},
-				new Object[] {Integer.class},
-				new Object[] {short.class},
-				new Object[] {Short.class},
-				new Object[] {char.class},
-				new Object[] {Character.class},
-				new Object[] {long.class},
-				new Object[] {Long.class},
-				new Object[] {boolean.class},
-				new Object[] {Boolean.class},
-				new Object[] {byte.class},
-				new Object[] {Byte.class},
-				new Object[] {float.class},
-				new Object[] {Float.class},
-				new Object[] {double.class},
-				new Object[] {Double.class},
-				new Object[] {CharSequence.class},
-				new Object[] {String.class},
-				new Object[] {Date.class},
-				new Object[] {URL.class},
-				new Object[] {Locale.class},
-				new Object[] {URI.class},
-				new Object[] {Number.class},
-				new Object[] {DiffNode.State.class},
-				new Object[] {Class.class},
+		return new Object[][]{
+				new Object[]{int.class},
+				new Object[]{Integer.class},
+				new Object[]{short.class},
+				new Object[]{Short.class},
+				new Object[]{char.class},
+				new Object[]{Character.class},
+				new Object[]{long.class},
+				new Object[]{Long.class},
+				new Object[]{boolean.class},
+				new Object[]{Boolean.class},
+				new Object[]{byte.class},
+				new Object[]{Byte.class},
+				new Object[]{float.class},
+				new Object[]{Float.class},
+				new Object[]{double.class},
+				new Object[]{Double.class},
+				new Object[]{CharSequence.class},
+				new Object[]{String.class},
+				new Object[]{Date.class},
+				new Object[]{URL.class},
+				new Object[]{Locale.class},
+				new Object[]{URI.class},
+				new Object[]{Number.class},
+				new Object[]{DiffNode.State.class},
+				new Object[]{Class.class},
 		};
 	}
 }

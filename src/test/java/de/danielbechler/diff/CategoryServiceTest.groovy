@@ -19,82 +19,80 @@ package de.danielbechler.diff
 import de.danielbechler.diff.bean.BeanPropertyElementSelector
 import spock.lang.Specification
 
-import static DiffNode.ROOT
-
 /**
  * @author Daniel Bechler
  */
 class CategoryServiceTest extends Specification {
-    def categoryService = new CategoryService()
-    def accessor = Mock(PropertyAwareAccessor)
-    def nodePath = NodePath.with("foo")
-    def nodeType = Alliance
-    def DiffNode node
-    def DiffNode rootNode
+	def categoryService = new CategoryService()
+	def accessor = Mock(PropertyAwareAccessor)
+	def nodePath = NodePath.with("foo")
+	def nodeType = Alliance
+	def DiffNode node
+	def DiffNode rootNode
 
-    def "setup"() {
-        accessor.elementSelector >> new BeanPropertyElementSelector("foo")
-        rootNode = new DiffNode(ROOT, RootAccessor.instance, null)
-        node = new DiffNode(rootNode, accessor, nodeType)
-    }
+	def "setup"() {
+		accessor.elementSelector >> new BeanPropertyElementSelector("foo")
+		rootNode = new DiffNode(DiffNode.ROOT, RootAccessor.instance, null)
+		node = new DiffNode(rootNode, accessor, nodeType)
+	}
 
-    def "resolveCategories: should return categories configured via path"() {
-        given:
-        categoryService.ofNode(nodePath).toBe("Stark", "Lannister")
+	def "resolveCategories: should return categories configured via path"() {
+		given:
+		  categoryService.ofNode(nodePath).toBe("Stark", "Lannister")
 
-        expect:
-        categoryService.resolveCategories(node) == ["Stark", "Lannister"] as Set
-    }
+		expect:
+		  categoryService.resolveCategories(node) == ["Stark", "Lannister"] as Set
+	}
 
-    def "resolveCategories: should return categories configured via type"() {
-        given:
-        categoryService.ofType(nodeType).toBe("Stark", "Lannister")
+	def "resolveCategories: should return categories configured via type"() {
+		given:
+		  categoryService.ofType(nodeType).toBe("Stark", "Lannister")
 
-        expect:
-        categoryService.resolveCategories(node) == ["Stark", "Lannister"] as Set
-    }
+		expect:
+		  categoryService.resolveCategories(node) == ["Stark", "Lannister"] as Set
+	}
 
-    def "resolveCategories: should return categories configured via node"() {
-        given:
-        accessor.categories >> ["Stark", "Lannister"]
+	def "resolveCategories: should return categories configured via node"() {
+		given:
+		  accessor.categories >> ["Stark", "Lannister"]
 
-        expect:
-        categoryService.resolveCategories(node) == ["Stark", "Lannister"] as Set
-    }
+		expect:
+		  categoryService.resolveCategories(node) == ["Stark", "Lannister"] as Set
+	}
 
-    def "resolveCategories: should return combined categories configured via all possible options"() {
-        given:
-        categoryService.ofNode(nodePath).toBe("A")
+	def "resolveCategories: should return combined categories configured via all possible options"() {
+		given:
+		  categoryService.ofNode(nodePath).toBe("A")
 
-        and:
-        categoryService.ofType(nodeType).toBe("B")
+		and:
+		  categoryService.ofType(nodeType).toBe("B")
 
-        and:
-        accessor.categories >> ["C"]
+		and:
+		  accessor.categories >> ["C"]
 
-        expect:
-        categoryService.resolveCategories(node) == ["A", "B", "C"] as Set
-    }
+		expect:
+		  categoryService.resolveCategories(node) == ["A", "B", "C"] as Set
+	}
 
-    def "resolveCategories: should not return categories of parent nodes"() {
-        given:
-        accessor.categories >> ["B"]
+	def "resolveCategories: should also return categories of parent nodes"() {
+		given:
+		  accessor.categories >> ["B"]
 
-        and:
-        categoryService.ofNode(NodePath.withRoot()).toBe("A")
+		and:
+		  categoryService.ofNode(NodePath.withRoot()).toBe("A")
 
-        expect:
-        categoryService.resolveCategories(node) == ["B"] as Set
-    }
+		expect:
+		  categoryService.resolveCategories(node) == ["A", "B"] as Set
+	}
 
-    def "resolveCategories: should return empty Set if no category is defined"() {
-        given:
-        node = new DiffNode()
+	def "resolveCategories: should return empty Set if no category is defined"() {
+		given:
+		  node = new DiffNode()
 
-        expect:
-        categoryService.resolveCategories(node) == [] as Set
-    }
+		expect:
+		  categoryService.resolveCategories(node) == [] as Set
+	}
 
-    class Alliance {
-    }
+	class Alliance {
+	}
 }

@@ -31,7 +31,7 @@
         <module name="java-object-diff" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
+    <bytecodeTargetLevel target="1.5">
       <module name="java-object-diff" target="1.5" />
     </bytecodeTargetLevel>
   </component>

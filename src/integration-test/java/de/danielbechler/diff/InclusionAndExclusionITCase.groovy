@@ -17,7 +17,6 @@
 package de.danielbechler.diff
 
 import de.danielbechler.diff.collection.CollectionItemElementSelector
-import de.danielbechler.diff.visitor.PrintingVisitor
 import spock.lang.Specification
 
 import static de.danielbechler.diff.PhoneBookSetup.Contact
@@ -27,12 +26,15 @@ import static de.danielbechler.diff.PhoneBookSetup.Contact
  */
 class InclusionAndExclusionITCase extends Specification {
 
+	static final GEORGE_SELECTOR = new CollectionItemElementSelector(new Contact(id: 'george'))
+	static final KRAMER_SELECTOR = new CollectionItemElementSelector(new Contact(id: 'kramer'))
+
 	def builder = ObjectDifferBuilder.startBuilding()
 	def configurable = builder.configure()
 	def working = PhoneBookSetup.getWorking()
 	def base = PhoneBookSetup.getBase()
 
-	def "Sanity check"() {
+	def "sanity check"() {
 		when:
 		  def node = ObjectDifferBuilder.buildDefault().compare(working, base)
 
@@ -44,12 +46,13 @@ class InclusionAndExclusionITCase extends Specification {
 		  node.getChild('contacts').childCount() == 2
 
 		and: "only Georges name should have changed"
-		  node.getChild('contacts').getChild(new CollectionItemElementSelector(new Contact(id: 'george'))).childCount() == 1
-		  node.getChild('contacts').getChild(new CollectionItemElementSelector(new Contact(id: 'george'))).getChild('name').changed
+		  node.getChild('contacts').getChild(GEORGE_SELECTOR).childCount() == 1
+		  node.getChild('contacts').getChild(GEORGE_SELECTOR).getChild('name').changed
 
 		and: "only Kramers number should have changed"
-		  node.getChild('contacts').getChild(new CollectionItemElementSelector(new Contact(id: 'kramer'))).childCount() == 1
-		  node.getChild('contacts').getChild(new CollectionItemElementSelector(new Contact(id: 'kramer'))).getChild('number').changed
+
+		  node.getChild('contacts').getChild(KRAMER_SELECTOR).childCount() == 1
+		  node.getChild('contacts').getChild(KRAMER_SELECTOR).getChild('number').changed
 	}
 
 	def "Property with specific name excluded via configuration"() {
@@ -60,7 +63,7 @@ class InclusionAndExclusionITCase extends Specification {
 		  def node = builder.build().compare(working, base)
 
 		then: "Georges name change should be ignored"
-		  node.getChild('contacts').getChild(new CollectionItemElementSelector(new Contact(id: 'george'))) == null
+		  node.getChild('contacts').getChild(GEORGE_SELECTOR) == null
 
 		and: "The name change of the phone book should be ignored too"
 		  node.getChild('name') == null
@@ -74,7 +77,7 @@ class InclusionAndExclusionITCase extends Specification {
 		  def node = builder.build().compare(working, base)
 
 		then: "Kramers changed number should be ignored"
-		  node.getChild('contacts').getChild(new CollectionItemElementSelector(new Contact(id: 'kramer'))) == null
+		  node.getChild('contacts').getChild(KRAMER_SELECTOR) == null
 	}
 
 	def "Type excluded via configuration"() {
@@ -93,14 +96,14 @@ class InclusionAndExclusionITCase extends Specification {
 		  configurable.inclusion().toExclude().node(NodePath
 				  .startBuilding()
 				  .propertyName('contacts')
-				  .collectionItem(new Contact(id: 'george'))
+				  .element(GEORGE_SELECTOR)
 				  .build())
 
 		when:
 		  def node = builder.build().compare(working, base)
 
 		then:
-		  node.getChild('contacts').getChild(new CollectionItemElementSelector(new Contact(id: 'george'))) == null
+		  node.getChild('contacts').getChild(GEORGE_SELECTOR) == null
 	}
 
 	def "Property excluded via @ObjectDiffProperty annotation"() {
@@ -139,7 +142,15 @@ class InclusionAndExclusionITCase extends Specification {
 	}
 
 	def "including an element via path includes all its children"() {
+		given:
+		  configurable.inclusion().toInclude().node(NodePath.with('contacts'))
 
+		when:
+		  def node = builder.build().compare(working, base)
+
+		then:
+		  node.getChild('contacts').changed
+		  node.getChild("contacts").childCount() == 2
 	}
 
 	def "including an element via category"() {
@@ -172,25 +183,61 @@ class InclusionAndExclusionITCase extends Specification {
 
 	def "include all but some specific elements"() {
 		given:
-		  configurable.inclusion().toInclude().node(NodePath.startBuilding().propertyName('contacts').any().build())
-		  configurable.inclusion().toExclude().node(NodePath.startBuilding().propertyName('contacts').collectionItem(new Contact(id: 'kramer')).build())
+		  configurable.inclusion().toInclude().node(NodePath.startBuilding().propertyName('contacts').build())
+		  configurable.inclusion().toExclude().node(NodePath.startBuilding().propertyName('contacts').element(KRAMER_SELECTOR).build())
 
 		when:
 		  def node = builder.build().compare(working, base)
-
-		and:
-		  node.visit(new PrintingVisitor(working, base))
 
 		then:
 		  node.getChild('contacts').changed
 		  node.getChild('contacts').childCount() == 1
 	}
 
-	def "including an element via category only includes properties if any of their parent elements is also somehow included"() {
+	def "when an element is included by property name, all its children will be implicitly included"() {
+		given:
+		  configurable.inclusion().toInclude().node(NodePath.startBuilding().propertyName('contacts').build())
+
+		when:
+		  def node = builder.build().compare(working, base)
+
+		then:
+		  node.childCount() == 1
+		  node.getChild('contacts').childCount() == 2
+		  node.getChild('contacts').getChild(GEORGE_SELECTOR).changed
+		  node.getChild('contacts').getChild(KRAMER_SELECTOR).changed
+	}
+
+	def "when an element is included by category, all its children will be implicitly included"() {
+		given:
+		  configurable.categories().ofNode(NodePath.startBuilding().propertyName('contacts').build()).toBe('identifier')
+		  configurable.inclusion().toInclude().categories('identifier')
+
+		when:
+		  def node = builder.build().compare(working, base)
+
+		then:
+		  node.childCount() == 1
+		  node.getChild('contacts').changed
+	}
+
+	def "when a child of an explicitly excluded element is included it should be excluded as well"() {
+		given:
+		  configurable.inclusion().toExclude().node(NodePath.startBuilding().propertyName('contacts').build())
+		  configurable.inclusion().toInclude().node(NodePath.startBuilding().propertyName('contacts').element(GEORGE_SELECTOR).build())
+
+		when:
+		  def node = builder.build().compare(working, base)
+
+		then:
+		  node.getChild('contacts') == null
+	}
+
+	def "including a category includes matching properties only if they can be reached due to other inclusion rules"() {
 		def includedCategory = "representation"
 		def nodePathToKramer = NodePath.startBuilding()
 				.propertyName("contacts")
-				.collectionItem(new Contact(id: "kramer"))
+				.element(KRAMER_SELECTOR)
 				.build()
 
 		given:

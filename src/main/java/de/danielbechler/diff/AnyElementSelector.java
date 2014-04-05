@@ -18,7 +18,10 @@ package de.danielbechler.diff;
 
 /**
  * Created by Daniel Bechler.
+ *
+ * @deprecated Not very intuitive to work with (at least not internally)
  */
+@Deprecated
 public final class AnyElementSelector extends ElementSelector
 {
 	@Override

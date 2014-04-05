@@ -119,7 +119,11 @@ class InclusionService implements InclusionConfiguration, IsIgnoredResolver
 	{
 		if (hasInclusions(EXCLUDED))
 		{
-			if (isExcludedByPath(node))
+			if (node.isExcluded())
+			{
+				return true;
+			}
+			else if (isExcludedByPath(node))
 			{
 				return true;
 			}
@@ -152,7 +156,12 @@ class InclusionService implements InclusionConfiguration, IsIgnoredResolver
 
 	private boolean isExcludedByPath(final DiffNode node)
 	{
-		return nodeInclusions.getNodeForPath(node.getPath()).isExcluded();
+		final ConfigNode configNode = nodeInclusions.getNodeForPath(node.getPath());
+		if (configNode.isExcluded() && !configNode.containsInclusion(INCLUDED))
+		{
+			return true;
+		}
+		return false;
 	}
 
 	private boolean isExcludedByCategory(final DiffNode node)
@@ -264,3 +273,11 @@ class InclusionService implements InclusionConfiguration, IsIgnoredResolver
 		}
 	}
 }
+
+/*
+TODO
+Per Default sind alle Nodes included
+Wenn es explizite inclusion Regeln gibt, sind nur noch Nodes included die den Regeln gerecht werden
+Ein Node ist included wenn sein Parent included ist, außer er ist explizit excluded
+Ein Node ist excluded wenn sein Parent excluded ist, außer er ist explizit included
+*/

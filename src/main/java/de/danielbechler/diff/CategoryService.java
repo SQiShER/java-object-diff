@@ -1,9 +1,15 @@
 package de.danielbechler.diff;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
-import static java.util.Arrays.*;
-import static java.util.Collections.*;
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptySet;
 
 /**
  *
@@ -12,6 +18,11 @@ class CategoryService implements CategoryConfiguration, CategoryResolver
 {
 	private final NodePathValueHolder<String[]> nodePathCategories = NodePathValueHolder.of(String[].class);
 	private final Map<Class<?>, String[]> typeCategories = new HashMap<Class<?>, String[]>();
+
+	private static Collection<String> categoriesFromNode(final DiffNode node)
+	{
+		return node.getCategories();
+	}
 
 	public Set<String> resolveCategories(final DiffNode node)
 	{
@@ -24,12 +35,13 @@ class CategoryService implements CategoryConfiguration, CategoryResolver
 
 	private Collection<String> categoriesFromNodePathConfiguration(final DiffNode node)
 	{
-		final String[] categories = nodePathCategories.valueForNodePath(node.getPath());
-		if (categories != null)
+		final Collection<String> allCategories = new HashSet<String>();
+		final List<String[]> accumulatedValues = nodePathCategories.accumulatedValuesForNodePath(node.getPath());
+		for (final String[] categoriesForElement : accumulatedValues)
 		{
-			return asList(categories);
+			allCategories.addAll(asList(categoriesForElement));
 		}
-		return emptySet();
+		return allCategories;
 	}
 
 	private Collection<String> categoriesFromTypeConfiguration(final DiffNode node)
@@ -44,11 +56,6 @@ class CategoryService implements CategoryConfiguration, CategoryResolver
 			}
 		}
 		return emptySet();
-	}
-
-	private static Collection<String> categoriesFromNode(final DiffNode node)
-	{
-		return node.getCategories();
 	}
 
 	public Of ofNode(final NodePath nodePath)

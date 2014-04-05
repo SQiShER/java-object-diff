@@ -31,6 +31,7 @@ public class ConfigNode
 	private final Map<ElementSelector, ConfigNode> children = new HashMap<ElementSelector, ConfigNode>();
 	private final ElementSelector elementSelector;
 	private final ConfigNode parent;
+	@Deprecated
 	private ConfigNode prototype;
 	private Inclusion inclusion;
 
@@ -133,26 +134,27 @@ public class ConfigNode
 
 	public boolean isIncluded()
 	{
-		if (inclusion == EXCLUDED)
+		if (inclusion != EXCLUDED)
 		{
-			return false;
-		}
-		final ConfigNode parentWithInclusion = getClosestParentWithInclusion();
-		if (parentWithInclusion == null)
-		{
+			final ConfigNode parentWithInclusion = getClosestParentWithInclusion();
+			if (parentWithInclusion != null)
+			{
+				return parentWithInclusion.getInclusion() != EXCLUDED;
+			}
 			if (!hasInclusion() && hasPrototype() && prototype.hasInclusion())
 			{
 				return prototype.inclusion == INCLUDED;
 			}
-			else
+			if (inclusion == INCLUDED)
 			{
-				return inclusion == INCLUDED || hasIncludedChildren();
+				return true;
+			}
+			if (hasIncludedChildren())
+			{
+				return true;
 			}
 		}
-		else
-		{
-			return parentWithInclusion.getInclusion() != EXCLUDED;
-		}
+		return false;
 	}
 
 	public boolean isExcluded()
