@@ -360,6 +360,19 @@ public class DiffNode
 		}
 	}
 
+	public final void visitParents(final Visitor visitor)
+	{
+		final Visit visit = new Visit();
+		if (parentNode != null)
+		{
+			visitor.accept(parentNode, visit);
+			if (!visit.isStopped())
+			{
+				parentNode.visitParents(visitor);
+			}
+		}
+	}
+
 	/**
 	 * If this node represents a bean property this method returns all annotations of its getter.
 	 *

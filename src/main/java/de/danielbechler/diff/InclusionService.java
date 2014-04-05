@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static de.danielbechler.diff.Inclusion.EXCLUDED;
 import static de.danielbechler.diff.Inclusion.INCLUDED;
@@ -204,11 +205,29 @@ class InclusionService implements InclusionConfiguration, IsIgnoredResolver
 
 	private boolean isIncludedByType(final DiffNode node)
 	{
+		final AtomicBoolean result = new AtomicBoolean(false);
+		node.visitParents(new DiffNode.Visitor()
+		{
+			public void accept(final DiffNode node, final Visit visit)
+			{
+				if (node.getValueType() != null)
+				{
+					if (typeInclusions.get(node.getValueType()) == INCLUDED)
+					{
+						result.set(true);
+						visit.stop();
+					}
+				}
+			}
+		});
 		if (node.getValueType() != null)
 		{
-			return typeInclusions.get(node.getValueType()) == INCLUDED;
+			if (typeInclusions.get(node.getValueType()) == INCLUDED)
+			{
+				result.set(true);
+			}
 		}
-		return false;
+		return result.get();
 	}
 
 	private boolean isExcludedByType(final DiffNode node)

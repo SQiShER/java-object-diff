@@ -24,7 +24,7 @@ import static de.danielbechler.diff.PhoneBookSetup.Contact
 /**
  * Created by dbechler.
  */
-class InclusionAndExclusionIT extends Specification {
+class InclusionIT extends Specification {
 
 	static final GEORGE_SELECTOR = new CollectionItemElementSelector(new Contact(id: 'george'))
 	static final KRAMER_SELECTOR = new CollectionItemElementSelector(new Contact(id: 'kramer'))
