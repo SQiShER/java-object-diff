@@ -10,7 +10,7 @@ import org.testng.annotations.Test;
 
 import java.util.Arrays;
 
-public class PersonDiffITCase
+public class PersonDiffIT
 {
 	@Test
 	public void testIncludeCollectionAttribute()

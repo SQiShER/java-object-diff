@@ -27,7 +27,7 @@ import static de.danielbechler.diff.Inclusion.INCLUDED
 /**
  * Created by Daniel Bechler.
  */
-class ConfigNodeTest extends Specification {
+class ConfigNodeSpec extends Specification {
 
 	def node = new ConfigNode()
 

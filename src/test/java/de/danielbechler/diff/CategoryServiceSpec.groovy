@@ -22,7 +22,7 @@ import spock.lang.Specification
 /**
  * @author Daniel Bechler
  */
-class CategoryServiceTest extends Specification {
+class CategoryServiceSpec extends Specification {
 	def categoryService = new CategoryService()
 	def accessor = Mock(PropertyAwareAccessor)
 	def nodePath = NodePath.with("foo")

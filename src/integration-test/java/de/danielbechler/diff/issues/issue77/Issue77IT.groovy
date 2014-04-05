@@ -22,7 +22,7 @@ import spock.lang.Specification
 /**
  * @author Daniel Bechler
  */
-class Issue77ITCase extends Specification {
+class Issue77IT extends Specification {
     def "NullPointerException on null unsafe Comparable implementations"() {
         expect:
         ObjectDifferBuilder.buildDefault().compare(new SomeObject(BigDecimal.ONE), new SomeObject(null));

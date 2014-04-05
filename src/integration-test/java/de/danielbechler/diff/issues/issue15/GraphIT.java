@@ -37,7 +37,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
  * @author https://github.com/oplohmann (original author)
  * @author Daniel Bechler (modifications)
  */
-public class GraphITCase
+public class GraphIT
 {
 	private static final boolean PRINT_ENABLED = true;
 

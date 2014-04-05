@@ -24,7 +24,7 @@ import spock.lang.Specification
 
 import static de.danielbechler.diff.DiffNode.State.UNTOUCHED
 
-class Example2ITSpec extends Specification {
+class Example2IT extends Specification {
     def "Comparing an object via equalsOnlyValueProvider (via property annotation)"() {
         given:
         def base = new Company()

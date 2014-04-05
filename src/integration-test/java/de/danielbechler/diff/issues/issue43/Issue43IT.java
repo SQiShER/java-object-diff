@@ -17,7 +17,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * https://github.com/SQiShER/java-object-diff/issues/43
  */
 @SuppressWarnings("ALL")
-public class Issue43ITCase
+public class Issue43IT
 {
 	private class Thing
 	{

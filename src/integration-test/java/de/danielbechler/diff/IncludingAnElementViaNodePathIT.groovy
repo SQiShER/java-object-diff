@@ -7,7 +7,7 @@ import static de.danielbechler.diff.PhoneBookSetup.Contact
 /**
  * Created by Daniel Bechler.
  */
-class IncludingAnElementViaNodePathITCase extends Specification {
+class IncludingAnElementViaNodePathIT extends Specification {
 
 	def builder = ObjectDifferBuilder.startBuilding()
 	def configurable = builder.configure()

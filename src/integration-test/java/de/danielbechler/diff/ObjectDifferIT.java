@@ -54,7 +54,7 @@ import static java.util.Arrays.asList;
  * @author Daniel Bechler
  */
 @Test(groups = TestGroups.INTEGRATION)
-public class ObjectDifferITCase
+public class ObjectDifferIT
 {
 	private ObjectDiffer objectDiffer;
 

@@ -24,7 +24,7 @@ import static de.danielbechler.diff.PhoneBookSetup.Contact
 /**
  * Created by dbechler.
  */
-class InclusionAndExclusionITCase extends Specification {
+class InclusionAndExclusionIT extends Specification {
 
 	static final GEORGE_SELECTOR = new CollectionItemElementSelector(new Contact(id: 'george'))
 	static final KRAMER_SELECTOR = new CollectionItemElementSelector(new Contact(id: 'kramer'))
@@ -258,11 +258,5 @@ class InclusionAndExclusionITCase extends Specification {
 	}
 
 	def "children of included elements can be excluded"() {
-	}
-
-	def "elements can be excluded via wildcard"() {
-	}
-
-	def "elements can be excluded via exclude-all-but(x, y, ...) rule"() {
 	}
 }

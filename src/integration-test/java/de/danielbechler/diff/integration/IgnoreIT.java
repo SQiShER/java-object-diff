@@ -29,7 +29,7 @@ import static de.danielbechler.diff.helper.NodeAssertions.assertThat;
 /**
  * @author Daniel Bechler
  */
-public class IgnoreITCase
+public class IgnoreIT
 {
 	@Test
 	public void verify_that_ignore_rules_with_complex_paths_works_properly() throws Exception

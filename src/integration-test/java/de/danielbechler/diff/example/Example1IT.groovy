@@ -22,7 +22,7 @@ import spock.lang.Specification
 import static de.danielbechler.diff.DiffNode.State.CHANGED
 import static de.danielbechler.diff.DiffNode.State.UNTOUCHED
 
-public class Example1ITSpec extends Specification
+public class Example1IT extends Specification
 {
   def "Comparing Objects via compareTo instead of equals"()
   {

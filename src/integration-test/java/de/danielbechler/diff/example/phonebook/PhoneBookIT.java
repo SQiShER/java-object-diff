@@ -30,7 +30,7 @@ import static org.hamcrest.core.Is.is;
 /**
  * @author Daniel Bechler
  */
-public class PhoneBookITCase
+public class PhoneBookIT
 {
 	@Test
 	public void testContactMiddleNameChanges()

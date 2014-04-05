@@ -33,7 +33,7 @@ import static de.danielbechler.diff.helper.NodeAssertions.assertThat;
 /**
  * @author Daniel Bechler
  */
-public class DeepDiffingCollectionItemChangeITCase
+public class DeepDiffingCollectionItemChangeIT
 {
 	@Test
 	public void test_returns_full_property_graph_of_added_collection_items()

@@ -29,7 +29,7 @@ import static org.testng.AssertJUnit.assertEquals;
 /**
  * @author Daniel Bechler
  */
-public class AdditionIntegrationITCase
+public class AdditionIntegrationIT
 {
 	@Test
 	public void detects_change_from_null_to_object_referenct_as_addition() throws Exception

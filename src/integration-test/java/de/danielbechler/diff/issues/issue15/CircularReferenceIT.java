@@ -30,7 +30,7 @@ import static de.danielbechler.diff.helper.NodeAssertions.assertThat;
 /**
  * @author Daniel Bechler
  */
-public class CircularReferenceIntegrationTest
+public class CircularReferenceIT
 {
 	@Test
 	public void testCircularReference()
