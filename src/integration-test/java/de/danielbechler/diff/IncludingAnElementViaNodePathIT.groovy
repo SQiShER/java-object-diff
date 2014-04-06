@@ -21,7 +21,7 @@ class IncludingAnElementViaNodePathIT extends Specification {
 		def includedNode = NodePath.with('contacts')
 
 		given:
-		  configurable.inclusion().toInclude().node(includedNode)
+		  configurable.inclusion().include().node(includedNode)
 
 		when:
 		  def node = builder.build().compare(working, base)
@@ -32,7 +32,7 @@ class IncludingAnElementViaNodePathIT extends Specification {
 
 	def 'should include its parents but not their children'() {
 		given:
-		  configurable.inclusion().toInclude().node(pathToContactKramer)
+		  configurable.inclusion().include().node(pathToContactKramer)
 
 		when:
 		  def node = builder.build().compare(working, base)
@@ -45,6 +45,6 @@ class IncludingAnElementViaNodePathIT extends Specification {
 	}
 
 	def 'ideas'() {
-		configurable.inclusion().toInclude().node(pathToContactKramer)
+		configurable.inclusion().include().node(pathToContactKramer)
 	}
 }

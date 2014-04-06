@@ -6,7 +6,6 @@ import de.danielbechler.util.Assert;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static de.danielbechler.diff.Inclusion.EXCLUDED;
@@ -18,17 +17,20 @@ import static de.danielbechler.diff.Inclusion.INCLUDED;
 class InclusionService implements InclusionConfiguration, IsIgnoredResolver
 {
 	private final CategoryResolver categoryResolver;
+	private final Configuration rootConfiguration;
 	private final ConfigNode nodeInclusions = new ConfigNode();
 	private final Map<Class<?>, Inclusion> typeInclusions = new HashMap<Class<?>, Inclusion>();
-	private final Map<String, Inclusion> categoryInclusions = new TreeMap<String, Inclusion>();
+	private final Map<String, Inclusion> categoryInclusions = new HashMap<String, Inclusion>();
+	private final Map<String, Inclusion> propertyNameInclusions = new HashMap<String, Inclusion>();
+	private final ToInclude includeAndReturn = new ToIncludeAndReturnImpl();
+	private final ToExclude excludeAndReturn = new ToExcludeAndReturnImpl();
 
-	@Deprecated
-	private final Map<String, Inclusion> propertyNameInclusions = new TreeMap<String, Inclusion>();
-
-	public InclusionService(final CategoryResolver categoryResolver)
+	public InclusionService(final CategoryResolver categoryResolver, final Configuration rootConfiguration)
 	{
 		Assert.notNull(categoryResolver, "categoryResolver");
+		Assert.notNull(rootConfiguration, "rootConfiguration");
 		this.categoryResolver = categoryResolver;
+		this.rootConfiguration = rootConfiguration;
 	}
 
 	public boolean isIgnored(final DiffNode node)
@@ -144,7 +146,6 @@ class InclusionService implements InclusionConfiguration, IsIgnoredResolver
 		return false;
 	}
 
-	@SuppressWarnings("TypeMayBeWeakened") // we don't want to weaken the type for consistency reasons
 	private boolean isExcludedByPropertyName(final DiffNode node)
 	{
 		final String propertyName = node.getPropertyName();
@@ -239,64 +240,87 @@ class InclusionService implements InclusionConfiguration, IsIgnoredResolver
 		return false;
 	}
 
-	public To toInclude()
+	public ToInclude include()
 	{
-		return new ToImpl(INCLUDED);
+		return includeAndReturn;
 	}
 
-	public To toExclude()
+	public ToExclude exclude()
 	{
-		return new ToImpl(EXCLUDED);
+		return excludeAndReturn;
 	}
 
-	private class ToImpl implements To
+	private class ToExcludeAndReturnImpl implements ToExcludeAndReturn
 	{
-		private final Inclusion inclusion;
-
-		public ToImpl(final Inclusion inclusion)
+		public Configuration and()
 		{
-			this.inclusion = inclusion;
+			return rootConfiguration;
 		}
 
-		public To categories(final String... categories)
+		public ToExcludeAndReturn category(final String category)
 		{
-			for (final String category : categories)
-			{
-				categoryInclusions.put(category, inclusion);
-			}
+			categoryInclusions.put(category, EXCLUDED);
 			return this;
 		}
 
-		public To types(final Class<?>... types)
+		public ToExcludeAndReturn type(final Class<?> type)
 		{
-			for (final Class<?> type : types)
-			{
-				typeInclusions.put(type, inclusion);
-			}
+			typeInclusions.put(type, EXCLUDED);
 			return this;
 		}
 
-		public To node(final NodePath nodePath)
+		public ToExcludeAndReturn node(final NodePath nodePath)
 		{
-			nodeInclusions.getNodeForPath(nodePath).setInclusion(inclusion);
+			nodeInclusions.getNodeForPath(nodePath).setInclusion(EXCLUDED);
 			return this;
 		}
 
-		public To propertyNames(final String... propertyNames)
+		public ToExcludeAndReturn propertyName(final String propertyName)
 		{
-			for (final String propertyName : propertyNames)
-			{
-				propertyNameInclusions.put(propertyName, inclusion);
-			}
+			propertyNameInclusions.put(propertyName, EXCLUDED);
+			return this;
+		}
+
+		public ToInclude include()
+		{
+			return InclusionService.this.include();
+		}
+	}
+
+	private class ToIncludeAndReturnImpl implements ToIncludeAndReturn
+	{
+		public Configuration and()
+		{
+			return rootConfiguration;
+		}
+
+		public ToExclude exclude()
+		{
+			return InclusionService.this.exclude();
+		}
+
+		public ToIncludeAndReturn category(final String category)
+		{
+			categoryInclusions.put(category, INCLUDED);
+			return this;
+		}
+
+		public ToIncludeAndReturn type(final Class<?> type)
+		{
+			typeInclusions.put(type, INCLUDED);
+			return this;
+		}
+
+		public ToIncludeAndReturn node(final NodePath nodePath)
+		{
+			nodeInclusions.getNodeForPath(nodePath).setInclusion(INCLUDED);
+			return this;
+		}
+
+		public ToIncludeAndReturn propertyName(final String propertyName)
+		{
+			propertyNameInclusions.put(propertyName, INCLUDED);
 			return this;
 		}
 	}
 }
-
-/*
-TODO
-Per Default sind alle Nodes included
-Wenn es explizite inclusion Regeln gibt, sind nur noch Nodes included die den Regeln gerecht werden
-Ein Node ist included wenn sein Parent included ist, außer er ist explizit excluded
-Ein Node ist excluded wenn sein Parent excluded ist, außer er ist explizit included
-*/

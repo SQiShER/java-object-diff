@@ -24,22 +24,20 @@ import java.util.concurrent.ConcurrentSkipListMap
 /**
  * @author Daniel Bechler
  */
-class ClassesSpec extends Specification
-{
-  @Unroll
-  def "Classes.mostSpecificSharedType should return #expectedResult for #types"()
-  {
-    expect:
-    Classes.mostSpecificSharedType(types) == expectedResult
+class ClassesSpec extends Specification {
+	@Unroll
+	def "Classes.mostSpecificSharedType should return #expectedResult for #types"() {
+		expect:
+		  Classes.mostSpecificSharedType(types) == expectedResult
 
-    where:
-    types                                     || expectedResult
-    [TreeMap, TreeMap]                        || TreeMap
-    [ConcurrentSkipListMap, TreeMap]          || AbstractMap
-    [ConcurrentSkipListMap, TreeMap, HashMap] || AbstractMap
-    [ArrayList, AbstractList]                 || AbstractList
-    [CharSequence, String]                    || CharSequence
-    [Serializable, Serializable]              || Serializable
-    [String, Map, Date]                       || null
-  }
+		where:
+		  types                                     || expectedResult
+		  [TreeMap, TreeMap]                        || TreeMap
+		  [ConcurrentSkipListMap, TreeMap]          || AbstractMap
+		  [ConcurrentSkipListMap, TreeMap, HashMap] || AbstractMap
+		  [ArrayList, AbstractList]                 || AbstractList
+		  [CharSequence, String]                    || CharSequence
+		  [Serializable, Serializable]              || Serializable
+		  [String, Map, Date]                       || null
+	}
 }

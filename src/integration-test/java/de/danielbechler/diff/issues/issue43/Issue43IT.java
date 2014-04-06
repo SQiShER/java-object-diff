@@ -152,7 +152,7 @@ public class Issue43IT
 		{
 			final NodePath nodePath = NodePath.with(name);
 			builder.configure().comparison().ofNode(nodePath).toUseEqualsMethod();
-			builder.configure().inclusion().toInclude().node(nodePath);
+			builder.configure().inclusion().include().node(nodePath);
 		}
 
 		final Thing thingOne = new Thing("a", "b");

@@ -23,10 +23,134 @@ import spock.lang.Specification
 /**
  * Created by Daniel Bechler.
  */
+@SuppressWarnings("GroovyUnusedDeclaration")
 class InclusionAT extends Specification {
+
 	def objectDifferBuilder = ObjectDifferBuilder.startBuilding()
 	def base = new Album(artist: 'Pharrell Williams', songs: ['Happy'])
 	def working = new Album(artist: 'N.E.R.D.', songs: ['It'])
+
+	def 'exclude an element by type'() {
+		given:
+		  objectDifferBuilder.configure().inclusion().exclude().type(ArrayList)
+		when:
+		  def node = objectDifferBuilder.build().compare(working, base)
+		then:
+		  node.getChild('songs') == null
+		  node.getChild('artist').changed
+	}
+
+	def 'exclude an element by property name'() {
+		given:
+		  objectDifferBuilder.configure().inclusion().exclude().propertyName('songs')
+		when:
+		  def node = objectDifferBuilder.build().compare(working, base)
+		then:
+		  node.getChild('songs') == null
+		  node.getChild('artist').changed
+	}
+
+	def 'exclude an element by node path'() {
+		given:
+		  objectDifferBuilder.configure().inclusion().exclude().node(NodePath.with('songs'))
+		when:
+		  def node = objectDifferBuilder.build().compare(working, base)
+		then:
+		  node.getChild('songs') == null
+		  node.getChild('artist').changed
+	}
+
+	def 'exclude an element by category'() {
+		given:
+		  objectDifferBuilder.configure().inclusion().exclude().category('foo')
+		when:
+		  def node = objectDifferBuilder.build().compare(working, base)
+		then:
+		  node.getChild('songs') == null
+		  node.getChild('artist').changed
+	}
+
+	def 'include an element by type'() {
+		given:
+		  objectDifferBuilder.configure().inclusion().include().type(ArrayList)
+		when:
+		  def node = objectDifferBuilder.build().compare(working, base)
+		then:
+		  node.getChild('songs').changed
+		  node.getChild('artist') == null
+	}
+
+	def 'include an element by property name'() {
+		given:
+		  objectDifferBuilder.configure().inclusion().include().propertyName('songs')
+		when:
+		  def node = objectDifferBuilder.build().compare(working, base)
+		then:
+		  node.getChild('songs').changed
+		  node.getChild('artist') == null
+	}
+
+	def 'include an element by node path'() {
+		given:
+		  objectDifferBuilder.configure().inclusion().include().node(NodePath.with('songs'))
+		when:
+		  def node = objectDifferBuilder.build().compare(working, base)
+		then:
+		  node.getChild('songs').changed
+		  node.getChild('artist') == null
+	}
+
+	def 'include an element by category'() {
+		given:
+		  objectDifferBuilder.configure().inclusion().include().category('foo')
+		when:
+		  def node = objectDifferBuilder.build().compare(working, base)
+		then:
+		  node.getChild('songs').changed
+		  node.getChild('artist') == null
+	}
+
+	def 'excludes always win over includes'() {
+		given:
+		  objectDifferBuilder.configure().inclusion()
+				  .exclude().node(NodePath.with('songs'))
+				  .include().node(NodePath.startBuildingFrom(NodePath.with('songs')).collectionItem('Happy').build())
+		when:
+		  def node = objectDifferBuilder.build().compare(working, base)
+		then:
+		  node.childCount() == 0
+	}
+
+	def 'including an element implicitly excludes its siblings'() {
+		given:
+		  objectDifferBuilder.configure().inclusion().include().propertyName('artist')
+		when:
+		  def node = objectDifferBuilder.build().compare(working, base)
+		then:
+		  node.childCount() == 1
+		  node.getChild('artist').changed
+	}
+
+	def 'including an element implicitly includes its children'() {
+		given:
+		  objectDifferBuilder.configure().inclusion().include().node(NodePath.with('songs'))
+		when:
+		  def node = objectDifferBuilder.build().compare(working, base)
+		then:
+		  node.getChild('songs').getChild(new CollectionItemElementSelector('Happy')).removed
+		  node.getChild('songs').getChild(new CollectionItemElementSelector('It')).added
+	}
+
+	def 'including an element by path implicitly includes its parents'() {
+		given:
+		  objectDifferBuilder.configure().inclusion()
+				  .include().node(NodePath.startBuilding().propertyName('songs').collectionItem('Happy').build())
+		when:
+		  def node = objectDifferBuilder.build().compare(working, base)
+		then:
+		  node.getChild('songs').getChild(new CollectionItemElementSelector('Happy')).removed
+		  node.getChild('songs').childCount() == 1
+	}
 
 	class Album {
 		def String artist
@@ -40,117 +164,5 @@ class InclusionAT extends Specification {
 		void setSongs(ArrayList<String> songs) {
 			this.songs = songs
 		}
-	}
-
-	def 'exclude an element by type'() {
-		given:
-		  objectDifferBuilder.configure().inclusion().toExclude().types(ArrayList)
-		when:
-		  def node = objectDifferBuilder.build().compare(working, base)
-		then:
-		  node.getChild('songs') == null
-		  node.getChild('artist').changed
-	}
-
-	def 'exclude an element by property name'() {
-		given:
-		  objectDifferBuilder.configure().inclusion().toExclude().propertyNames('songs')
-		when:
-		  def node = objectDifferBuilder.build().compare(working, base)
-		then:
-		  node.getChild('songs') == null
-		  node.getChild('artist').changed
-	}
-
-	def 'exclude an element by node path'() {
-		given:
-		  objectDifferBuilder.configure().inclusion().toExclude().node(NodePath.with('songs'))
-		when:
-		  def node = objectDifferBuilder.build().compare(working, base)
-		then:
-		  node.getChild('songs') == null
-		  node.getChild('artist').changed
-	}
-
-	def 'exclude an element by category'() {
-		given:
-		  objectDifferBuilder.configure().inclusion().toExclude().categories('foo')
-		when:
-		  def node = objectDifferBuilder.build().compare(working, base)
-		then:
-		  node.getChild('songs') == null
-		  node.getChild('artist').changed
-	}
-
-	def 'include an element by type'() {
-		given:
-		  objectDifferBuilder.configure().inclusion().toInclude().types(ArrayList)
-		when:
-		  def node = objectDifferBuilder.build().compare(working, base)
-		then:
-		  node.getChild('songs').changed
-		  node.getChild('artist') == null
-	}
-
-	def 'include an element by property name'() {
-		given:
-		  objectDifferBuilder.configure().inclusion().toInclude().propertyNames('songs')
-		when:
-		  def node = objectDifferBuilder.build().compare(working, base)
-		then:
-		  node.getChild('songs').changed
-		  node.getChild('artist') == null
-	}
-
-	def 'include an element by node path'() {
-		given:
-		  objectDifferBuilder.configure().inclusion().toInclude().node(NodePath.with('songs'))
-		when:
-		  def node = objectDifferBuilder.build().compare(working, base)
-		then:
-		  node.getChild('songs').changed
-		  node.getChild('artist') == null
-	}
-
-	def 'include an element by category'() {
-		given:
-		  objectDifferBuilder.configure().inclusion().toInclude().categories('foo')
-		when:
-		  def node = objectDifferBuilder.build().compare(working, base)
-		then:
-		  node.getChild('songs').changed
-		  node.getChild('artist') == null
-	}
-
-	def 'excludes always win over includes'() {
-		given:
-		  def songs = NodePath.with('songs')
-		  objectDifferBuilder.configure().inclusion().toExclude().node(songs)
-		and:
-		  objectDifferBuilder.configure().inclusion().toInclude().node(NodePath.startBuildingFrom(songs).collectionItem('Happy').build())
-		when:
-		  def node = objectDifferBuilder.build().compare(working, base)
-		then:
-		  node.childCount() == 0
-	}
-
-	def 'including an element implicitly excludes its siblings'() {
-		given:
-		  objectDifferBuilder.configure().inclusion().toInclude().propertyNames('artist')
-		when:
-		  def node = objectDifferBuilder.build().compare(working, base)
-		then:
-		  node.childCount() == 1
-		  node.getChild('artist').changed
-	}
-
-	def 'including an element implicitly includes its children'() {
-		given:
-		  objectDifferBuilder.configure().inclusion().toInclude().node(NodePath.with('songs'))
-		when:
-		  def node = objectDifferBuilder.build().compare(working, base)
-		then:
-		  node.getChild('songs').getChild(new CollectionItemElementSelector('Happy')).removed
-		  node.getChild('songs').getChild(new CollectionItemElementSelector('It')).added
 	}
 }

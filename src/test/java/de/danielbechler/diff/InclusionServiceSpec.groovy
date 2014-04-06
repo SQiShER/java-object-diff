@@ -22,11 +22,11 @@ import spock.lang.Specification
 /**
  * @author Daniel Bechler
  */
-@SuppressWarnings("GroovyPointlessBoolean")
 class InclusionServiceSpec extends Specification {
 	def categoryResolver = Mock(CategoryResolver)
 	def accessor = Mock(PropertyAwareAccessor)
-	def inclusionService = new InclusionService(categoryResolver)
+	def rootConfiguration = Mock(Configuration)
+	def inclusionService = new InclusionService(categoryResolver, rootConfiguration)
 	def NodePath nodePath = NodePath.with("foo")
 	def DiffNode rootNode
 	def DiffNode node
@@ -38,9 +38,17 @@ class InclusionServiceSpec extends Specification {
 		categoryResolver.resolveCategories(_ as DiffNode) >> []
 	}
 
-	def "construction: should fail if no categoryResolver is given"() {
+	def "construction: should fail when no categoryResolver is given"() {
 		when:
-		  new InclusionService(null)
+		  new InclusionService(null, rootConfiguration)
+
+		then:
+		  thrown(IllegalArgumentException)
+	}
+
+	def "construction: should fail when no root configuration is given"() {
+		when:
+		  new InclusionService(categoryResolver, null)
 
 		then:
 		  thrown(IllegalArgumentException)
@@ -61,7 +69,7 @@ class InclusionServiceSpec extends Specification {
 
 	def "isIgnored: should return 'true' if node doesn't match defined inclusion rules"() {
 		setup:
-		  inclusionService.toInclude().categories("unknown-category")
+		  inclusionService.include().category("unknown-category")
 
 		expect:
 		  inclusionService.isIgnored(node) == true
@@ -69,7 +77,7 @@ class InclusionServiceSpec extends Specification {
 
 	def "isIgnored: should return 'false' if node doesn't match defined inclusion rules but is root node"() {
 		given:
-		  inclusionService.toInclude().categories("unknown-category")
+		  inclusionService.include().category("unknown-category")
 
 		expect:
 		  !inclusionService.isIgnored(rootNode)
@@ -77,7 +85,7 @@ class InclusionServiceSpec extends Specification {
 
 	def "isIgnored: should return 'false' if node is included via path"() {
 		setup:
-		  inclusionService.toInclude().node(nodePath)
+		  inclusionService.include().node(nodePath)
 
 		expect:
 		  inclusionService.isIgnored(node) == false
@@ -91,7 +99,7 @@ class InclusionServiceSpec extends Specification {
 		  def ignored = inclusionService.isIgnored(node)
 
 		then:
-		  inclusionService.toInclude().categories("test-category")
+		  inclusionService.include().category("test-category")
 
 		and:
 		  ignored == false
@@ -100,7 +108,7 @@ class InclusionServiceSpec extends Specification {
 	def "isIgnored: should return 'false' if node is included via type"() {
 		setup:
 		  node.setType(URL)
-		  inclusionService.toInclude().types(URL)
+		  inclusionService.include().type(URL)
 
 		expect:
 		  inclusionService.isIgnored(node) == false
@@ -108,7 +116,7 @@ class InclusionServiceSpec extends Specification {
 
 	def "isIgnored: should return 'false' if node doesn't match exclusion rules"() {
 		setup:
-		  inclusionService.toExclude().categories("unknown-category")
+		  inclusionService.exclude().category("unknown-category")
 
 		expect:
 		  inclusionService.isIgnored(node) == false
@@ -116,7 +124,7 @@ class InclusionServiceSpec extends Specification {
 
 	def "isIgnored: should return 'true' if node is excluded via path"() {
 		setup:
-		  inclusionService.toExclude().node(nodePath)
+		  inclusionService.exclude().node(nodePath)
 
 		expect:
 		  inclusionService.isIgnored(node) == true
@@ -125,7 +133,7 @@ class InclusionServiceSpec extends Specification {
 	def "isIgnored: should return 'true' if node is excluded via type"() {
 		setup:
 		  node.setType(URL)
-		  inclusionService.toExclude().types(URL)
+		  inclusionService.exclude().type(URL)
 
 		expect:
 		  inclusionService.isIgnored(node)
@@ -133,7 +141,7 @@ class InclusionServiceSpec extends Specification {
 
 	def "isIgnored: should return 'true' if node is excluded via category"() {
 		given:
-		  inclusionService.toExclude().categories("test-category")
+		  inclusionService.exclude().category("test-category")
 
 		when:
 		  def ignored = inclusionService.isIgnored(node)
@@ -152,7 +160,7 @@ class InclusionServiceSpec extends Specification {
 		  def node = new DiffNode(propertyAwareAccessor, null)
 
 		and:
-		  inclusionService.toExclude().propertyNames(propertyName)
+		  inclusionService.exclude().propertyName(propertyName)
 
 		expect:
 		  inclusionService.isIgnored(node) == true
@@ -165,7 +173,7 @@ class InclusionServiceSpec extends Specification {
 		  def node = new DiffNode(propertyAwareAccessor, null)
 
 		and:
-		  inclusionService.toInclude().propertyNames(propertyName)
+		  inclusionService.include().propertyName(propertyName)
 
 		expect:
 		  inclusionService.isIgnored(node) == false
@@ -180,7 +188,7 @@ class InclusionServiceSpec extends Specification {
 
 	def "isIgnored: should return 'false' for children of included nodes"() {
 		given:
-		  inclusionService.toInclude().node(NodePath.withRoot())
+		  inclusionService.include().node(NodePath.withRoot())
 
 		expect:
 		  inclusionService.isIgnored(node) == false
@@ -188,7 +196,7 @@ class InclusionServiceSpec extends Specification {
 
 	def "isIgnored: should return 'true' for children of excluded nodes"() {
 		given:
-		  inclusionService.toExclude().node(NodePath.withRoot())
+		  inclusionService.exclude().node(NodePath.withRoot())
 
 		expect:
 		  inclusionService.isIgnored(node) == true

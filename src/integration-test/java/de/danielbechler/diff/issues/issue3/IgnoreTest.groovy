@@ -33,7 +33,7 @@ class IgnoreTest extends Specification {
 
         and: "some properties are excluded by name"
         def builder = ObjectDifferBuilder.startBuilding()
-        builder.configure().inclusion().toExclude().propertyNames('foo', 'bar')
+        builder.configure().inclusion().exclude().propertyName('foo').propertyName('bar')
         def objectDiffer = builder.build()
 
         when:

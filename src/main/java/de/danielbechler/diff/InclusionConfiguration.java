@@ -17,18 +17,59 @@ public interface InclusionConfiguration
 	 * Includes elements (and implicitly all their children) based on certain criteria, unless their parent element
 	 * doesn't match any inclusion rules.
 	 */
-	To toInclude();
+	ToInclude include();
 
-	To toExclude();
+	ToExclude exclude();
 
-	public interface To
+	public interface To<T extends To>
 	{
-		To categories(String... categories);
+		T categories(String... categories);
 
-		To types(Class<?>... types);
+		T types(Class<?>... types);
 
-		To node(NodePath nodePath);
+		T node(NodePath nodePath);
 
-		To propertyNames(String... propertyNames);
+		T propertyNames(String... propertyNames);
+	}
+
+	public interface AndReturn
+	{
+		Configuration and();
+	}
+
+	public interface ToInclude
+	{
+		ToIncludeAndReturn category(String category);
+
+		ToIncludeAndReturn type(Class<?> type);
+
+		ToIncludeAndReturn node(NodePath nodePath);
+
+		ToIncludeAndReturn propertyName(String propertyName);
+
+		ToExclude exclude();
+	}
+
+	public interface ToIncludeAndReturn extends ToInclude
+	{
+		Configuration and();
+	}
+
+	public interface ToExclude
+	{
+		ToExcludeAndReturn category(String category);
+
+		ToExcludeAndReturn type(Class<?> type);
+
+		ToExcludeAndReturn node(NodePath nodePath);
+
+		ToExcludeAndReturn propertyName(String property);
+
+		ToInclude include();
+	}
+
+	public interface ToExcludeAndReturn extends ToExclude
+	{
+		Configuration and();
 	}
 }

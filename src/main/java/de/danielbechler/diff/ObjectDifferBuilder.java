@@ -30,13 +30,13 @@ import de.danielbechler.diff.primitive.PrimitiveDiffer;
  */
 public final class ObjectDifferBuilder
 {
+	private final Configuration configuration = new ConfigurationImpl();
 	private final CategoryService categoryService = new CategoryService();
-	private final InclusionService inclusionService = new InclusionService(categoryService);
+	private final InclusionService inclusionService = new InclusionService(categoryService, configuration);
 	private final ComparisonService comparisonService = new ComparisonService();
 	private final ReturnableNodeService returnableNodeService = new ReturnableNodeService();
 	private final IntrospectionService introspectionService = new IntrospectionService();
 	private final CircularReferenceService circularReferenceService = new CircularReferenceService();
-	private final Configurable configurable = new Configurable();
 
 	private ObjectDifferBuilder()
 	{
@@ -66,14 +66,14 @@ public final class ObjectDifferBuilder
 	/**
 	 * Configure the way the ObjectDiffer should behave.
 	 */
-	public final Configurable configure()
+	public final Configuration configure()
 	{
-		return configurable;
+		return configuration;
 	}
 
-	public class Configurable
+	public class ConfigurationImpl implements Configuration
 	{
-		private Configurable()
+		private ConfigurationImpl()
 		{
 		}
 

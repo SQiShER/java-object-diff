@@ -19,7 +19,7 @@ public class PersonDiffIT
 		final Person b = new Person("Gulen Chongthamm", Arrays.asList("Hola Espanyol", "Vicky Boss", "Roger Harper"));
 
 		final ObjectDifferBuilder builder = ObjectDifferBuilder.startBuilding();
-		builder.configure().inclusion().toInclude().node(NodePath.with("aliases"));
+		builder.configure().inclusion().include().node(NodePath.with("aliases"));
 		final ObjectDiffer differ = builder.build();
 
 		final DiffNode root = differ.compare(b, a);
