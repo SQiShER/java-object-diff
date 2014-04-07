@@ -17,12 +17,12 @@
 package de.danielbechler.diff;
 
 import de.danielbechler.diff.bean.BeanPropertyElementSelector;
-import de.danielbechler.diff.visitor.PropertyVisitor;
 import de.danielbechler.util.Assert;
 
 import java.lang.annotation.Annotation;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -238,14 +238,19 @@ public class DiffNode
 	/**
 	 * Retrieve a child that matches the given absolute path, starting from the current node.
 	 *
-	 * @param path The path from the object root to the requested child node.
+	 * @param nodePath The path from the object root to the requested child node.
 	 * @return The requested child node or <code>null</code>.
 	 */
-	public DiffNode getChild(final NodePath path)
+	public DiffNode getChild(final NodePath nodePath)
 	{
-		final PropertyVisitor visitor = new PropertyVisitor(path);
-		visitChildren(visitor);
-		return visitor.getNode();
+		if (parentNode != null)
+		{
+			return parentNode.getChild(nodePath.getElementSelectors());
+		}
+		else
+		{
+			return getChild(nodePath.getElementSelectors());
+		}
 	}
 
 	/**
@@ -257,6 +262,46 @@ public class DiffNode
 	public DiffNode getChild(final ElementSelector pathElementSelector)
 	{
 		return children.get(pathElementSelector);
+	}
+
+	/**
+	 * Retrieve a child that matches the given path element relative to this node.
+	 *
+	 * @param selectors The path element of the child node to get.
+	 * @return The requested child node or <code>null</code>.
+	 */
+	public DiffNode getChild(final List<ElementSelector> selectors)
+	{
+		Assert.notEmpty(selectors, "selectors");
+		final ElementSelector selector = selectors.get(0);
+		if (selectors.size() == 1)
+		{
+			if (selector == RootElementSelector.getInstance())
+			{
+				return isRootNode() ? this : null;
+			}
+			else
+			{
+				return getChild(selector);
+			}
+		}
+		else if (selectors.size() > 1)
+		{
+			final DiffNode child;
+			if (selector == RootElementSelector.getInstance())
+			{
+				child = isRootNode() ? this : null;
+			}
+			else
+			{
+				child = getChild(selector);
+			}
+			if (child != null)
+			{
+				return child.getChild(selectors.subList(1, selectors.size()));
+			}
+		}
+		return null;
 	}
 
 	/**

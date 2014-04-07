@@ -22,8 +22,10 @@ import de.danielbechler.diff.collection.CollectionItemAccessor;
 import de.danielbechler.diff.collection.CollectionItemElementSelector;
 import de.danielbechler.diff.helper.NodeAssertions;
 import de.danielbechler.diff.mock.ObjectDiffTest;
-import org.fest.assertions.api.Assertions;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.Is;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -34,13 +36,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.Mock;
-import static org.mockito.MockitoAnnotations.initMocks;
 
 /**
  * @author Daniel Bechler
@@ -53,7 +49,7 @@ public class DiffNodeTest
 	@BeforeMethod
 	public void setUp()
 	{
-		initMocks(this);
+		MockitoAnnotations.initMocks(this);
 	}
 
 	@Test
@@ -61,7 +57,7 @@ public class DiffNodeTest
 	{
 		final DiffNode node = new DiffNode(String.class);
 		node.setState(DiffNode.State.UNTOUCHED);
-		assertThat(node.hasChanges(), Is.is(false));
+		MatcherAssert.assertThat(node.hasChanges(), Is.is(false));
 	}
 
 	@Test
@@ -69,7 +65,7 @@ public class DiffNodeTest
 	{
 		final DiffNode node = new DiffNode(String.class);
 		node.setState(DiffNode.State.IGNORED);
-		assertThat(node.hasChanges(), Is.is(false));
+		MatcherAssert.assertThat(node.hasChanges(), Is.is(false));
 	}
 
 	@Test
@@ -77,7 +73,7 @@ public class DiffNodeTest
 	{
 		final DiffNode node = new DiffNode(String.class);
 		node.setState(DiffNode.State.CIRCULAR);
-		assertThat(node.hasChanges(), Is.is(false));
+		MatcherAssert.assertThat(node.hasChanges(), Is.is(false));
 	}
 
 	@Test
@@ -85,7 +81,7 @@ public class DiffNodeTest
 	{
 		final DiffNode node = new DiffNode(String.class);
 		node.setState(DiffNode.State.CHANGED);
-		assertThat(node.hasChanges(), Is.is(true));
+		MatcherAssert.assertThat(node.hasChanges(), Is.is(true));
 	}
 
 	@Test
@@ -93,7 +89,7 @@ public class DiffNodeTest
 	{
 		final DiffNode node = new DiffNode(String.class);
 		node.setState(DiffNode.State.REMOVED);
-		assertThat(node.hasChanges(), Is.is(true));
+		MatcherAssert.assertThat(node.hasChanges(), Is.is(true));
 	}
 
 	@Test
@@ -101,7 +97,7 @@ public class DiffNodeTest
 	{
 		final DiffNode node = new DiffNode(String.class);
 		node.setState(DiffNode.State.ADDED);
-		assertThat(node.hasChanges(), Is.is(true));
+		MatcherAssert.assertThat(node.hasChanges(), Is.is(true));
 	}
 
 	@Test
@@ -111,14 +107,14 @@ public class DiffNodeTest
 		final DiffNode child = new DiffNode(root, new CollectionItemAccessor("foo"), String.class);
 		root.addChild(child);
 		child.setState(DiffNode.State.ADDED);
-		assertThat(root.hasChanges(), Is.is(true));
+		MatcherAssert.assertThat(root.hasChanges(), Is.is(true));
 	}
 
 	@Test
 	public void getPropertyPath_with_parent_node_should_return_canonical_path()
 	{
 		final DiffNode parentNode = new DiffNode(RootAccessor.getInstance(), String.class);
-		when(accessor.getElementSelector()).thenReturn(new BeanPropertyElementSelector("foo"));
+		Mockito.when(accessor.getElementSelector()).thenReturn(new BeanPropertyElementSelector("foo"));
 
 		final DiffNode root = new DiffNode(parentNode, accessor, Object.class);
 
@@ -182,44 +178,44 @@ public class DiffNodeTest
 	@Test
 	public void should_return_property_annotations_of_property_accessor() throws Exception
 	{
-		final BeanPropertyAccessor propertyAccessor = mock(BeanPropertyAccessor.class);
-		final Annotation annotation = mock(Annotation.class);
-		when(propertyAccessor.getReadMethodAnnotations()).thenReturn(new LinkedHashSet<Annotation>(Arrays.asList(annotation)));
+		final BeanPropertyAccessor propertyAccessor = Mockito.mock(BeanPropertyAccessor.class);
+		final Annotation annotation = Mockito.mock(Annotation.class);
+		Mockito.when(propertyAccessor.getReadMethodAnnotations()).thenReturn(new LinkedHashSet<Annotation>(Arrays.asList(annotation)));
 		final DiffNode node = new DiffNode(propertyAccessor, Object.class);
 
 		final Set<Annotation> annotations = node.getPropertyAnnotations();
 
-		Assertions.assertThat(annotations).containsAll(Arrays.asList(annotation));
+		assertThat(annotations).containsAll(Arrays.asList(annotation));
 	}
 
 	@Test
 	public void should_return_empty_set_of_property_annotations_if_accessor_is_not_property_accessor() throws Exception
 	{
-		final BeanPropertyAccessor propertyAccessor = mock(BeanPropertyAccessor.class);
-		final Annotation annotation = mock(Annotation.class);
-		when(propertyAccessor.getReadMethodAnnotations()).thenReturn(new LinkedHashSet<Annotation>(Arrays.asList(annotation)));
+		final BeanPropertyAccessor propertyAccessor = Mockito.mock(BeanPropertyAccessor.class);
+		final Annotation annotation = Mockito.mock(Annotation.class);
+		Mockito.when(propertyAccessor.getReadMethodAnnotations()).thenReturn(new LinkedHashSet<Annotation>(Arrays.asList(annotation)));
 		final DiffNode node = new DiffNode(propertyAccessor, Object.class);
 
 		final Set<Annotation> annotations = node.getPropertyAnnotations();
 
-		Assertions.assertThat(annotations).containsAll(Arrays.asList(annotation));
+		assertThat(annotations).containsAll(Arrays.asList(annotation));
 	}
 
 	@Test
 	public void getPropertyAnnotation_should_delegate_call_to_property_accessor()
 	{
-		final BeanPropertyAccessor propertyAccessor = mock(BeanPropertyAccessor.class);
-		when(propertyAccessor.getReadMethodAnnotation(ObjectDiffTest.class)).thenReturn(null);
+		final BeanPropertyAccessor propertyAccessor = Mockito.mock(BeanPropertyAccessor.class);
+		Mockito.when(propertyAccessor.getReadMethodAnnotation(ObjectDiffTest.class)).thenReturn(null);
 
 		new DiffNode(propertyAccessor, Object.class).getPropertyAnnotation(ObjectDiffTest.class);
 
-		verify(propertyAccessor, times(1)).getReadMethodAnnotation(ObjectDiffTest.class);
+		Mockito.verify(propertyAccessor, Mockito.times(1)).getReadMethodAnnotation(ObjectDiffTest.class);
 	}
 
 	@Test
 	public void getPropertyAnnotation_should_return_null_if_accessor_is_not_property_accessor()
 	{
-		final Accessor propertyAccessor = mock(Accessor.class);
+		final Accessor propertyAccessor = Mockito.mock(Accessor.class);
 
 		final ObjectDiffTest annotation = new DiffNode(propertyAccessor, Object.class).getPropertyAnnotation(ObjectDiffTest.class);
 
@@ -230,8 +226,8 @@ public class DiffNodeTest
 	public void getPropertyName_returns_name_from_PropertyAwareAccessor()
 	{
 		final String expectedPropertyName = "foo";
-		final PropertyAwareAccessor accessor = mock(PropertyAwareAccessor.class);
-		when(accessor.getPropertyName()).thenReturn(expectedPropertyName);
+		final PropertyAwareAccessor accessor = Mockito.mock(PropertyAwareAccessor.class);
+		Mockito.when(accessor.getPropertyName()).thenReturn(expectedPropertyName);
 
 		final DiffNode diffNode = new DiffNode(accessor, Object.class);
 		final String actualPropertyName = diffNode.getPropertyName();
@@ -244,11 +240,11 @@ public class DiffNodeTest
 	{
 		final String expectedPropertyName = "foo";
 
-		final PropertyAwareAccessor propertyAwareAccessor = mock(PropertyAwareAccessor.class);
-		when(propertyAwareAccessor.getPropertyName()).thenReturn(expectedPropertyName);
+		final PropertyAwareAccessor propertyAwareAccessor = Mockito.mock(PropertyAwareAccessor.class);
+		Mockito.when(propertyAwareAccessor.getPropertyName()).thenReturn(expectedPropertyName);
 
 		final DiffNode parentNodeWithPropertyAwareAccessor = new DiffNode(propertyAwareAccessor, Object.class);
-		final DiffNode node = new DiffNode(parentNodeWithPropertyAwareAccessor, mock(Accessor.class), Object.class);
+		final DiffNode node = new DiffNode(parentNodeWithPropertyAwareAccessor, Mockito.mock(Accessor.class), Object.class);
 
 		assertThat(node.getPropertyName()).isEqualTo(expectedPropertyName);
 	}
@@ -256,7 +252,7 @@ public class DiffNodeTest
 	@Test
 	public void getPropertyName_returns_null_when_property_name_can_not_be_resolved()
 	{
-		final DiffNode node = new DiffNode(mock(Accessor.class), Object.class);
+		final DiffNode node = new DiffNode(Mockito.mock(Accessor.class), Object.class);
 
 		assertThat(node.getPropertyName()).isNull();
 	}
@@ -264,7 +260,7 @@ public class DiffNodeTest
 	@Test
 	public void isPropertyAware_returns_true()
 	{
-		final PropertyAwareAccessor propertyAwareAccessor = mock(PropertyAwareAccessor.class);
+		final PropertyAwareAccessor propertyAwareAccessor = Mockito.mock(PropertyAwareAccessor.class);
 		final DiffNode node = new DiffNode(propertyAwareAccessor, Object.class);
 
 		assertThat(node.isPropertyAware()).isTrue();
@@ -273,7 +269,7 @@ public class DiffNodeTest
 	@Test
 	public void isPropertyAware_returns_false()
 	{
-		final Accessor notAPropertyAwareAccessor = mock(Accessor.class);
+		final Accessor notAPropertyAwareAccessor = Mockito.mock(Accessor.class);
 
 		final DiffNode node = new DiffNode(notAPropertyAwareAccessor, Object.class);
 
