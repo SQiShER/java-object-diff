@@ -16,13 +16,10 @@
 
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.bean.BeanPropertyAccessor;
 import de.danielbechler.util.Assert;
 import de.danielbechler.util.Classes;
 import de.danielbechler.util.Collections;
-import de.danielbechler.util.Exceptions;
 
-import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -32,7 +29,6 @@ import static de.danielbechler.util.Objects.isEqual;
 /**
  * @author Daniel Bechler
  */
-@SuppressWarnings({"UnusedDeclaration"})
 public class Instances
 {
 	private final Accessor sourceAccessor;
@@ -78,27 +74,6 @@ public class Instances
 	public Accessor getSourceAccessor()
 	{
 		return sourceAccessor;
-	}
-
-	public Instances access(final String methodName)
-	{
-		Assert.hasText(methodName, "methodName");
-		final Class<?> type = getType();
-		if (type != null)
-		{
-			try
-			{
-				final Method method = type.getMethod(methodName);
-				method.setAccessible(true);
-				final BeanPropertyAccessor accessor = new BeanPropertyAccessor(methodName, method, null);
-				return new Instances(accessor, accessor.get(working), accessor.get(base), accessor.get(fresh));
-			}
-			catch (NoSuchMethodException e)
-			{
-				throw Exceptions.escalate(type.getName(), e);
-			}
-		}
-		return null;
 	}
 
 	public Instances access(final Accessor accessor)
@@ -289,14 +264,4 @@ public class Instances
 				"Instances must either be null or have the exact same type.");
 	}
 
-	public NodePath getPropertyPath(final DiffNode parentNode)
-	{
-		if (parentNode != null)
-		{
-			final NodePath parentPath = parentNode.getPath();
-			final ElementSelector elementSelector = sourceAccessor.getElementSelector();
-			return NodePath.startBuildingFrom(parentPath).element(elementSelector).build();
-		}
-		return NodePath.withRoot();
-	}
 }

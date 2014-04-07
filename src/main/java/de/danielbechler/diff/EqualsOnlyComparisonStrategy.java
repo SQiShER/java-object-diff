@@ -16,7 +16,11 @@
 
 package de.danielbechler.diff;
 
-import de.danielbechler.util.*;
+import de.danielbechler.util.Assert;
+import de.danielbechler.util.Exceptions;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import static de.danielbechler.util.Objects.isEqual;
 
@@ -38,6 +42,32 @@ public class EqualsOnlyComparisonStrategy implements ComparisonStrategy
 		this.equalsValueProviderMethod = equalsValueProviderMethod;
 	}
 
+	private static Object access(final Object target, final String methodName)
+	{
+		if (target == null)
+		{
+			return null;
+		}
+		try
+		{
+			final Method method = target.getClass().getMethod(methodName);
+			method.setAccessible(true);
+			return method.invoke(target);
+		}
+		catch (final NoSuchMethodException e)
+		{
+			throw Exceptions.escalate(e);
+		}
+		catch (final InvocationTargetException e)
+		{
+			throw Exceptions.escalate(e);
+		}
+		catch (final IllegalAccessException e)
+		{
+			throw Exceptions.escalate(e);
+		}
+	}
+
 	public void compare(final DiffNode node, final Instances instances)
 	{
 		if (hasEqual(instances))
@@ -54,7 +84,9 @@ public class EqualsOnlyComparisonStrategy implements ComparisonStrategy
 	{
 		if (equalsValueProviderMethod != null)
 		{
-			return instances.access(equalsValueProviderMethod).areEqual();
+			final Object working = access(instances.getWorking(), equalsValueProviderMethod);
+			final Object base = access(instances.getBase(), equalsValueProviderMethod);
+			return isEqual(working, base);
 		}
 		else
 		{
