@@ -22,7 +22,7 @@ import de.danielbechler.diff.mock.ObjectWithEqualsOnlyPropertyType;
 import de.danielbechler.diff.mock.ObjectWithInheritedPropertyAnnotation;
 import de.danielbechler.diff.mock.ObjectWithPropertyAnnotations;
 import de.danielbechler.diff.mock.ObjectWithString;
-import de.danielbechler.diff.node.ComparisonStrategy;
+import de.danielbechler.diff.config.comparison.ComparisonStrategy;
 import de.danielbechler.diff.node.path.BeanPropertyElementSelector;
 import de.danielbechler.util.Collections;
 import org.hamcrest.core.IsEqual;

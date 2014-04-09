@@ -24,22 +24,6 @@ public interface InclusionConfiguration
 
 	ToExclude exclude();
 
-	public interface To<T extends To>
-	{
-		T categories(String... categories);
-
-		T types(Class<?>... types);
-
-		T node(NodePath nodePath);
-
-		T propertyNames(String... propertyNames);
-	}
-
-	public interface AndReturn
-	{
-		Configuration and();
-	}
-
 	public interface ToInclude
 	{
 		ToIncludeAndReturn category(String category);

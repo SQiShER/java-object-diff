@@ -17,7 +17,7 @@
 package de.danielbechler.diff;
 
 import de.danielbechler.diff.config.comparison.ComparisonStrategyResolver;
-import de.danielbechler.diff.node.ComparisonStrategy;
+import de.danielbechler.diff.config.comparison.ComparisonStrategy;
 import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.diff.node.RootAccessor;
 import de.danielbechler.diff.node.path.NodePath;

@@ -16,7 +16,6 @@
 
 package de.danielbechler.diff.config.comparison;
 
-import de.danielbechler.diff.node.ComparisonStrategy;
 import de.danielbechler.diff.node.DiffNode;
 
 import static de.danielbechler.util.Comparables.isEqualByComparison;

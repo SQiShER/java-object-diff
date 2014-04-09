@@ -16,6 +16,7 @@
 
 package de.danielbechler.diff.node;
 
+import de.danielbechler.diff.config.comparison.ComparisonStrategy;
 import de.danielbechler.diff.node.path.BeanPropertyElementSelector;
 import de.danielbechler.diff.node.path.ElementSelector;
 import de.danielbechler.diff.node.path.NodePath;

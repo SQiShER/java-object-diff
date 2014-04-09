@@ -23,7 +23,7 @@ import de.danielbechler.diff.config.comparison.ComparisonStrategyResolver;
 import de.danielbechler.diff.config.introspection.Introspector;
 import de.danielbechler.diff.config.introspection.IntrospectorResolver;
 import de.danielbechler.diff.config.introspection.IsIntrospectableResolver;
-import de.danielbechler.diff.node.ComparisonStrategy;
+import de.danielbechler.diff.config.comparison.ComparisonStrategy;
 import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.diff.node.path.BeanPropertyElementSelector;
 import org.fest.assertions.api.Assertions;

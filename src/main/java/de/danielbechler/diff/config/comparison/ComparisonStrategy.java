@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.danielbechler.diff.node;
+package de.danielbechler.diff.config.comparison;
 
 import de.danielbechler.diff.node.DiffNode;
 

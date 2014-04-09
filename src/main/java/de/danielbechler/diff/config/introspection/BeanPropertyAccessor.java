@@ -18,7 +18,7 @@ package de.danielbechler.diff.config.introspection;
 
 import de.danielbechler.diff.node.Accessor;
 import de.danielbechler.diff.node.PropertyAwareAccessor;
-import de.danielbechler.diff.node.ComparisonStrategy;
+import de.danielbechler.diff.config.comparison.ComparisonStrategy;
 import de.danielbechler.diff.node.path.BeanPropertyElementSelector;
 import de.danielbechler.diff.node.path.ElementSelector;
 import de.danielbechler.util.Assert;

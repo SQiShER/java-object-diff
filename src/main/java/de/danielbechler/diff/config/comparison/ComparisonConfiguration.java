@@ -1,6 +1,5 @@
 package de.danielbechler.diff.config.comparison;
 
-import de.danielbechler.diff.node.ComparisonStrategy;
 import de.danielbechler.diff.node.path.NodePath;
 
 /**

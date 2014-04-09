@@ -18,7 +18,7 @@ package de.danielbechler.diff
 
 import de.danielbechler.diff.config.comparison.ComparisonStrategyResolver
 import de.danielbechler.diff.config.filtering.IsReturnableResolver
-import de.danielbechler.diff.node.ComparisonStrategy
+import de.danielbechler.diff.config.comparison.ComparisonStrategy
 import de.danielbechler.diff.node.Accessor
 import de.danielbechler.diff.node.DiffNode
 import de.danielbechler.diff.node.MapEntryAccessor

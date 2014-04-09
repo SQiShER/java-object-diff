@@ -19,7 +19,7 @@ package de.danielbechler.diff;
 import de.danielbechler.diff.node.Accessor;
 import de.danielbechler.diff.node.CollectionItemAccessor;
 import de.danielbechler.diff.config.comparison.ComparisonStrategyResolver;
-import de.danielbechler.diff.node.ComparisonStrategy;
+import de.danielbechler.diff.config.comparison.ComparisonStrategy;
 import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.util.Assert;
 import de.danielbechler.util.Collections;
