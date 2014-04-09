@@ -16,7 +16,7 @@
 
 package de.danielbechler.diff.issues.issue3
 
-import de.danielbechler.diff.ObjectDifferBuilder
+import de.danielbechler.diff.builder.ObjectDifferBuilder
 import spock.lang.Ignore
 import spock.lang.Specification
 
@@ -25,44 +25,44 @@ import spock.lang.Specification
  */
 class IgnoreTest extends Specification {
 
-    @Ignore
-    def "ignoring by property name"() {
-        given:
-        def base = new FooContainer("foo-base", "bar-base", "test-base")
-        def working = new FooContainer("foo-working", "bar-working", "test-working")
+	@Ignore
+	def "ignoring by property name"() {
+		given:
+		  def base = new FooContainer("foo-base", "bar-base", "test-base")
+		  def working = new FooContainer("foo-working", "bar-working", "test-working")
 
-        and: "some properties are excluded by name"
-        def builder = ObjectDifferBuilder.startBuilding()
-        builder.configure().inclusion().exclude().propertyName('foo').propertyName('bar')
-        def objectDiffer = builder.build()
+		and: "some properties are excluded by name"
+		  def builder = ObjectDifferBuilder.startBuilding()
+		  builder.configure().inclusion().exclude().propertyName('foo').propertyName('bar')
+		  def objectDiffer = builder.build()
 
-        when:
-        def result = objectDiffer.compare(working, base)
+		when:
+		  def result = objectDiffer.compare(working, base)
 
-        then: "excluded properties should not have been diffed"
-        result.childCount() == 1
-        result.getChild("barContainer") != null
-        result.getChild("barContainer").childCount() == 1
-        result.getChild("barContainer").getChild("test") != null
-    }
+		then: "excluded properties should not have been diffed"
+		  result.childCount() == 1
+		  result.getChild("barContainer") != null
+		  result.getChild("barContainer").childCount() == 1
+		  result.getChild("barContainer").getChild("test") != null
+	}
 
-    class FooContainer {
-        def foo
-        def barContainer
+	class FooContainer {
+		def foo
+		def barContainer
 
-        FooContainer(foo, bar, test) {
-            this.foo = foo
-            this.barContainer = new BarContainer(bar, test)
-        }
-    }
+		FooContainer(foo, bar, test) {
+			this.foo = foo
+			this.barContainer = new BarContainer(bar, test)
+		}
+	}
 
-    class BarContainer {
-        def bar
-        def test
+	class BarContainer {
+		def bar
+		def test
 
-        BarContainer(bar, test) {
-            this.bar = bar
-            this.test = test
-        }
-    }
+		BarContainer(bar, test) {
+			this.bar = bar
+			this.test = test
+		}
+	}
 }

@@ -1,6 +1,6 @@
 package de.danielbechler.diff.mock;
 
-import de.danielbechler.diff.annotation.*;
+import de.danielbechler.diff.introspection.ObjectDiffProperty;
 
 public class ObjectWithMethodEqualsOnlyValueProviderMethodOnGetNestedObject extends ObjectWithNestedObject
 {

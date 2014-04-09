@@ -16,17 +16,17 @@
 
 package de.danielbechler.diff.issues.issue15;
 
-import de.danielbechler.diff.CircularReferenceDetector;
-import de.danielbechler.diff.DiffNode;
-import de.danielbechler.diff.ObjectDiffer;
-import de.danielbechler.diff.ObjectDifferBuilder;
+import de.danielbechler.diff.NodeHierarchyVisitor;
+import de.danielbechler.diff.PrintingVisitor;
+import de.danielbechler.diff.builder.ObjectDiffer;
+import de.danielbechler.diff.builder.ObjectDifferBuilder;
+import de.danielbechler.diff.circular.CircularReferenceDetector;
 import de.danielbechler.diff.helper.NodeAssertions;
-import de.danielbechler.diff.visitor.NodeHierarchyVisitor;
-import de.danielbechler.diff.visitor.PrintingVisitor;
+import de.danielbechler.diff.node.DiffNode;
 import org.testng.annotations.Test;
 
-import static de.danielbechler.diff.NodePath.startBuilding;
 import static de.danielbechler.diff.helper.NodeAssertions.assertThat;
+import static de.danielbechler.diff.nodepath.NodePath.startBuilding;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 /**

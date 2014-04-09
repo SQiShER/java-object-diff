@@ -36,10 +36,10 @@ public class Instances
 	private final Object base;
 	private final Object fresh;
 
-	Instances(final Accessor sourceAccessor,
-			  final Object working,
-			  final Object base,
-			  final Object fresh)
+	public Instances(final Accessor sourceAccessor,
+					 final Object working,
+					 final Object base,
+					 final Object fresh)
 	{
 		Assert.notNull(sourceAccessor, "sourceAccessor");
 		this.sourceAccessor = sourceAccessor;
@@ -48,21 +48,21 @@ public class Instances
 		this.fresh = fresh;
 	}
 
-	static <T> Instances of(final Accessor sourceAccessor,
-							final T working,
-							final T base,
-							final T fresh)
+	public static <T> Instances of(final Accessor sourceAccessor,
+								   final T working,
+								   final T base,
+								   final T fresh)
 	{
 		return new Instances(sourceAccessor, working, base, fresh);
 	}
 
-	static <T> Instances of(final Accessor sourceAccessor, final T working, final T base)
+	public static <T> Instances of(final Accessor sourceAccessor, final T working, final T base)
 	{
 		final Object fresh = (working != null) ? Classes.freshInstanceOf(working.getClass()) : null;
 		return new Instances(sourceAccessor, working, base, fresh);
 	}
 
-	static <T> Instances of(final T working, final T base)
+	public static <T> Instances of(final T working, final T base)
 	{
 		final Object fresh = (working != null) ? Classes.freshInstanceOf(working.getClass()) : null;
 		return new Instances(RootAccessor.getInstance(), working, base, fresh);

@@ -16,99 +16,99 @@
 
 package de.danielbechler.diff.example
 
-import de.danielbechler.diff.NodePath
-import de.danielbechler.diff.ObjectDifferBuilder
-import de.danielbechler.diff.annotation.ObjectDiffEqualsOnlyType
-import de.danielbechler.diff.annotation.ObjectDiffProperty
+import de.danielbechler.diff.builder.ObjectDifferBuilder
+import de.danielbechler.diff.introspection.ObjectDiffEqualsOnlyType
+import de.danielbechler.diff.introspection.ObjectDiffProperty
+import de.danielbechler.diff.nodepath.NodePath
 import spock.lang.Specification
 
-import static de.danielbechler.diff.DiffNode.State.UNTOUCHED
+import static de.danielbechler.diff.node.DiffNode.State.UNTOUCHED
 
 class Example2IT extends Specification {
-    def "Comparing an object via equalsOnlyValueProvider (via property annotation)"() {
-        given:
-        def base = new Company()
-        base.manager = new PersonWithEqualsOnlyTypeAnnotation("Walter", "Walt", "White")
+	def "Comparing an object via equalsOnlyValueProvider (via property annotation)"() {
+		given:
+		  def base = new Company()
+		  base.manager = new PersonWithEqualsOnlyTypeAnnotation("Walter", "Walt", "White")
 
-        and:
-        def working = new Company()
-        working.manager = new PersonWithEqualsOnlyTypeAnnotation("Walter", "Heisenberg", "White")
+		and:
+		  def working = new Company()
+		  working.manager = new PersonWithEqualsOnlyTypeAnnotation("Walter", "Heisenberg", "White")
 
-        expect:
-        ObjectDifferBuilder.buildDefault().compare(working, base).state == UNTOUCHED
-    }
+		expect:
+		  ObjectDifferBuilder.buildDefault().compare(working, base).state == UNTOUCHED
+	}
 
-    def "Comparing an object via equalsOnlyValueProvider (via type annotation)"() {
-        given:
-        def base = new PersonWithEqualsOnlyTypeAnnotation("Walter", "Walt", "White")
-        def working = new PersonWithEqualsOnlyTypeAnnotation("Walter", "Heisenberg", "White")
+	def "Comparing an object via equalsOnlyValueProvider (via type annotation)"() {
+		given:
+		  def base = new PersonWithEqualsOnlyTypeAnnotation("Walter", "Walt", "White")
+		  def working = new PersonWithEqualsOnlyTypeAnnotation("Walter", "Heisenberg", "White")
 
-        expect:
-        ObjectDifferBuilder.buildDefault().compare(working, base).state == UNTOUCHED
-    }
+		expect:
+		  ObjectDifferBuilder.buildDefault().compare(working, base).state == UNTOUCHED
+	}
 
-    def "Comparing an object via equalsOnlyValueProvider (via configuration using property path)"() {
-        given:
-        def builder = ObjectDifferBuilder.startBuilding()
-        builder.configure().comparison().ofNode(NodePath.withRoot()).toUseEqualsMethodOfValueProvidedByMethod("presentationForDiffer")
+	def "Comparing an object via equalsOnlyValueProvider (via configuration using property path)"() {
+		given:
+		  def builder = ObjectDifferBuilder.startBuilding()
+		  builder.configure().comparison().ofNode(NodePath.withRoot()).toUseEqualsMethodOfValueProvidedByMethod("presentationForDiffer")
 
-        def base = new PersonWithEqualsOnlyTypeAnnotation("Walter", "Walt", "White")
-        def working = new PersonWithEqualsOnlyTypeAnnotation("Walter", "Heisenberg", "White")
+		  def base = new PersonWithEqualsOnlyTypeAnnotation("Walter", "Walt", "White")
+		  def working = new PersonWithEqualsOnlyTypeAnnotation("Walter", "Heisenberg", "White")
 
-        expect:
-        builder.build().compare(working, base).state == UNTOUCHED
-    }
+		expect:
+		  builder.build().compare(working, base).state == UNTOUCHED
+	}
 
-    def "Comparing an object via equalsOnlyValueProvider (via configuration using type)"() {
-        given:
-        def builder = ObjectDifferBuilder.startBuilding()
-        builder.configure().comparison().ofType(Person).toUseEqualsMethodOfValueProvidedByMethod("presentationForDiffer")
-        def base = new PersonWithEqualsOnlyTypeAnnotation("Walter", "Walt", "White")
-        def working = new PersonWithEqualsOnlyTypeAnnotation("Walter", "Heisenberg", "White")
+	def "Comparing an object via equalsOnlyValueProvider (via configuration using type)"() {
+		given:
+		  def builder = ObjectDifferBuilder.startBuilding()
+		  builder.configure().comparison().ofType(Person).toUseEqualsMethodOfValueProvidedByMethod("presentationForDiffer")
+		  def base = new PersonWithEqualsOnlyTypeAnnotation("Walter", "Walt", "White")
+		  def working = new PersonWithEqualsOnlyTypeAnnotation("Walter", "Heisenberg", "White")
 
-        expect:
-        builder.build().compare(working, base).state == UNTOUCHED
-    }
+		expect:
+		  builder.build().compare(working, base).state == UNTOUCHED
+	}
 
 
-    public static class Company {
-        private Person manager;
+	public static class Company {
+		private Person manager;
 
-        @ObjectDiffProperty(equalsOnly = true, equalsOnlyValueProviderMethod = "presentationForDiffer")
-        public Person getManager() {
-            return manager
-        }
+		@ObjectDiffProperty(equalsOnly = true, equalsOnlyValueProviderMethod = "presentationForDiffer")
+		public Person getManager() {
+			return manager
+		}
 
-        void setManager(final Person manager) {
-            this.manager = manager
-        }
-    }
+		void setManager(final Person manager) {
+			this.manager = manager
+		}
+	}
 
-    public static class Person {
-        private String firstname
-        private String lastname
-        private String nickname
+	public static class Person {
+		private String firstname
+		private String lastname
+		private String nickname
 
-        public Person(String firstname, String nickname, String lastname) {
-            this.firstname = firstname
-            this.nickname = nickname
-            this.lastname = lastname
-        }
+		public Person(String firstname, String nickname, String lastname) {
+			this.firstname = firstname
+			this.nickname = nickname
+			this.lastname = lastname
+		}
 
-        public String presentationForDiffer() {
-            return firstname + " " + lastname
-        }
+		public String presentationForDiffer() {
+			return firstname + " " + lastname
+		}
 
-        boolean equals(final o) {
-            return false
-        }
-    }
+		boolean equals(final o) {
+			return false
+		}
+	}
 
-    @ObjectDiffEqualsOnlyType(valueProviderMethod = "presentationForDiffer")
-    public static class PersonWithEqualsOnlyTypeAnnotation extends Person {
-        public PersonWithEqualsOnlyTypeAnnotation(
-                final String firstname, final String nickname, final String lastname) {
-            super(firstname, nickname, lastname)
-        }
-    }
+	@ObjectDiffEqualsOnlyType(valueProviderMethod = "presentationForDiffer")
+	public static class PersonWithEqualsOnlyTypeAnnotation extends Person {
+		public PersonWithEqualsOnlyTypeAnnotation(
+				final String firstname, final String nickname, final String lastname) {
+			super(firstname, nickname, lastname)
+		}
+	}
 }

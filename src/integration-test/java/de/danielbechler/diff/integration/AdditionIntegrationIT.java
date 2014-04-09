@@ -16,11 +16,11 @@
 
 package de.danielbechler.diff.integration;
 
-import de.danielbechler.diff.DiffNode;
-import de.danielbechler.diff.ObjectDifferBuilder;
+import de.danielbechler.diff.builder.ObjectDifferBuilder;
 import de.danielbechler.diff.example.phonebook.Contact;
 import de.danielbechler.diff.example.phonebook.PhoneBook;
 import de.danielbechler.diff.mock.ObjectWithString;
+import de.danielbechler.diff.node.DiffNode;
 import org.testng.annotations.Test;
 
 import static de.danielbechler.diff.helper.NodeAssertions.assertThat;

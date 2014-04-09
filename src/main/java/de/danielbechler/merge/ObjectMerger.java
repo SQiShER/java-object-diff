@@ -16,10 +16,10 @@
 
 package de.danielbechler.merge;
 
-import de.danielbechler.diff.DiffNode;
-import de.danielbechler.diff.ObjectDiffer;
-import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.Visit;
+import de.danielbechler.diff.builder.ObjectDiffer;
+import de.danielbechler.diff.builder.ObjectDifferBuilder;
+import de.danielbechler.diff.node.DiffNode;
 
 /**
  * Careful: This class has not yet been tested very thoroughly and serves more as an example for your own

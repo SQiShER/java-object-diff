@@ -16,12 +16,15 @@
 
 package de.danielbechler.diff.example.phonebook;
 
-import de.danielbechler.diff.annotation.*;
-import de.danielbechler.util.*;
+import de.danielbechler.diff.introspection.ObjectDiffProperty;
+import de.danielbechler.util.Strings;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 public class Contact
 {
 	public static Contact from(final Contact contact)

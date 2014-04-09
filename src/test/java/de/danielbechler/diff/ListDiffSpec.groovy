@@ -16,8 +16,9 @@
 
 package de.danielbechler.diff
 
-import de.danielbechler.diff.collection.CollectionItemElementSelector
-import de.danielbechler.diff.visitor.PrintingVisitor
+import de.danielbechler.diff.builder.ObjectDifferBuilder
+import de.danielbechler.diff.node.DiffNode
+import de.danielbechler.diff.nodepath.CollectionItemElementSelector
 import spock.lang.Ignore
 import spock.lang.Specification
 
@@ -25,26 +26,26 @@ import spock.lang.Specification
  * @author Daniel Bechler
  */
 class ListDiffSpec extends Specification {
-    def objectDiffer;
+	def objectDiffer;
 
-    def setup() {
-        objectDiffer = ObjectDifferBuilder.buildDefault();
-    }
+	def setup() {
+		objectDiffer = ObjectDifferBuilder.buildDefault();
+	}
 
-    @Ignore
-    def "detects position switch"() {
-        DiffNode node;
+	@Ignore
+	def "detects position switch"() {
+		DiffNode node;
 
-        when:
-        node = objectDiffer.compare(working, base);
+		when:
+		  node = objectDiffer.compare(working, base);
 
-        then:
-        node.visit(new PrintingVisitor(working, base));
-        node.getChild(new CollectionItemElementSelector("a")).getState() == DiffNode.State.CHANGED;
-        node.getChild(new CollectionItemElementSelector("b")).getState() == DiffNode.State.CHANGED;
+		then:
+		  node.visit(new PrintingVisitor(working, base));
+		  node.getChild(new CollectionItemElementSelector("a")).getState() == DiffNode.State.CHANGED;
+		  node.getChild(new CollectionItemElementSelector("b")).getState() == DiffNode.State.CHANGED;
 
-        where:
-        base       | working
-        ["a", "b"] | ["b", "a"]
-    }
+		where:
+		  base       | working
+		  ["a", "b"] | ["b", "a"]
+	}
 }

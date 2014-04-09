@@ -16,15 +16,19 @@
 
 package de.danielbechler.diff;
 
-import org.testng.annotations.*;
+import de.danielbechler.diff.nodepath.RootElementSelector;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.core.Is.*;
-import static org.hamcrest.core.IsEqual.*;
-import static org.hamcrest.core.IsInstanceOf.*;
-import static org.hamcrest.core.IsSame.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.core.IsInstanceOf.instanceOf;
+import static org.hamcrest.core.IsSame.sameInstance;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 public class RootAccessorTest
 {
 	private Object target;

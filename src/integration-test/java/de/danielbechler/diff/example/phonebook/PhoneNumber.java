@@ -16,9 +16,11 @@
 
 package de.danielbechler.diff.example.phonebook;
 
-import de.danielbechler.diff.annotation.*;
+import de.danielbechler.diff.introspection.ObjectDiffEqualsOnlyType;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 @ObjectDiffEqualsOnlyType
 public final class PhoneNumber
 {

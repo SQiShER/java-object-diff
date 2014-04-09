@@ -1,7 +1,9 @@
 package de.danielbechler.diff.example;
 
-import de.danielbechler.diff.*;
-import de.danielbechler.diff.visitor.*;
+import de.danielbechler.diff.PrintingVisitor;
+import de.danielbechler.diff.builder.ObjectDifferBuilder;
+import de.danielbechler.diff.node.DiffNode;
+import de.danielbechler.diff.nodepath.NodePath;
 
 class EqualsOnlyValueProviderMethodExample
 {
@@ -20,8 +22,8 @@ class EqualsOnlyValueProviderMethodExample
 
 		// (Option 1) Causes the ObjectDiffer to compare using the method "getProp1" on the 'prop' property of the root object
 		builder.configure().comparison()
-			   .ofNode(NodePath.with("prop"))
-			   .toUseEqualsMethodOfValueProvidedByMethod("getProp1");
+				.ofNode(NodePath.with("prop"))
+				.toUseEqualsMethodOfValueProvidedByMethod("getProp1");
 
 		final DiffNode node = builder.build().compare(working, base);
 

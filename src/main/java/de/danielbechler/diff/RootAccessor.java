@@ -16,7 +16,12 @@
 
 package de.danielbechler.diff;
 
-/** @author Daniel Bechler */
+import de.danielbechler.diff.nodepath.ElementSelector;
+import de.danielbechler.diff.nodepath.RootElementSelector;
+
+/**
+ * @author Daniel Bechler
+ */
 public final class RootAccessor implements Accessor
 {
 	private static final RootAccessor instance = new RootAccessor();

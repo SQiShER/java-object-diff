@@ -16,11 +16,11 @@
 
 package de.danielbechler.diff.helper;
 
-import de.danielbechler.diff.DiffNode;
-import de.danielbechler.diff.ElementSelector;
-import de.danielbechler.diff.NodePath;
-import de.danielbechler.diff.collection.CollectionItemElementSelector;
-import de.danielbechler.diff.visitor.PropertyVisitor;
+import de.danielbechler.diff.NodePathVisitor;
+import de.danielbechler.diff.node.DiffNode;
+import de.danielbechler.diff.nodepath.CollectionItemElementSelector;
+import de.danielbechler.diff.nodepath.ElementSelector;
+import de.danielbechler.diff.nodepath.NodePath;
 import org.fest.assertions.api.Assertions;
 import org.fest.assertions.core.Condition;
 
@@ -136,7 +136,7 @@ public final class NodeAssertions
 					}
 					else
 					{
-						final PropertyVisitor visitor = new PropertyVisitor(nodePath);
+						final NodePathVisitor visitor = new NodePathVisitor(nodePath);
 						value.visit(visitor);
 						return visitor.getNode() != null;
 					}
@@ -176,7 +176,7 @@ public final class NodeAssertions
 					}
 					else
 					{
-						final PropertyVisitor visitor = new PropertyVisitor(nodePath);
+						final NodePathVisitor visitor = new NodePathVisitor(nodePath);
 						value.visit(visitor);
 						return visitor.getNode() == null;
 					}

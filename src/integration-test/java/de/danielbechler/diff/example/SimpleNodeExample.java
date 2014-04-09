@@ -16,10 +16,10 @@
 
 package de.danielbechler.diff.example;
 
-import de.danielbechler.diff.DiffNode;
-import de.danielbechler.diff.ObjectDifferBuilder;
-import de.danielbechler.diff.visitor.NodeHierarchyVisitor;
-import de.danielbechler.diff.visitor.PrintingVisitor;
+import de.danielbechler.diff.NodeHierarchyVisitor;
+import de.danielbechler.diff.PrintingVisitor;
+import de.danielbechler.diff.builder.ObjectDifferBuilder;
+import de.danielbechler.diff.node.DiffNode;
 
 /**
  * @author Daniel Bechler

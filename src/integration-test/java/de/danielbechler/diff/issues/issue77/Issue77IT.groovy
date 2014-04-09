@@ -16,31 +16,31 @@
 
 package de.danielbechler.diff.issues.issue77
 
-import de.danielbechler.diff.ObjectDifferBuilder
+import de.danielbechler.diff.builder.ObjectDifferBuilder
 import spock.lang.Specification
 
 /**
  * @author Daniel Bechler
  */
 class Issue77IT extends Specification {
-    def "NullPointerException on null unsafe Comparable implementations"() {
-        expect:
-        ObjectDifferBuilder.buildDefault().compare(new SomeObject(BigDecimal.ONE), new SomeObject(null));
-    }
+	def "NullPointerException on null unsafe Comparable implementations"() {
+		expect:
+		  ObjectDifferBuilder.buildDefault().compare(new SomeObject(BigDecimal.ONE), new SomeObject(null));
+	}
 
-    class SomeObject {
-        BigDecimal value;
+	class SomeObject {
+		BigDecimal value;
 
-        SomeObject(BigDecimal value) {
-            this.value = value;
-        }
+		SomeObject(BigDecimal value) {
+			this.value = value;
+		}
 
-        BigDecimal getValue() {
-            return value
-        }
+		BigDecimal getValue() {
+			return value
+		}
 
-        void setValue(final BigDecimal value) {
-            this.value = value
-        }
-    }
+		void setValue(final BigDecimal value) {
+			this.value = value
+		}
+	}
 }

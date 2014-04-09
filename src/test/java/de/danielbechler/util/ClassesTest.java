@@ -16,7 +16,6 @@
 
 package de.danielbechler.util;
 
-import de.danielbechler.diff.DiffNode;
 import de.danielbechler.diff.example.phonebook.Contact;
 import de.danielbechler.diff.example.phonebook.PhoneBook;
 import de.danielbechler.diff.example.phonebook.PhoneNumber;
@@ -24,6 +23,7 @@ import de.danielbechler.diff.mock.ObjectWithExceptionThrowingDefaultConstructor;
 import de.danielbechler.diff.mock.ObjectWithPrivateDefaultConstructor;
 import de.danielbechler.diff.mock.ObjectWithString;
 import de.danielbechler.diff.mock.ObjectWithoutDefaultConstructor;
+import de.danielbechler.diff.node.DiffNode;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 

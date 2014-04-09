@@ -16,16 +16,18 @@
 
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.bean.*;
-import org.testng.annotations.*;
+import org.testng.annotations.Test;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Method;
 
-import static de.danielbechler.diff.helper.MockitoExtensions.*;
-import static org.fest.assertions.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static de.danielbechler.diff.helper.MockitoExtensions.returnClass;
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 public class InstancesTest
 {
 	private static <T> TypeAwareAccessor mockTypeAwareAccessorOfType(final Class<T> clazz)

@@ -16,59 +16,51 @@
 
 package de.danielbechler.diff.example
 
-import de.danielbechler.diff.ObjectDifferBuilder
+import de.danielbechler.diff.builder.ObjectDifferBuilder
 import spock.lang.Specification
 
-import static de.danielbechler.diff.DiffNode.State.CHANGED
-import static de.danielbechler.diff.DiffNode.State.UNTOUCHED
+import static de.danielbechler.diff.node.DiffNode.State.CHANGED
+import static de.danielbechler.diff.node.DiffNode.State.UNTOUCHED
 
-public class Example1IT extends Specification
-{
-  def "Comparing Objects via compareTo instead of equals"()
-  {
-    given: "an object differ configured to compare the given type via compareTo method"
-    def builder = ObjectDifferBuilder.startBuilding()
-    builder.configure().comparison().ofType(ComparableObject).toUseCompareToMethod()
-    def objectDiffer = builder.build()
+public class Example1IT extends Specification {
+	def "Comparing Objects via compareTo instead of equals"() {
+		given: "an object differ configured to compare the given type via compareTo method"
+		  def builder = ObjectDifferBuilder.startBuilding()
+		  builder.configure().comparison().ofType(ComparableObject).toUseCompareToMethod()
+		  def objectDiffer = builder.build()
 
-    expect:
-    objectDiffer.compare(working, base).state == expectedState
+		expect:
+		  objectDiffer.compare(working, base).state == expectedState
 
-    where:
-    base                           | working                        || expectedState
-    new ComparableObject("foo", 1) | new ComparableObject("foo", 2) || UNTOUCHED
-    new ComparableObject("foo", 1) | new ComparableObject("bar", 1) || CHANGED
-  }
+		where:
+		  base                           | working                        || expectedState
+		  new ComparableObject("foo", 1) | new ComparableObject("foo", 2) || UNTOUCHED
+		  new ComparableObject("foo", 1) | new ComparableObject("bar", 1) || CHANGED
+	}
 
-  public static class ComparableObject implements Comparable<ComparableObject>
-  {
-    private final String value
-    private final int index
+	public static class ComparableObject implements Comparable<ComparableObject> {
+		private final String value
+		private final int index
 
-    public ComparableObject(String value, int index)
-    {
-      this.value = value
-      this.index = index
-    }
+		public ComparableObject(String value, int index) {
+			this.value = value
+			this.index = index
+		}
 
-    public String getValue()
-    {
-      return value
-    }
+		public String getValue() {
+			return value
+		}
 
-    public int compareTo(ComparableObject o)
-    {
-      return value.compareToIgnoreCase(o.value)
-    }
+		public int compareTo(ComparableObject o) {
+			return value.compareToIgnoreCase(o.value)
+		}
 
-    public boolean equals(Object o)
-    {
-      return false
-    }
+		public boolean equals(Object o) {
+			return false
+		}
 
-    public int hashCode()
-    {
-      return 0
-    }
-  }
+		public int hashCode() {
+			return 0
+		}
+	}
 }

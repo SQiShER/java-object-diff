@@ -16,12 +16,12 @@
 
 package de.danielbechler.diff.issues.issue15;
 
-import de.danielbechler.diff.DiffNode;
-import de.danielbechler.diff.NodePath;
-import de.danielbechler.diff.ObjectDiffer;
-import de.danielbechler.diff.ObjectDifferBuilder;
+import de.danielbechler.diff.PrintingVisitor;
+import de.danielbechler.diff.builder.ObjectDiffer;
+import de.danielbechler.diff.builder.ObjectDifferBuilder;
 import de.danielbechler.diff.mock.ObjectWithCircularReference;
-import de.danielbechler.diff.visitor.PrintingVisitor;
+import de.danielbechler.diff.node.DiffNode;
+import de.danielbechler.diff.nodepath.NodePath;
 import org.fest.assertions.api.Assertions;
 import org.testng.annotations.Test;
 

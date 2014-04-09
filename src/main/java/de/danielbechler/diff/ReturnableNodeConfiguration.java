@@ -1,5 +1,7 @@
 package de.danielbechler.diff;
 
+import de.danielbechler.diff.node.DiffNode;
+
 /**
  * Allows to exclude nodes from being added to the object graph based on criteria that are only known after the diff
  * for

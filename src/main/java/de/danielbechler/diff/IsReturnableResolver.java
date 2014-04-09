@@ -16,7 +16,11 @@
 
 package de.danielbechler.diff;
 
-/** @author Daniel Bechler */
+import de.danielbechler.diff.node.DiffNode;
+
+/**
+ * @author Daniel Bechler
+ */
 public interface IsReturnableResolver
 {
 	boolean isReturnable(DiffNode node);

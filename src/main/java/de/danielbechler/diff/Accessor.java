@@ -16,7 +16,11 @@
 
 package de.danielbechler.diff;
 
-/** @author Daniel Bechler */
+import de.danielbechler.diff.nodepath.ElementSelector;
+
+/**
+ * @author Daniel Bechler
+ */
 public interface Accessor
 {
 	ElementSelector getElementSelector();

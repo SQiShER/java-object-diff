@@ -16,9 +16,11 @@
 
 package de.danielbechler.diff.mock;
 
-import de.danielbechler.diff.annotation.*;
+import de.danielbechler.diff.introspection.ObjectDiffProperty;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 public class ObjectWithAnnotatedProperty
 {
 	private String value;

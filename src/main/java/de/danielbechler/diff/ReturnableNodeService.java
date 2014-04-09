@@ -16,6 +16,8 @@
 
 package de.danielbechler.diff;
 
+import de.danielbechler.diff.node.DiffNode;
+
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.List;
@@ -28,7 +30,7 @@ import static java.util.Arrays.asList;
 /**
  * @author Daniel Bechler
  */
-class ReturnableNodeService implements ReturnableNodeConfiguration, IsReturnableResolver
+public class ReturnableNodeService implements ReturnableNodeConfiguration, IsReturnableResolver
 {
 	private final Map<DiffNode.State, Boolean> stateFilterSettings;
 

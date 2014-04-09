@@ -16,14 +16,19 @@
 
 package de.danielbechler.diff.issues.issue15;
 
-import de.danielbechler.diff.*;
-import de.danielbechler.diff.helper.*;
-import de.danielbechler.diff.mock.*;
-import org.testng.annotations.*;
+import de.danielbechler.diff.builder.ObjectDiffer;
+import de.danielbechler.diff.builder.ObjectDifferBuilder;
+import de.danielbechler.diff.helper.NodeAssertions;
+import de.danielbechler.diff.mock.ObjectWithNestedObject;
+import de.danielbechler.diff.node.DiffNode;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
-import static de.danielbechler.diff.CircularReferenceMatchingMode.*;
+import static de.danielbechler.diff.circular.CircularReferenceMatchingMode.EQUALITY_OPERATOR;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 public class CircularReferenceDetectionBasedOnIdentityTest
 {
 	private ObjectDiffer objectDiffer;
@@ -33,8 +38,8 @@ public class CircularReferenceDetectionBasedOnIdentityTest
 	{
 		final ObjectDifferBuilder configuration = ObjectDifferBuilder.startBuilding();
 		configuration.configure()
-					 .circularReferenceHandling()
-					 .matchCircularReferencesUsing(EQUALITY_OPERATOR);
+				.circularReferenceHandling()
+				.matchCircularReferencesUsing(EQUALITY_OPERATOR);
 		objectDiffer = configuration.build();
 	}
 

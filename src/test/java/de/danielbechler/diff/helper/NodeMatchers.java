@@ -17,10 +17,10 @@
 package de.danielbechler.diff.helper;
 
 import de.danielbechler.diff.Accessor;
-import de.danielbechler.diff.DiffNode;
-import de.danielbechler.diff.NodePath;
-import de.danielbechler.diff.collection.CollectionItemAccessor;
-import de.danielbechler.diff.collection.CollectionItemElementSelector;
+import de.danielbechler.diff.CollectionItemAccessor;
+import de.danielbechler.diff.node.DiffNode;
+import de.danielbechler.diff.nodepath.CollectionItemElementSelector;
+import de.danielbechler.diff.nodepath.NodePath;
 import org.fest.assertions.core.Condition;
 import org.mockito.ArgumentMatcher;
 

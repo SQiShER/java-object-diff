@@ -16,9 +16,12 @@
 
 package de.danielbechler.diff.mock;
 
-import de.danielbechler.diff.annotation.*;
+import de.danielbechler.diff.introspection.ObjectDiffEqualsOnlyType;
+import de.danielbechler.diff.introspection.ObjectDiffProperty;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 @ObjectDiffEqualsOnlyType
 public class ObjectWithPropertyAnnotations extends ObjectWithHashCodeAndEquals
 {
