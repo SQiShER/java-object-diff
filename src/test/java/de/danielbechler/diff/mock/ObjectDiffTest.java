@@ -16,7 +16,7 @@
 
 package de.danielbechler.diff.mock;
 
-import de.danielbechler.diff.introspection.ObjectDiffAnnotation;
+import de.danielbechler.diff.config.introspection.ObjectDiffAnnotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;

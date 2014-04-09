@@ -16,9 +16,9 @@
 
 package de.danielbechler.diff.issues.issue38;
 
-import de.danielbechler.diff.PrintingVisitor;
-import de.danielbechler.diff.builder.ObjectDiffer;
-import de.danielbechler.diff.builder.ObjectDifferBuilder;
+import de.danielbechler.diff.visit.PrintingVisitor;
+import de.danielbechler.diff.ObjectDiffer;
+import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.node.DiffNode;
 
 public class Issue38

@@ -16,7 +16,7 @@
 
 package de.danielbechler.diff.mock;
 
-import de.danielbechler.diff.introspection.ObjectDiffProperty;
+import de.danielbechler.diff.config.introspection.ObjectDiffProperty;
 
 /**
  * @author Daniel Bechler

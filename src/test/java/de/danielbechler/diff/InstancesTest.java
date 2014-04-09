@@ -16,6 +16,9 @@
 
 package de.danielbechler.diff;
 
+import de.danielbechler.diff.config.introspection.BeanPropertyAccessor;
+import de.danielbechler.diff.node.RootAccessor;
+import de.danielbechler.diff.node.TypeAwareAccessor;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;

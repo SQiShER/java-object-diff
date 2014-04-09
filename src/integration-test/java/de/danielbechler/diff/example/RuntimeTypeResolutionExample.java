@@ -16,7 +16,7 @@
 
 package de.danielbechler.diff.example;
 
-import de.danielbechler.diff.builder.ObjectDifferBuilder;
+import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.node.DiffNode;
 
 /**

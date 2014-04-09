@@ -16,18 +16,10 @@
 
 package de.danielbechler.diff.node;
 
-import de.danielbechler.diff.Accessor;
-import de.danielbechler.diff.CategoryAwareAccessor;
-import de.danielbechler.diff.ComparisonStrategyAwareAccessor;
-import de.danielbechler.diff.ExclusionAwareAccessor;
-import de.danielbechler.diff.PropertyAwareAccessor;
-import de.danielbechler.diff.RootAccessor;
-import de.danielbechler.diff.TypeAwareAccessor;
-import de.danielbechler.diff.Visit;
-import de.danielbechler.diff.nodepath.BeanPropertyElementSelector;
-import de.danielbechler.diff.nodepath.ElementSelector;
-import de.danielbechler.diff.nodepath.NodePath;
-import de.danielbechler.diff.nodepath.RootElementSelector;
+import de.danielbechler.diff.node.path.BeanPropertyElementSelector;
+import de.danielbechler.diff.node.path.ElementSelector;
+import de.danielbechler.diff.node.path.NodePath;
+import de.danielbechler.diff.node.path.RootElementSelector;
 import de.danielbechler.util.Assert;
 
 import java.lang.annotation.Annotation;
@@ -498,9 +490,9 @@ public class DiffNode
 
 	public ComparisonStrategy getComparisonStrategy()
 	{
-		if (accessor instanceof ComparisonStrategyAwareAccessor)
+		if (accessor instanceof ComparisonStrategyAware)
 		{
-			return ((ComparisonStrategyAwareAccessor) accessor).getComparisonStrategy();
+			return ((ComparisonStrategyAware) accessor).getComparisonStrategy();
 		}
 		return null;
 	}

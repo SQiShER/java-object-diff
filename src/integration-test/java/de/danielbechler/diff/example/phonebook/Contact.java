@@ -16,7 +16,7 @@
 
 package de.danielbechler.diff.example.phonebook;
 
-import de.danielbechler.diff.introspection.ObjectDiffProperty;
+import de.danielbechler.diff.config.introspection.ObjectDiffProperty;
 import de.danielbechler.util.Strings;
 
 import java.util.LinkedHashMap;

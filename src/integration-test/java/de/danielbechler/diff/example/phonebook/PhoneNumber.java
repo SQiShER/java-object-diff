@@ -16,7 +16,7 @@
 
 package de.danielbechler.diff.example.phonebook;
 
-import de.danielbechler.diff.introspection.ObjectDiffEqualsOnlyType;
+import de.danielbechler.diff.config.introspection.ObjectDiffEqualsOnlyType;
 
 /**
  * @author Daniel Bechler

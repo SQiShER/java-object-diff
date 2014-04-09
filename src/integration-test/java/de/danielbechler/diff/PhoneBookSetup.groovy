@@ -16,7 +16,7 @@
 
 package de.danielbechler.diff
 
-import de.danielbechler.diff.introspection.ObjectDiffProperty
+import de.danielbechler.diff.config.introspection.ObjectDiffProperty
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 

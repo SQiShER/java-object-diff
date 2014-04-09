@@ -16,15 +16,15 @@
 
 package de.danielbechler.diff.issues.issue15;
 
-import de.danielbechler.diff.builder.ObjectDiffer;
-import de.danielbechler.diff.builder.ObjectDifferBuilder;
+import de.danielbechler.diff.ObjectDiffer;
+import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.helper.NodeAssertions;
 import de.danielbechler.diff.mock.ObjectWithNestedObject;
 import de.danielbechler.diff.node.DiffNode;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import static de.danielbechler.diff.circular.CircularReferenceMatchingMode.EQUALITY_OPERATOR;
+import static de.danielbechler.diff.config.circular.CircularReferenceMatchingMode.EQUALITY_OPERATOR;
 
 /**
  * @author Daniel Bechler

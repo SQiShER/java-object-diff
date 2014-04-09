@@ -16,7 +16,7 @@
 
 package de.danielbechler.diff.integration;
 
-import de.danielbechler.diff.builder.ObjectDifferBuilder;
+import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.example.phonebook.Contact;
 import de.danielbechler.diff.example.phonebook.PhoneBook;
 import de.danielbechler.diff.mock.ObjectWithString;

@@ -16,6 +16,9 @@
 
 package de.danielbechler.diff;
 
+import de.danielbechler.diff.node.Accessor;
+import de.danielbechler.diff.node.RootAccessor;
+import de.danielbechler.diff.node.TypeAwareAccessor;
 import de.danielbechler.util.Assert;
 import de.danielbechler.util.Classes;
 import de.danielbechler.util.Collections;

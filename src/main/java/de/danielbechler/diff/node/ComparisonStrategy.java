@@ -16,12 +16,12 @@
 
 package de.danielbechler.diff.node;
 
-import de.danielbechler.diff.Instances;
+import de.danielbechler.diff.node.DiffNode;
 
 /**
  * @author Daniel Bechler
  */
 public interface ComparisonStrategy
 {
-	void compare(final DiffNode node, Instances instances);
+	void compare(final DiffNode node, @Deprecated Class<?> type, final Object working, final Object base);
 }

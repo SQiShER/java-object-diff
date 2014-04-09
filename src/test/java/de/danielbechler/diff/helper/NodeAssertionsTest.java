@@ -16,12 +16,12 @@
 
 package de.danielbechler.diff.helper;
 
-import de.danielbechler.diff.Accessor;
-import de.danielbechler.diff.builder.ObjectDifferBuilder;
+import de.danielbechler.diff.node.Accessor;
+import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.mock.ObjectWithString;
 import de.danielbechler.diff.node.DiffNode;
-import de.danielbechler.diff.nodepath.BeanPropertyElementSelector;
-import de.danielbechler.diff.nodepath.NodePath;
+import de.danielbechler.diff.node.path.BeanPropertyElementSelector;
+import de.danielbechler.diff.node.path.NodePath;
 import org.testng.annotations.Test;
 
 import static de.danielbechler.diff.helper.NodeAssertions.assertThat;

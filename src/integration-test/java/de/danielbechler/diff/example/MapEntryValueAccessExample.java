@@ -16,10 +16,10 @@
 
 package de.danielbechler.diff.example;
 
-import de.danielbechler.diff.Visit;
-import de.danielbechler.diff.builder.ObjectDifferBuilder;
+import de.danielbechler.diff.node.Visit;
+import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.node.DiffNode;
-import de.danielbechler.diff.nodepath.MapKeyElementSelector;
+import de.danielbechler.diff.node.path.MapKeyElementSelector;
 
 import java.util.Map;
 import java.util.TreeMap;

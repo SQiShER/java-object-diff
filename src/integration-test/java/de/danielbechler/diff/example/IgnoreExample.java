@@ -1,10 +1,10 @@
 package de.danielbechler.diff.example;
 
-import de.danielbechler.diff.PrintingVisitor;
-import de.danielbechler.diff.builder.ObjectDifferBuilder;
-import de.danielbechler.diff.introspection.ObjectDiffProperty;
+import de.danielbechler.diff.visit.PrintingVisitor;
+import de.danielbechler.diff.ObjectDifferBuilder;
+import de.danielbechler.diff.config.introspection.ObjectDiffProperty;
 import de.danielbechler.diff.node.DiffNode;
-import de.danielbechler.diff.nodepath.NodePath;
+import de.danielbechler.diff.node.path.NodePath;
 
 /**
  * @author Daniel Bechler

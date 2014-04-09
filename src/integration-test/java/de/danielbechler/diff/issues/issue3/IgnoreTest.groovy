@@ -16,7 +16,7 @@
 
 package de.danielbechler.diff.issues.issue3
 
-import de.danielbechler.diff.builder.ObjectDifferBuilder
+import de.danielbechler.diff.ObjectDifferBuilder
 import spock.lang.Ignore
 import spock.lang.Specification
 
