@@ -16,7 +16,6 @@
 
 package de.danielbechler.diff.node;
 
-import de.danielbechler.diff.config.comparison.ComparisonStrategy;
 import de.danielbechler.diff.node.path.BeanPropertyElementSelector;
 import de.danielbechler.diff.node.path.ElementSelector;
 import de.danielbechler.diff.node.path.NodePath;
@@ -487,15 +486,6 @@ public class DiffNode
 	public final boolean isIgnored()
 	{
 		return state == State.IGNORED;
-	}
-
-	public ComparisonStrategy getComparisonStrategy()
-	{
-		if (accessor instanceof ComparisonStrategyAware)
-		{
-			return ((ComparisonStrategyAware) accessor).getComparisonStrategy();
-		}
-		return null;
 	}
 
 	public boolean isExcluded()

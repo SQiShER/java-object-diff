@@ -22,7 +22,7 @@ import java.util.Set;
 /**
  * @author Daniel Bechler
  */
-public interface PropertyAwareAccessor extends TypeAwareAccessor, CategoryAwareAccessor, ComparisonStrategyAware, ExclusionAwareAccessor
+public interface PropertyAwareAccessor extends TypeAwareAccessor, CategoryAwareAccessor, ExclusionAwareAccessor
 {
 	String getPropertyName();
 

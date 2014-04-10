@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package de.danielbechler.diff.config;
+package de.danielbechler.diff;
 
-import de.danielbechler.diff.config.filtering.ReturnableNodeConfiguration;
 import de.danielbechler.diff.config.category.CategoryConfiguration;
 import de.danielbechler.diff.config.circular.CircularReferenceConfiguration;
 import de.danielbechler.diff.config.comparison.ComparisonConfiguration;
+import de.danielbechler.diff.config.filtering.ReturnableNodeConfiguration;
 import de.danielbechler.diff.config.inclusion.InclusionConfiguration;
 import de.danielbechler.diff.config.introspection.IntrospectionConfiguration;
 
@@ -34,7 +34,7 @@ public interface Configuration
 
 	CircularReferenceConfiguration circularReferenceHandling();
 
-	InclusionConfiguration inclusion();
+	InclusionConfiguration<Configuration> inclusion();
 
 	ComparisonConfiguration comparison();
 

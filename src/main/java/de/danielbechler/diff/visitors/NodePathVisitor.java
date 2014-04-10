@@ -14,42 +14,47 @@
  * limitations under the License.
  */
 
-package de.danielbechler.diff.visit;
+package de.danielbechler.diff.visitors;
 
 import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.diff.node.Visit;
+import de.danielbechler.diff.node.path.NodePath;
 import de.danielbechler.util.Assert;
 
 /**
  * @author Daniel Bechler
  */
-public class StateFilteringVisitor extends AbstractFilteringVisitor
+public class NodePathVisitor implements DiffNode.Visitor
 {
-	private final DiffNode.State state;
+	private final NodePath nodePath;
 
-	public StateFilteringVisitor(final DiffNode.State state)
+	private DiffNode node;
+
+	public NodePathVisitor(final NodePath nodePath)
 	{
-		Assert.notNull(state, "state");
-		this.state = state;
+		Assert.notNull(nodePath, "nodePath");
+		this.nodePath = nodePath;
 	}
 
-	@Override
-	protected boolean accept(final DiffNode node)
+	public void accept(final DiffNode node, final Visit visit)
 	{
-		return node.getState() == state;
+		final NodePath differencePath = node.getPath();
+		if (differencePath.matches(nodePath) || differencePath.isParentOf(nodePath))
+		{
+			if (differencePath.matches(nodePath))
+			{
+				this.node = node;
+				visit.stop();
+			}
+		}
+		else
+		{
+			visit.dontGoDeeper();
+		}
 	}
 
-	@Override
-	protected void onAccept(final DiffNode node, final Visit visit)
+	public DiffNode getNode()
 	{
-		super.onAccept(node, visit);
-		visit.dontGoDeeper();
-	}
-
-	@Override
-	protected void onDismiss(final DiffNode node, final Visit visit)
-	{
-		super.onDismiss(node, visit);
-		visit.dontGoDeeper();
+		return node;
 	}
 }

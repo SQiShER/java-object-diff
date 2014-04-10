@@ -2,8 +2,8 @@
 <project version="4">
   <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="true" defaultCharsetForPropertiesFiles="UTF-8">
     <file url="file://$PROJECT_DIR$" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/de/danielbechler/diff/visit/CategoryFilteringVisitor.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/de/danielbechler/diff/visit/NodeHierarchyVisitor.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/de/danielbechler/diff/visitors/CategoryFilteringVisitor.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/de/danielbechler/diff/visitors/NodeHierarchyVisitor.java" charset="UTF-8" />
   </component>
 </project>
 

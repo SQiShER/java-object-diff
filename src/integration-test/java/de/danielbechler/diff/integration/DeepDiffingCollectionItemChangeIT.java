@@ -16,7 +16,7 @@
 
 package de.danielbechler.diff.integration;
 
-import de.danielbechler.diff.visit.NodeHierarchyVisitor;
+import de.danielbechler.diff.visitors.NodeHierarchyVisitor;
 import de.danielbechler.diff.ObjectDiffer;
 import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.mock.ObjectWithString;

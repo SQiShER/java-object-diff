@@ -1,6 +1,5 @@
 package de.danielbechler.diff.config.inclusion;
 
-import de.danielbechler.diff.config.Configuration;
 import de.danielbechler.diff.node.path.NodePath;
 
 /**
@@ -14,49 +13,49 @@ import de.danielbechler.diff.node.path.NodePath;
  *
  * @author Daniel Bechler
  */
-public interface InclusionConfiguration
+public interface InclusionConfiguration<T>
 {
 	/**
 	 * Includes elements (and implicitly all their children) based on certain criteria, unless their parent element
 	 * doesn't match any inclusion rules.
 	 */
-	ToInclude include();
+	ToInclude<T> include();
 
-	ToExclude exclude();
+	ToExclude<T> exclude();
 
-	public interface ToInclude
+	public interface ToInclude<T>
 	{
-		ToIncludeAndReturn category(String category);
+		ToIncludeAndReturn<T> category(String category);
 
-		ToIncludeAndReturn type(Class<?> type);
+		ToIncludeAndReturn<T> type(Class<?> type);
 
-		ToIncludeAndReturn node(NodePath nodePath);
+		ToIncludeAndReturn<T> node(NodePath nodePath);
 
-		ToIncludeAndReturn propertyName(String propertyName);
+		ToIncludeAndReturn<T> propertyName(String propertyName);
 
-		ToExclude exclude();
+		ToExclude<T> exclude();
 	}
 
-	public interface ToIncludeAndReturn extends ToInclude
+	public interface ToIncludeAndReturn<T> extends ToInclude<T>
 	{
-		Configuration and();
+		T and();
 	}
 
-	public interface ToExclude
+	public interface ToExclude<T>
 	{
-		ToExcludeAndReturn category(String category);
+		ToExcludeAndReturn<T> category(String category);
 
-		ToExcludeAndReturn type(Class<?> type);
+		ToExcludeAndReturn<T> type(Class<?> type);
 
-		ToExcludeAndReturn node(NodePath nodePath);
+		ToExcludeAndReturn<T> node(NodePath nodePath);
 
-		ToExcludeAndReturn propertyName(String property);
+		ToExcludeAndReturn<T> propertyName(String property);
 
-		ToInclude include();
+		ToInclude<T> include();
 	}
 
-	public interface ToExcludeAndReturn extends ToExclude
+	public interface ToExcludeAndReturn<T> extends ToExclude<T>
 	{
-		Configuration and();
+		T and();
 	}
 }

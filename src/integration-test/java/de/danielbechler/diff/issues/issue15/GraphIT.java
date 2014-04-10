@@ -16,8 +16,8 @@
 
 package de.danielbechler.diff.issues.issue15;
 
-import de.danielbechler.diff.visit.NodeHierarchyVisitor;
-import de.danielbechler.diff.visit.PrintingVisitor;
+import de.danielbechler.diff.visitors.NodeHierarchyVisitor;
+import de.danielbechler.diff.visitors.PrintingVisitor;
 import de.danielbechler.diff.ObjectDiffer;
 import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.config.circular.CircularReferenceDetector;

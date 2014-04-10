@@ -14,46 +14,42 @@
  * limitations under the License.
  */
 
-package de.danielbechler.diff.visit;
+package de.danielbechler.diff.visitors;
 
 import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.diff.node.Visit;
-
-import java.util.Collection;
-import java.util.LinkedList;
+import de.danielbechler.util.Assert;
 
 /**
  * @author Daniel Bechler
  */
-public abstract class AbstractFilteringVisitor implements DiffNode.Visitor
+public class StateFilteringVisitor extends AbstractFilteringVisitor
 {
-	private final Collection<DiffNode> matches = new LinkedList<DiffNode>();
+	private final DiffNode.State state;
 
-	protected abstract boolean accept(final DiffNode node);
+	public StateFilteringVisitor(final DiffNode.State state)
+	{
+		Assert.notNull(state, "state");
+		this.state = state;
+	}
 
+	@Override
+	protected boolean accept(final DiffNode node)
+	{
+		return node.getState() == state;
+	}
+
+	@Override
 	protected void onAccept(final DiffNode node, final Visit visit)
 	{
-		matches.add(node);
+		super.onAccept(node, visit);
+		visit.dontGoDeeper();
 	}
 
+	@Override
 	protected void onDismiss(final DiffNode node, final Visit visit)
 	{
-	}
-
-	public void accept(final DiffNode node, final Visit visit)
-	{
-		if (accept(node))
-		{
-			onAccept(node, visit);
-		}
-		else
-		{
-			onDismiss(node, visit);
-		}
-	}
-
-	public Collection<DiffNode> getMatches()
-	{
-		return matches;
+		super.onDismiss(node, visit);
+		visit.dontGoDeeper();
 	}
 }

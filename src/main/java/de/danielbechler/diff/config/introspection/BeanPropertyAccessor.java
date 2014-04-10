@@ -18,7 +18,6 @@ package de.danielbechler.diff.config.introspection;
 
 import de.danielbechler.diff.node.Accessor;
 import de.danielbechler.diff.node.PropertyAwareAccessor;
-import de.danielbechler.diff.config.comparison.ComparisonStrategy;
 import de.danielbechler.diff.node.path.BeanPropertyElementSelector;
 import de.danielbechler.diff.node.path.ElementSelector;
 import de.danielbechler.util.Assert;
@@ -47,7 +46,6 @@ public class BeanPropertyAccessor implements PropertyAwareAccessor, Accessor
 	private final Method writeMethod;
 	private Set<String> categories = new TreeSet<String>();
 	private boolean excluded;
-	private ComparisonStrategy comparisonStrategy;
 
 	public BeanPropertyAccessor(final String propertyName, final Method readMethod, final Method writeMethod)
 	{
@@ -128,16 +126,6 @@ public class BeanPropertyAccessor implements PropertyAwareAccessor, Accessor
 		this.excluded = excluded;
 	}
 
-	public ComparisonStrategy getComparisonStrategy()
-	{
-		return comparisonStrategy;
-	}
-
-	public void setComparisonStrategy(final ComparisonStrategy comparisonStrategy)
-	{
-		this.comparisonStrategy = comparisonStrategy;
-	}
-
 	public void set(final Object target, final Object value)
 	{
 		if (target == null)
@@ -167,7 +155,7 @@ public class BeanPropertyAccessor implements PropertyAwareAccessor, Accessor
 		{
 			writeMethod.invoke(target, value);
 		}
-		catch (Exception e)
+		catch (final Exception e)
 		{
 			final BeanPropertyWriteException ex = new BeanPropertyWriteException(e, value);
 			ex.setPropertyName(propertyName);

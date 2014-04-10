@@ -28,7 +28,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Inherited
-@ObjectDiffAnnotation
 public @interface ObjectDiffEqualsOnlyType
 {
 	/**

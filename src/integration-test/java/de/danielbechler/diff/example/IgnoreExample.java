@@ -1,6 +1,6 @@
 package de.danielbechler.diff.example;
 
-import de.danielbechler.diff.visit.PrintingVisitor;
+import de.danielbechler.diff.visitors.PrintingVisitor;
 import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.config.introspection.ObjectDiffProperty;
 import de.danielbechler.diff.node.DiffNode;

@@ -17,11 +17,9 @@
 package de.danielbechler.diff.config.introspection;
 
 import de.danielbechler.diff.node.PropertyAwareAccessor;
-import de.danielbechler.diff.config.comparison.EqualsOnlyComparisonStrategy;
 import de.danielbechler.util.Assert;
 import de.danielbechler.util.Collections;
 import de.danielbechler.util.Exceptions;
-import de.danielbechler.util.Strings;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -52,29 +50,8 @@ public class StandardBeanIntrospector implements de.danielbechler.diff.config.in
 		final BeanPropertyAccessor accessor = new BeanPropertyAccessor(propertyName, readMethod, writeMethod);
 
 		handleObjectDiffPropertyAnnotation(readMethod, accessor);
-		handleEqualsOnlyTypeAnnotation(readMethod, accessor);
 
 		return accessor;
-	}
-
-	private static void handleEqualsOnlyTypeAnnotation(final Method readMethod,
-													   final BeanPropertyAccessor propertyAccessor)
-	{
-		final Class<?> returnType = readMethod.getReturnType();
-		final ObjectDiffEqualsOnlyType annotation = returnType.getAnnotation(ObjectDiffEqualsOnlyType.class);
-		if (annotation != null)
-		{
-			final EqualsOnlyComparisonStrategy comparisonStrategy;
-			if (Strings.hasText(annotation.valueProviderMethod()))
-			{
-				comparisonStrategy = new EqualsOnlyComparisonStrategy(annotation.valueProviderMethod());
-			}
-			else
-			{
-				comparisonStrategy = new EqualsOnlyComparisonStrategy();
-			}
-			propertyAccessor.setComparisonStrategy(comparisonStrategy);
-		}
 	}
 
 	private static void handleObjectDiffPropertyAnnotation(final Method readMethod,
@@ -83,20 +60,6 @@ public class StandardBeanIntrospector implements de.danielbechler.diff.config.in
 		final ObjectDiffProperty annotation = readMethod.getAnnotation(ObjectDiffProperty.class);
 		if (annotation != null)
 		{
-			if (annotation.equalsOnly())
-			{
-				final String equalsOnlyValueProviderMethod = annotation.equalsOnlyValueProviderMethod();
-				final EqualsOnlyComparisonStrategy comparisonStrategy;
-				if (Strings.hasText(equalsOnlyValueProviderMethod))
-				{
-					comparisonStrategy = new EqualsOnlyComparisonStrategy(equalsOnlyValueProviderMethod);
-				}
-				else
-				{
-					comparisonStrategy = new EqualsOnlyComparisonStrategy();
-				}
-				propertyAccessor.setComparisonStrategy(comparisonStrategy);
-			}
 			propertyAccessor.setExcluded(annotation.excluded());
 			propertyAccessor.setCategories(Collections.setOf(annotation.categories()));
 		}

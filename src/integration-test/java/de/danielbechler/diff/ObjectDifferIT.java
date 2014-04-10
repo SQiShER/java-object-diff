@@ -16,7 +16,7 @@
 
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.visit.NodeHierarchyVisitor;
+import de.danielbechler.diff.visitors.NodeHierarchyVisitor;
 import de.danielbechler.diff.helper.NodeAssertions;
 import de.danielbechler.diff.helper.TestGroups;
 import de.danielbechler.diff.mock.ObjectWithAccessTrackingIgnoredProperty;

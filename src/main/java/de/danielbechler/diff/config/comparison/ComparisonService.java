@@ -16,6 +16,8 @@
 
 package de.danielbechler.diff.config.comparison;
 
+import de.danielbechler.diff.config.introspection.ObjectDiffEqualsOnlyType;
+import de.danielbechler.diff.config.introspection.ObjectDiffProperty;
 import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.diff.node.path.NodePath;
 import de.danielbechler.diff.node.path.NodePathValueHolder;
@@ -42,24 +44,39 @@ public class ComparisonService implements ComparisonConfiguration, ComparisonStr
 			return comparisonStrategy;
 		}
 
-		if (typeComparisonStrategyMap.containsKey(node.getValueType()))
+		final Class<?> valueType = node.getValueType();
+		if (typeComparisonStrategyMap.containsKey(valueType))
 		{
-			return typeComparisonStrategyMap.get(node.getValueType());
+			return typeComparisonStrategyMap.get(valueType);
 		}
 
-		if (Classes.isComparableType(node.getValueType()))
+		if (Classes.isComparableType(valueType))
 		{
 			return new ComparableComparisonStrategy();
 		}
 
-		if (Classes.isSimpleType(node.getValueType()))
+		if (Classes.isSimpleType(valueType))
 		{
 			return new EqualsOnlyComparisonStrategy();
 		}
 
-		if (node.getComparisonStrategy() != null)
+		final ObjectDiffPropertyComparisonStrategyResolver comparisonStrategyResolver = ObjectDiffPropertyComparisonStrategyResolver.instance;
+
+		final ObjectDiffProperty objectDiffProperty = node.getPropertyAnnotation(ObjectDiffProperty.class);
+		final ComparisonStrategy comparisonStrategyFromObjectDiffPropertyAnnotation = comparisonStrategyResolver.comparisonStrategyForAnnotation(objectDiffProperty);
+		if (comparisonStrategyFromObjectDiffPropertyAnnotation != null)
 		{
-			return node.getComparisonStrategy();
+			return comparisonStrategyFromObjectDiffPropertyAnnotation;
+		}
+
+		if (valueType != null)
+		{
+			final ObjectDiffEqualsOnlyType objectDiffEqualsOnlyType = valueType.getAnnotation(ObjectDiffEqualsOnlyType.class);
+			final ComparisonStrategy comparisonStrategyFromObjectDiffEqualsOnlyTypeAnnotation = comparisonStrategyResolver.comparisonStrategyForAnnotation(objectDiffEqualsOnlyType);
+			if (comparisonStrategyFromObjectDiffEqualsOnlyTypeAnnotation != null)
+			{
+				return comparisonStrategyFromObjectDiffEqualsOnlyTypeAnnotation;
+			}
 		}
 
 		return null;

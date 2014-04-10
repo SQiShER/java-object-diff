@@ -16,15 +16,14 @@
 
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.config.Configuration;
-import de.danielbechler.diff.config.filtering.ReturnableNodeConfiguration;
-import de.danielbechler.diff.config.filtering.ReturnableNodeService;
 import de.danielbechler.diff.config.category.CategoryConfiguration;
 import de.danielbechler.diff.config.category.CategoryService;
 import de.danielbechler.diff.config.circular.CircularReferenceConfiguration;
 import de.danielbechler.diff.config.circular.CircularReferenceService;
 import de.danielbechler.diff.config.comparison.ComparisonConfiguration;
 import de.danielbechler.diff.config.comparison.ComparisonService;
+import de.danielbechler.diff.config.filtering.ReturnableNodeConfiguration;
+import de.danielbechler.diff.config.filtering.ReturnableNodeService;
 import de.danielbechler.diff.config.inclusion.InclusionConfiguration;
 import de.danielbechler.diff.config.inclusion.InclusionService;
 import de.danielbechler.diff.config.introspection.IntrospectionConfiguration;
@@ -41,7 +40,7 @@ public final class ObjectDifferBuilder
 {
 	private final Configuration configuration = new ConfigurationImpl();
 	private final CategoryService categoryService = new CategoryService();
-	private final InclusionService inclusionService = new InclusionService(categoryService, configuration);
+	private final InclusionService<Configuration> inclusionService = new InclusionService<Configuration>(categoryService, configuration);
 	private final ComparisonService comparisonService = new ComparisonService();
 	private final ReturnableNodeService returnableNodeService = new ReturnableNodeService();
 	private final IntrospectionService introspectionService = new IntrospectionService();
@@ -115,7 +114,7 @@ public final class ObjectDifferBuilder
 		 * Allows to in- or exclude nodes based on property name, object type, category or location in the object
 		 * graph.
 		 */
-		public InclusionConfiguration inclusion()
+		public InclusionConfiguration<Configuration> inclusion()
 		{
 			return inclusionService;
 		}

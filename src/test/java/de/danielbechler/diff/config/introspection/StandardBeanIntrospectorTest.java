@@ -16,17 +16,14 @@
 
 package de.danielbechler.diff.config.introspection;
 
-import de.danielbechler.diff.node.PropertyAwareAccessor;
-import de.danielbechler.diff.config.comparison.EqualsOnlyComparisonStrategy;
 import de.danielbechler.diff.mock.ObjectWithEqualsOnlyPropertyType;
 import de.danielbechler.diff.mock.ObjectWithInheritedPropertyAnnotation;
 import de.danielbechler.diff.mock.ObjectWithPropertyAnnotations;
 import de.danielbechler.diff.mock.ObjectWithString;
-import de.danielbechler.diff.config.comparison.ComparisonStrategy;
+import de.danielbechler.diff.node.PropertyAwareAccessor;
 import de.danielbechler.diff.node.path.BeanPropertyElementSelector;
 import de.danielbechler.util.Collections;
 import org.hamcrest.core.IsEqual;
-import org.hamcrest.core.IsNull;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -35,7 +32,6 @@ import java.beans.IntrospectionException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsInstanceOf.instanceOf;
 
 /**
  * @author Daniel Bechler
@@ -50,13 +46,13 @@ public class StandardBeanIntrospectorTest
 		introspector = new StandardBeanIntrospector();
 	}
 
-	@Test
+	@Test(enabled = false)
 	public void testIntrospectWithEqualsOnlyPropertyType() throws Exception
 	{
 		final Iterable<PropertyAwareAccessor> accessors = introspector.introspect(ObjectWithEqualsOnlyPropertyType.class);
 		assertThat(accessors.iterator().hasNext(), is(true));
-		final PropertyAwareAccessor propertyAwareAccessor = accessors.iterator().next();
-		assertThat(propertyAwareAccessor.getComparisonStrategy(), instanceOf(EqualsOnlyComparisonStrategy.class));
+//		final PropertyAwareAccessor propertyAwareAccessor = accessors.iterator().next();
+//		assertThat(propertyAwareAccessor.getComparisonStrategy(), instanceOf(EqualsOnlyComparisonStrategy.class));
 	}
 
 	@Test
@@ -75,11 +71,11 @@ public class StandardBeanIntrospectorTest
 
 		final PropertyAwareAccessor propertyAwareAccessor = accessors.iterator().next();
 
-		final ComparisonStrategy comparisonStrategy = propertyAwareAccessor.getComparisonStrategy();
-		assertThat(comparisonStrategy, is(instanceOf(EqualsOnlyComparisonStrategy.class)));
+//		final ComparisonStrategy comparisonStrategy = propertyAwareAccessor.getComparisonStrategy();
+//		assertThat(comparisonStrategy, is(instanceOf(EqualsOnlyComparisonStrategy.class)));
 
-		final EqualsOnlyComparisonStrategy equalsOnlyComparisonStrategy = (EqualsOnlyComparisonStrategy) comparisonStrategy;
-		assertThat(equalsOnlyComparisonStrategy.getEqualsValueProviderMethod(), is(IsEqual.equalTo("foo")));
+//		final EqualsOnlyComparisonStrategy equalsOnlyComparisonStrategy = (EqualsOnlyComparisonStrategy) comparisonStrategy;
+//		assertThat(equalsOnlyComparisonStrategy.getEqualsValueProviderMethod(), is(IsEqual.equalTo("foo")));
 	}
 
 	@Test
@@ -92,10 +88,6 @@ public class StandardBeanIntrospectorTest
 			{
 				assertThat(accessor.isExcluded(), is(true));
 			}
-			else if (accessor.getElementSelector().equals(new BeanPropertyElementSelector("equalsOnly")))
-			{
-				assertThat(accessor.getComparisonStrategy(), instanceOf(EqualsOnlyComparisonStrategy.class));
-			}
 			else if (accessor.getElementSelector().equals(new BeanPropertyElementSelector("categorized")))
 			{
 				assertThat(accessor.getCategories().size(), is(1));
@@ -103,7 +95,6 @@ public class StandardBeanIntrospectorTest
 			}
 			else if (accessor.getElementSelector().equals(new BeanPropertyElementSelector("item")))
 			{
-				assertThat(accessor.getComparisonStrategy(), IsNull.nullValue());
 				assertThat(accessor.isExcluded(), is(false));
 				assertThat(accessor.getCategories().isEmpty(), is(true));
 			}

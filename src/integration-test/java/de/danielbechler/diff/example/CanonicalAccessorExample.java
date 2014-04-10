@@ -16,7 +16,7 @@
 
 package de.danielbechler.diff.example;
 
-import de.danielbechler.diff.visit.NodeHierarchyVisitor;
+import de.danielbechler.diff.visitors.NodeHierarchyVisitor;
 import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.diff.node.path.CollectionItemElementSelector;

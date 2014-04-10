@@ -16,7 +16,7 @@
 
 package de.danielbechler.diff.example.gettingstarted;
 
-import de.danielbechler.diff.visit.PrintingVisitor;
+import de.danielbechler.diff.visitors.PrintingVisitor;
 import de.danielbechler.diff.ObjectDiffer;
 import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.example.phonebook.Contact;

@@ -26,7 +26,6 @@ import de.danielbechler.diff.config.introspection.ObjectDiffProperty;
 public class ObjectWithPropertyAnnotations extends ObjectWithHashCodeAndEquals
 {
 	private String ignored;
-	private String equalsOnly;
 	private String categorized;
 
 	public ObjectWithPropertyAnnotations(final String key)
@@ -48,17 +47,6 @@ public class ObjectWithPropertyAnnotations extends ObjectWithHashCodeAndEquals
 	public void setIgnored(final String ignored)
 	{
 		this.ignored = ignored;
-	}
-
-	@ObjectDiffProperty(equalsOnly = true)
-	public String getEqualsOnly()
-	{
-		return equalsOnly;
-	}
-
-	public void setEqualsOnly(final String equalsOnly)
-	{
-		this.equalsOnly = equalsOnly;
 	}
 
 	@ObjectDiffProperty(categories = {"foo"})

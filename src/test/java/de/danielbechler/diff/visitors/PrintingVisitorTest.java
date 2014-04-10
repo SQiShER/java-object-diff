@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.danielbechler.diff.visit;
+package de.danielbechler.diff.visitors;
 
 import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.mock.ObjectWithCircularReference;

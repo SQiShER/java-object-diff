@@ -14,47 +14,46 @@
  * limitations under the License.
  */
 
-package de.danielbechler.diff.visit;
+package de.danielbechler.diff.visitors;
 
 import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.diff.node.Visit;
-import de.danielbechler.diff.node.path.NodePath;
-import de.danielbechler.util.Assert;
+
+import java.util.Collection;
+import java.util.LinkedList;
 
 /**
  * @author Daniel Bechler
  */
-public class NodePathVisitor implements DiffNode.Visitor
+public abstract class AbstractFilteringVisitor implements DiffNode.Visitor
 {
-	private final NodePath nodePath;
+	private final Collection<DiffNode> matches = new LinkedList<DiffNode>();
 
-	private DiffNode node;
+	protected abstract boolean accept(final DiffNode node);
 
-	public NodePathVisitor(final NodePath nodePath)
+	protected void onAccept(final DiffNode node, final Visit visit)
 	{
-		Assert.notNull(nodePath, "nodePath");
-		this.nodePath = nodePath;
+		matches.add(node);
+	}
+
+	protected void onDismiss(final DiffNode node, final Visit visit)
+	{
 	}
 
 	public void accept(final DiffNode node, final Visit visit)
 	{
-		final NodePath differencePath = node.getPath();
-		if (differencePath.matches(nodePath) || differencePath.isParentOf(nodePath))
+		if (accept(node))
 		{
-			if (differencePath.matches(nodePath))
-			{
-				this.node = node;
-				visit.stop();
-			}
+			onAccept(node, visit);
 		}
 		else
 		{
-			visit.dontGoDeeper();
+			onDismiss(node, visit);
 		}
 	}
 
-	public DiffNode getNode()
+	public Collection<DiffNode> getMatches()
 	{
-		return node;
+		return matches;
 	}
 }
