@@ -62,6 +62,12 @@ public class DifferDispatcher
 		resetInstanceMemory();
 	}
 
+	protected final void resetInstanceMemory()
+	{
+		workingCircularReferenceDetector = circularReferenceDetectorFactory.createCircularReferenceDetector();
+		baseCircularReferenceDetector = circularReferenceDetectorFactory.createCircularReferenceDetector();
+	}
+
 	private static DiffNode findNodeMatchingPropertyPath(final DiffNode node, final NodePath nodePath)
 	{
 		if (node == null)
@@ -144,7 +150,7 @@ public class DifferDispatcher
 				forgetInstances(instances);
 			}
 		}
-		catch (CircularReferenceException e)
+		catch (final CircularReferenceException e)
 		{
 			node = newCircularNode(parentNode, instances, e.getNodePath());
 			circularReferenceExceptionHandler.onCircularReferenceException(node);
@@ -165,12 +171,6 @@ public class DifferDispatcher
 					"'. This mustn't happen, as there should always be a fallback differ.");
 		}
 		return differ.compare(parentNode, instances);
-	}
-
-	protected final void resetInstanceMemory()
-	{
-		workingCircularReferenceDetector = circularReferenceDetectorFactory.createCircularReferenceDetector();
-		baseCircularReferenceDetector = circularReferenceDetectorFactory.createCircularReferenceDetector();
 	}
 
 	protected void forgetInstances(final Instances instances)

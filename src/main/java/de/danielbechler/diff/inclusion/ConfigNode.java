@@ -17,7 +17,6 @@
 package de.danielbechler.diff.inclusion;
 
 import de.danielbechler.diff.path.NodePath;
-import de.danielbechler.diff.selector.AnyElementSelector;
 import de.danielbechler.diff.selector.ElementSelector;
 import de.danielbechler.diff.selector.RootElementSelector;
 
@@ -36,8 +35,6 @@ public class ConfigNode
 	private final Map<ElementSelector, ConfigNode> children = new HashMap<ElementSelector, ConfigNode>();
 	private final ElementSelector elementSelector;
 	private final ConfigNode parent;
-	@Deprecated
-	private ConfigNode prototype;
 	private Inclusion inclusion;
 
 	public ConfigNode()
@@ -97,14 +94,6 @@ public class ConfigNode
 		{
 			throw new IllegalArgumentException("A child node can never be the root");
 		}
-		if (childSelector instanceof AnyElementSelector)
-		{
-			if (prototype == null)
-			{
-				prototype = new ConfigNode(childSelector, parent);
-			}
-			return prototype;
-		}
 		if (children.containsKey(childSelector))
 		{
 			return children.get(childSelector);
@@ -145,10 +134,6 @@ public class ConfigNode
 			if (parentWithInclusion != null)
 			{
 				return parentWithInclusion.getInclusion() != EXCLUDED;
-			}
-			if (!hasInclusion() && hasPrototype() && prototype.hasInclusion())
-			{
-				return prototype.inclusion == INCLUDED;
 			}
 			if (inclusion == INCLUDED)
 			{
@@ -225,20 +210,5 @@ public class ConfigNode
 			}
 		}
 		return false;
-	}
-
-	public ConfigNode getPrototype()
-	{
-		return prototype;
-	}
-
-	public void setPrototype(final ConfigNode prototype)
-	{
-		this.prototype = prototype;
-	}
-
-	public boolean hasPrototype()
-	{
-		return prototype != null;
 	}
 }

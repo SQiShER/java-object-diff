@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Daniel Bechler
+ * Copyright 2014 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package de.danielbechler.diff.path;
 
-import de.danielbechler.diff.selector.AnyElementSelector;
 import de.danielbechler.diff.selector.BeanPropertyElementSelector;
 import de.danielbechler.diff.selector.CollectionItemElementSelector;
 import de.danielbechler.diff.selector.ElementSelector;
@@ -42,27 +41,10 @@ public final class NodePath implements Comparable<NodePath>
 		this.elementSelectors = Collections.unmodifiableList(elementSelectors);
 	}
 
-	public static AppendableBuilder startBuilding()
-	{
-		final List<ElementSelector> elementSelectors1 = new LinkedList<ElementSelector>();
-		elementSelectors1.add(RootElementSelector.getInstance());
-		return new AppendableBuilderImpl(elementSelectors1);
-	}
-
 	public static AppendableBuilder startBuildingFrom(final NodePath nodePath)
 	{
 		Assert.notNull(nodePath, "propertyPath");
 		return new AppendableBuilderImpl(new ArrayList<ElementSelector>(nodePath.getElementSelectors()));
-	}
-
-	public static NodePath with(final String propertyName, final String... additionalPropertyNames)
-	{
-		return startBuilding().propertyName(propertyName, additionalPropertyNames).build();
-	}
-
-	public static NodePath withRoot()
-	{
-		return startBuilding().build();
 	}
 
 	public List<ElementSelector> getElementSelectors()
@@ -70,9 +52,21 @@ public final class NodePath implements Comparable<NodePath>
 		return elementSelectors;
 	}
 
-	public boolean matches(final NodePath nodePath)
+	public static NodePath with(final String propertyName, final String... additionalPropertyNames)
 	{
-		return nodePath.equals(this);
+		return startBuilding().propertyName(propertyName, additionalPropertyNames).build();
+	}
+
+	public static AppendableBuilder startBuilding()
+	{
+		final List<ElementSelector> elementSelectors1 = new LinkedList<ElementSelector>();
+		elementSelectors1.add(RootElementSelector.getInstance());
+		return new AppendableBuilderImpl(elementSelectors1);
+	}
+
+	public static NodePath withRoot()
+	{
+		return startBuilding().build();
 	}
 
 	public boolean isParentOf(final NodePath nodePath)
@@ -98,6 +92,34 @@ public final class NodePath implements Comparable<NodePath>
 	public ElementSelector getLastElementSelector()
 	{
 		return elementSelectors.get(elementSelectors.size() - 1);
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return elementSelectors.hashCode();
+	}
+
+	@Override
+	public boolean equals(final Object o)
+	{
+		if (this == o)
+		{
+			return true;
+		}
+		if (o == null || getClass() != o.getClass())
+		{
+			return false;
+		}
+
+		final NodePath that = (NodePath) o;
+
+		if (!elementSelectors.equals(that.elementSelectors))
+		{
+			return false;
+		}
+
+		return true;
 	}
 
 	@Override
@@ -131,34 +153,6 @@ public final class NodePath implements Comparable<NodePath>
 		return sb.toString();
 	}
 
-	@Override
-	public boolean equals(final Object o)
-	{
-		if (this == o)
-		{
-			return true;
-		}
-		if (o == null || getClass() != o.getClass())
-		{
-			return false;
-		}
-
-		final NodePath that = (NodePath) o;
-
-		if (!elementSelectors.equals(that.elementSelectors))
-		{
-			return false;
-		}
-
-		return true;
-	}
-
-	@Override
-	public int hashCode()
-	{
-		return elementSelectors.hashCode();
-	}
-
 	public int compareTo(final NodePath that)
 	{
 		if (this.getElementSelectors().size() <= that.getElementSelectors().size())
@@ -179,10 +173,13 @@ public final class NodePath implements Comparable<NodePath>
 		}
 	}
 
+	public boolean matches(final NodePath nodePath)
+	{
+		return nodePath.equals(this);
+	}
+
 	public static interface AppendableBuilder
 	{
-		AppendableBuilder any();
-
 		AppendableBuilder element(ElementSelector elementSelector);
 
 		AppendableBuilder propertyName(String name, String... names);
@@ -202,12 +199,6 @@ public final class NodePath implements Comparable<NodePath>
 		{
 			Assert.notEmpty(elementSelectors, "elementSelectors");
 			this.elementSelectors = new LinkedList<ElementSelector>(elementSelectors);
-		}
-
-		public AppendableBuilder any()
-		{
-			elementSelectors.add(new AnyElementSelector());
-			return this;
 		}
 
 		public AppendableBuilder element(final ElementSelector elementSelector)

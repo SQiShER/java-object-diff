@@ -504,6 +504,7 @@ public class DiffNode
 		return false;
 	}
 
+	// TODO These categories should also contain the ones configured via CategoryService
 	public final Set<String> getCategories()
 	{
 		final Set<String> categories = new TreeSet<String>();
