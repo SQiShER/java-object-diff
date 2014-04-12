@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Daniel Bechler
+ * Copyright 2014 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@
 package de.danielbechler.diff.helper;
 
 import de.danielbechler.diff.node.DiffNode;
+import de.danielbechler.diff.node.NodePathVisitor;
 import de.danielbechler.diff.path.NodePath;
 import de.danielbechler.diff.selector.CollectionItemElementSelector;
 import de.danielbechler.diff.selector.ElementSelector;
-import de.danielbechler.diff.visitors.NodePathVisitor;
 import org.fest.assertions.api.Assertions;
 import org.fest.assertions.core.Condition;
 
@@ -29,9 +29,56 @@ import org.fest.assertions.core.Condition;
  */
 public final class NodeAssertions
 {
+	private NodeAssertions()
+	{
+	}
+
 	public static Syntax.SelectNode assertThat(final DiffNode node)
 	{
 		return new NodeAssertionLanguage(node);
+	}
+
+	private interface Syntax
+	{
+		public interface SelectNode
+		{
+			AssertNode root();
+
+			AssertNode self();
+
+			AssertNode child(NodePath nodePath);
+
+			AssertNode child(NodePath.AppendableBuilder propertyPathBuilder);
+
+			AssertNode child(String propertyName, String... propertyPathElements);
+
+			AssertNode child(ElementSelector pathElementSelector);
+
+			AssertNode collectionChild(Object referenceItem);
+		}
+
+		public interface AssertNode
+		{
+			AssertNode doesExist();
+
+			AssertNode doesNotExist();
+
+			AssertNode hasState(DiffNode.State state);
+
+			AssertNode hasChildren();
+
+			AssertNode hasChildren(int count);
+
+			AssertNode hasNoChildren();
+
+			AssertNode isCircular();
+
+			AssertNode isUntouched();
+
+			AssertNode hasChanges();
+
+			AssertNode hasCircularStartPathEqualTo(final NodePath nodePath);
+		}
 	}
 
 	public static final class NodeAssertionLanguage implements Syntax.SelectNode, Syntax.AssertNode
@@ -44,83 +91,6 @@ public final class NodeAssertions
 		private NodeAssertionLanguage(final DiffNode rootNode)
 		{
 			this.rootNode = rootNode;
-		}
-
-		public Syntax.AssertNode root()
-		{
-			this.selectedNode = rootNode;
-			this.nodePath = NodePath.withRoot();
-			return this;
-		}
-
-		public Syntax.AssertNode self()
-		{
-			this.selectedNode = rootNode;
-			this.nodePath = rootNode.getPath();
-			return this;
-		}
-
-		public Syntax.AssertNode child(final NodePath nodePath)
-		{
-			if (rootNode != null)
-			{
-				selectedNode = rootNode.getChild(nodePath);
-			}
-			this.nodePath = nodePath;
-			return this;
-		}
-
-		public Syntax.AssertNode child(final NodePath.AppendableBuilder propertyPathBuilder)
-		{
-			return child(propertyPathBuilder.build());
-		}
-
-		public Syntax.AssertNode child(final String propertyName, final String... propertyNames)
-		{
-			return child(NodePath.with(propertyName, propertyNames));
-		}
-
-		public Syntax.AssertNode child(final ElementSelector pathElementSelector)
-		{
-			return child(NodePath.startBuilding().element(pathElementSelector));
-		}
-
-		public Syntax.AssertNode collectionChild(final Object referenceItem)
-		{
-			return child(new CollectionItemElementSelector(referenceItem));
-		}
-
-		public Syntax.AssertNode doesExist()
-		{
-			Assertions.assertThat(rootNode).has(childAt(nodePath));
-			return this;
-		}
-
-		public Syntax.AssertNode doesNotExist()
-		{
-			Assertions.assertThat(rootNode).has(noChildAt(nodePath));
-			return this;
-		}
-
-		public Syntax.AssertNode hasState(final DiffNode.State state)
-		{
-			doesExist();
-			Assertions.assertThat(selectedNode).has(state(state));
-			return this;
-		}
-
-		public Syntax.AssertNode hasChildren()
-		{
-			doesExist();
-			Assertions.assertThat(selectedNode).has(atLeastOneChild());
-			return this;
-		}
-
-		public Syntax.AssertNode hasChildren(final int count)
-		{
-			doesExist();
-			Assertions.assertThat(selectedNode).has(exactChildCountOf(count));
-			return this;
 		}
 
 		private static Condition<DiffNode> childAt(final NodePath nodePath)
@@ -219,6 +189,83 @@ public final class NodeAssertions
 			};
 		}
 
+		public Syntax.AssertNode root()
+		{
+			this.selectedNode = rootNode;
+			this.nodePath = NodePath.withRoot();
+			return this;
+		}
+
+		public Syntax.AssertNode self()
+		{
+			this.selectedNode = rootNode;
+			this.nodePath = rootNode.getPath();
+			return this;
+		}
+
+		public Syntax.AssertNode child(final NodePath nodePath)
+		{
+			if (rootNode != null)
+			{
+				selectedNode = rootNode.getChild(nodePath);
+			}
+			this.nodePath = nodePath;
+			return this;
+		}
+
+		public Syntax.AssertNode child(final NodePath.AppendableBuilder propertyPathBuilder)
+		{
+			return child(propertyPathBuilder.build());
+		}
+
+		public Syntax.AssertNode child(final String propertyName, final String... propertyNames)
+		{
+			return child(NodePath.with(propertyName, propertyNames));
+		}
+
+		public Syntax.AssertNode child(final ElementSelector pathElementSelector)
+		{
+			return child(NodePath.startBuilding().element(pathElementSelector));
+		}
+
+		public Syntax.AssertNode collectionChild(final Object referenceItem)
+		{
+			return child(new CollectionItemElementSelector(referenceItem));
+		}
+
+		public Syntax.AssertNode doesExist()
+		{
+			Assertions.assertThat(rootNode).has(childAt(nodePath));
+			return this;
+		}
+
+		public Syntax.AssertNode doesNotExist()
+		{
+			Assertions.assertThat(rootNode).has(noChildAt(nodePath));
+			return this;
+		}
+
+		public Syntax.AssertNode hasState(final DiffNode.State state)
+		{
+			doesExist();
+			Assertions.assertThat(selectedNode).has(state(state));
+			return this;
+		}
+
+		public Syntax.AssertNode hasChildren()
+		{
+			doesExist();
+			Assertions.assertThat(selectedNode).has(atLeastOneChild());
+			return this;
+		}
+
+		public Syntax.AssertNode hasChildren(final int count)
+		{
+			doesExist();
+			Assertions.assertThat(selectedNode).has(exactChildCountOf(count));
+			return this;
+		}
+
 		public Syntax.AssertNode hasNoChildren()
 		{
 			return hasChildren(0);
@@ -250,53 +297,6 @@ public final class NodeAssertions
 			doesExist();
 			Assertions.assertThat(selectedNode.getCircleStartPath()).isEqualTo(nodePath);
 			return this;
-		}
-	}
-
-	private NodeAssertions()
-	{
-	}
-
-	private interface Syntax
-	{
-		public interface SelectNode
-		{
-			AssertNode root();
-
-			AssertNode self();
-
-			AssertNode child(NodePath nodePath);
-
-			AssertNode child(NodePath.AppendableBuilder propertyPathBuilder);
-
-			AssertNode child(String propertyName, String... propertyPathElements);
-
-			AssertNode child(ElementSelector pathElementSelector);
-
-			AssertNode collectionChild(Object referenceItem);
-		}
-
-		public interface AssertNode
-		{
-			AssertNode doesExist();
-
-			AssertNode doesNotExist();
-
-			AssertNode hasState(DiffNode.State state);
-
-			AssertNode hasChildren();
-
-			AssertNode hasChildren(int count);
-
-			AssertNode hasNoChildren();
-
-			AssertNode isCircular();
-
-			AssertNode isUntouched();
-
-			AssertNode hasChanges();
-
-			AssertNode hasCircularStartPathEqualTo(final NodePath nodePath);
 		}
 	}
 }

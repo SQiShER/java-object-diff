@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Daniel Bechler
+ * Copyright 2014 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package de.danielbechler.diff.example.phonebook;
 
-import de.danielbechler.diff.config.introspection.ObjectDiffProperty;
+import de.danielbechler.diff.introspection.ObjectDiffProperty;
 import de.danielbechler.util.Strings;
 
 import java.util.LinkedHashMap;
@@ -27,14 +27,6 @@ import java.util.Map;
  */
 public class Contact
 {
-	public static Contact from(final Contact contact)
-	{
-		final Contact copy = new Contact(contact.firstName, contact.lastName);
-		copy.setMiddleName(contact.middleName);
-		copy.setPhoneNumbers(new LinkedHashMap<String, PhoneNumber>(contact.phoneNumbers));
-		return copy;
-	}
-
 	private final String firstName;
 	private final String lastName;
 	private String middleName;
@@ -44,6 +36,14 @@ public class Contact
 	{
 		this.firstName = firstName;
 		this.lastName = lastName;
+	}
+
+	public static Contact from(final Contact contact)
+	{
+		final Contact copy = new Contact(contact.firstName, contact.lastName);
+		copy.setMiddleName(contact.middleName);
+		copy.setPhoneNumbers(new LinkedHashMap<String, PhoneNumber>(contact.phoneNumbers));
+		return copy;
 	}
 
 	@ObjectDiffProperty(categories = "name")

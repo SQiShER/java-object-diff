@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Daniel Bechler
+ * Copyright 2014 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,61 +16,15 @@
 
 package de.danielbechler.diff.issues.issue38;
 
-import de.danielbechler.diff.visitors.PrintingVisitor;
 import de.danielbechler.diff.ObjectDiffer;
 import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.node.DiffNode;
+import de.danielbechler.diff.node.PrintingVisitor;
 
 public class Issue38
 {
 	private Issue38()
 	{
-	}
-
-	// class has public access
-	public static class TestIntBeanPublic
-	{
-
-		private int value;
-
-		public int getValue()
-		{
-			return this.value;
-		}
-
-		public void setValue(final int value)
-		{
-			this.value = value;
-		}
-
-		@Override
-		public String toString()
-		{
-			return "TestIntBeanPublic [value=" + this.value + "]";
-		}
-	}
-
-	// class has private access
-	private static class TestIntBeanPrivate
-	{
-
-		private int value;
-
-		public int getValue()
-		{
-			return this.value;
-		}
-
-		public void setValue(final int value)
-		{
-			this.value = value;
-		}
-
-		@Override
-		public String toString()
-		{
-			return "TestIntBeanPrivate [value=" + this.value + "]";
-		}
 	}
 
 	public static void testIntegerFailsPublic()
@@ -128,5 +82,51 @@ public class Issue38
 		System.out
 				.println("The following comparison works properly bewcause the class has private access (detects change)");
 		Issue38.testIntegerWorksPrivate();
+	}
+
+	// class has public access
+	public static class TestIntBeanPublic
+	{
+
+		private int value;
+
+		public int getValue()
+		{
+			return this.value;
+		}
+
+		public void setValue(final int value)
+		{
+			this.value = value;
+		}
+
+		@Override
+		public String toString()
+		{
+			return "TestIntBeanPublic [value=" + this.value + "]";
+		}
+	}
+
+	// class has private access
+	private static class TestIntBeanPrivate
+	{
+
+		private int value;
+
+		public int getValue()
+		{
+			return this.value;
+		}
+
+		public void setValue(final int value)
+		{
+			this.value = value;
+		}
+
+		@Override
+		public String toString()
+		{
+			return "TestIntBeanPrivate [value=" + this.value + "]";
+		}
 	}
 }

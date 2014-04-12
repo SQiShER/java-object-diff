@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Daniel Bechler
+ * Copyright 2014 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 
 package de.danielbechler.diff.example;
 
-import de.danielbechler.diff.visitors.NodeHierarchyVisitor;
-import de.danielbechler.diff.visitors.PrintingVisitor;
 import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.node.DiffNode;
+import de.danielbechler.diff.node.NodeHierarchyVisitor;
+import de.danielbechler.diff.node.PrintingVisitor;
 
 /**
  * @author Daniel Bechler
@@ -28,6 +28,22 @@ class SimpleNodeExample
 {
 	private SimpleNodeExample()
 	{
+	}
+
+	public static void main(final String[] args)
+	{
+		final Person bruceWayne = new Person("Bruce", "Wayne");
+		final Person batman = new Person("Batman", null);
+		final DiffNode rootNode = ObjectDifferBuilder.buildDefault().compare(batman, bruceWayne);
+		rootNode.visit(new NodeHierarchyVisitor(10));
+		rootNode.visit(new PrintingVisitor(batman, bruceWayne)
+		{
+			@Override
+			protected boolean filter(final DiffNode node)
+			{
+				return true;
+			}
+		});
 	}
 
 	private static class Person
@@ -75,21 +91,5 @@ class SimpleNodeExample
 			}
 			return sb.toString();
 		}
-	}
-
-	public static void main(final String[] args)
-	{
-		final Person bruceWayne = new Person("Bruce", "Wayne");
-		final Person batman = new Person("Batman", null);
-		final DiffNode rootNode = ObjectDifferBuilder.buildDefault().compare(batman, bruceWayne);
-		rootNode.visit(new NodeHierarchyVisitor(10));
-		rootNode.visit(new PrintingVisitor(batman, bruceWayne)
-		{
-			@Override
-			protected boolean filter(final DiffNode node)
-			{
-				return true;
-			}
-		});
 	}
 }

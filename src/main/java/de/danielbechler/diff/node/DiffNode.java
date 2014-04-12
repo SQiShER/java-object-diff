@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Daniel Bechler
+ * Copyright 2014 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 package de.danielbechler.diff.node;
 
 import de.danielbechler.diff.access.Accessor;
-import de.danielbechler.diff.access.CategoryAwareAccessor;
-import de.danielbechler.diff.access.ExclusionAwareAccessor;
+import de.danielbechler.diff.access.CategoryAware;
+import de.danielbechler.diff.access.ExclusionAware;
 import de.danielbechler.diff.access.PropertyAwareAccessor;
 import de.danielbechler.diff.access.RootAccessor;
 import de.danielbechler.diff.access.TypeAwareAccessor;
@@ -496,9 +496,9 @@ public class DiffNode
 
 	public boolean isExcluded()
 	{
-		if (accessor instanceof ExclusionAwareAccessor)
+		if (accessor instanceof ExclusionAware)
 		{
-			return ((ExclusionAwareAccessor) accessor).isExcluded();
+			return ((ExclusionAware) accessor).isExcluded();
 		}
 		return false;
 	}
@@ -510,10 +510,9 @@ public class DiffNode
 		{
 			categories.addAll(parentNode.getCategories());
 		}
-		if (accessor instanceof CategoryAwareAccessor)
+		if (accessor instanceof CategoryAware)
 		{
-			final CategoryAwareAccessor categoryAwareAccessor = (CategoryAwareAccessor) accessor;
-			final Set<String> categoriesFromAccessor = categoryAwareAccessor.getCategories();
+			final Set<String> categoriesFromAccessor = ((CategoryAware) accessor).getCategories();
 			if (categoriesFromAccessor != null)
 			{
 				categories.addAll(categoriesFromAccessor);

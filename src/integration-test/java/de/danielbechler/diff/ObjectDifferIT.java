@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Daniel Bechler
+ * Copyright 2014 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,10 +28,10 @@ import de.danielbechler.diff.mock.ObjectWithMethodEqualsOnlyValueProviderMethodO
 import de.danielbechler.diff.mock.ObjectWithMethodEqualsOnlyValueProviderMethodOnGetNestedObject;
 import de.danielbechler.diff.mock.ObjectWithNestedObject;
 import de.danielbechler.diff.node.DiffNode;
+import de.danielbechler.diff.node.NodeHierarchyVisitor;
 import de.danielbechler.diff.path.NodePath;
 import de.danielbechler.diff.selector.CollectionItemElementSelector;
 import de.danielbechler.diff.selector.MapKeyElementSelector;
-import de.danielbechler.diff.visitors.NodeHierarchyVisitor;
 import org.fest.assertions.api.Assertions;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

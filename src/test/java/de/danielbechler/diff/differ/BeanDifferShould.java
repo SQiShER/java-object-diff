@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Daniel Bechler
+ * Copyright 2014 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,12 @@ package de.danielbechler.diff.differ;
 import de.danielbechler.diff.access.Instances;
 import de.danielbechler.diff.access.PropertyAwareAccessor;
 import de.danielbechler.diff.access.RootAccessor;
-import de.danielbechler.diff.config.comparison.ComparisonStrategy;
-import de.danielbechler.diff.config.comparison.ComparisonStrategyResolver;
-import de.danielbechler.diff.config.filtering.IsReturnableResolver;
-import de.danielbechler.diff.config.introspection.Introspector;
-import de.danielbechler.diff.config.introspection.IntrospectorResolver;
-import de.danielbechler.diff.config.introspection.IsIntrospectableResolver;
+import de.danielbechler.diff.comparison.ComparisonStrategy;
+import de.danielbechler.diff.comparison.ComparisonStrategyResolver;
+import de.danielbechler.diff.filtering.IsReturnableResolver;
+import de.danielbechler.diff.introspection.Introspector;
+import de.danielbechler.diff.introspection.IntrospectorResolver;
+import de.danielbechler.diff.introspection.IsIntrospectableResolver;
 import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.diff.selector.BeanPropertyElementSelector;
 import org.fest.assertions.api.Assertions;
@@ -77,27 +77,6 @@ public class BeanDifferShould
 	@Mock
 	private ComparisonStrategy comparisonStrategy;
 
-	@BeforeMethod
-	public void setUp()
-	{
-		initMocks(this);
-
-		when(instances.getSourceAccessor()).thenReturn(RootAccessor.getInstance());
-		when(instances.getType()).then(new Answer<Object>()
-		{
-			public Object answer(final InvocationOnMock invocation) throws Throwable
-			{
-				return String.class;
-			}
-		});
-		when(instances.getWorking()).thenReturn("foo");
-		when(instances.getBase()).thenReturn("bar");
-		when(introspectorResolver.introspectorForNode(any(DiffNode.class))).thenReturn(introspector);
-		when(introspector.introspect(any(Class.class))).thenReturn(Collections.<PropertyAwareAccessor>emptyList());
-
-		beanDiffer = new BeanDiffer(differDispatcher, introspectableResolver, returnableResolver, comparisonStrategyResolver, introspectorResolver);
-	}
-
 	@DataProvider
 	public static Object[][] acceptableTypes()
 	{
@@ -117,6 +96,27 @@ public class BeanDifferShould
 				new Class[]{int[].class},
 				new Class[]{boolean.class}
 		};
+	}
+
+	@BeforeMethod
+	public void setUp()
+	{
+		initMocks(this);
+
+		when(instances.getSourceAccessor()).thenReturn(RootAccessor.getInstance());
+		when(instances.getType()).then(new Answer<Object>()
+		{
+			public Object answer(final InvocationOnMock invocation) throws Throwable
+			{
+				return String.class;
+			}
+		});
+		when(instances.getWorking()).thenReturn("foo");
+		when(instances.getBase()).thenReturn("bar");
+		when(introspectorResolver.introspectorForNode(any(DiffNode.class))).thenReturn(introspector);
+		when(introspector.introspect(any(Class.class))).thenReturn(Collections.<PropertyAwareAccessor>emptyList());
+
+		beanDiffer = new BeanDiffer(differDispatcher, introspectableResolver, returnableResolver, comparisonStrategyResolver, introspectorResolver);
 	}
 
 	@Test(dataProvider = "acceptableTypes")

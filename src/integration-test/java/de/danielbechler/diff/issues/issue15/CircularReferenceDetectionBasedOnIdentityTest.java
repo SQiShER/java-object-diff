@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Daniel Bechler
+ * Copyright 2014 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import de.danielbechler.diff.node.DiffNode;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import static de.danielbechler.diff.config.circular.CircularReferenceMatchingMode.EQUALITY_OPERATOR;
+import static de.danielbechler.diff.circular.CircularReferenceMatchingMode.EQUALITY_OPERATOR;
 
 /**
  * @author Daniel Bechler

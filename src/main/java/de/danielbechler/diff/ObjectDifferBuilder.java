@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Daniel Bechler
+ * Copyright 2014 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,24 +16,24 @@
 
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.config.category.CategoryConfiguration;
-import de.danielbechler.diff.config.category.CategoryService;
-import de.danielbechler.diff.config.circular.CircularReferenceConfiguration;
-import de.danielbechler.diff.config.circular.CircularReferenceService;
-import de.danielbechler.diff.config.comparison.ComparisonConfiguration;
-import de.danielbechler.diff.config.comparison.ComparisonService;
-import de.danielbechler.diff.config.filtering.ReturnableNodeConfiguration;
-import de.danielbechler.diff.config.filtering.ReturnableNodeService;
-import de.danielbechler.diff.config.inclusion.InclusionConfiguration;
-import de.danielbechler.diff.config.inclusion.InclusionService;
-import de.danielbechler.diff.config.introspection.IntrospectionConfiguration;
-import de.danielbechler.diff.config.introspection.IntrospectionService;
+import de.danielbechler.diff.category.CategoryConfiguration;
+import de.danielbechler.diff.category.CategoryService;
+import de.danielbechler.diff.circular.CircularReferenceConfiguration;
+import de.danielbechler.diff.circular.CircularReferenceService;
+import de.danielbechler.diff.comparison.ComparisonConfiguration;
+import de.danielbechler.diff.comparison.ComparisonService;
 import de.danielbechler.diff.differ.BeanDiffer;
 import de.danielbechler.diff.differ.CollectionDiffer;
 import de.danielbechler.diff.differ.DifferDispatcher;
 import de.danielbechler.diff.differ.DifferProvider;
 import de.danielbechler.diff.differ.MapDiffer;
 import de.danielbechler.diff.differ.PrimitiveDiffer;
+import de.danielbechler.diff.filtering.ReturnableNodeConfiguration;
+import de.danielbechler.diff.filtering.ReturnableNodeService;
+import de.danielbechler.diff.inclusion.InclusionConfiguration;
+import de.danielbechler.diff.inclusion.InclusionService;
+import de.danielbechler.diff.introspection.IntrospectionConfiguration;
+import de.danielbechler.diff.introspection.IntrospectionService;
 
 /**
  * This is the entry point of every diffing operation. It acts as a factory to get hold of an actual {@link
@@ -44,7 +44,7 @@ import de.danielbechler.diff.differ.PrimitiveDiffer;
  */
 public final class ObjectDifferBuilder
 {
-	private final Configuration configuration = new ConfigurationImpl();
+	private final Configuration configuration = new Configuration();
 	private final CategoryService categoryService = new CategoryService();
 	private final InclusionService<Configuration> inclusionService = new InclusionService<Configuration>(categoryService, configuration);
 	private final ComparisonService comparisonService = new ComparisonService();
@@ -85,9 +85,9 @@ public final class ObjectDifferBuilder
 		return configuration;
 	}
 
-	public class ConfigurationImpl implements Configuration
+	public class Configuration
 	{
-		private ConfigurationImpl()
+		private Configuration()
 		{
 		}
 

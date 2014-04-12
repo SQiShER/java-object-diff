@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Daniel Bechler
+ * Copyright 2014 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,17 +18,17 @@ package de.danielbechler.diff.differ;
 
 import de.danielbechler.diff.access.Accessor;
 import de.danielbechler.diff.access.Instances;
-import de.danielbechler.diff.config.circular.CircularReferenceDetector;
-import de.danielbechler.diff.config.circular.CircularReferenceDetectorFactory;
-import de.danielbechler.diff.config.circular.CircularReferenceExceptionHandler;
-import de.danielbechler.diff.config.filtering.IsReturnableResolver;
-import de.danielbechler.diff.config.inclusion.IsIgnoredResolver;
+import de.danielbechler.diff.circular.CircularReferenceDetector;
+import de.danielbechler.diff.circular.CircularReferenceDetectorFactory;
+import de.danielbechler.diff.circular.CircularReferenceExceptionHandler;
+import de.danielbechler.diff.filtering.IsReturnableResolver;
+import de.danielbechler.diff.inclusion.IsIgnoredResolver;
 import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.diff.path.NodePath;
 import de.danielbechler.diff.selector.ElementSelector;
 import de.danielbechler.util.Assert;
 
-import static de.danielbechler.diff.config.circular.CircularReferenceDetector.CircularReferenceException;
+import static de.danielbechler.diff.circular.CircularReferenceDetector.CircularReferenceException;
 
 /**
  * @author Daniel Bechler
@@ -87,7 +87,7 @@ public class DifferDispatcher
 	}
 
 	/**
-	 * Delegates the call to an appropriate {@link de.danielbechler.diff.differ.Differ}.
+	 * Delegates the call to an appropriate {@link Differ}.
 	 *
 	 * @return A node representing the difference between the given {@link Instances}.
 	 */

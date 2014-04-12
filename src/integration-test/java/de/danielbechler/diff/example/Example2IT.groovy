@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Daniel Bechler
+ * Copyright 2014 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 package de.danielbechler.diff.example
 
 import de.danielbechler.diff.ObjectDifferBuilder
-import de.danielbechler.diff.config.introspection.ObjectDiffEqualsOnlyType
-import de.danielbechler.diff.config.introspection.ObjectDiffProperty
+import de.danielbechler.diff.introspection.ObjectDiffEqualsOnlyType
+import de.danielbechler.diff.introspection.ObjectDiffProperty
 import de.danielbechler.diff.path.NodePath
 import spock.lang.Specification
 

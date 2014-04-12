@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Daniel Bechler
+ * Copyright 2014 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ package de.danielbechler.diff.differ;
 import de.danielbechler.diff.access.Accessor;
 import de.danielbechler.diff.access.CollectionItemAccessor;
 import de.danielbechler.diff.access.Instances;
-import de.danielbechler.diff.config.comparison.ComparisonStrategy;
-import de.danielbechler.diff.config.comparison.ComparisonStrategyResolver;
+import de.danielbechler.diff.comparison.ComparisonStrategy;
+import de.danielbechler.diff.comparison.ComparisonStrategyResolver;
 import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.util.Assert;
 import de.danielbechler.util.Collections;
@@ -46,6 +46,43 @@ public final class CollectionDiffer implements Differ
 
 		Assert.notNull(comparisonStrategyResolver, "comparisonStrategyResolver");
 		this.comparisonStrategyResolver = comparisonStrategyResolver;
+	}
+
+	private static void compareUsingComparisonStrategy(final DiffNode collectionNode,
+													   final Instances collectionInstances,
+													   final ComparisonStrategy comparisonStrategy)
+	{
+		comparisonStrategy.compare(collectionNode, collectionInstances.getType(), collectionInstances.getWorking(Collection.class), collectionInstances.getBase(Collection.class));
+	}
+
+	private static DiffNode newNode(final DiffNode parentNode, final Instances collectionInstances)
+	{
+		final Accessor accessor = collectionInstances.getSourceAccessor();
+		final Class<?> type = collectionInstances.getType();
+		return new DiffNode(parentNode, accessor, type);
+	}
+
+	private static Collection<?> addedItemsOf(final Instances instances)
+	{
+		final Collection<?> working = instances.getWorking(Collection.class);
+		final Collection<?> base = instances.getBase(Collection.class);
+		return Collections.filteredCopyOf(working, base);
+	}
+
+	private static Collection<?> removedItemsOf(final Instances instances)
+	{
+		final Collection<?> working = instances.getWorking(Collection.class);
+		final Collection<?> base = instances.getBase(Collection.class);
+		return Collections.filteredCopyOf(base, working);
+	}
+
+	private static Iterable<?> knownItemsOf(final Instances instances)
+	{
+		final Collection<?> working = instances.getWorking(Collection.class);
+		final Collection<Object> changed = new ArrayList<Object>(working);
+		changed.removeAll(addedItemsOf(instances));
+		changed.removeAll(removedItemsOf(instances));
+		return changed;
 	}
 
 	public boolean accepts(final Class<?> type)
@@ -87,25 +124,11 @@ public final class CollectionDiffer implements Differ
 		return collectionNode;
 	}
 
-	private static void compareUsingComparisonStrategy(final DiffNode collectionNode,
-													   final Instances collectionInstances,
-													   final ComparisonStrategy comparisonStrategy)
-	{
-		comparisonStrategy.compare(collectionNode, collectionInstances.getType(), collectionInstances.getWorking(Collection.class), collectionInstances.getBase(Collection.class));
-	}
-
 	private void compareInternally(final DiffNode collectionNode, final Instances collectionInstances)
 	{
 		compareItems(collectionNode, collectionInstances, addedItemsOf(collectionInstances));
 		compareItems(collectionNode, collectionInstances, removedItemsOf(collectionInstances));
 		compareItems(collectionNode, collectionInstances, knownItemsOf(collectionInstances));
-	}
-
-	private static DiffNode newNode(final DiffNode parentNode, final Instances collectionInstances)
-	{
-		final Accessor accessor = collectionInstances.getSourceAccessor();
-		final Class<?> type = collectionInstances.getType();
-		return new DiffNode(parentNode, accessor, type);
 	}
 
 	private void compareItems(final DiffNode collectionNode,
@@ -117,28 +140,5 @@ public final class CollectionDiffer implements Differ
 			final Accessor itemAccessor = new CollectionItemAccessor(item);
 			differDispatcher.dispatch(collectionNode, collectionInstances, itemAccessor);
 		}
-	}
-
-	private static Collection<?> addedItemsOf(final Instances instances)
-	{
-		final Collection<?> working = instances.getWorking(Collection.class);
-		final Collection<?> base = instances.getBase(Collection.class);
-		return Collections.filteredCopyOf(working, base);
-	}
-
-	private static Collection<?> removedItemsOf(final Instances instances)
-	{
-		final Collection<?> working = instances.getWorking(Collection.class);
-		final Collection<?> base = instances.getBase(Collection.class);
-		return Collections.filteredCopyOf(base, working);
-	}
-
-	private static Iterable<?> knownItemsOf(final Instances instances)
-	{
-		final Collection<?> working = instances.getWorking(Collection.class);
-		final Collection<Object> changed = new ArrayList<Object>(working);
-		changed.removeAll(addedItemsOf(instances));
-		changed.removeAll(removedItemsOf(instances));
-		return changed;
 	}
 }

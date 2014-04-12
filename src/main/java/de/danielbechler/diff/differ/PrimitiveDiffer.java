@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Daniel Bechler
+ * Copyright 2014 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,11 @@
 package de.danielbechler.diff.differ;
 
 import de.danielbechler.diff.access.Instances;
-import de.danielbechler.diff.config.comparison.PrimitiveDefaultValueModeResolver;
+import de.danielbechler.diff.comparison.PrimitiveDefaultValueModeResolver;
 import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.util.Classes;
 
-import static de.danielbechler.diff.config.comparison.PrimitiveDefaultValueMode.UNASSIGNED;
+import static de.danielbechler.diff.comparison.PrimitiveDefaultValueMode.UNASSIGNED;
 
 /**
  * @author Daniel Bechler

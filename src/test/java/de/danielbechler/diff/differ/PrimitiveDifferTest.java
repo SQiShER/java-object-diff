@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Daniel Bechler
+ * Copyright 2014 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ package de.danielbechler.diff.differ;
 
 import de.danielbechler.diff.access.Instances;
 import de.danielbechler.diff.access.TypeAwareAccessor;
-import de.danielbechler.diff.config.comparison.PrimitiveDefaultValueMode;
-import de.danielbechler.diff.config.comparison.PrimitiveDefaultValueModeResolver;
+import de.danielbechler.diff.comparison.PrimitiveDefaultValueMode;
+import de.danielbechler.diff.comparison.PrimitiveDefaultValueModeResolver;
 import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.diff.selector.BeanPropertyElementSelector;
 import org.mockito.Mock;
@@ -32,8 +32,8 @@ import org.testng.annotations.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static de.danielbechler.diff.config.comparison.PrimitiveDefaultValueMode.ASSIGNED;
-import static de.danielbechler.diff.config.comparison.PrimitiveDefaultValueMode.UNASSIGNED;
+import static de.danielbechler.diff.comparison.PrimitiveDefaultValueMode.ASSIGNED;
+import static de.danielbechler.diff.comparison.PrimitiveDefaultValueMode.UNASSIGNED;
 import static de.danielbechler.diff.helper.MockitoAnswers.withType;
 import static de.danielbechler.diff.helper.MockitoExtensions.returnClass;
 import static de.danielbechler.diff.helper.NodeAssertions.assertThat;
@@ -58,6 +58,11 @@ public class PrimitiveDifferTest
 	private PrimitiveDefaultValueModeResolver primitiveDefaultValueModeResolver;
 	@Mock
 	private Instances instances;
+
+	private static <T> Object[] instances(final Class<T> type, final T base, final T working, final T fresh)
+	{
+		return new Object[]{type, base, working, fresh};
+	}
 
 	@BeforeMethod
 	public void setUp()
@@ -161,11 +166,6 @@ public class PrimitiveDifferTest
 		when(instances.getSourceAccessor()).thenReturn(accessor);
 		when(instances.getType()).thenAnswer(withType(type));
 		return instances;
-	}
-
-	private static <T> Object[] instances(final Class<T> type, final T base, final T working, final T fresh)
-	{
-		return new Object[]{type, base, working, fresh};
 	}
 
 	@DataProvider

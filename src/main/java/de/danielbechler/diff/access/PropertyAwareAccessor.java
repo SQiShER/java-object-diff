@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Daniel Bechler
+ * Copyright 2014 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import java.util.Set;
 /**
  * @author Daniel Bechler
  */
-public interface PropertyAwareAccessor extends TypeAwareAccessor, CategoryAwareAccessor, ExclusionAwareAccessor
+public interface PropertyAwareAccessor extends TypeAwareAccessor, CategoryAware, ExclusionAware
 {
 	String getPropertyName();
 

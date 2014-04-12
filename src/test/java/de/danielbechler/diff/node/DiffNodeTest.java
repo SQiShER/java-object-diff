@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Daniel Bechler
+ * Copyright 2014 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ import de.danielbechler.diff.access.Accessor;
 import de.danielbechler.diff.access.CollectionItemAccessor;
 import de.danielbechler.diff.access.PropertyAwareAccessor;
 import de.danielbechler.diff.access.RootAccessor;
-import de.danielbechler.diff.config.introspection.BeanPropertyAccessor;
 import de.danielbechler.diff.helper.NodeAssertions;
+import de.danielbechler.diff.introspection.BeanPropertyAccessor;
 import de.danielbechler.diff.mock.ObjectDiffTest;
 import de.danielbechler.diff.path.NodePath;
 import de.danielbechler.diff.selector.BeanPropertyElementSelector;

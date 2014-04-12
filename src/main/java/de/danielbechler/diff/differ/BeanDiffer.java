@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Daniel Bechler
+ * Copyright 2014 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,12 @@ package de.danielbechler.diff.differ;
 
 import de.danielbechler.diff.access.Instances;
 import de.danielbechler.diff.access.PropertyAwareAccessor;
-import de.danielbechler.diff.config.comparison.ComparisonStrategy;
-import de.danielbechler.diff.config.comparison.ComparisonStrategyResolver;
-import de.danielbechler.diff.config.filtering.IsReturnableResolver;
-import de.danielbechler.diff.config.introspection.Introspector;
-import de.danielbechler.diff.config.introspection.IntrospectorResolver;
-import de.danielbechler.diff.config.introspection.IsIntrospectableResolver;
+import de.danielbechler.diff.comparison.ComparisonStrategy;
+import de.danielbechler.diff.comparison.ComparisonStrategyResolver;
+import de.danielbechler.diff.filtering.IsReturnableResolver;
+import de.danielbechler.diff.introspection.Introspector;
+import de.danielbechler.diff.introspection.IntrospectorResolver;
+import de.danielbechler.diff.introspection.IsIntrospectableResolver;
 import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.util.Assert;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Daniel Bechler
+ * Copyright 2014 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package de.danielbechler.diff.mock;
 
-import de.danielbechler.diff.config.introspection.ObjectDiffProperty;
+import de.danielbechler.diff.introspection.ObjectDiffProperty;
 
 /**
  * @author Daniel Bechler
@@ -24,8 +24,8 @@ import de.danielbechler.diff.config.introspection.ObjectDiffProperty;
 @SuppressWarnings({"MethodMayBeStatic", "UnusedDeclaration"})
 public class ObjectWithAccessTrackingIgnoredProperty
 {
-	private boolean value;
 	public boolean accessed;
+	private boolean value;
 
 	@ObjectDiffProperty(excluded = true)
 	public boolean getValue()

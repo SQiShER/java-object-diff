@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Daniel Bechler
+ * Copyright 2014 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,15 +20,15 @@ import de.danielbechler.diff.access.Accessor
 import de.danielbechler.diff.access.Instances
 import de.danielbechler.diff.access.MapEntryAccessor
 import de.danielbechler.diff.access.RootAccessor
-import de.danielbechler.diff.config.comparison.ComparisonStrategy
-import de.danielbechler.diff.config.comparison.ComparisonStrategyResolver
-import de.danielbechler.diff.config.filtering.IsReturnableResolver
+import de.danielbechler.diff.comparison.ComparisonStrategy
+import de.danielbechler.diff.comparison.ComparisonStrategyResolver
+import de.danielbechler.diff.filtering.IsReturnableResolver
 import de.danielbechler.diff.node.DiffNode
 import spock.lang.Specification
 
 import static de.danielbechler.diff.node.DiffNode.State.*
 
-/** @author Daniel Bechler                 */
+/** @author Daniel Bechler                  */
 public class MapDifferTest extends Specification {
 
 	def MapDiffer mapDiffer

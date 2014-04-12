@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Daniel Bechler
+ * Copyright 2014 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ package de.danielbechler.diff.example;
 
 import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.node.DiffNode;
+import de.danielbechler.diff.node.NodeHierarchyVisitor;
 import de.danielbechler.diff.selector.CollectionItemElementSelector;
-import de.danielbechler.diff.visitors.NodeHierarchyVisitor;
 
 import java.util.LinkedList;
 import java.util.List;

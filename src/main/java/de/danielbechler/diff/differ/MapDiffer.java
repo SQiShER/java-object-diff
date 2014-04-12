@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Daniel Bechler
+ * Copyright 2014 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package de.danielbechler.diff.differ;
 
 import de.danielbechler.diff.access.Instances;
 import de.danielbechler.diff.access.MapEntryAccessor;
-import de.danielbechler.diff.config.comparison.ComparisonStrategyResolver;
+import de.danielbechler.diff.comparison.ComparisonStrategyResolver;
 import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.util.Assert;
 import de.danielbechler.util.Collections;
@@ -42,6 +42,29 @@ public final class MapDiffer implements Differ
 		Assert.notNull(differDispatcher, "differDispatcher");
 		this.differDispatcher = differDispatcher;
 		this.comparisonStrategyResolver = comparisonStrategyResolver;
+	}
+
+	private static Collection<?> findAddedKeys(final Instances instances)
+	{
+		final Set<?> source = instances.getWorking(Map.class).keySet();
+		final Set<?> filter = instances.getBase(Map.class).keySet();
+		return Collections.filteredCopyOf(source, filter);
+	}
+
+	private static Collection<?> findRemovedKeys(final Instances instances)
+	{
+		final Set<?> source = instances.getBase(Map.class).keySet();
+		final Set<?> filter = instances.getWorking(Map.class).keySet();
+		return Collections.filteredCopyOf(source, filter);
+	}
+
+	private static Iterable<?> findKnownKeys(final Instances instances)
+	{
+		final Set<?> keys = instances.getWorking(Map.class).keySet();
+		final Collection<?> changed = Collections.setOf(keys);
+		changed.removeAll(findAddedKeys(instances));
+		changed.removeAll(findRemovedKeys(instances));
+		return changed;
 	}
 
 	public boolean accepts(final Class<?> type)
@@ -89,28 +112,5 @@ public final class MapDiffer implements Differ
 		{
 			differDispatcher.dispatch(mapNode, mapInstances, new MapEntryAccessor(key));
 		}
-	}
-
-	private static Collection<?> findAddedKeys(final Instances instances)
-	{
-		final Set<?> source = instances.getWorking(Map.class).keySet();
-		final Set<?> filter = instances.getBase(Map.class).keySet();
-		return Collections.filteredCopyOf(source, filter);
-	}
-
-	private static Collection<?> findRemovedKeys(final Instances instances)
-	{
-		final Set<?> source = instances.getBase(Map.class).keySet();
-		final Set<?> filter = instances.getWorking(Map.class).keySet();
-		return Collections.filteredCopyOf(source, filter);
-	}
-
-	private static Iterable<?> findKnownKeys(final Instances instances)
-	{
-		final Set<?> keys = instances.getWorking(Map.class).keySet();
-		final Collection<?> changed = Collections.setOf(keys);
-		changed.removeAll(findAddedKeys(instances));
-		changed.removeAll(findRemovedKeys(instances));
-		return changed;
 	}
 }

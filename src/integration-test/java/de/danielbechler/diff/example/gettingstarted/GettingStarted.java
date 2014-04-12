@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Daniel Bechler
+ * Copyright 2014 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,13 @@
 
 package de.danielbechler.diff.example.gettingstarted;
 
-import de.danielbechler.diff.visitors.PrintingVisitor;
 import de.danielbechler.diff.ObjectDiffer;
 import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.example.phonebook.Contact;
 import de.danielbechler.diff.example.phonebook.PhoneBook;
 import de.danielbechler.diff.example.phonebook.PhoneNumber;
 import de.danielbechler.diff.node.DiffNode;
+import de.danielbechler.diff.node.PrintingVisitor;
 
 /**
  * @author Daniel Bechler

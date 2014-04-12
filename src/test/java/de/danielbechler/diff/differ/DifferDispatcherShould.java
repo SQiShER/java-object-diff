@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Daniel Bechler
+ * Copyright 2014 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,11 @@ package de.danielbechler.diff.differ;
 import de.danielbechler.diff.access.Accessor;
 import de.danielbechler.diff.access.Instances;
 import de.danielbechler.diff.access.RootAccessor;
-import de.danielbechler.diff.config.circular.CircularReferenceDetector;
-import de.danielbechler.diff.config.circular.CircularReferenceDetectorFactory;
-import de.danielbechler.diff.config.circular.CircularReferenceExceptionHandler;
-import de.danielbechler.diff.config.filtering.IsReturnableResolver;
-import de.danielbechler.diff.config.inclusion.IsIgnoredResolver;
+import de.danielbechler.diff.circular.CircularReferenceDetector;
+import de.danielbechler.diff.circular.CircularReferenceDetectorFactory;
+import de.danielbechler.diff.circular.CircularReferenceExceptionHandler;
+import de.danielbechler.diff.filtering.IsReturnableResolver;
+import de.danielbechler.diff.inclusion.IsIgnoredResolver;
 import de.danielbechler.diff.mock.ObjectWithCircularReference;
 import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.diff.path.NodePath;
@@ -33,7 +33,7 @@ import org.mockito.stubbing.Answer;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import static de.danielbechler.diff.config.circular.CircularReferenceDetector.CircularReferenceException;
+import static de.danielbechler.diff.circular.CircularReferenceDetector.CircularReferenceException;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doThrow;
@@ -68,6 +68,17 @@ public class DifferDispatcherShould
 	private Instances instances;
 	@Mock
 	private Instances accessedInstances;
+
+	private static <T> Answer<Class<T>> returnType(final Class<T> type)
+	{
+		return new Answer<Class<T>>()
+		{
+			public Class<T> answer(final InvocationOnMock invocation) throws Throwable
+			{
+				return type;
+			}
+		};
+	}
 
 	@BeforeMethod
 	public void setUp() throws Exception
@@ -139,17 +150,6 @@ public class DifferDispatcherShould
 		when(differProvider.retrieveDifferForType(eq(UnsupportedType.class))).thenReturn(null);
 
 		differDispatcher.dispatch(DiffNode.ROOT, instances, accessor);
-	}
-
-	private static <T> Answer<Class<T>> returnType(final Class<T> type)
-	{
-		return new Answer<Class<T>>()
-		{
-			public Class<T> answer(final InvocationOnMock invocation) throws Throwable
-			{
-				return type;
-			}
-		};
 	}
 
 	private static class UnsupportedType
