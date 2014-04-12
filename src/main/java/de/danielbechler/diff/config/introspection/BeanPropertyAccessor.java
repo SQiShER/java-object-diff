@@ -16,10 +16,8 @@
 
 package de.danielbechler.diff.config.introspection;
 
-import de.danielbechler.diff.node.Accessor;
 import de.danielbechler.diff.node.PropertyAwareAccessor;
 import de.danielbechler.diff.node.path.BeanPropertyElementSelector;
-import de.danielbechler.diff.node.path.ElementSelector;
 import de.danielbechler.util.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +34,7 @@ import java.util.TreeSet;
 /**
  * @author Daniel Bechler
  */
-public class BeanPropertyAccessor implements PropertyAwareAccessor, Accessor
+public class BeanPropertyAccessor implements PropertyAwareAccessor
 {
 	private static final Logger logger = LoggerFactory.getLogger(BeanPropertyAccessor.class);
 
@@ -217,7 +215,7 @@ public class BeanPropertyAccessor implements PropertyAwareAccessor, Accessor
 		return this.propertyName;
 	}
 
-	public ElementSelector getElementSelector()
+	public BeanPropertyElementSelector getElementSelector()
 	{
 		return new BeanPropertyElementSelector(this.propertyName);
 	}
