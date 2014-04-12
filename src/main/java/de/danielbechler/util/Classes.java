@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Daniel Bechler
+ * Copyright 2014 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,25 @@
 
 package de.danielbechler.util;
 
-import org.slf4j.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.lang.reflect.*;
-import java.math.*;
-import java.net.*;
-import java.util.*;
+import java.io.Serializable;
+import java.lang.reflect.Constructor;
+import java.math.BigDecimal;
+import java.net.URI;
+import java.net.URL;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
+import java.util.TreeSet;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
 public final class Classes
 {
 	private static final Logger logger = LoggerFactory.getLogger(Classes.class);
@@ -67,16 +77,6 @@ public final class Classes
 		numericTypes.add(float.class);
 		numericTypes.add(double.class);
 		return numericTypes;
-	}
-
-	public static boolean isPrimitiveType(final Class<?> clazz)
-	{
-		return clazz != null && clazz.isPrimitive();
-	}
-
-	public static boolean isPrimitiveWrapperType(final Class<?> clazz)
-	{
-		return clazz != null && WRAPPER_TYPES.contains(clazz);
 	}
 
 	public static boolean isSimpleType(final Class<?> clazz)
@@ -127,6 +127,16 @@ public final class Classes
 		return false;
 	}
 
+	public static boolean isPrimitiveType(final Class<?> clazz)
+	{
+		return clazz != null && clazz.isPrimitive();
+	}
+
+	public static boolean isPrimitiveWrapperType(final Class<?> clazz)
+	{
+		return clazz != null && WRAPPER_TYPES.contains(clazz);
+	}
+
 	public static boolean isComparableType(final Class<?> clazz)
 	{
 		return BigDecimal.class.equals(clazz);
@@ -143,7 +153,7 @@ public final class Classes
 		{
 			constructor = clazz.getDeclaredConstructor();
 		}
-		catch (NoSuchMethodException e)
+		catch (final NoSuchMethodException e)
 		{
 			logger.debug("Missing default constructor for type {}. Assuming standard default values " +
 					"for primitive properties.", clazz.getName());
@@ -155,7 +165,7 @@ public final class Classes
 			constructor.setAccessible(true);
 			return constructor.newInstance();
 		}
-		catch (Exception e)
+		catch (final Exception e)
 		{
 			throw new RuntimeException(e);
 		}

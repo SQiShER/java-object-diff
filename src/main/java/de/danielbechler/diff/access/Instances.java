@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Daniel Bechler
+ * Copyright 2014 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,10 +36,10 @@ public class Instances
 	private final Object base;
 	private final Object fresh;
 
-	public Instances(final Accessor sourceAccessor,
-					 final Object working,
-					 final Object base,
-					 final Object fresh)
+	Instances(final Accessor sourceAccessor,
+			  final Object working,
+			  final Object base,
+			  final Object fresh)
 	{
 		Assert.notNull(sourceAccessor, "sourceAccessor");
 		this.sourceAccessor = sourceAccessor;
@@ -160,40 +160,6 @@ public class Instances
 		return Classes.isPrimitiveWrapperType(getType());
 	}
 
-	public boolean isPrimitiveNumericType()
-	{
-		return Classes.isPrimitiveNumericType(getType());
-	}
-
-	private boolean isPrimitiveBooleanType()
-	{
-		return getType() == boolean.class;
-	}
-
-	public boolean areEqual()
-	{
-		return isEqual(base, working);
-	}
-
-	public boolean areSame()
-	{
-		return working == base;
-	}
-
-	public boolean areNull()
-	{
-		return working == null && base == null;
-	}
-
-	private Class<?> tryToGetTypeFromSourceAccessor()
-	{
-		if (sourceAccessor instanceof TypeAwareAccessor)
-		{
-			return ((TypeAwareAccessor) sourceAccessor).getType();
-		}
-		return null;
-	}
-
 	public Class<?> getType()
 	{
 		final Set<Class<?>> types = Classes.typesOf(working, base, fresh);
@@ -262,6 +228,40 @@ public class Instances
 		}
 		throw new IllegalArgumentException("Detected instances of different types " + types + ". " +
 				"Instances must either be null or have the exact same type.");
+	}
+
+	private Class<?> tryToGetTypeFromSourceAccessor()
+	{
+		if (sourceAccessor instanceof TypeAwareAccessor)
+		{
+			return ((TypeAwareAccessor) sourceAccessor).getType();
+		}
+		return null;
+	}
+
+	public boolean isPrimitiveNumericType()
+	{
+		return Classes.isPrimitiveNumericType(getType());
+	}
+
+	private boolean isPrimitiveBooleanType()
+	{
+		return getType() == boolean.class;
+	}
+
+	public boolean areEqual()
+	{
+		return isEqual(base, working);
+	}
+
+	public boolean areSame()
+	{
+		return working == base;
+	}
+
+	public boolean areNull()
+	{
+		return working == null && base == null;
 	}
 
 }

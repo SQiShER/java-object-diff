@@ -33,6 +33,40 @@ public class PrintingVisitor implements DiffNode.Visitor
 		this.working = working;
 	}
 
+	public void node(final DiffNode node, final Visit visit)
+	{
+		if (filter(node))
+		{
+			final String text = differenceToString(node, base, working);
+			print(text);
+		}
+	}
+
+	protected boolean filter(final DiffNode node)
+	{
+		return (node.isRootNode() && !node.hasChanges())
+				|| (node.hasChanges() && !node.hasChildren());
+	}
+
+	protected String differenceToString(final DiffNode node, final Object base, final Object modified)
+	{
+		final NodePath nodePath = node.getPath();
+		final String stateMessage = translateState(node.getState(), node.canonicalGet(base), node.canonicalGet(modified));
+		final String propertyMessage = String.format("Property at path '%s' %s", nodePath, stateMessage);
+		final StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append(propertyMessage);
+		if (node.isCircular())
+		{
+			stringBuilder.append(" (Circular reference detected: The property has already been processed at another position.)");
+		}
+		return stringBuilder.toString();
+	}
+
+	protected void print(final String text)
+	{
+		System.out.println(text);
+	}
+
 	private static String translateState(final DiffNode.State state, final Object base, final Object modified)
 	{
 		if (state == DiffNode.State.IGNORED)
@@ -62,39 +96,5 @@ public class PrintingVisitor implements DiffNode.Visitor
 			return "has already been processed at another position. (Circular reference!)";
 		}
 		return '(' + state.name() + ')';
-	}
-
-	public void accept(final DiffNode node, final Visit visit)
-	{
-		if (filter(node))
-		{
-			final String text = differenceToString(node, base, working);
-			print(text);
-		}
-	}
-
-	protected boolean filter(final DiffNode node)
-	{
-		return (node.isRootNode() && !node.hasChanges())
-				|| (node.hasChanges() && !node.hasChildren());
-	}
-
-	protected void print(final String text)
-	{
-		System.out.println(text);
-	}
-
-	protected String differenceToString(final DiffNode node, final Object base, final Object modified)
-	{
-		final NodePath nodePath = node.getPath();
-		final String stateMessage = translateState(node.getState(), node.canonicalGet(base), node.canonicalGet(modified));
-		final String propertyMessage = String.format("Property at path '%s' %s", nodePath, stateMessage);
-		final StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append(propertyMessage);
-		if (node.isCircular())
-		{
-			stringBuilder.append(" (Circular reference detected: The property has already been processed at another position.)");
-		}
-		return stringBuilder.toString();
 	}
 }

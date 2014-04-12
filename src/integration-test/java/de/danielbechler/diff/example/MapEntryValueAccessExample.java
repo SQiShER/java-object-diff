@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Daniel Bechler
+ * Copyright 2014 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ class MapEntryValueAccessExample
 		final DiffNode mapNode = ObjectDifferBuilder.buildDefault().compare(working, base);
 		mapNode.visitChildren(new DiffNode.Visitor()
 		{
-			public void accept(final DiffNode node, final Visit visit)
+			public void node(final DiffNode node, final Visit visit)
 			{
 				final Object key = ((MapKeyElementSelector) node.getElementSelector()).getKey();
 				//                 ^^^ I do not encourage this, but currently it's the only way

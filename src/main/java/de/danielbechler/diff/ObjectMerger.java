@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Daniel Bechler
+ * Copyright 2014 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.node.Visit;
 import de.danielbechler.diff.node.DiffNode;
+import de.danielbechler.diff.node.Visit;
 
 /**
  * Careful: This class has not yet been tested very thoroughly and serves more as an example for your own
@@ -60,7 +60,7 @@ public final class ObjectMerger
 			this.modified = modified;
 		}
 
-		public void accept(final DiffNode node, final Visit visit)
+		public void node(final DiffNode node, final Visit visit)
 		{
 			if (node.getState() == DiffNode.State.ADDED)
 			{
@@ -69,10 +69,6 @@ public final class ObjectMerger
 			else if (node.getState() == DiffNode.State.REMOVED)
 			{
 				node.canonicalUnset(head);
-			}
-			else if (node.getState() == DiffNode.State.UNTOUCHED)
-			{
-				// not touched - nothing to do
 			}
 			else if (node.getState() == DiffNode.State.CHANGED)
 			{

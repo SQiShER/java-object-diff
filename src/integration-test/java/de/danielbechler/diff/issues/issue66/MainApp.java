@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Daniel Bechler
+ * Copyright 2014 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 
 package de.danielbechler.diff.issues.issue66;
 
-import de.danielbechler.diff.node.Visit;
 import de.danielbechler.diff.ObjectDiffer;
 import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.node.DiffNode;
+import de.danielbechler.diff.node.Visit;
 
 public class MainApp
 {
@@ -41,7 +41,7 @@ public class MainApp
 
 		root.visit(new DiffNode.Visitor()
 		{
-			public void accept(final DiffNode node, final Visit visit)
+			public void node(final DiffNode node, final Visit visit)
 			{
 				System.out.print(node.getPath() + " :: ");
 				System.out.print(node.canonicalGet(p1));

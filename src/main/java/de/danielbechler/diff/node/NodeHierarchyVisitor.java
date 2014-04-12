@@ -23,13 +23,13 @@ import de.danielbechler.util.Strings;
  *
  * @author Daniel Bechler
  */
+@SuppressWarnings({"UnusedDeclaration"})
 public class NodeHierarchyVisitor implements DiffNode.Visitor
 {
 	public static final int UNLIMITED = -1;
 
 	private final int maxDepth;
 
-	@SuppressWarnings({"UnusedDeclaration"})
 	public NodeHierarchyVisitor()
 	{
 		this(UNLIMITED);
@@ -40,19 +40,7 @@ public class NodeHierarchyVisitor implements DiffNode.Visitor
 		this.maxDepth = maxDepth;
 	}
 
-	private static int calculateDepth(final DiffNode node)
-	{
-		int count = 0;
-		DiffNode parentNode = node.getParentNode();
-		while (parentNode != null)
-		{
-			count++;
-			parentNode = parentNode.getParentNode();
-		}
-		return count;
-	}
-
-	public void accept(final DiffNode node, final Visit visit)
+	public void node(final DiffNode node, final Visit visit)
 	{
 		if (maxDepth == 0)
 		{
@@ -74,6 +62,18 @@ public class NodeHierarchyVisitor implements DiffNode.Visitor
 		{
 			print(node, currentLevel);
 		}
+	}
+
+	private static int calculateDepth(final DiffNode node)
+	{
+		int count = 0;
+		DiffNode parentNode = node.getParentNode();
+		while (parentNode != null)
+		{
+			count++;
+			parentNode = parentNode.getParentNode();
+		}
+		return count;
 	}
 
 	protected void print(final DiffNode node, final int level)

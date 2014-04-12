@@ -36,40 +36,6 @@ import java.util.Collection;
  */
 public class StandardBeanIntrospector implements de.danielbechler.diff.introspection.Introspector
 {
-	private static PropertyAwareAccessor handlePropertyDescriptor(final PropertyDescriptor descriptor)
-	{
-		if (shouldSkip(descriptor))
-		{
-			return null;
-		}
-
-		final String propertyName = descriptor.getName();
-		final Method readMethod = descriptor.getReadMethod();
-		final Method writeMethod = descriptor.getWriteMethod();
-
-		final BeanPropertyAccessor accessor = new BeanPropertyAccessor(propertyName, readMethod, writeMethod);
-
-		handleObjectDiffPropertyAnnotation(readMethod, accessor);
-
-		return accessor;
-	}
-
-	private static void handleObjectDiffPropertyAnnotation(final Method readMethod,
-														   final BeanPropertyAccessor propertyAccessor)
-	{
-		final ObjectDiffProperty annotation = readMethod.getAnnotation(ObjectDiffProperty.class);
-		if (annotation != null)
-		{
-			propertyAccessor.setExcluded(annotation.excluded());
-			propertyAccessor.setCategories(Collections.setOf(annotation.categories()));
-		}
-	}
-
-	private static boolean shouldSkip(final PropertyDescriptor descriptor)
-	{
-		return descriptor.getName().equals("class") || descriptor.getReadMethod() == null;
-	}
-
 	public Iterable<PropertyAwareAccessor> introspect(final Class<?> type)
 	{
 		Assert.notNull(type, "type");
@@ -77,7 +43,7 @@ public class StandardBeanIntrospector implements de.danielbechler.diff.introspec
 		{
 			return internalIntrospect(type);
 		}
-		catch (IntrospectionException e)
+		catch (final IntrospectionException e)
 		{
 			throw Exceptions.escalate(e);
 		}
@@ -101,5 +67,39 @@ public class StandardBeanIntrospector implements de.danielbechler.diff.introspec
 	protected BeanInfo getBeanInfo(final Class<?> type) throws IntrospectionException
 	{
 		return Introspector.getBeanInfo(type);
+	}
+
+	private static PropertyAwareAccessor handlePropertyDescriptor(final PropertyDescriptor descriptor)
+	{
+		if (shouldSkip(descriptor))
+		{
+			return null;
+		}
+
+		final String propertyName = descriptor.getName();
+		final Method readMethod = descriptor.getReadMethod();
+		final Method writeMethod = descriptor.getWriteMethod();
+
+		final BeanPropertyAccessor accessor = new BeanPropertyAccessor(propertyName, readMethod, writeMethod);
+
+		handleObjectDiffPropertyAnnotation(readMethod, accessor);
+
+		return accessor;
+	}
+
+	private static boolean shouldSkip(final PropertyDescriptor descriptor)
+	{
+		return descriptor.getName().equals("class") || descriptor.getReadMethod() == null;
+	}
+
+	private static void handleObjectDiffPropertyAnnotation(final Method readMethod,
+														   final BeanPropertyAccessor propertyAccessor)
+	{
+		final ObjectDiffProperty annotation = readMethod.getAnnotation(ObjectDiffProperty.class);
+		if (annotation != null)
+		{
+			propertyAccessor.setExcluded(annotation.excluded());
+			propertyAccessor.setCategories(Collections.setOf(annotation.categories()));
+		}
 	}
 }

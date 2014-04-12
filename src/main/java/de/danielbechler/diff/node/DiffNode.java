@@ -48,6 +48,7 @@ import static java.util.Collections.unmodifiableSet;
  *
  * @author Daniel Bechler
  */
+@SuppressWarnings("UnusedDeclaration")
 public class DiffNode
 {
 	public static final DiffNode ROOT = null;
@@ -61,17 +62,17 @@ public class DiffNode
 	private DiffNode circleStartNode;
 	private Class<?> valueType;
 
+	public DiffNode(final Accessor accessor, final Class<?> valueType)
+	{
+		this(ROOT, accessor, valueType);
+	}
+
 	public DiffNode(final DiffNode parentNode, final Accessor accessor, final Class<?> valueType)
 	{
 		Assert.notNull(accessor, "accessor");
 		this.accessor = accessor;
 		this.valueType = valueType;
 		setParentNode(parentNode);
-	}
-
-	public DiffNode(final Accessor accessor, final Class<?> valueType)
-	{
-		this(ROOT, accessor, valueType);
 	}
 
 	public DiffNode(final Class<?> valueType)
@@ -115,7 +116,7 @@ public class DiffNode
 		final AtomicBoolean result = new AtomicBoolean(false);
 		visitChildren(new Visitor()
 		{
-			public void accept(final DiffNode node, final Visit visit)
+			public void node(final DiffNode node, final Visit visit)
 			{
 				if (node.hasChanges())
 				{
@@ -245,6 +246,17 @@ public class DiffNode
 	}
 
 	/**
+	 * Retrieve a child that matches the given path element relative to this node.
+	 *
+	 * @param pathElementSelector The path element of the child node to get.
+	 * @return The requested child node or <code>null</code>.
+	 */
+	public DiffNode getChild(final ElementSelector pathElementSelector)
+	{
+		return children.get(pathElementSelector);
+	}
+
+	/**
 	 * Retrieve a child that matches the given absolute path, starting from the current node.
 	 *
 	 * @param nodePath The path from the object root to the requested child node.
@@ -260,17 +272,6 @@ public class DiffNode
 		{
 			return getChild(nodePath.getElementSelectors());
 		}
-	}
-
-	/**
-	 * Retrieve a child that matches the given path element relative to this node.
-	 *
-	 * @param pathElementSelector The path element of the child node to get.
-	 * @return The requested child node or <code>null</code>.
-	 */
-	public DiffNode getChild(final ElementSelector pathElementSelector)
-	{
-		return children.get(pathElementSelector);
 	}
 
 	/**
@@ -378,7 +379,7 @@ public class DiffNode
 	{
 		try
 		{
-			visitor.accept(this, visit);
+			visitor.node(this, visit);
 		}
 		catch (final StopVisitationException e)
 		{
@@ -419,7 +420,7 @@ public class DiffNode
 		final Visit visit = new Visit();
 		if (parentNode != null)
 		{
-			visitor.accept(parentNode, visit);
+			visitor.node(parentNode, visit);
 			if (!visit.isStopped())
 			{
 				parentNode.visitParents(visitor);
@@ -586,6 +587,34 @@ public class DiffNode
 	}
 
 	@Override
+	public int hashCode()
+	{
+		return accessor.hashCode();
+	}
+
+	@Override
+	public boolean equals(final Object o)
+	{
+		if (this == o)
+		{
+			return true;
+		}
+		if (o == null || getClass() != o.getClass())
+		{
+			return false;
+		}
+
+		final DiffNode that = (DiffNode) o;
+
+		if (!accessor.equals(that.accessor))
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	@Override
 	public String toString()
 	{
 		final StringBuilder sb = new StringBuilder();
@@ -616,34 +645,6 @@ public class DiffNode
 		sb.append(", accessed via ").append(accessor);
 		sb.append(')');
 		return sb.toString();
-	}
-
-	@Override
-	public boolean equals(final Object o)
-	{
-		if (this == o)
-		{
-			return true;
-		}
-		if (o == null || getClass() != o.getClass())
-		{
-			return false;
-		}
-
-		final DiffNode that = (DiffNode) o;
-
-		if (!accessor.equals(that.accessor))
-		{
-			return false;
-		}
-
-		return true;
-	}
-
-	@Override
-	public int hashCode()
-	{
-		return accessor.hashCode();
 	}
 
 	/**
@@ -711,6 +712,6 @@ public class DiffNode
 	 */
 	public static interface Visitor
 	{
-		void accept(DiffNode node, Visit visit);
+		void node(DiffNode node, Visit visit);
 	}
 }

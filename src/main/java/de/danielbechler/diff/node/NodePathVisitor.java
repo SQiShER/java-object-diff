@@ -34,7 +34,7 @@ public class NodePathVisitor implements DiffNode.Visitor
 		this.nodePath = nodePath;
 	}
 
-	public void accept(final DiffNode node, final Visit visit)
+	public void node(final DiffNode node, final Visit visit)
 	{
 		final NodePath differencePath = node.getPath();
 		if (differencePath.matches(nodePath) || differencePath.isParentOf(nodePath))

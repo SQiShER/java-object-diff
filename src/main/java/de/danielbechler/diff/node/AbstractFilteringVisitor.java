@@ -26,18 +26,7 @@ public abstract class AbstractFilteringVisitor implements DiffNode.Visitor
 {
 	private final Collection<DiffNode> matches = new LinkedList<DiffNode>();
 
-	protected abstract boolean accept(final DiffNode node);
-
-	protected void onAccept(final DiffNode node, final Visit visit)
-	{
-		matches.add(node);
-	}
-
-	protected void onDismiss(final DiffNode node, final Visit visit)
-	{
-	}
-
-	public void accept(final DiffNode node, final Visit visit)
+	public void node(final DiffNode node, final Visit visit)
 	{
 		if (accept(node))
 		{
@@ -47,6 +36,17 @@ public abstract class AbstractFilteringVisitor implements DiffNode.Visitor
 		{
 			onDismiss(node, visit);
 		}
+	}
+
+	protected abstract boolean accept(final DiffNode node);
+
+	protected void onAccept(final DiffNode node, final Visit visit)
+	{
+		matches.add(node);
+	}
+
+	protected void onDismiss(final DiffNode node, final Visit visit)
+	{
 	}
 
 	public Collection<DiffNode> getMatches()

@@ -43,6 +43,29 @@ public class EqualsOnlyComparisonStrategy implements ComparisonStrategy
 		this.equalsValueProviderMethod = equalsValueProviderMethod;
 	}
 
+	public void compare(final DiffNode node, final Class<?> type, final Object working, final Object base)
+	{
+		final boolean result;
+		if (equalsValueProviderMethod != null)
+		{
+			final Object workingValue = access(working, equalsValueProviderMethod);
+			final Object baseValue = access(base, equalsValueProviderMethod);
+			result = isEqual(workingValue, baseValue);
+		}
+		else
+		{
+			result = isEqual(working, base);
+		}
+		if (result)
+		{
+			node.setState(DiffNode.State.UNTOUCHED);
+		}
+		else
+		{
+			node.setState(DiffNode.State.CHANGED);
+		}
+	}
+
 	private static Object access(final Object target, final String methodName)
 	{
 		if (target == null)
@@ -67,33 +90,5 @@ public class EqualsOnlyComparisonStrategy implements ComparisonStrategy
 		{
 			throw Exceptions.escalate(e);
 		}
-	}
-
-	public void compare(final DiffNode node, final Class<?> type, final Object working, final Object base)
-	{
-		final boolean result;
-		if (equalsValueProviderMethod != null)
-		{
-			final Object workingValue = access(working, equalsValueProviderMethod);
-			final Object baseValue = access(base, equalsValueProviderMethod);
-			result = isEqual(workingValue, baseValue);
-		}
-		else
-		{
-			result = isEqual(working, base);
-		}
-		if (result)
-		{
-			node.setState(DiffNode.State.UNTOUCHED);
-		}
-		else
-		{
-			node.setState(DiffNode.State.CHANGED);
-		}
-	}
-
-	public String getEqualsValueProviderMethod()
-	{
-		return equalsValueProviderMethod;
 	}
 }

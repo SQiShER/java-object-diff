@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Daniel Bechler
+ * Copyright 2014 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,10 @@
 
 package de.danielbechler.util;
 
-/** @author Daniel Bechler */
+/**
+ * @author Daniel Bechler
+ */
+@SuppressWarnings("ClassUnconnectedToPackage")
 public class Comparables
 {
 	private Comparables()

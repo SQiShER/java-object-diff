@@ -88,57 +88,6 @@ public class InclusionService<T> implements InclusionConfiguration<T>, IsIgnored
 		return true;
 	}
 
-	private boolean isIncludedByPropertyName(final DiffNode node)
-	{
-		if (isIncludedByOwnPropertyName(node))
-		{
-			return true;
-		}
-		else if (isIncludedByParentPropertyName(node))
-		{
-			return true;
-		}
-		return false;
-	}
-
-	private boolean isIncludedByOwnPropertyName(final DiffNode node)
-	{
-		final String propertyName = node.getPropertyName();
-		if (propertyName != null)
-		{
-			return propertyNameInclusions.get(propertyName) == INCLUDED;
-		}
-		return false;
-	}
-
-	private boolean isIncludedByParentPropertyName(final DiffNode node)
-	{
-		final List<ElementSelector> pathElementSelectors = node.getPath().getElementSelectors();
-		for (final ElementSelector elementSelector : pathElementSelectors)
-		{
-			if (elementSelector instanceof BeanPropertyElementSelector)
-			{
-				final BeanPropertyElementSelector beanPropertyElement = (BeanPropertyElementSelector) elementSelector;
-				final String propertyName = beanPropertyElement.getPropertyName();
-				if (propertyName != null && propertyNameInclusions.get(propertyName) == INCLUDED)
-				{
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	private boolean isIncludedByCategory(final DiffNode node)
-	{
-		return hasCategoryWithInclusion(node, INCLUDED);
-	}
-
-	private boolean isIncludedByPath(final DiffNode node)
-	{
-		return nodeInclusions.getNodeForPath(node.getPath()).isIncluded();
-	}
-
 	private boolean isExcluded(final DiffNode node)
 	{
 		if (hasInclusions(EXCLUDED))
@@ -167,31 +116,6 @@ public class InclusionService<T> implements InclusionConfiguration<T>, IsIgnored
 		return false;
 	}
 
-	private boolean isExcludedByPropertyName(final DiffNode node)
-	{
-		final String propertyName = node.getPropertyName();
-		if (propertyName != null)
-		{
-			return propertyNameInclusions.get(propertyName) == EXCLUDED;
-		}
-		return false;
-	}
-
-	private boolean isExcludedByPath(final DiffNode node)
-	{
-		final ConfigNode configNode = nodeInclusions.getNodeForPath(node.getPath());
-		if (configNode.isExcluded() && !configNode.containsInclusion(INCLUDED))
-		{
-			return true;
-		}
-		return false;
-	}
-
-	private boolean isExcludedByCategory(final DiffNode node)
-	{
-		return hasCategoryWithInclusion(node, EXCLUDED);
-	}
-
 	private boolean hasInclusions(final Inclusion inclusion)
 	{
 		if (nodeInclusions.containsInclusion(inclusion))
@@ -213,16 +137,14 @@ public class InclusionService<T> implements InclusionConfiguration<T>, IsIgnored
 		return false;
 	}
 
-	private boolean hasCategoryWithInclusion(final DiffNode node, final Inclusion inclusion)
+	private boolean isIncludedByPath(final DiffNode node)
 	{
-		for (final String category : categoryResolver.resolveCategories(node))
-		{
-			if (categoryInclusions.get(category) == inclusion)
-			{
-				return true;
-			}
-		}
-		return false;
+		return nodeInclusions.getNodeForPath(node.getPath()).isIncluded();
+	}
+
+	private boolean isIncludedByCategory(final DiffNode node)
+	{
+		return hasCategoryWithInclusion(node, INCLUDED);
 	}
 
 	private boolean isIncludedByType(final DiffNode node)
@@ -230,7 +152,7 @@ public class InclusionService<T> implements InclusionConfiguration<T>, IsIgnored
 		final AtomicBoolean result = new AtomicBoolean(false);
 		node.visitParents(new DiffNode.Visitor()
 		{
-			public void accept(final DiffNode node, final Visit visit)
+			public void node(final DiffNode node, final Visit visit)
 			{
 				if (node.getValueType() != null)
 				{
@@ -252,11 +174,89 @@ public class InclusionService<T> implements InclusionConfiguration<T>, IsIgnored
 		return result.get();
 	}
 
+	private boolean isIncludedByPropertyName(final DiffNode node)
+	{
+		if (isIncludedByOwnPropertyName(node))
+		{
+			return true;
+		}
+		else if (isIncludedByParentPropertyName(node))
+		{
+			return true;
+		}
+		return false;
+	}
+
+	private boolean isExcludedByPath(final DiffNode node)
+	{
+		final ConfigNode configNode = nodeInclusions.getNodeForPath(node.getPath());
+		if (configNode.isExcluded() && !configNode.containsInclusion(INCLUDED))
+		{
+			return true;
+		}
+		return false;
+	}
+
+	private boolean isExcludedByCategory(final DiffNode node)
+	{
+		return hasCategoryWithInclusion(node, EXCLUDED);
+	}
+
 	private boolean isExcludedByType(final DiffNode node)
 	{
 		if (node.getValueType() != null)
 		{
 			return typeInclusions.get(node.getValueType()) == EXCLUDED;
+		}
+		return false;
+	}
+
+	private boolean isExcludedByPropertyName(final DiffNode node)
+	{
+		final String propertyName = node.getPropertyName();
+		if (propertyName != null)
+		{
+			return propertyNameInclusions.get(propertyName) == EXCLUDED;
+		}
+		return false;
+	}
+
+	private boolean hasCategoryWithInclusion(final DiffNode node, final Inclusion inclusion)
+	{
+		for (final String category : categoryResolver.resolveCategories(node))
+		{
+			if (categoryInclusions.get(category) == inclusion)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean isIncludedByOwnPropertyName(final DiffNode node)
+	{
+		final String propertyName = node.getPropertyName();
+		if (propertyName != null)
+		{
+			return propertyNameInclusions.get(propertyName) == INCLUDED;
+		}
+		return false;
+	}
+
+	private boolean isIncludedByParentPropertyName(final DiffNode node)
+	{
+		final List<ElementSelector> pathElementSelectors = node.getPath().getElementSelectors();
+		for (final ElementSelector elementSelector : pathElementSelectors)
+		{
+			if (elementSelector instanceof BeanPropertyElementSelector)
+			{
+				final BeanPropertyElementSelector beanPropertyElement = (BeanPropertyElementSelector) elementSelector;
+				final String propertyName = beanPropertyElement.getPropertyName();
+				if (propertyName != null && propertyNameInclusions.get(propertyName) == INCLUDED)
+				{
+					return true;
+				}
+			}
 		}
 		return false;
 	}
@@ -315,11 +315,6 @@ public class InclusionService<T> implements InclusionConfiguration<T>, IsIgnored
 			return rootConfiguration;
 		}
 
-		public ToExclude<T> exclude()
-		{
-			return InclusionService.this.exclude();
-		}
-
 		public ToIncludeAndReturn<T> category(final String category)
 		{
 			categoryInclusions.put(category, INCLUDED);
@@ -342,6 +337,11 @@ public class InclusionService<T> implements InclusionConfiguration<T>, IsIgnored
 		{
 			propertyNameInclusions.put(propertyName, INCLUDED);
 			return this;
+		}
+
+		public ToExclude<T> exclude()
+		{
+			return InclusionService.this.exclude();
 		}
 	}
 }
