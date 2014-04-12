@@ -1,11 +1,11 @@
 package de.danielbechler.diff.issues.issue70;
 
-import de.danielbechler.diff.visitors.PrintingVisitor;
 import de.danielbechler.diff.ObjectDiffer;
 import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.helper.NodeAssertions;
 import de.danielbechler.diff.node.DiffNode;
-import de.danielbechler.diff.node.path.NodePath;
+import de.danielbechler.diff.path.NodePath;
+import de.danielbechler.diff.visitors.PrintingVisitor;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;

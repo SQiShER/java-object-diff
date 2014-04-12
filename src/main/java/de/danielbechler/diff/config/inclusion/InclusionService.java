@@ -3,9 +3,9 @@ package de.danielbechler.diff.config.inclusion;
 import de.danielbechler.diff.config.category.CategoryResolver;
 import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.diff.node.Visit;
-import de.danielbechler.diff.node.path.BeanPropertyElementSelector;
-import de.danielbechler.diff.node.path.ElementSelector;
-import de.danielbechler.diff.node.path.NodePath;
+import de.danielbechler.diff.path.NodePath;
+import de.danielbechler.diff.selector.BeanPropertyElementSelector;
+import de.danielbechler.diff.selector.ElementSelector;
 import de.danielbechler.util.Assert;
 
 import java.util.HashMap;

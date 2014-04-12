@@ -1,6 +1,6 @@
 package de.danielbechler.diff.config.inclusion;
 
-import de.danielbechler.diff.node.path.NodePath;
+import de.danielbechler.diff.path.NodePath;
 
 /**
  * Allows to in- or exclude nodes based on property name, object type, category or location in the object graph.

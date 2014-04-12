@@ -1,8 +1,8 @@
 package de.danielbechler.diff.config.category;
 
 import de.danielbechler.diff.node.DiffNode;
-import de.danielbechler.diff.node.path.NodePath;
-import de.danielbechler.diff.node.path.NodePathValueHolder;
+import de.danielbechler.diff.path.NodePath;
+import de.danielbechler.diff.path.NodePathValueHolder;
 
 import java.util.Collection;
 import java.util.HashMap;

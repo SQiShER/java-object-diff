@@ -16,11 +16,11 @@
 
 package de.danielbechler.diff.helper;
 
-import de.danielbechler.diff.visitors.NodePathVisitor;
 import de.danielbechler.diff.node.DiffNode;
-import de.danielbechler.diff.node.path.CollectionItemElementSelector;
-import de.danielbechler.diff.node.path.ElementSelector;
-import de.danielbechler.diff.node.path.NodePath;
+import de.danielbechler.diff.path.NodePath;
+import de.danielbechler.diff.selector.CollectionItemElementSelector;
+import de.danielbechler.diff.selector.ElementSelector;
+import de.danielbechler.diff.visitors.NodePathVisitor;
 import org.fest.assertions.api.Assertions;
 import org.fest.assertions.core.Condition;
 

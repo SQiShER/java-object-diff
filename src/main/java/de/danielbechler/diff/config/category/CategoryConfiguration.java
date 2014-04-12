@@ -1,6 +1,6 @@
 package de.danielbechler.diff.config.category;
 
-import de.danielbechler.diff.node.path.NodePath;
+import de.danielbechler.diff.path.NodePath;
 
 /**
  * Allows to assign custom categories (or tags) to entire types or selected elements and properties. These categories

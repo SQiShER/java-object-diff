@@ -2,7 +2,7 @@ package de.danielbechler.diff.issues.issue43;
 
 import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.node.DiffNode;
-import de.danielbechler.diff.node.path.NodePath;
+import de.danielbechler.diff.path.NodePath;
 import org.testng.annotations.Test;
 
 import java.util.List;

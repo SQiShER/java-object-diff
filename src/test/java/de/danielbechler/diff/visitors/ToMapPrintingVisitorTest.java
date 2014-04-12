@@ -17,7 +17,7 @@
 package de.danielbechler.diff.visitors;
 
 import de.danielbechler.diff.node.DiffNode;
-import de.danielbechler.diff.node.path.NodePath;
+import de.danielbechler.diff.path.NodePath;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 

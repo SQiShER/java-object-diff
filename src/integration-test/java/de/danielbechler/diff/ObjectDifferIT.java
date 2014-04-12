@@ -16,7 +16,6 @@
 
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.visitors.NodeHierarchyVisitor;
 import de.danielbechler.diff.helper.NodeAssertions;
 import de.danielbechler.diff.helper.TestGroups;
 import de.danielbechler.diff.mock.ObjectWithAccessTrackingIgnoredProperty;
@@ -29,9 +28,10 @@ import de.danielbechler.diff.mock.ObjectWithMethodEqualsOnlyValueProviderMethodO
 import de.danielbechler.diff.mock.ObjectWithMethodEqualsOnlyValueProviderMethodOnGetNestedObject;
 import de.danielbechler.diff.mock.ObjectWithNestedObject;
 import de.danielbechler.diff.node.DiffNode;
-import de.danielbechler.diff.node.path.CollectionItemElementSelector;
-import de.danielbechler.diff.node.path.MapKeyElementSelector;
-import de.danielbechler.diff.node.path.NodePath;
+import de.danielbechler.diff.path.NodePath;
+import de.danielbechler.diff.selector.CollectionItemElementSelector;
+import de.danielbechler.diff.selector.MapKeyElementSelector;
+import de.danielbechler.diff.visitors.NodeHierarchyVisitor;
 import org.fest.assertions.api.Assertions;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

@@ -17,7 +17,7 @@
 package de.danielbechler.diff.config.circular;
 
 import de.danielbechler.diff.mock.ObjectWithString;
-import de.danielbechler.diff.node.path.NodePath;
+import de.danielbechler.diff.path.NodePath;
 import org.fest.assertions.api.Assertions;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

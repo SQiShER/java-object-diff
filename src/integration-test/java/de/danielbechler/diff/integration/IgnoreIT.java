@@ -16,12 +16,12 @@
 
 package de.danielbechler.diff.integration;
 
-import de.danielbechler.diff.visitors.PrintingVisitor;
 import de.danielbechler.diff.ObjectDiffer;
 import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.mock.ObjectWithCircularReference;
 import de.danielbechler.diff.node.DiffNode;
-import de.danielbechler.diff.node.path.NodePath;
+import de.danielbechler.diff.path.NodePath;
+import de.danielbechler.diff.visitors.PrintingVisitor;
 import org.testng.annotations.Test;
 
 import static de.danielbechler.diff.helper.NodeAssertions.assertThat;

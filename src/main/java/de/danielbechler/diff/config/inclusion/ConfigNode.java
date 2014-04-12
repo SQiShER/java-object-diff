@@ -16,10 +16,10 @@
 
 package de.danielbechler.diff.config.inclusion;
 
-import de.danielbechler.diff.node.path.AnyElementSelector;
-import de.danielbechler.diff.node.path.ElementSelector;
-import de.danielbechler.diff.node.path.NodePath;
-import de.danielbechler.diff.node.path.RootElementSelector;
+import de.danielbechler.diff.path.NodePath;
+import de.danielbechler.diff.selector.AnyElementSelector;
+import de.danielbechler.diff.selector.ElementSelector;
+import de.danielbechler.diff.selector.RootElementSelector;
 
 import java.util.HashMap;
 import java.util.List;

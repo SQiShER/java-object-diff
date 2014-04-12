@@ -16,12 +16,14 @@
 
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.node.RootAccessor;
+import de.danielbechler.diff.access.Instances;
+import de.danielbechler.diff.access.RootAccessor;
+import de.danielbechler.diff.differ.DifferDispatcher;
 import de.danielbechler.diff.node.DiffNode;
 
 /**
  * This is the entry point for all comparisons. It determines the type of the given objects and passes them to
- * the appropriate {@link Differ}.
+ * the appropriate {@link de.danielbechler.diff.differ.Differ}.
  *
  * @author Daniel Bechler
  */

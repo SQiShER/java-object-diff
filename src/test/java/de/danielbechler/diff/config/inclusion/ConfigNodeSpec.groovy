@@ -16,9 +16,9 @@
 
 package de.danielbechler.diff.config.inclusion
 
-import de.danielbechler.diff.node.path.BeanPropertyElementSelector
-import de.danielbechler.diff.node.path.NodePath
-import de.danielbechler.diff.node.path.RootElementSelector
+import de.danielbechler.diff.path.NodePath
+import de.danielbechler.diff.selector.BeanPropertyElementSelector
+import de.danielbechler.diff.selector.RootElementSelector
 import spock.lang.FailsWith
 import spock.lang.Specification
 import spock.lang.Unroll

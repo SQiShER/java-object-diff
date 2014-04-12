@@ -18,7 +18,7 @@ package de.danielbechler.diff.visitors;
 
 import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.diff.node.Visit;
-import de.danielbechler.diff.node.path.NodePath;
+import de.danielbechler.diff.path.NodePath;
 import de.danielbechler.util.Strings;
 
 /**

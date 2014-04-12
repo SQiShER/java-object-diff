@@ -16,7 +16,7 @@
 
 package de.danielbechler.diff.config.introspection;
 
-import de.danielbechler.diff.node.PropertyAwareAccessor;
+import de.danielbechler.diff.access.PropertyAwareAccessor;
 import de.danielbechler.util.Assert;
 import de.danielbechler.util.Collections;
 import de.danielbechler.util.Exceptions;

@@ -19,7 +19,7 @@ package de.danielbechler.diff.example.phonebook;
 import de.danielbechler.diff.ObjectDiffer;
 import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.node.DiffNode;
-import de.danielbechler.diff.node.path.CollectionItemElementSelector;
+import de.danielbechler.diff.selector.CollectionItemElementSelector;
 import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.IsNull;
 import org.testng.annotations.Test;

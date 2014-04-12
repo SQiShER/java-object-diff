@@ -19,7 +19,7 @@ package de.danielbechler.diff.example
 import de.danielbechler.diff.ObjectDifferBuilder
 import de.danielbechler.diff.config.introspection.ObjectDiffEqualsOnlyType
 import de.danielbechler.diff.config.introspection.ObjectDiffProperty
-import de.danielbechler.diff.node.path.NodePath
+import de.danielbechler.diff.path.NodePath
 import spock.lang.Specification
 
 import static de.danielbechler.diff.node.DiffNode.State.UNTOUCHED

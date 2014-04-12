@@ -1,6 +1,6 @@
 package de.danielbechler.diff.config.introspection;
 
-import de.danielbechler.diff.node.path.NodePath;
+import de.danielbechler.diff.path.NodePath;
 
 /**
  * Allows to replace the default bean introspector with a custom implementation. The default introspector internally

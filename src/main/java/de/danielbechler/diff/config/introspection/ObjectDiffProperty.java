@@ -34,14 +34,14 @@ import java.lang.annotation.Target;
 public @interface ObjectDiffProperty
 {
 	/**
-	 * Causes the {@link de.danielbechler.diff.Differ Differs} to skip the marked property and all its children.
+	 * Causes the {@link de.danielbechler.diff.differ.Differ Differs} to skip the marked property and all its children.
 	 *
 	 * @return <code>true</code> if the property should be ignored.
 	 */
 	public boolean excluded() default false;
 
 	/**
-	 * Causes the {@link de.danielbechler.diff.Differ Differs} to compare the object by using the {@link
+	 * Causes the {@link de.danielbechler.diff.differ.Differ Differs} to compare the object by using the {@link
 	 * Object#equals(Object)} method instead of introspection.
 	 *
 	 * @return <code>true</code> if the property should be compared via {@link Object#equals(Object)}.

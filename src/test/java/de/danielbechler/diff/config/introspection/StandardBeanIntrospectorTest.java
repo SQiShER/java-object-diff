@@ -16,12 +16,12 @@
 
 package de.danielbechler.diff.config.introspection;
 
+import de.danielbechler.diff.access.PropertyAwareAccessor;
 import de.danielbechler.diff.mock.ObjectWithEqualsOnlyPropertyType;
 import de.danielbechler.diff.mock.ObjectWithInheritedPropertyAnnotation;
 import de.danielbechler.diff.mock.ObjectWithPropertyAnnotations;
 import de.danielbechler.diff.mock.ObjectWithString;
-import de.danielbechler.diff.node.PropertyAwareAccessor;
-import de.danielbechler.diff.node.path.BeanPropertyElementSelector;
+import de.danielbechler.diff.selector.BeanPropertyElementSelector;
 import de.danielbechler.util.Collections;
 import org.hamcrest.core.IsEqual;
 import org.testng.annotations.BeforeMethod;

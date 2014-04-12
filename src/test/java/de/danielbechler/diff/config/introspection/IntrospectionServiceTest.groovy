@@ -1,12 +1,12 @@
 package de.danielbechler.diff.config.introspection
 
-import de.danielbechler.diff.node.RootAccessor
-import de.danielbechler.diff.node.TypeAwareAccessor
+import de.danielbechler.diff.access.RootAccessor
+import de.danielbechler.diff.access.TypeAwareAccessor
 import de.danielbechler.diff.config.circular.CircularReferenceMatchingMode
 import de.danielbechler.diff.config.inclusion.Inclusion
 import de.danielbechler.diff.mock.ObjectWithString
 import de.danielbechler.diff.node.DiffNode
-import de.danielbechler.diff.node.path.NodePath
+import de.danielbechler.diff.path.NodePath
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll

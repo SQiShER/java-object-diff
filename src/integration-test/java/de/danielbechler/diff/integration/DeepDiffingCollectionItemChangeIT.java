@@ -16,12 +16,12 @@
 
 package de.danielbechler.diff.integration;
 
-import de.danielbechler.diff.visitors.NodeHierarchyVisitor;
 import de.danielbechler.diff.ObjectDiffer;
 import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.mock.ObjectWithString;
 import de.danielbechler.diff.node.DiffNode;
-import de.danielbechler.diff.node.path.NodePath;
+import de.danielbechler.diff.path.NodePath;
+import de.danielbechler.diff.visitors.NodeHierarchyVisitor;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;

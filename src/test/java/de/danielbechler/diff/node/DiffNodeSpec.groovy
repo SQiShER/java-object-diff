@@ -16,7 +16,8 @@
 
 package de.danielbechler.diff.node
 
-import de.danielbechler.diff.node.path.NodePath
+import de.danielbechler.diff.access.CollectionItemAccessor
+import de.danielbechler.diff.path.NodePath
 import spock.lang.Specification
 
 /**

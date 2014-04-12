@@ -16,10 +16,10 @@
 
 package de.danielbechler.diff.config.inclusion
 
-import de.danielbechler.diff.PhoneBookSetup
 import de.danielbechler.diff.ObjectDifferBuilder
-import de.danielbechler.diff.node.path.CollectionItemElementSelector
-import de.danielbechler.diff.node.path.NodePath
+import de.danielbechler.diff.PhoneBookSetup
+import de.danielbechler.diff.path.NodePath
+import de.danielbechler.diff.selector.CollectionItemElementSelector
 import spock.lang.Specification
 
 import static de.danielbechler.diff.PhoneBookSetup.Contact

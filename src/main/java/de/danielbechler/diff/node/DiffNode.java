@@ -16,10 +16,16 @@
 
 package de.danielbechler.diff.node;
 
-import de.danielbechler.diff.node.path.BeanPropertyElementSelector;
-import de.danielbechler.diff.node.path.ElementSelector;
-import de.danielbechler.diff.node.path.NodePath;
-import de.danielbechler.diff.node.path.RootElementSelector;
+import de.danielbechler.diff.access.Accessor;
+import de.danielbechler.diff.access.CategoryAwareAccessor;
+import de.danielbechler.diff.access.ExclusionAwareAccessor;
+import de.danielbechler.diff.access.PropertyAwareAccessor;
+import de.danielbechler.diff.access.RootAccessor;
+import de.danielbechler.diff.access.TypeAwareAccessor;
+import de.danielbechler.diff.path.NodePath;
+import de.danielbechler.diff.selector.BeanPropertyElementSelector;
+import de.danielbechler.diff.selector.ElementSelector;
+import de.danielbechler.diff.selector.RootElementSelector;
 import de.danielbechler.util.Assert;
 
 import java.lang.annotation.Annotation;

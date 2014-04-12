@@ -19,8 +19,8 @@ package de.danielbechler.diff.config.comparison;
 import de.danielbechler.diff.config.introspection.ObjectDiffEqualsOnlyType;
 import de.danielbechler.diff.config.introspection.ObjectDiffProperty;
 import de.danielbechler.diff.node.DiffNode;
-import de.danielbechler.diff.node.path.NodePath;
-import de.danielbechler.diff.node.path.NodePathValueHolder;
+import de.danielbechler.diff.path.NodePath;
+import de.danielbechler.diff.path.NodePathValueHolder;
 import de.danielbechler.util.Classes;
 
 import java.util.HashMap;

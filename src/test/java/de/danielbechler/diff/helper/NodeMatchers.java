@@ -16,11 +16,11 @@
 
 package de.danielbechler.diff.helper;
 
-import de.danielbechler.diff.node.Accessor;
-import de.danielbechler.diff.node.CollectionItemAccessor;
+import de.danielbechler.diff.access.Accessor;
+import de.danielbechler.diff.access.CollectionItemAccessor;
 import de.danielbechler.diff.node.DiffNode;
-import de.danielbechler.diff.node.path.CollectionItemElementSelector;
-import de.danielbechler.diff.node.path.NodePath;
+import de.danielbechler.diff.path.NodePath;
+import de.danielbechler.diff.selector.CollectionItemElementSelector;
 import org.fest.assertions.core.Condition;
 import org.mockito.ArgumentMatcher;
 

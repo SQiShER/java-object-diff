@@ -16,12 +16,16 @@
 
 package de.danielbechler.diff.node;
 
+import de.danielbechler.diff.access.Accessor;
+import de.danielbechler.diff.access.CollectionItemAccessor;
+import de.danielbechler.diff.access.PropertyAwareAccessor;
+import de.danielbechler.diff.access.RootAccessor;
 import de.danielbechler.diff.config.introspection.BeanPropertyAccessor;
 import de.danielbechler.diff.helper.NodeAssertions;
 import de.danielbechler.diff.mock.ObjectDiffTest;
-import de.danielbechler.diff.node.path.BeanPropertyElementSelector;
-import de.danielbechler.diff.node.path.CollectionItemElementSelector;
-import de.danielbechler.diff.node.path.NodePath;
+import de.danielbechler.diff.path.NodePath;
+import de.danielbechler.diff.selector.BeanPropertyElementSelector;
+import de.danielbechler.diff.selector.CollectionItemElementSelector;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.Is;
 import org.mockito.Mockito;

@@ -1,6 +1,6 @@
 package de.danielbechler.diff.config.comparison;
 
-import de.danielbechler.diff.node.path.NodePath;
+import de.danielbechler.diff.path.NodePath;
 
 /**
  * Allows to configure the way objects are compared. Sometimes introspection is just not the way to go. Let it be for

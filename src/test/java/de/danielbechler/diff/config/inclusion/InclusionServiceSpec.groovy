@@ -16,13 +16,13 @@
 
 package de.danielbechler.diff.config.inclusion
 
-import de.danielbechler.diff.node.PropertyAwareAccessor
-import de.danielbechler.diff.node.RootAccessor
-import de.danielbechler.diff.config.category.CategoryResolver
 import de.danielbechler.diff.Configuration
+import de.danielbechler.diff.access.PropertyAwareAccessor
+import de.danielbechler.diff.access.RootAccessor
+import de.danielbechler.diff.config.category.CategoryResolver
 import de.danielbechler.diff.node.DiffNode
-import de.danielbechler.diff.node.path.BeanPropertyElementSelector
-import de.danielbechler.diff.node.path.NodePath
+import de.danielbechler.diff.path.NodePath
+import de.danielbechler.diff.selector.BeanPropertyElementSelector
 import spock.lang.Specification
 
 /**

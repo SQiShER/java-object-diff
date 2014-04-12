@@ -16,7 +16,7 @@
 
 package de.danielbechler.diff.config.circular;
 
-import de.danielbechler.diff.node.path.NodePath;
+import de.danielbechler.diff.path.NodePath;
 import de.danielbechler.util.Assert;
 
 import java.util.LinkedList;

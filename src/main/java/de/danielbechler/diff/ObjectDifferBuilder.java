@@ -28,6 +28,12 @@ import de.danielbechler.diff.config.inclusion.InclusionConfiguration;
 import de.danielbechler.diff.config.inclusion.InclusionService;
 import de.danielbechler.diff.config.introspection.IntrospectionConfiguration;
 import de.danielbechler.diff.config.introspection.IntrospectionService;
+import de.danielbechler.diff.differ.BeanDiffer;
+import de.danielbechler.diff.differ.CollectionDiffer;
+import de.danielbechler.diff.differ.DifferDispatcher;
+import de.danielbechler.diff.differ.DifferProvider;
+import de.danielbechler.diff.differ.MapDiffer;
+import de.danielbechler.diff.differ.PrimitiveDiffer;
 
 /**
  * This is the entry point of every diffing operation. It acts as a factory to get hold of an actual {@link

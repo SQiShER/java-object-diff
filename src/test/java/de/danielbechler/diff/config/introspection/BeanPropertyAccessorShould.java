@@ -19,7 +19,7 @@ package de.danielbechler.diff.config.introspection;
 import de.danielbechler.diff.mock.ObjectWithAnnotatedProperty;
 import de.danielbechler.diff.mock.ObjectWithHashCodeAndEquals;
 import de.danielbechler.diff.mock.ObjectWithStringAndUnsupportedWriteMethod;
-import de.danielbechler.diff.node.path.BeanPropertyElementSelector;
+import de.danielbechler.diff.selector.BeanPropertyElementSelector;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 

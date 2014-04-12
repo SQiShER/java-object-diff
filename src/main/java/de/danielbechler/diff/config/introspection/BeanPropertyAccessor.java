@@ -16,8 +16,8 @@
 
 package de.danielbechler.diff.config.introspection;
 
-import de.danielbechler.diff.node.PropertyAwareAccessor;
-import de.danielbechler.diff.node.path.BeanPropertyElementSelector;
+import de.danielbechler.diff.access.PropertyAwareAccessor;
+import de.danielbechler.diff.selector.BeanPropertyElementSelector;
 import de.danielbechler.util.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

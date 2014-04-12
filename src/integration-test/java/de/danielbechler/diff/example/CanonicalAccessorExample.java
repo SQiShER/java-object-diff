@@ -16,10 +16,10 @@
 
 package de.danielbechler.diff.example;
 
-import de.danielbechler.diff.visitors.NodeHierarchyVisitor;
 import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.node.DiffNode;
-import de.danielbechler.diff.node.path.CollectionItemElementSelector;
+import de.danielbechler.diff.selector.CollectionItemElementSelector;
+import de.danielbechler.diff.visitors.NodeHierarchyVisitor;
 
 import java.util.LinkedList;
 import java.util.List;
