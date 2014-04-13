@@ -39,7 +39,7 @@ public class InclusionService<T> implements InclusionConfiguration<T>, IsIgnored
 {
 	private final CategoryResolver categoryResolver;
 	private final T rootConfiguration;
-	private final ConfigNode nodeInclusions = new ConfigNode();
+	private final InclusionNode nodeInclusions = new InclusionNode();
 	private final Map<Class<?>, Inclusion> typeInclusions = new HashMap<Class<?>, Inclusion>();
 	private final Map<String, Inclusion> categoryInclusions = new HashMap<String, Inclusion>();
 	private final Map<String, Inclusion> propertyNameInclusions = new HashMap<String, Inclusion>();
@@ -118,7 +118,7 @@ public class InclusionService<T> implements InclusionConfiguration<T>, IsIgnored
 
 	private boolean hasInclusions(final Inclusion inclusion)
 	{
-		if (nodeInclusions.containsInclusion(inclusion))
+		if (nodeInclusions.containsValue(inclusion))
 		{
 			return true;
 		}
@@ -139,7 +139,7 @@ public class InclusionService<T> implements InclusionConfiguration<T>, IsIgnored
 
 	private boolean isIncludedByPath(final DiffNode node)
 	{
-		return nodeInclusions.getNodeForPath(node.getPath()).isIncluded();
+		return ((InclusionNode) nodeInclusions.getNodeForPath(node.getPath())).isIncluded();
 	}
 
 	private boolean isIncludedByCategory(final DiffNode node)
@@ -189,8 +189,8 @@ public class InclusionService<T> implements InclusionConfiguration<T>, IsIgnored
 
 	private boolean isExcludedByPath(final DiffNode node)
 	{
-		final ConfigNode configNode = nodeInclusions.getNodeForPath(node.getPath());
-		if (configNode.isExcluded() && !configNode.containsInclusion(INCLUDED))
+		final InclusionNode valueNode = (InclusionNode) nodeInclusions.getNodeForPath(node.getPath());
+		if (valueNode.isExcluded() && !valueNode.containsValue(INCLUDED))
 		{
 			return true;
 		}
@@ -292,7 +292,7 @@ public class InclusionService<T> implements InclusionConfiguration<T>, IsIgnored
 
 		public ToExcludeAndReturn<T> node(final NodePath nodePath)
 		{
-			nodeInclusions.getNodeForPath(nodePath).setInclusion(EXCLUDED);
+			nodeInclusions.getNodeForPath(nodePath).setValue(EXCLUDED);
 			return this;
 		}
 
@@ -329,7 +329,7 @@ public class InclusionService<T> implements InclusionConfiguration<T>, IsIgnored
 
 		public ToIncludeAndReturn<T> node(final NodePath nodePath)
 		{
-			nodeInclusions.getNodeForPath(nodePath).setInclusion(INCLUDED);
+			nodeInclusions.getNodeForPath(nodePath).setValue(INCLUDED);
 			return this;
 		}
 

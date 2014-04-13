@@ -24,38 +24,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static de.danielbechler.diff.inclusion.Inclusion.EXCLUDED;
-import static de.danielbechler.diff.inclusion.Inclusion.INCLUDED;
-
 /**
  * Created by Daniel Bechler.
  */
-public class ConfigNode
+public class ValueNode<V>
 {
-	private final Map<ElementSelector, ConfigNode> children = new HashMap<ElementSelector, ConfigNode>();
-	private final ElementSelector elementSelector;
-	private final ConfigNode parent;
-	private Inclusion inclusion;
+	protected final Map<ElementSelector, ValueNode<V>> children = new HashMap<ElementSelector, ValueNode<V>>();
+	protected final ValueNode<V> parent;
+	protected final ElementSelector elementSelector;
+	protected V value;
 
-	public ConfigNode()
+	public ValueNode()
 	{
 		this(RootElementSelector.getInstance(), null);
 	}
 
-	private ConfigNode(final ElementSelector elementSelector, final ConfigNode parent)
+	protected ValueNode(final ElementSelector elementSelector, final ValueNode<V> parent)
 	{
 		this.elementSelector = elementSelector;
 		this.parent = parent;
-	}
-
-	public Inclusion getInclusion()
-	{
-		return inclusion;
-	}
-
-	public void setInclusion(final Inclusion inclusion)
-	{
-		this.inclusion = inclusion;
 	}
 
 	public ElementSelector getElementSelector()
@@ -63,12 +50,12 @@ public class ConfigNode
 		return elementSelector;
 	}
 
-	public ConfigNode getParent()
+	public ValueNode<V> getParent()
 	{
 		return parent;
 	}
 
-	public ConfigNode getNodeForPath(final NodePath nodePath)
+	public ValueNode<V> getNodeForPath(final NodePath nodePath)
 	{
 		if (parent == null)
 		{
@@ -88,7 +75,7 @@ public class ConfigNode
 		}
 	}
 
-	public ConfigNode getChild(final ElementSelector childSelector)
+	public ValueNode<V> getChild(final ElementSelector childSelector)
 	{
 		if (childSelector == RootElementSelector.getInstance())
 		{
@@ -100,13 +87,18 @@ public class ConfigNode
 		}
 		else
 		{
-			final ConfigNode childNode = new ConfigNode(childSelector, this);
+			final ValueNode<V> childNode = newNode(childSelector);
 			children.put(childSelector, childNode);
 			return childNode;
 		}
 	}
 
-	private ConfigNode getChild(final List<ElementSelector> childSelectors)
+	protected ValueNode<V> newNode(final ElementSelector childSelector)
+	{
+		return new ValueNode<V>(childSelector, this);
+	}
+
+	private ValueNode<V> getChild(final List<ElementSelector> childSelectors)
 	{
 		assert !childSelectors.isEmpty();
 		if (childSelectors.contains(RootElementSelector.getInstance()))
@@ -117,7 +109,7 @@ public class ConfigNode
 		{
 			return getChild(childSelectors.get(0));
 		}
-		final ConfigNode child = getChild(childSelectors.get(0));
+		final ValueNode<V> child = getChild(childSelectors.get(0));
 		return child.getChild(childSelectors.subList(1, childSelectors.size()));
 	}
 
@@ -126,89 +118,53 @@ public class ConfigNode
 		return children.get(childSelector) != null;
 	}
 
-	public boolean isIncluded()
-	{
-		if (inclusion != EXCLUDED)
-		{
-			final ConfigNode parentWithInclusion = getClosestParentWithInclusion();
-			if (parentWithInclusion != null)
-			{
-				return parentWithInclusion.getInclusion() != EXCLUDED;
-			}
-			if (inclusion == INCLUDED)
-			{
-				return true;
-			}
-			if (hasIncludedChildren())
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public boolean isExcluded()
-	{
-		if (inclusion == EXCLUDED)
-		{
-			return true;
-		}
-		if (parent != null && parent.isExcluded())
-		{
-			return true;
-		}
-		return false;
-	}
-
-	public ConfigNode getClosestParentWithInclusion()
+	public ValueNode<V> getClosestParentWithValue()
 	{
 		if (parent != null)
 		{
-			if (parent.hasInclusion())
+			if (parent.hasValue())
 			{
 				return parent;
 			}
 			else
 			{
-				return parent.getClosestParentWithInclusion();
+				return parent.getClosestParentWithValue();
 			}
 		}
 		return null;
 	}
 
-	private boolean hasIncludedChildren()
+	public boolean hasValue()
 	{
-		for (final ConfigNode child : children.values())
-		{
-			if (child.isIncluded())
-			{
-				return true;
-			}
-		}
-		return false;
+		return value != null;
 	}
 
-	public boolean hasInclusion()
+	public boolean containsValue(final V value)
 	{
-		return inclusion != null;
-	}
-
-	public boolean containsInclusion(final Inclusion inclusion)
-	{
-		if (this.inclusion == inclusion)
+		if (this.value == value)
 		{
 			return true;
 		}
 		else
 		{
-			for (final ConfigNode child : children.values())
+			for (final ValueNode<V> child : children.values())
 			{
-				if (child.containsInclusion(inclusion))
+				if (child.containsValue(value))
 				{
 					return true;
 				}
 			}
 		}
 		return false;
+	}
+
+	public V getValue()
+	{
+		return value;
+	}
+
+	public void setValue(final V value)
+	{
+		this.value = value;
 	}
 }

@@ -29,9 +29,9 @@ import static de.danielbechler.diff.inclusion.Inclusion.INCLUDED
 /**
  * Created by Daniel Bechler.
  */
-class ConfigNodeSpec extends Specification {
+class InclusionNodeSpec extends Specification {
 
-	def node = new ConfigNode()
+	def node = new InclusionNode()
 
 	def 'getChild creates a child for an unknown selector'() {
 		given:
@@ -88,7 +88,7 @@ class ConfigNodeSpec extends Specification {
 
 	def 'isIncluded returns true when the node itself is INCLUDED'() {
 		given:
-		  node.inclusion = INCLUDED
+		  node.value = INCLUDED
 
 		expect:
 		  node.isIncluded()
@@ -96,7 +96,7 @@ class ConfigNodeSpec extends Specification {
 
 	def 'isIncluded returns true when the node has at least one INCLUDED children'() {
 		given:
-		  node.getNodeForPath(NodePath.with('foo', 'bar')).inclusion = INCLUDED
+		  node.getNodeForPath(NodePath.with('foo', 'bar')).value = INCLUDED
 
 		expect:
 		  node.isIncluded()
@@ -104,8 +104,8 @@ class ConfigNodeSpec extends Specification {
 
 	def 'isIncluded returns false when closest parent with inclusion is EXCLUDED'() {
 		given:
-		  node.getNodeForPath(NodePath.with('a')).inclusion = EXCLUDED
-		  node.getNodeForPath(NodePath.with('a', 'b', 'c')).inclusion = INCLUDED
+		  node.getNodeForPath(NodePath.with('a')).value = EXCLUDED
+		  node.getNodeForPath(NodePath.with('a', 'b', 'c')).value = INCLUDED
 
 		expect:
 		  !node.getNodeForPath(NodePath.with('a', 'b', 'c')).isIncluded()
@@ -113,8 +113,8 @@ class ConfigNodeSpec extends Specification {
 
 	def 'isIncluded returns false when inclusion is EXCLUDED'() {
 		given:
-		  node.getNodeForPath(NodePath.with('a')).inclusion = INCLUDED
-		  node.getNodeForPath(NodePath.with('a', 'b', 'c')).inclusion = EXCLUDED
+		  node.getNodeForPath(NodePath.with('a')).value = INCLUDED
+		  node.getNodeForPath(NodePath.with('a', 'b', 'c')).value = EXCLUDED
 
 		expect:
 		  !node.getNodeForPath(NodePath.with('a', 'b', 'c')).isIncluded()
@@ -122,7 +122,7 @@ class ConfigNodeSpec extends Specification {
 
 	def 'isIncluded returns true when closest parent with explicit inclusion is INCLUDED'() {
 		given:
-		  node.getNodeForPath(NodePath.with('a')).inclusion = INCLUDED
+		  node.getNodeForPath(NodePath.with('a')).value = INCLUDED
 
 		expect:
 		  node.getNodeForPath(NodePath.with('a', 'b', 'c')).isIncluded()
@@ -130,7 +130,7 @@ class ConfigNodeSpec extends Specification {
 
 	def 'isIncluded returns false when node has no included children'() {
 		given:
-		  node.getNodeForPath(NodePath.with('a', 'b')).inclusion = EXCLUDED
+		  node.getNodeForPath(NodePath.with('a', 'b')).value = EXCLUDED
 
 		expect:
 		  !node.getNodeForPath(NodePath.with('a')).isIncluded()
@@ -138,15 +138,15 @@ class ConfigNodeSpec extends Specification {
 
 	def 'isExcluded returns true when the node is EXCLUDED'() {
 		given:
-		  node.inclusion = EXCLUDED
+		  node.value = EXCLUDED
 		expect:
 		  node.isExcluded()
 	}
 
 	def 'isExcluded returns true when any of the parents is EXCLUDED'() {
 		given:
-		  node.getNodeForPath(NodePath.with('a')).inclusion = EXCLUDED
-		  node.getNodeForPath(NodePath.with('a', 'b', 'c')).inclusion = INCLUDED
+		  node.getNodeForPath(NodePath.with('a')).value = EXCLUDED
+		  node.getNodeForPath(NodePath.with('a', 'b', 'c')).value = INCLUDED
 		expect:
 		  node.getNodeForPath(NodePath.with('a', 'b', 'c')).isExcluded()
 	}
@@ -159,10 +159,10 @@ class ConfigNodeSpec extends Specification {
 	@Unroll
 	def 'hasInclusion returns #expected when inclusion is set to #inclusion'() {
 		when:
-		  node.setInclusion(inclusion)
+		  node.setValue(inclusion)
 
 		then:
-		  node.hasInclusion() == expected
+		  node.hasValue() == expected
 
 		where:
 		  inclusion || expected

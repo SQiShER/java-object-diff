@@ -29,7 +29,7 @@ import java.util.Map;
 
 /**
  * @author Daniel Bechler
- * @see de.danielbechler.diff.inclusion.ConfigNode
+ * @see de.danielbechler.diff.inclusion.ValueNode
  * @deprecated The ConfigNode provides a much more powerful way to store values for NodePaths.
  */
 @Deprecated
