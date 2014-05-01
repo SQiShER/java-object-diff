@@ -223,7 +223,7 @@ class InclusionIT extends Specification {
 		  node.getChild('contacts').changed
 	}
 
-	def "when a child of an explicitly excluded element is included it should be excluded as well"() {
+	def "included children of excluded nodes should also be excluded"() {
 		given:
 		  configurable.inclusion().exclude().node(NodePath.startBuilding().propertyName('contacts').build())
 		  configurable.inclusion().include().node(NodePath.startBuilding().propertyName('contacts').element(GEORGE_SELECTOR).build())
@@ -254,11 +254,5 @@ class InclusionIT extends Specification {
 
 		then:
 		  node.getChild('name').changed
-	}
-
-	def "including an element only works if its parent element is also included"() {
-	}
-
-	def "children of included elements can be excluded"() {
 	}
 }

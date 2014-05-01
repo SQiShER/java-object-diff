@@ -139,7 +139,7 @@ public class InclusionService<T> implements InclusionConfiguration<T>, IsIgnored
 
 	private boolean isIncludedByPath(final DiffNode node)
 	{
-		return ((InclusionNode) nodeInclusions.getNodeForPath(node.getPath())).isIncluded();
+		return nodeInclusions.getNodeForPath(node.getPath()).isIncluded();
 	}
 
 	private boolean isIncludedByCategory(final DiffNode node)
@@ -189,7 +189,7 @@ public class InclusionService<T> implements InclusionConfiguration<T>, IsIgnored
 
 	private boolean isExcludedByPath(final DiffNode node)
 	{
-		final InclusionNode valueNode = (InclusionNode) nodeInclusions.getNodeForPath(node.getPath());
+		final InclusionNode valueNode = nodeInclusions.getNodeForPath(node.getPath());
 		if (valueNode.isExcluded() && !valueNode.containsValue(INCLUDED))
 		{
 			return true;

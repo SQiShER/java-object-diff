@@ -33,7 +33,7 @@ public interface InclusionConfiguration<T>
 {
 	/**
 	 * Includes elements (and implicitly all their children) based on certain criteria, unless their parent element
-	 * doesn't match any inclusion rules.
+	 * is excluded.
 	 */
 	ToInclude<T> include();
 
