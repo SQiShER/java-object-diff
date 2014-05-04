@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Daniel Bechler
+ * Copyright 2014 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,9 +40,8 @@ public class ObjectDiffer
 	 * Recursively inspects the given objects and returns a node representing their differences. Both objects
 	 * have be have the same type.
 	 *
-	 * @param working This object will be treated as the successor of the <code>base</code> object.
+	 * @param working This object will be treated as the successor of the `base` object.
 	 * @param base    This object will be treated as the predecessor of the <code>working</code> object.
-	 * @param <T>     The type of the objects to compare.
 	 * @return A node representing the differences between the given objects.
 	 */
 	public <T> DiffNode compare(final T working, final T base)

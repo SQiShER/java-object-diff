@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Daniel Bechler
+ * Copyright 2014 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,15 @@
 
 package de.danielbechler.diff.issues.issue15;
 
-import org.slf4j.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
-import static java.util.Arrays.*;
+import static java.util.Arrays.asList;
 
 /**
  * @author https://github.com/oplohmann (original author)
@@ -39,6 +43,11 @@ public class GraphNode
 	private GraphNode parent;
 	private GraphNode directReference;
 
+	public GraphNode(final int id)
+	{
+		this(id, null);
+	}
+
 	public GraphNode(final int id, final String value)
 	{
 		if (id == -1)
@@ -50,13 +59,8 @@ public class GraphNode
 		this.value = value;
 	}
 
-	public GraphNode(final int id)
-	{
-		this(id, null);
-	}
-
 	/**
-	 * @see GraphNode(int, String)
+	 * @see #GraphNode(int, String)
 	 * @deprecated You should always provide an ID.
 	 */
 	@Deprecated
@@ -66,18 +70,13 @@ public class GraphNode
 	}
 
 	/**
-	 * @see GraphNode(int, String)
+	 * @see #GraphNode(int, String)
 	 * @deprecated You should always provide an ID.
 	 */
 	@Deprecated
 	public GraphNode()
 	{
 		this(-1, null);
-	}
-
-	public void setDirectReference(final GraphNode directReference)
-	{
-		this.directReference = directReference;
 	}
 
 	public void addChild(final GraphNode child)
@@ -113,6 +112,11 @@ public class GraphNode
 	public GraphNode getDirectReference()
 	{
 		return directReference;
+	}
+
+	public void setDirectReference(final GraphNode directReference)
+	{
+		this.directReference = directReference;
 	}
 
 	public List<GraphNode> getChildren()
