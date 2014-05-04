@@ -17,15 +17,13 @@
 package de.danielbechler.diff.issues.issue3
 
 import de.danielbechler.diff.ObjectDifferBuilder
-import spock.lang.Ignore
 import spock.lang.Specification
 
 /**
  * Created by dbechler.
  */
-class IgnoreTest extends Specification {
+class IgnoreByPropertyNameIT extends Specification {
 
-	@Ignore
 	def "ignoring by property name"() {
 		given:
 		  def base = new FooContainer("foo-base", "bar-base", "test-base")

@@ -21,7 +21,7 @@ import java.lang.reflect.Method;
 /**
  * @author Daniel Bechler
  */
-public final class BeanPropertyAccessorBuilder
+final class BeanPropertyAccessorBuilder
 {
 	private BeanPropertyAccessorBuilder()
 	{
@@ -85,7 +85,7 @@ public final class BeanPropertyAccessorBuilder
 				}
 				return new BeanPropertyAccessor(propertyName, readMethod, writeMethod);
 			}
-			catch (NoSuchMethodException e)
+			catch (final NoSuchMethodException e)
 			{
 				throw new RuntimeException(e);
 			}

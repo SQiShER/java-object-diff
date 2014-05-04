@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Daniel Bechler
+ * Copyright 2014 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,13 +76,13 @@ class InstancesSpec extends Specification {
 
 	def "getType() returns most specific shared type for non-primitive objects (except for Map and Collection)"() {
 		given:
-		  def instances = Instances.of(accessor, working, base);
+		  def instances = Instances.of(beanPropertyAccessor, working, base);
 
 		expect:
 		  instances.getType() == resultType
 
 		where:
-		  accessor              | working                                    | base                                     | resultType
+		  beanPropertyAccessor  | working                                    | base                                     | resultType
 		  RootAccessor.instance | BigInteger.ONE                             | BigDecimal.ONE                           | Number
 		  RootAccessor.instance | new LineNumberReader(new StringReader("")) | new BufferedReader(new StringReader("")) | BufferedReader
 		  RootAccessor.instance | new StringReader("")                       | new BufferedReader(new StringReader("")) | Reader

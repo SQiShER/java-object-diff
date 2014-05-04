@@ -427,6 +427,16 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>
                 <version>2.6</version>
+                <configuration>
+                    <instrumentation>
+                        <excludes>
+                            <exclude>**/*IT.class</exclude>
+                            <exclude>**/*AT.class</exclude>
+                            <exclude>**/*Example.class</exclude>
+                        </excludes>
+                    </instrumentation>
+                    <check/>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

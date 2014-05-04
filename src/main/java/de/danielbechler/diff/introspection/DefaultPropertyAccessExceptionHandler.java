@@ -20,6 +20,7 @@ import de.danielbechler.diff.node.DiffNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@SuppressWarnings("UnusedDeclaration")
 public class DefaultPropertyAccessExceptionHandler implements BeanPropertyAccessExceptionHandler
 {
 	private static final Logger logger = LoggerFactory.getLogger(DefaultPropertyAccessExceptionHandler.class);

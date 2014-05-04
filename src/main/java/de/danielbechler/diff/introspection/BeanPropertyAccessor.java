@@ -64,6 +64,140 @@ public class BeanPropertyAccessor implements PropertyAwareAccessor
 		return method;
 	}
 
+	public final Set<String> getCategories()
+	{
+		return categories;
+	}
+
+	public final void setCategories(final Set<String> categories)
+	{
+		this.categories = categories;
+	}
+
+	public boolean isExcluded()
+	{
+		return excluded;
+	}
+
+	public void setExcluded(final boolean excluded)
+	{
+		this.excluded = excluded;
+	}
+
+	public String getPropertyName()
+	{
+		return this.propertyName;
+	}
+
+	/**
+	 * @return The annotations of the getter used to access this property.
+	 */
+	public Set<Annotation> getReadMethodAnnotations()
+	{
+		return new LinkedHashSet<Annotation>(Arrays.asList(readMethod.getAnnotations()));
+	}
+
+	public <T extends Annotation> T getReadMethodAnnotation(final Class<T> annotationClass)
+	{
+		final Set<? extends Annotation> annotations = getReadMethodAnnotations();
+		assert (annotations != null) : "Something is wrong here. " +
+				"The contract of getReadAnnotations() guarantees a non-null return value.";
+		for (final Annotation annotation : annotations)
+		{
+			if (annotationClass.isAssignableFrom(annotation.annotationType()))
+			{
+				return annotationClass.cast(annotation);
+			}
+		}
+		return null;
+	}
+
+	public BeanPropertyElementSelector getElementSelector()
+	{
+		return new BeanPropertyElementSelector(this.propertyName);
+	}
+
+	public Object get(final Object target)
+	{
+		if (target == null)
+		{
+			return null;
+		}
+		try
+		{
+			return readMethod.invoke(target);
+		}
+		catch (final Exception e)
+		{
+			final BeanPropertyReadException ex = new BeanPropertyReadException(e);
+			ex.setPropertyName(propertyName);
+			ex.setTargetType(target.getClass());
+			throw ex;
+		}
+	}
+
+	public void set(final Object target, final Object value)
+	{
+		if (target == null)
+		{
+			logger.debug("The target object is null");
+			logFailedSet(value);
+		}
+		else if (writeMethod == null)
+		{
+			logger.debug("No setter found for property '{}'", propertyName);
+			tryToReplaceContentOfCollectionTypes(target, value);
+		}
+		else
+		{
+			invokeWriteMethod(target, value);
+		}
+	}
+
+	public void unset(final Object target)
+	{
+		set(target, null);
+	}
+
+	private void logFailedSet(final Object value)
+	{
+		logger.info("Couldn't set new value '{}' for property '{}'", value, propertyName);
+	}
+
+	private void tryToReplaceContentOfCollectionTypes(final Object target, final Object value)
+	{
+		if (Collection.class.isAssignableFrom(readMethod.getReturnType()))
+		{
+			//noinspection unchecked
+			tryToReplaceCollectionContent((Collection<Object>) get(target), (Collection<Object>) value);
+			return;
+		}
+
+		if (Map.class.isAssignableFrom(readMethod.getReturnType()))
+		{
+			//noinspection unchecked
+			tryToReplaceMapContent((Map<Object, Object>) get(target), (Map<Object, Object>) value);
+			return;
+		}
+
+		logFailedSet(value);
+	}
+
+	private void invokeWriteMethod(final Object target, final Object value)
+	{
+		try
+		{
+			writeMethod.invoke(target, value);
+		}
+		catch (final Exception e)
+		{
+			final BeanPropertyWriteException ex = new BeanPropertyWriteException(e, value);
+			ex.setPropertyName(propertyName);
+			ex.setTargetType(getType());
+			throw ex;
+		}
+	}
+
 	private static boolean tryToReplaceCollectionContent(final Collection<Object> target,
 														 final Collection<Object> value)
 	{
@@ -104,143 +238,9 @@ public class BeanPropertyAccessor implements PropertyAwareAccessor
 		}
 	}
 
-	public final Set<String> getCategories()
-	{
-		return categories;
-	}
-
-	public final void setCategories(final Set<String> categories)
-	{
-		this.categories = categories;
-	}
-
-	public boolean isExcluded()
-	{
-		return excluded;
-	}
-
-	public void setExcluded(final boolean excluded)
-	{
-		this.excluded = excluded;
-	}
-
-	public void set(final Object target, final Object value)
-	{
-		if (target == null)
-		{
-			logger.debug("The target object is null");
-			logFailedSet(value);
-		}
-		else if (writeMethod == null)
-		{
-			logger.debug("No setter found for property '{}'", propertyName);
-			tryToReplaceContentOfCollectionTypes(target, value);
-		}
-		else
-		{
-			invokeWriteMethod(target, value);
-		}
-	}
-
-	private void logFailedSet(final Object value)
-	{
-		logger.info("Couldn't set new value '{}' for property '{}'", value, propertyName);
-	}
-
-	private void invokeWriteMethod(final Object target, final Object value)
-	{
-		try
-		{
-			writeMethod.invoke(target, value);
-		}
-		catch (final Exception e)
-		{
-			final BeanPropertyWriteException ex = new BeanPropertyWriteException(e, value);
-			ex.setPropertyName(propertyName);
-			ex.setTargetType(getType());
-			throw ex;
-		}
-	}
-
-	private void tryToReplaceContentOfCollectionTypes(final Object target, final Object value)
-	{
-		if (Collection.class.isAssignableFrom(readMethod.getReturnType()))
-		{
-			//noinspection unchecked
-			tryToReplaceCollectionContent((Collection<Object>) get(target), (Collection<Object>) value);
-			return;
-		}
-
-		if (Map.class.isAssignableFrom(readMethod.getReturnType()))
-		{
-			//noinspection unchecked
-			tryToReplaceMapContent((Map<Object, Object>) get(target), (Map<Object, Object>) value);
-			return;
-		}
-
-		logFailedSet(value);
-	}
-
-	public Object get(final Object target)
-	{
-		if (target == null)
-		{
-			return null;
-		}
-		try
-		{
-			return readMethod.invoke(target);
-		}
-		catch (final Exception e)
-		{
-			final BeanPropertyReadException ex = new BeanPropertyReadException(e);
-			ex.setPropertyName(propertyName);
-			ex.setTargetType(target.getClass());
-			throw ex;
-		}
-	}
-
-	public void unset(final Object target)
-	{
-		set(target, null);
-	}
-
 	public Class<?> getType()
 	{
 		return this.type;
-	}
-
-	public String getPropertyName()
-	{
-		return this.propertyName;
-	}
-
-	public BeanPropertyElementSelector getElementSelector()
-	{
-		return new BeanPropertyElementSelector(this.propertyName);
-	}
-
-	/**
-	 * @return The annotations of the getter used to access this property.
-	 */
-	public Set<Annotation> getReadMethodAnnotations()
-	{
-		return new LinkedHashSet<Annotation>(Arrays.asList(readMethod.getAnnotations()));
-	}
-
-	public <T extends Annotation> T getReadMethodAnnotation(final Class<T> annotationClass)
-	{
-		final Set<? extends Annotation> annotations = getReadMethodAnnotations();
-		assert (annotations != null) : "Something is wrong here. " +
-				"The contract of getReadAnnotations() guarantees a non-null return value.";
-		for (final Annotation annotation : annotations)
-		{
-			if (annotationClass.isAssignableFrom(annotation.annotationType()))
-			{
-				return annotationClass.cast(annotation);
-			}
-		}
-		return null;
 	}
 
 	@Override

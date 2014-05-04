@@ -24,12 +24,12 @@ import de.danielbechler.diff.node.DiffNode;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import static de.danielbechler.diff.circular.CircularReferenceMatchingMode.EQUALITY_OPERATOR;
+import static de.danielbechler.diff.circular.CircularReferenceMatchingMode.EQUALS_METHOD;
 
 /**
  * @author Daniel Bechler
  */
-public class CircularReferenceDetectionBasedOnIdentityTest
+public class CircularReferenceDetectionBasedOnEqualsIT
 {
 	private ObjectDiffer objectDiffer;
 
@@ -39,7 +39,7 @@ public class CircularReferenceDetectionBasedOnIdentityTest
 		final ObjectDifferBuilder configuration = ObjectDifferBuilder.startBuilding();
 		configuration.configure()
 				.circularReferenceHandling()
-				.matchCircularReferencesUsing(EQUALITY_OPERATOR);
+				.matchCircularReferencesUsing(EQUALS_METHOD);
 		objectDiffer = configuration.build();
 	}
 
@@ -53,10 +53,10 @@ public class CircularReferenceDetectionBasedOnIdentityTest
 	}
 
 	@Test
-	public void detectsNoCircularReference_whenEncounteringDifferentButEqualObjectsTwice() throws Exception
+	public void detectsCircularReference_whenEncounteringDifferentButEqualObjectsTwice() throws Exception
 	{
 		final ObjectWithNestedObject object = new ObjectWithNestedObject("foo", new ObjectWithNestedObject("foo"));
 		final DiffNode node = objectDiffer.compare(object, null);
-		NodeAssertions.assertThat(node).child("object").hasState(DiffNode.State.ADDED);
+		NodeAssertions.assertThat(node).child("object").isCircular();
 	}
 }
