@@ -16,6 +16,7 @@
 
 package de.danielbechler.diff.inclusion
 
+import de.danielbechler.diff.Configuration
 import de.danielbechler.diff.access.PropertyAwareAccessor
 import de.danielbechler.diff.access.RootAccessor
 import de.danielbechler.diff.category.CategoryResolver
@@ -30,7 +31,7 @@ import spock.lang.Specification
 class InclusionServiceSpec extends Specification {
 	def categoryResolver = Mock(CategoryResolver)
 	def accessor = Mock(PropertyAwareAccessor)
-	def rootConfiguration = Mock(Object)
+	def rootConfiguration = Mock(Configuration)
 	def inclusionService = new InclusionService(categoryResolver, rootConfiguration)
 	def NodePath nodePath = NodePath.with("foo")
 	def DiffNode rootNode

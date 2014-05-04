@@ -16,6 +16,7 @@
 
 package de.danielbechler.diff.inclusion;
 
+import de.danielbechler.diff.Configuration;
 import de.danielbechler.diff.category.CategoryResolver;
 import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.diff.node.Visit;
@@ -35,18 +36,18 @@ import static de.danielbechler.diff.inclusion.Inclusion.INCLUDED;
 /**
  *
  */
-public class InclusionService<T> implements InclusionConfiguration<T>, IsIgnoredResolver
+public class InclusionService implements InclusionConfiguration, IsIgnoredResolver
 {
 	private final CategoryResolver categoryResolver;
-	private final T rootConfiguration;
+	private final Configuration rootConfiguration;
 	private final InclusionNode nodeInclusions = new InclusionNode();
 	private final Map<Class<?>, Inclusion> typeInclusions = new HashMap<Class<?>, Inclusion>();
 	private final Map<String, Inclusion> categoryInclusions = new HashMap<String, Inclusion>();
 	private final Map<String, Inclusion> propertyNameInclusions = new HashMap<String, Inclusion>();
-	private final ToInclude<T> includeAndReturn = new ToIncludeAndReturnImpl();
-	private final ToExclude<T> excludeAndReturn = new ToExcludeAndReturnImpl();
+	private final ToInclude includeAndReturn = new ToIncludeAndReturnImpl();
+	private final ToExclude excludeAndReturn = new ToExcludeAndReturnImpl();
 
-	public InclusionService(final CategoryResolver categoryResolver, final T rootConfiguration)
+	public InclusionService(final CategoryResolver categoryResolver, final Configuration rootConfiguration)
 	{
 		Assert.notNull(categoryResolver, "categoryResolver");
 		Assert.notNull(rootConfiguration, "rootConfiguration");
@@ -261,85 +262,85 @@ public class InclusionService<T> implements InclusionConfiguration<T>, IsIgnored
 		return false;
 	}
 
-	public ToInclude<T> include()
+	public ToInclude include()
 	{
 		return includeAndReturn;
 	}
 
-	public ToExclude<T> exclude()
+	public ToExclude exclude()
 	{
 		return excludeAndReturn;
 	}
 
-	private class ToExcludeAndReturnImpl implements ToExcludeAndReturn<T>
+	private class ToExcludeAndReturnImpl implements ToExcludeAndReturn
 	{
-		public T and()
+		public Configuration and()
 		{
 			return rootConfiguration;
 		}
 
-		public ToExcludeAndReturn<T> category(final String category)
+		public ToExcludeAndReturn category(final String category)
 		{
 			categoryInclusions.put(category, EXCLUDED);
 			return this;
 		}
 
-		public ToExcludeAndReturn<T> type(final Class<?> type)
+		public ToExcludeAndReturn type(final Class<?> type)
 		{
 			typeInclusions.put(type, EXCLUDED);
 			return this;
 		}
 
-		public ToExcludeAndReturn<T> node(final NodePath nodePath)
+		public ToExcludeAndReturn node(final NodePath nodePath)
 		{
 			nodeInclusions.getNodeForPath(nodePath).setValue(EXCLUDED);
 			return this;
 		}
 
-		public ToExcludeAndReturn<T> propertyName(final String propertyName)
+		public ToExcludeAndReturn propertyName(final String propertyName)
 		{
 			propertyNameInclusions.put(propertyName, EXCLUDED);
 			return this;
 		}
 
-		public ToInclude<T> include()
+		public ToInclude include()
 		{
 			return InclusionService.this.include();
 		}
 	}
 
-	private class ToIncludeAndReturnImpl implements ToIncludeAndReturn<T>
+	private class ToIncludeAndReturnImpl implements ToIncludeAndReturn
 	{
-		public T and()
+		public Configuration and()
 		{
 			return rootConfiguration;
 		}
 
-		public ToIncludeAndReturn<T> category(final String category)
+		public ToIncludeAndReturn category(final String category)
 		{
 			categoryInclusions.put(category, INCLUDED);
 			return this;
 		}
 
-		public ToIncludeAndReturn<T> type(final Class<?> type)
+		public ToIncludeAndReturn type(final Class<?> type)
 		{
 			typeInclusions.put(type, INCLUDED);
 			return this;
 		}
 
-		public ToIncludeAndReturn<T> node(final NodePath nodePath)
+		public ToIncludeAndReturn node(final NodePath nodePath)
 		{
 			nodeInclusions.getNodeForPath(nodePath).setValue(INCLUDED);
 			return this;
 		}
 
-		public ToIncludeAndReturn<T> propertyName(final String propertyName)
+		public ToIncludeAndReturn propertyName(final String propertyName)
 		{
 			propertyNameInclusions.put(propertyName, INCLUDED);
 			return this;
 		}
 
-		public ToExclude<T> exclude()
+		public ToExclude exclude()
 		{
 			return InclusionService.this.exclude();
 		}

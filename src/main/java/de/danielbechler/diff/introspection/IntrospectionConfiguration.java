@@ -16,6 +16,7 @@
 
 package de.danielbechler.diff.introspection;
 
+import de.danielbechler.diff.Configuration;
 import de.danielbechler.diff.path.NodePath;
 
 /**
@@ -35,6 +36,8 @@ public interface IntrospectionConfiguration
 	Of ofType(Class<?> type);
 
 	Of ofNode(NodePath path);
+
+	Configuration and();
 
 	public static interface Of
 	{

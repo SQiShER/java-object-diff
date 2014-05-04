@@ -37,7 +37,7 @@ class IntrospectionServiceTest extends Specification {
 	@Shared
 	def primitiveWrapperTypes = [Integer, Short, Long, Boolean, Character, Byte, Double, Float]
 
-	def introspectionService = new IntrospectionService()
+	def introspectionService = new IntrospectionService(null)
 	def rootNode = new DiffNode(DiffNode.ROOT, RootAccessor.instance, ObjectWithString)
 	def childNode
 	def childAccessor = Mock(TypeAwareAccessor)

@@ -44,12 +44,12 @@ import de.danielbechler.diff.introspection.IntrospectionService;
  */
 public final class ObjectDifferBuilder
 {
-	private final Configuration configuration = new Configuration();
+	private final Configuration configuration = new ConfigurationImpl();
+	private final IntrospectionService introspectionService = new IntrospectionService(configuration);
 	private final CategoryService categoryService = new CategoryService();
-	private final InclusionService<Configuration> inclusionService = new InclusionService<Configuration>(categoryService, configuration);
+	private final InclusionService inclusionService = new InclusionService(categoryService, configuration);
 	private final ComparisonService comparisonService = new ComparisonService();
 	private final ReturnableNodeService returnableNodeService = new ReturnableNodeService();
-	private final IntrospectionService introspectionService = new IntrospectionService();
 	private final CircularReferenceService circularReferenceService = new CircularReferenceService();
 
 	private ObjectDifferBuilder()
@@ -59,11 +59,6 @@ public final class ObjectDifferBuilder
 	public static ObjectDiffer buildDefault()
 	{
 		return startBuilding().build();
-	}
-
-	public static ObjectDifferBuilder startBuilding()
-	{
-		return new ObjectDifferBuilder();
 	}
 
 	public ObjectDiffer build()
@@ -77,6 +72,11 @@ public final class ObjectDifferBuilder
 		return new ObjectDiffer(differDispatcher);
 	}
 
+	public static ObjectDifferBuilder startBuilding()
+	{
+		return new ObjectDifferBuilder();
+	}
+
 	/**
 	 * Configure the way the ObjectDiffer should behave.
 	 */
@@ -85,9 +85,9 @@ public final class ObjectDifferBuilder
 		return configuration;
 	}
 
-	public class Configuration
+	public class ConfigurationImpl implements de.danielbechler.diff.Configuration
 	{
-		private Configuration()
+		private ConfigurationImpl()
 		{
 		}
 
@@ -120,7 +120,7 @@ public final class ObjectDifferBuilder
 		 * Allows to in- or exclude nodes based on property name, object type, category or location in the object
 		 * graph.
 		 */
-		public InclusionConfiguration<Configuration> inclusion()
+		public InclusionConfiguration inclusion()
 		{
 			return inclusionService;
 		}

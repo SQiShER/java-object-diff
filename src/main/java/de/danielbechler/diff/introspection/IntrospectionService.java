@@ -16,6 +16,7 @@
 
 package de.danielbechler.diff.introspection;
 
+import de.danielbechler.diff.Configuration;
 import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.diff.path.NodePath;
 import de.danielbechler.diff.path.NodePathValueHolder;
@@ -34,14 +35,12 @@ public class IntrospectionService implements IntrospectionConfiguration, IsIntro
 	private final Map<Class<?>, IntrospectionMode> typeIntrospectionModeMap = new HashMap<Class<?>, IntrospectionMode>();
 	private final NodePathValueHolder<Introspector> nodePathIntrospectorHolder = new NodePathValueHolder<Introspector>();
 	private final NodePathValueHolder<IntrospectionMode> nodePathIntrospectionModeHolder = new NodePathValueHolder<IntrospectionMode>();
+	private final Configuration configuration;
 	private Introspector defaultIntrospector = new StandardBeanIntrospector();
 
-	private static boolean isPrimitiveTypeEnumOrArray(final Class<?> nodeType)
+	public IntrospectionService(final Configuration configuration)
 	{
-		return Classes.isPrimitiveType(nodeType)
-				|| Classes.isPrimitiveWrapperType(nodeType)
-				|| nodeType.isEnum()
-				|| nodeType.isArray();
+		this.configuration = configuration;
 	}
 
 	public boolean isIntrospectable(final DiffNode node)
@@ -64,6 +63,14 @@ public class IntrospectionService implements IntrospectionConfiguration, IsIntro
 			return false;
 		}
 		return true;
+	}
+
+	private static boolean isPrimitiveTypeEnumOrArray(final Class<?> nodeType)
+	{
+		return Classes.isPrimitiveType(nodeType)
+				|| Classes.isPrimitiveWrapperType(nodeType)
+				|| nodeType.isEnum()
+				|| nodeType.isArray();
 	}
 
 	public Introspector introspectorForNode(final DiffNode node)
@@ -136,6 +143,11 @@ public class IntrospectionService implements IntrospectionConfiguration, IsIntro
 				return IntrospectionService.this;
 			}
 		};
+	}
+
+	public Configuration and()
+	{
+		return configuration;
 	}
 
 	public enum IntrospectionMode
