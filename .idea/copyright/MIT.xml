@@ -1,9 +1,0 @@
-<component name="CopyrightManager">
-  <copyright>
-    <option name="notice" value="Copyright (c) &amp;#36;today.year the original author or authors.&#10;&#10;Permission is hereby granted, free of charge, to any person obtaining&#10;a copy of this software and associated documentation files (the&#10;&quot;Software&quot;), to deal in the Software without restriction, including&#10;without limitation the rights to use, copy, modify, merge, publish,&#10;distribute, sublicense, and/or sell copies of the Software, and to&#10;permit persons to whom the Software is furnished to do so, subject to&#10;the following conditions:&#10;&#10;The above copyright notice and this permission notice shall be&#10;included in all copies or substantial portions of the Software.&#10;&#10;THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND,&#10;EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF&#10;MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND&#10;NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE&#10;LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION&#10;OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION&#10;WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE." />
-    <option name="keyword" value="Copyright" />
-    <option name="allowReplaceKeyword" value="Copyright" />
-    <option name="myName" value="MIT" />
-    <option name="myLocal" value="true" />
-  </copyright>
-</component>

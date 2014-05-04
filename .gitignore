@@ -12,3 +12,4 @@ target
 *.jar
 *.war
 *.ear
+.idea
