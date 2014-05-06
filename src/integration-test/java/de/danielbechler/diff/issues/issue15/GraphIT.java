@@ -504,9 +504,9 @@ public class GraphIT
 		final GraphNode base2 = new GraphNode(2);
 		establishCircularDirectReference(base1, base2);
 
-		final ObjectDifferBuilder configuration = ObjectDifferBuilder.startBuilding();
-		configuration.filtering().returnNodesWithState(DiffNode.State.CIRCULAR);
-		final DiffNode node = configuration.build().compare(working1, base1);
+		final ObjectDifferBuilder objectDifferBuilder = ObjectDifferBuilder.startBuilding();
+		objectDifferBuilder.filtering().returnNodesWithState(DiffNode.State.CIRCULAR);
+		final DiffNode node = objectDifferBuilder.build().compare(working1, base1);
 		node.visit(new NodeHierarchyVisitor());
 
 		assertThat(node).child("value").hasState(DiffNode.State.ADDED);

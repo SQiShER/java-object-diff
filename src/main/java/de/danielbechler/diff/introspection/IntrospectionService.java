@@ -35,12 +35,12 @@ public class IntrospectionService implements IntrospectionConfigurer, IsIntrospe
 	private final Map<Class<?>, IntrospectionMode> typeIntrospectionModeMap = new HashMap<Class<?>, IntrospectionMode>();
 	private final NodePathValueHolder<Introspector> nodePathIntrospectorHolder = new NodePathValueHolder<Introspector>();
 	private final NodePathValueHolder<IntrospectionMode> nodePathIntrospectionModeHolder = new NodePathValueHolder<IntrospectionMode>();
-	private final ObjectDifferBuilder configuration;
+	private final ObjectDifferBuilder objectDifferBuilder;
 	private Introspector defaultIntrospector = new StandardBeanIntrospector();
 
-	public IntrospectionService(final ObjectDifferBuilder configuration)
+	public IntrospectionService(final ObjectDifferBuilder objectDifferBuilder)
 	{
-		this.configuration = configuration;
+		this.objectDifferBuilder = objectDifferBuilder;
 	}
 
 	public boolean isIntrospectable(final DiffNode node)
@@ -147,7 +147,7 @@ public class IntrospectionService implements IntrospectionConfigurer, IsIntrospe
 
 	public ObjectDifferBuilder and()
 	{
-		return configuration;
+		return objectDifferBuilder;
 	}
 
 	public enum IntrospectionMode

@@ -132,10 +132,10 @@ public class ObjectDifferIT
 	{
 		final ObjectWithNestedObject base = new ObjectWithNestedObject("1");
 		final ObjectWithNestedObject working = new ObjectWithNestedObject("1", new ObjectWithNestedObject("2", new ObjectWithNestedObject("foo")));
-		final ObjectDifferBuilder configuration = ObjectDifferBuilder.startBuilding();
-		// final Configuration2 configuration = new Configuration2().withChildrenOfAddedNodes();
+		final ObjectDifferBuilder objectDifferBuilder = ObjectDifferBuilder.startBuilding();
+		// final Configuration2 objectDifferBuilder = new Configuration2().withChildrenOfAddedNodes();
 
-		final DiffNode node = configuration.build().compare(working, base);
+		final DiffNode node = objectDifferBuilder.build().compare(working, base);
 
 		node.visit(new NodeHierarchyVisitor());
 		NodeAssertions.assertThat(node).root().hasState(DiffNode.State.CHANGED);
