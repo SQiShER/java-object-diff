@@ -16,7 +16,7 @@
 
 package de.danielbechler.diff.inclusion;
 
-import de.danielbechler.diff.Configuration;
+import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.path.NodePath;
 
 /**
@@ -30,7 +30,7 @@ import de.danielbechler.diff.path.NodePath;
  *
  * @author Daniel Bechler
  */
-public interface InclusionConfiguration
+public interface InclusionConfigurer
 {
 	/**
 	 * Includes elements (and implicitly all their children) based on certain criteria, unless their parent element
@@ -55,7 +55,7 @@ public interface InclusionConfiguration
 
 	public interface ToIncludeAndReturn extends ToInclude
 	{
-		Configuration and();
+		ObjectDifferBuilder and();
 	}
 
 	public interface ToExclude
@@ -73,6 +73,6 @@ public interface InclusionConfiguration
 
 	public interface ToExcludeAndReturn extends ToExclude
 	{
-		Configuration and();
+		ObjectDifferBuilder and();
 	}
 }

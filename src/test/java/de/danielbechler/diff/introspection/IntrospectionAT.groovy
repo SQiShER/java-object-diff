@@ -20,7 +20,6 @@ import de.danielbechler.diff.ObjectDifferBuilder
 import de.danielbechler.diff.path.NodePath
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
-import org.mockito.Mock
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -29,20 +28,18 @@ import spock.lang.Specification
  */
 class IntrospectionAT extends Specification {
 
+	ObjectDifferBuilder objectDifferBuilder = ObjectDifferBuilder.startBuilding()
+
+	Introspector introspector = Mock(Introspector)
+
 	@Shared
 	Role base = new Role(name: 'Daario Naharis', actor: new Actor(firstName: 'Ed', lastName: 'Skrein'))
-
 	@Shared
 	Role working = new Role(name: 'Daario Naharis', actor: new Actor(firstName: 'Michiel', lastName: 'Huisman'))
 
-	@Mock
-	Introspector introspector = Mock(Introspector)
-
-	ObjectDifferBuilder objectDifferBuilder = ObjectDifferBuilder.startBuilding()
-
 	def 'set default introspector'() {
 		given:
-		  objectDifferBuilder.configure().introspection().setDefaultIntrospector(introspector)
+		  objectDifferBuilder.introspection().setDefaultIntrospector(introspector)
 		when:
 		  objectDifferBuilder.build().compare(working, base)
 		then:
@@ -51,7 +48,7 @@ class IntrospectionAT extends Specification {
 
 	def 'disable introspection for node'() {
 		given:
-		  objectDifferBuilder.configure().introspection().ofNode(NodePath.with('actor')).toBeDisabled()
+		  objectDifferBuilder.introspection().ofNode(NodePath.with('actor')).toBeDisabled()
 		when:
 		  def node = objectDifferBuilder.build().compare(working, base)
 		then:
@@ -60,7 +57,7 @@ class IntrospectionAT extends Specification {
 
 	def 'disable introspection for type'() {
 		given:
-		  objectDifferBuilder.configure().introspection().ofType(Actor).toBeDisabled()
+		  objectDifferBuilder.introspection().ofType(Actor).toBeDisabled()
 		when:
 		  def node = objectDifferBuilder.build().compare(working, base)
 		then:
@@ -69,9 +66,9 @@ class IntrospectionAT extends Specification {
 
 	def 'enable introspection for node'() {
 		given:
-		  objectDifferBuilder.configure().introspection().ofNode(NodePath.with('actor')).toBeDisabled()
+		  objectDifferBuilder.introspection().ofNode(NodePath.with('actor')).toBeDisabled()
 		and:
-		  objectDifferBuilder.configure().introspection().ofNode(NodePath.with('actor')).toBeEnabled()
+		  objectDifferBuilder.introspection().ofNode(NodePath.with('actor')).toBeEnabled()
 		when:
 		  def node = objectDifferBuilder.build().compare(working, base)
 		then:
@@ -80,9 +77,9 @@ class IntrospectionAT extends Specification {
 
 	def 'enable introspection for type'() {
 		given:
-		  objectDifferBuilder.configure().introspection().ofType(Actor).toBeDisabled()
+		  objectDifferBuilder.introspection().ofType(Actor).toBeDisabled()
 		and:
-		  objectDifferBuilder.configure().introspection().ofType(Actor).toBeEnabled()
+		  objectDifferBuilder.introspection().ofType(Actor).toBeEnabled()
 		when:
 		  def node = objectDifferBuilder.build().compare(working, base)
 		then:
@@ -91,7 +88,7 @@ class IntrospectionAT extends Specification {
 
 	def 'configure custom introspector for node'() {
 		given:
-		  objectDifferBuilder.configure().introspection().ofNode(NodePath.with('actor')).toUse(introspector)
+		  objectDifferBuilder.introspection().ofNode(NodePath.with('actor')).toUse(introspector)
 		when:
 		  objectDifferBuilder.build().compare(working, base)
 		then:
@@ -102,7 +99,7 @@ class IntrospectionAT extends Specification {
 
 	def 'configure custom introspector for type'() {
 		given:
-		  objectDifferBuilder.configure().introspection().ofType(Actor).toUse(introspector)
+		  objectDifferBuilder.introspection().ofType(Actor).toUse(introspector)
 		when:
 		  objectDifferBuilder.build().compare(working, base)
 		then:

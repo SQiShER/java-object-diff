@@ -36,11 +36,9 @@ public class CircularReferenceDetectionBasedOnIdentityIT
 	@BeforeMethod
 	public void setUp() throws Exception
 	{
-		final ObjectDifferBuilder configuration = ObjectDifferBuilder.startBuilding();
-		configuration.configure()
-				.circularReferenceHandling()
-				.matchCircularReferencesUsing(EQUALITY_OPERATOR);
-		objectDiffer = configuration.build();
+		final ObjectDifferBuilder objectDifferBuilder = ObjectDifferBuilder.startBuilding();
+		objectDifferBuilder.circularReferenceHandling().matchCircularReferencesUsing(EQUALITY_OPERATOR);
+		objectDiffer = objectDifferBuilder.build();
 	}
 
 	@Test

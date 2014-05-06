@@ -16,6 +16,7 @@
 
 package de.danielbechler.diff.category;
 
+import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.diff.path.NodePath;
 import de.danielbechler.diff.path.NodePathValueHolder;
@@ -34,14 +35,15 @@ import static java.util.Collections.emptySet;
 /**
  *
  */
-public class CategoryService implements CategoryConfiguration, CategoryResolver
+public class CategoryService implements CategoryConfigurer, CategoryResolver
 {
 	private final NodePathValueHolder<String[]> nodePathCategories = NodePathValueHolder.of(String[].class);
 	private final Map<Class<?>, String[]> typeCategories = new HashMap<Class<?>, String[]>();
+	private final ObjectDifferBuilder objectDifferBuilder;
 
-	private static Collection<String> categoriesFromNode(final DiffNode node)
+	public CategoryService(final ObjectDifferBuilder objectDifferBuilder)
 	{
-		return node.getCategories();
+		this.objectDifferBuilder = objectDifferBuilder;
 	}
 
 	public Set<String> resolveCategories(final DiffNode node)
@@ -78,11 +80,16 @@ public class CategoryService implements CategoryConfiguration, CategoryResolver
 		return emptySet();
 	}
 
+	private static Collection<String> categoriesFromNode(final DiffNode node)
+	{
+		return node.getCategories();
+	}
+
 	public Of ofNode(final NodePath nodePath)
 	{
 		return new Of()
 		{
-			public CategoryConfiguration toBe(final String... categories)
+			public CategoryConfigurer toBe(final String... categories)
 			{
 				nodePathCategories.put(nodePath, categories);
 				return CategoryService.this;
@@ -94,11 +101,16 @@ public class CategoryService implements CategoryConfiguration, CategoryResolver
 	{
 		return new Of()
 		{
-			public CategoryConfiguration toBe(final String... categories)
+			public CategoryConfigurer toBe(final String... categories)
 			{
 				typeCategories.put(type, categories);
 				return CategoryService.this;
 			}
 		};
+	}
+
+	public ObjectDifferBuilder and()
+	{
+		return objectDifferBuilder;
 	}
 }

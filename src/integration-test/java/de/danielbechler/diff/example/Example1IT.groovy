@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Daniel Bechler
+ * Copyright 2014 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ public class Example1IT extends Specification {
 	def "Comparing Objects via compareTo instead of equals"() {
 		given: "an object differ configured to compare the given type via compareTo method"
 		  def builder = ObjectDifferBuilder.startBuilding()
-		  builder.configure().comparison().ofType(ComparableObject).toUseCompareToMethod()
+		  builder.comparison().ofType(ComparableObject).toUseCompareToMethod()
 		  def objectDiffer = builder.build()
 
 		expect:

@@ -16,6 +16,7 @@
 
 package de.danielbechler.diff.comparison;
 
+import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.path.NodePath;
 
 /**
@@ -26,7 +27,7 @@ import de.danielbechler.diff.path.NodePath;
  *
  * @author Daniel Bechler
  */
-public interface ComparisonConfiguration
+public interface ComparisonConfigurer
 {
 	Of ofNode(NodePath nodePath);
 
@@ -34,19 +35,21 @@ public interface ComparisonConfiguration
 
 	OfPrimitiveTypes ofPrimitiveTypes();
 
+	ObjectDifferBuilder and();
+
 	public interface Of
 	{
-		ComparisonConfiguration toUse(ComparisonStrategy comparisonStrategy);
+		ComparisonConfigurer toUse(ComparisonStrategy comparisonStrategy);
 
-		ComparisonConfiguration toUseEqualsMethod();
+		ComparisonConfigurer toUseEqualsMethod();
 
-		ComparisonConfiguration toUseEqualsMethodOfValueProvidedByMethod(String propertyName);
+		ComparisonConfigurer toUseEqualsMethodOfValueProvidedByMethod(String propertyName);
 
-		ComparisonConfiguration toUseCompareToMethod();
+		ComparisonConfigurer toUseCompareToMethod();
 	}
 
 	public interface OfPrimitiveTypes
 	{
-		ComparisonConfiguration toTreatDefaultValuesAs(PrimitiveDefaultValueMode primitiveDefaultValueMode);
+		ComparisonConfigurer toTreatDefaultValuesAs(PrimitiveDefaultValueMode primitiveDefaultValueMode);
 	}
 }

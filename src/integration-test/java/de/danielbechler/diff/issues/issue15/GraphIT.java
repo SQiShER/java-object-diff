@@ -41,34 +41,6 @@ public class GraphIT
 {
 	private static final boolean PRINT_ENABLED = true;
 
-	private static DiffNode compareAndPrint(final GraphNode modified, final GraphNode base)
-	{
-		final DiffNode root = ObjectDifferBuilder.buildDefault().compare(modified, base);
-		if (PRINT_ENABLED)
-		{
-			root.visit(new PrintingVisitor(modified, base));
-		}
-		return root;
-	}
-
-	private static void establishParentChildRelationship(final GraphNode parent, final GraphNode child)
-	{
-		child.setParent(parent);
-		parent.addChild(child);
-	}
-
-	private static void establishCircularChildRelationship(final GraphNode a, final GraphNode b)
-	{
-		a.addChild(b);
-		b.addChild(a);
-	}
-
-	private static void establishCircularDirectReference(final GraphNode a, final GraphNode b)
-	{
-		a.setDirectReference(b);
-		b.setDirectReference(a);
-	}
-
 	@Test
 	public void basicNode()
 	{
@@ -84,6 +56,16 @@ public class GraphIT
 
 		assertThat(root).root().hasChildren(1);
 		assertThat(root).child("directReference", "value").hasState(DiffNode.State.CHANGED).hasNoChildren();
+	}
+
+	private static DiffNode compareAndPrint(final GraphNode modified, final GraphNode base)
+	{
+		final DiffNode root = ObjectDifferBuilder.buildDefault().compare(modified, base);
+		if (PRINT_ENABLED)
+		{
+			root.visit(new PrintingVisitor(modified, base));
+		}
+		return root;
 	}
 
 	@Test
@@ -130,6 +112,12 @@ public class GraphIT
 				.propertyName("children")
 				.collectionItem(b))
 				.hasState(DiffNode.State.CHANGED);
+	}
+
+	private static void establishCircularDirectReference(final GraphNode a, final GraphNode b)
+	{
+		a.setDirectReference(b);
+		b.setDirectReference(a);
 	}
 
 	@Test //(timeout = 1000)
@@ -321,6 +309,12 @@ public class GraphIT
 				.hasState(DiffNode.State.CHANGED);
 	}
 
+	private static void establishParentChildRelationship(final GraphNode parent, final GraphNode child)
+	{
+		child.setParent(parent);
+		parent.addChild(child);
+	}
+
 	@Test
 	public void simpleGraphWithoutChanges()
 	{
@@ -493,6 +487,12 @@ public class GraphIT
 				.hasState(DiffNode.State.CHANGED);
 	}
 
+	private static void establishCircularChildRelationship(final GraphNode a, final GraphNode b)
+	{
+		a.addChild(b);
+		b.addChild(a);
+	}
+
 	@Test
 	public void testWithSimpleBiDirectionalConnection()
 	{
@@ -505,7 +505,7 @@ public class GraphIT
 		establishCircularDirectReference(base1, base2);
 
 		final ObjectDifferBuilder configuration = ObjectDifferBuilder.startBuilding();
-		configuration.configure().filtering().returnNodesWithState(DiffNode.State.CIRCULAR);
+		configuration.filtering().returnNodesWithState(DiffNode.State.CIRCULAR);
 		final DiffNode node = configuration.build().compare(working1, base1);
 		node.visit(new NodeHierarchyVisitor());
 
@@ -529,7 +529,7 @@ public class GraphIT
 		base2.getMap().put("bar", base1);
 
 		final ObjectDifferBuilder objectDifferBuilder = ObjectDifferBuilder.startBuilding();
-		objectDifferBuilder.configure().filtering().returnNodesWithState(DiffNode.State.CIRCULAR);
+		objectDifferBuilder.filtering().returnNodesWithState(DiffNode.State.CIRCULAR);
 		final ObjectDiffer differ = objectDifferBuilder.build();
 
 		final DiffNode node = differ.compare(working1, base1);

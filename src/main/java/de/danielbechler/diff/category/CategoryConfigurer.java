@@ -16,6 +16,7 @@
 
 package de.danielbechler.diff.category;
 
+import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.path.NodePath;
 
 /**
@@ -25,14 +26,16 @@ import de.danielbechler.diff.path.NodePath;
  *
  * @author Daniel Bechler
  */
-public interface CategoryConfiguration
+public interface CategoryConfigurer
 {
 	Of ofNode(NodePath nodePath);
 
 	Of ofType(Class<?> type);
 
+	ObjectDifferBuilder and();
+
 	public interface Of
 	{
-		CategoryConfiguration toBe(String... categories);
+		CategoryConfigurer toBe(String... categories);
 	}
 }

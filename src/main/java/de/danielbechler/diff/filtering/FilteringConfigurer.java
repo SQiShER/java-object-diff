@@ -16,6 +16,7 @@
 
 package de.danielbechler.diff.filtering;
 
+import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.node.DiffNode;
 
 /**
@@ -30,11 +31,13 @@ import de.danielbechler.diff.node.DiffNode;
  *
  * @author Daniel Bechler
  */
-public interface ReturnableNodeConfiguration
+public interface FilteringConfigurer
 {
-	ReturnableNodeConfiguration returnNodesWithState(DiffNode.State state, boolean enabled);
+	FilteringConfigurer returnNodesWithState(DiffNode.State state, boolean enabled);
 
-	ReturnableNodeConfiguration returnNodesWithState(DiffNode.State state);
+	FilteringConfigurer returnNodesWithState(DiffNode.State state);
 
-	ReturnableNodeConfiguration omitNodesWithState(DiffNode.State state);
+	FilteringConfigurer omitNodesWithState(DiffNode.State state);
+
+	ObjectDifferBuilder and();
 }

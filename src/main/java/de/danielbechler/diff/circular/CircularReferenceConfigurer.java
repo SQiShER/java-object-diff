@@ -16,6 +16,8 @@
 
 package de.danielbechler.diff.circular;
 
+import de.danielbechler.diff.ObjectDifferBuilder;
+
 /**
  * Allows to define how the circular reference detector compares object instances. By default it uses the equality
  * operator (`==`) which should be fine in mose cases.
@@ -30,9 +32,11 @@ package de.danielbechler.diff.circular;
  *
  * @author Daniel Bechler
  */
-public interface CircularReferenceConfiguration
+public interface CircularReferenceConfigurer
 {
-	CircularReferenceConfiguration matchCircularReferencesUsing(CircularReferenceMatchingMode matchingMode);
+	CircularReferenceConfigurer matchCircularReferencesUsing(CircularReferenceMatchingMode matchingMode);
 
-	CircularReferenceConfiguration handleCircularReferenceExceptionsUsing(CircularReferenceExceptionHandler exceptionHandler);
+	CircularReferenceConfigurer handleCircularReferenceExceptionsUsing(CircularReferenceExceptionHandler exceptionHandler);
+
+	ObjectDifferBuilder and();
 }

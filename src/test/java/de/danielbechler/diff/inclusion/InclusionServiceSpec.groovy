@@ -16,7 +16,7 @@
 
 package de.danielbechler.diff.inclusion
 
-import de.danielbechler.diff.Configuration
+import de.danielbechler.diff.ObjectDifferBuilder
 import de.danielbechler.diff.access.PropertyAwareAccessor
 import de.danielbechler.diff.access.RootAccessor
 import de.danielbechler.diff.category.CategoryResolver
@@ -31,8 +31,8 @@ import spock.lang.Specification
 class InclusionServiceSpec extends Specification {
 	def categoryResolver = Mock(CategoryResolver)
 	def accessor = Mock(PropertyAwareAccessor)
-	def rootConfiguration = Mock(Configuration)
-	def inclusionService = new InclusionService(categoryResolver, rootConfiguration)
+	def builder = Mock(ObjectDifferBuilder)
+	def inclusionService = new InclusionService(categoryResolver, builder)
 	def NodePath nodePath = NodePath.with("foo")
 	def DiffNode rootNode
 	def DiffNode node
@@ -46,7 +46,7 @@ class InclusionServiceSpec extends Specification {
 
 	def "construction: should fail when no categoryResolver is given"() {
 		when:
-		  new InclusionService(null, rootConfiguration)
+		  new InclusionService(null, builder)
 
 		then:
 		  thrown(IllegalArgumentException)

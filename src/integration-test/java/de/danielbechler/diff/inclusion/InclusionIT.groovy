@@ -32,7 +32,6 @@ class InclusionIT extends Specification {
 	static final KRAMER_SELECTOR = new CollectionItemElementSelector(new Contact(id: 'kramer'))
 
 	def builder = ObjectDifferBuilder.startBuilding()
-	def configurable = builder.configure()
 	def working = PhoneBookSetup.getWorking()
 	def base = PhoneBookSetup.getBase()
 
@@ -59,7 +58,7 @@ class InclusionIT extends Specification {
 
 	def "Property with specific name excluded via configuration"() {
 		given:
-		  configurable.inclusion().exclude().propertyName("name")
+		  builder.inclusion().exclude().propertyName("name")
 
 		when:
 		  def node = builder.build().compare(working, base)
@@ -73,7 +72,7 @@ class InclusionIT extends Specification {
 
 	def "Category excluded via configuration"() {
 		given:
-		  configurable.inclusion().exclude().category('private')
+		  builder.inclusion().exclude().category('private')
 
 		when:
 		  def node = builder.build().compare(working, base)
@@ -84,7 +83,7 @@ class InclusionIT extends Specification {
 
 	def "Type excluded via configuration"() {
 		given:
-		  configurable.inclusion().exclude().type(Contact)
+		  builder.inclusion().exclude().type(Contact)
 
 		when:
 		  def node = builder.build().compare(working, base)
@@ -95,7 +94,7 @@ class InclusionIT extends Specification {
 
 	def "Node at specific NodePath excluded via configuration"() {
 		given:
-		  configurable.inclusion().exclude().node(NodePath
+		  builder.inclusion().exclude().node(NodePath
 				  .startBuilding()
 				  .propertyName('contacts')
 				  .element(GEORGE_SELECTOR)
@@ -110,7 +109,7 @@ class InclusionIT extends Specification {
 
 	def "Property excluded via @ObjectDiffProperty annotation"() {
 		given:
-		  configurable.inclusion().exclude().node(NodePath.with('name'))
+		  builder.inclusion().exclude().node(NodePath.with('name'))
 
 		when:
 		  def node = builder.build().compare(working, base)
@@ -121,7 +120,7 @@ class InclusionIT extends Specification {
 
 	def "including an element via property name"() {
 		given:
-		  configurable.inclusion().include().propertyName('name')
+		  builder.inclusion().include().propertyName('name')
 
 		when:
 		  def node = builder.build().compare(working, base)
@@ -133,7 +132,7 @@ class InclusionIT extends Specification {
 
 	def "including an element via property name includes all its children"() {
 		given:
-		  configurable.inclusion().include().propertyName('contacts')
+		  builder.inclusion().include().propertyName('contacts')
 
 		when:
 		  def node = builder.build().compare(working, base)
@@ -145,7 +144,7 @@ class InclusionIT extends Specification {
 
 	def "including an element via path includes all its children"() {
 		given:
-		  configurable.inclusion().include().node(NodePath.with('contacts'))
+		  builder.inclusion().include().node(NodePath.with('contacts'))
 
 		when:
 		  def node = builder.build().compare(working, base)
@@ -159,10 +158,10 @@ class InclusionIT extends Specification {
 		def includedCategory = "representation"
 
 		given: "the name property of the phonebook is part of our included category"
-		  configurable.categories().ofNode(NodePath.with("name")).toBe(includedCategory)
+		  builder.categories().ofNode(NodePath.with("name")).toBe(includedCategory)
 
 		and: "the category is included"
-		  configurable.inclusion().include().category(includedCategory)
+		  builder.inclusion().include().category(includedCategory)
 
 		when:
 		  def node = builder.build().compare(working, base)
@@ -173,7 +172,7 @@ class InclusionIT extends Specification {
 
 	def "including an element implicitly includes its children"() {
 		given:
-		  configurable.inclusion().include().node(NodePath.with('contacts'))
+		  builder.inclusion().include().node(NodePath.with('contacts'))
 
 		when:
 		  def node = builder.build().compare(working, base)
@@ -185,8 +184,8 @@ class InclusionIT extends Specification {
 
 	def "include all but some specific elements"() {
 		given:
-		  configurable.inclusion().include().node(NodePath.startBuilding().propertyName('contacts').build())
-		  configurable.inclusion().exclude().node(NodePath.startBuilding().propertyName('contacts').element(KRAMER_SELECTOR).build())
+		  builder.inclusion().include().node(NodePath.startBuilding().propertyName('contacts').build())
+		  builder.inclusion().exclude().node(NodePath.startBuilding().propertyName('contacts').element(KRAMER_SELECTOR).build())
 
 		when:
 		  def node = builder.build().compare(working, base)
@@ -198,7 +197,7 @@ class InclusionIT extends Specification {
 
 	def "when an element is included by property name, all its children will be implicitly included"() {
 		given:
-		  configurable.inclusion().include().node(NodePath.startBuilding().propertyName('contacts').build())
+		  builder.inclusion().include().node(NodePath.startBuilding().propertyName('contacts').build())
 
 		when:
 		  def node = builder.build().compare(working, base)
@@ -212,8 +211,8 @@ class InclusionIT extends Specification {
 
 	def "when an element is included by category, all its children will be implicitly included"() {
 		given:
-		  configurable.categories().ofNode(NodePath.startBuilding().propertyName('contacts').build()).toBe('identifier')
-		  configurable.inclusion().include().category('identifier')
+		  builder.categories().ofNode(NodePath.startBuilding().propertyName('contacts').build()).toBe('identifier')
+		  builder.inclusion().include().category('identifier')
 
 		when:
 		  def node = builder.build().compare(working, base)
@@ -225,8 +224,8 @@ class InclusionIT extends Specification {
 
 	def "included children of excluded nodes should also be excluded"() {
 		given:
-		  configurable.inclusion().exclude().node(NodePath.startBuilding().propertyName('contacts').build())
-		  configurable.inclusion().include().node(NodePath.startBuilding().propertyName('contacts').element(GEORGE_SELECTOR).build())
+		  builder.inclusion().exclude().node(NodePath.startBuilding().propertyName('contacts').build())
+		  builder.inclusion().include().node(NodePath.startBuilding().propertyName('contacts').element(GEORGE_SELECTOR).build())
 
 		when:
 		  def node = builder.build().compare(working, base)
@@ -243,11 +242,11 @@ class InclusionIT extends Specification {
 				.build()
 
 		given:
-		  configurable.categories().ofNode(NodePath.with("name")).toBe(includedCategory)
-		  configurable.categories().ofNode(nodePathToKramer).toBe(includedCategory)
+		  builder.categories().ofNode(NodePath.with("name")).toBe(includedCategory)
+		  builder.categories().ofNode(nodePathToKramer).toBe(includedCategory)
 
 		and: "the category is included"
-		  configurable.inclusion().include().category(includedCategory)
+		  builder.inclusion().include().category(includedCategory)
 
 		when:
 		  def node = builder.build().compare(working, base)

@@ -16,6 +16,7 @@
 
 package de.danielbechler.diff.filtering;
 
+import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.node.DiffNode;
 
 import java.util.Collection;
@@ -30,12 +31,14 @@ import static java.util.Arrays.asList;
 /**
  * @author Daniel Bechler
  */
-public class ReturnableNodeService implements ReturnableNodeConfiguration, IsReturnableResolver
+public class ReturnableNodeService implements FilteringConfigurer, IsReturnableResolver
 {
 	private final Map<DiffNode.State, Boolean> stateFilterSettings;
+	private final ObjectDifferBuilder objectDifferBuilder;
 
-	public ReturnableNodeService()
+	public ReturnableNodeService(final ObjectDifferBuilder objectDifferBuilder)
 	{
+		this.objectDifferBuilder = objectDifferBuilder;
 		this.stateFilterSettings = new EnumMap<DiffNode.State, Boolean>(DiffNode.State.class);
 		this.stateFilterSettings.put(DiffNode.State.IGNORED, false);
 		this.stateFilterSettings.put(DiffNode.State.UNTOUCHED, false);
@@ -86,5 +89,10 @@ public class ReturnableNodeService implements ReturnableNodeConfiguration, IsRet
 	public ReturnableNodeService omitNodesWithState(final DiffNode.State state)
 	{
 		return returnNodesWithState(state, false);
+	}
+
+	public ObjectDifferBuilder and()
+	{
+		return objectDifferBuilder;
 	}
 }

@@ -16,7 +16,7 @@
 
 package de.danielbechler.diff.introspection;
 
-import de.danielbechler.diff.Configuration;
+import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.diff.path.NodePath;
 import de.danielbechler.diff.path.NodePathValueHolder;
@@ -29,16 +29,16 @@ import java.util.Map;
 /**
  * @author Daniel Bechler
  */
-public class IntrospectionService implements IntrospectionConfiguration, IsIntrospectableResolver, IntrospectorResolver
+public class IntrospectionService implements IntrospectionConfigurer, IsIntrospectableResolver, IntrospectorResolver
 {
 	private final Map<Class<?>, Introspector> typeIntrospectorMap = new HashMap<Class<?>, Introspector>();
 	private final Map<Class<?>, IntrospectionMode> typeIntrospectionModeMap = new HashMap<Class<?>, IntrospectionMode>();
 	private final NodePathValueHolder<Introspector> nodePathIntrospectorHolder = new NodePathValueHolder<Introspector>();
 	private final NodePathValueHolder<IntrospectionMode> nodePathIntrospectionModeHolder = new NodePathValueHolder<IntrospectionMode>();
-	private final Configuration configuration;
+	private final ObjectDifferBuilder configuration;
 	private Introspector defaultIntrospector = new StandardBeanIntrospector();
 
-	public IntrospectionService(final Configuration configuration)
+	public IntrospectionService(final ObjectDifferBuilder configuration)
 	{
 		this.configuration = configuration;
 	}
@@ -90,7 +90,7 @@ public class IntrospectionService implements IntrospectionConfiguration, IsIntro
 		return defaultIntrospector;
 	}
 
-	public IntrospectionConfiguration setDefaultIntrospector(final Introspector introspector)
+	public IntrospectionConfigurer setDefaultIntrospector(final Introspector introspector)
 	{
 		Assert.notNull(introspector, "The default introspector must not be null");
 		defaultIntrospector = introspector;
@@ -101,19 +101,19 @@ public class IntrospectionService implements IntrospectionConfiguration, IsIntro
 	{
 		return new Of()
 		{
-			public IntrospectionConfiguration toUse(final Introspector introspector)
+			public IntrospectionConfigurer toUse(final Introspector introspector)
 			{
 				typeIntrospectorMap.put(type, introspector);
 				return IntrospectionService.this;
 			}
 
-			public IntrospectionConfiguration toBeEnabled()
+			public IntrospectionConfigurer toBeEnabled()
 			{
 				typeIntrospectionModeMap.put(type, IntrospectionMode.ENABLED);
 				return IntrospectionService.this;
 			}
 
-			public IntrospectionConfiguration toBeDisabled()
+			public IntrospectionConfigurer toBeDisabled()
 			{
 				typeIntrospectionModeMap.put(type, IntrospectionMode.DISABLED);
 				return IntrospectionService.this;
@@ -125,19 +125,19 @@ public class IntrospectionService implements IntrospectionConfiguration, IsIntro
 	{
 		return new Of()
 		{
-			public IntrospectionConfiguration toUse(final Introspector introspector)
+			public IntrospectionConfigurer toUse(final Introspector introspector)
 			{
 				nodePathIntrospectorHolder.put(path, introspector);
 				return IntrospectionService.this;
 			}
 
-			public IntrospectionConfiguration toBeEnabled()
+			public IntrospectionConfigurer toBeEnabled()
 			{
 				nodePathIntrospectionModeHolder.put(path, IntrospectionMode.ENABLED);
 				return IntrospectionService.this;
 			}
 
-			public IntrospectionConfiguration toBeDisabled()
+			public IntrospectionConfigurer toBeDisabled()
 			{
 				nodePathIntrospectionModeHolder.put(path, IntrospectionMode.DISABLED);
 				return IntrospectionService.this;
@@ -145,7 +145,7 @@ public class IntrospectionService implements IntrospectionConfiguration, IsIntro
 		};
 	}
 
-	public Configuration and()
+	public ObjectDifferBuilder and()
 	{
 		return configuration;
 	}

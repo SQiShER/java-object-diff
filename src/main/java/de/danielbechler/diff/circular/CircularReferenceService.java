@@ -16,6 +16,7 @@
 
 package de.danielbechler.diff.circular;
 
+import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.node.DiffNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,9 +24,10 @@ import org.slf4j.LoggerFactory;
 /**
  * @author Daniel Bechler
  */
-public class CircularReferenceService implements CircularReferenceConfiguration, CircularReferenceDetectorFactory, CircularReferenceExceptionHandler
+public class CircularReferenceService implements CircularReferenceConfigurer, CircularReferenceDetectorFactory, CircularReferenceExceptionHandler
 {
 	private static final Logger logger = LoggerFactory.getLogger(CircularReferenceService.class);
+	private final ObjectDifferBuilder objectDifferBuilder;
 
 	private CircularReferenceMatchingMode circularReferenceMatchingMode = CircularReferenceMatchingMode.EQUALITY_OPERATOR;
 	private CircularReferenceExceptionHandler circularReferenceExceptionHandler = new CircularReferenceExceptionHandler()
@@ -39,16 +41,26 @@ public class CircularReferenceService implements CircularReferenceConfiguration,
 		}
 	};
 
-	public CircularReferenceConfiguration matchCircularReferencesUsing(final CircularReferenceMatchingMode matchingMode)
+	public CircularReferenceService(final ObjectDifferBuilder objectDifferBuilder)
+	{
+		this.objectDifferBuilder = objectDifferBuilder;
+	}
+
+	public CircularReferenceConfigurer matchCircularReferencesUsing(final CircularReferenceMatchingMode matchingMode)
 	{
 		this.circularReferenceMatchingMode = matchingMode;
 		return this;
 	}
 
-	public CircularReferenceConfiguration handleCircularReferenceExceptionsUsing(final CircularReferenceExceptionHandler exceptionHandler)
+	public CircularReferenceConfigurer handleCircularReferenceExceptionsUsing(final CircularReferenceExceptionHandler exceptionHandler)
 	{
 		this.circularReferenceExceptionHandler = exceptionHandler;
 		return this;
+	}
+
+	public ObjectDifferBuilder and()
+	{
+		return objectDifferBuilder;
 	}
 
 	public CircularReferenceDetector createCircularReferenceDetector()

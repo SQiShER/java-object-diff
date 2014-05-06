@@ -16,11 +16,11 @@
 
 package de.danielbechler.diff;
 
-import de.danielbechler.diff.category.CategoryConfiguration;
+import de.danielbechler.diff.category.CategoryConfigurer;
 import de.danielbechler.diff.category.CategoryService;
-import de.danielbechler.diff.circular.CircularReferenceConfiguration;
+import de.danielbechler.diff.circular.CircularReferenceConfigurer;
 import de.danielbechler.diff.circular.CircularReferenceService;
-import de.danielbechler.diff.comparison.ComparisonConfiguration;
+import de.danielbechler.diff.comparison.ComparisonConfigurer;
 import de.danielbechler.diff.comparison.ComparisonService;
 import de.danielbechler.diff.differ.BeanDiffer;
 import de.danielbechler.diff.differ.CollectionDiffer;
@@ -28,11 +28,11 @@ import de.danielbechler.diff.differ.DifferDispatcher;
 import de.danielbechler.diff.differ.DifferProvider;
 import de.danielbechler.diff.differ.MapDiffer;
 import de.danielbechler.diff.differ.PrimitiveDiffer;
-import de.danielbechler.diff.filtering.ReturnableNodeConfiguration;
+import de.danielbechler.diff.filtering.FilteringConfigurer;
 import de.danielbechler.diff.filtering.ReturnableNodeService;
-import de.danielbechler.diff.inclusion.InclusionConfiguration;
+import de.danielbechler.diff.inclusion.InclusionConfigurer;
 import de.danielbechler.diff.inclusion.InclusionService;
-import de.danielbechler.diff.introspection.IntrospectionConfiguration;
+import de.danielbechler.diff.introspection.IntrospectionConfigurer;
 import de.danielbechler.diff.introspection.IntrospectionService;
 
 /**
@@ -42,15 +42,14 @@ import de.danielbechler.diff.introspection.IntrospectionService;
  *
  * @author Daniel Bechler
  */
-public final class ObjectDifferBuilder
+public class ObjectDifferBuilder
 {
-	private final Configuration configuration = new ConfigurationImpl();
-	private final IntrospectionService introspectionService = new IntrospectionService(configuration);
-	private final CategoryService categoryService = new CategoryService();
-	private final InclusionService inclusionService = new InclusionService(categoryService, configuration);
-	private final ComparisonService comparisonService = new ComparisonService();
-	private final ReturnableNodeService returnableNodeService = new ReturnableNodeService();
-	private final CircularReferenceService circularReferenceService = new CircularReferenceService();
+	private final IntrospectionService introspectionService = new IntrospectionService(this);
+	private final CategoryService categoryService = new CategoryService(this);
+	private final InclusionService inclusionService = new InclusionService(categoryService, this);
+	private final ComparisonService comparisonService = new ComparisonService(this);
+	private final ReturnableNodeService returnableNodeService = new ReturnableNodeService(this);
+	private final CircularReferenceService circularReferenceService = new CircularReferenceService(this);
 
 	private ObjectDifferBuilder()
 	{
@@ -78,67 +77,52 @@ public final class ObjectDifferBuilder
 	}
 
 	/**
-	 * Configure the way the ObjectDiffer should behave.
+	 * Allows to exclude nodes from being added to the object graph based on criteria that are only known after
+	 * the diff for the affected node and all its children has been determined.
 	 */
-	public final Configuration configure()
+	public FilteringConfigurer filtering()
 	{
-		return configuration;
+		return returnableNodeService;
 	}
 
-	public class ConfigurationImpl implements de.danielbechler.diff.Configuration
+	/**
+	 * Allows to replace the default bean introspector with a custom implementation.
+	 */
+	public IntrospectionConfigurer introspection()
 	{
-		private ConfigurationImpl()
-		{
-		}
+		return introspectionService;
+	}
 
-		/**
-		 * Allows to exclude nodes from being added to the object graph based on criteria that are only known after
-		 * the diff for the affected node and all its children has been determined.
-		 */
-		public ReturnableNodeConfiguration filtering()
-		{
-			return returnableNodeService;
-		}
+	/**
+	 * Allows to define how the circular reference detector compares object instances.
+	 */
+	public CircularReferenceConfigurer circularReferenceHandling()
+	{
+		return circularReferenceService;
+	}
 
-		/**
-		 * Allows to replace the default bean introspector with a custom implementation.
-		 */
-		public IntrospectionConfiguration introspection()
-		{
-			return introspectionService;
-		}
+	/**
+	 * Allows to in- or exclude nodes based on property name, object type, category or location in the object
+	 * graph.
+	 */
+	public InclusionConfigurer inclusion()
+	{
+		return inclusionService;
+	}
 
-		/**
-		 * Allows to define how the circular reference detector compares object instances.
-		 */
-		public CircularReferenceConfiguration circularReferenceHandling()
-		{
-			return circularReferenceService;
-		}
+	/**
+	 * Allows to configure the way objects are compared.
+	 */
+	public ComparisonConfigurer comparison()
+	{
+		return comparisonService;
+	}
 
-		/**
-		 * Allows to in- or exclude nodes based on property name, object type, category or location in the object
-		 * graph.
-		 */
-		public InclusionConfiguration inclusion()
-		{
-			return inclusionService;
-		}
-
-		/**
-		 * Allows to configure the way objects are compared.
-		 */
-		public ComparisonConfiguration comparison()
-		{
-			return comparisonService;
-		}
-
-		/**
-		 * Allows to assign custom categories (or tags) to entire types or selected elements and properties.
-		 */
-		public CategoryConfiguration categories()
-		{
-			return categoryService;
-		}
+	/**
+	 * Allows to assign custom categories (or tags) to entire types or selected elements and properties.
+	 */
+	public CategoryConfigurer categories()
+	{
+		return categoryService;
 	}
 }

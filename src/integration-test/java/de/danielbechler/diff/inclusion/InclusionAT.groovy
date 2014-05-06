@@ -34,7 +34,7 @@ class InclusionAT extends Specification {
 
 	def 'exclude an element by type'() {
 		given:
-		  objectDifferBuilder.configure().inclusion().exclude().type(ArrayList)
+		  objectDifferBuilder.inclusion().exclude().type(ArrayList)
 		when:
 		  def node = objectDifferBuilder.build().compare(working, base)
 		then:
@@ -44,7 +44,7 @@ class InclusionAT extends Specification {
 
 	def 'exclude an element by property name'() {
 		given:
-		  objectDifferBuilder.configure().inclusion().exclude().propertyName('songs')
+		  objectDifferBuilder.inclusion().exclude().propertyName('songs')
 		when:
 		  def node = objectDifferBuilder.build().compare(working, base)
 		then:
@@ -54,7 +54,7 @@ class InclusionAT extends Specification {
 
 	def 'exclude an element by node path'() {
 		given:
-		  objectDifferBuilder.configure().inclusion().exclude().node(NodePath.with('songs'))
+		  objectDifferBuilder.inclusion().exclude().node(NodePath.with('songs'))
 		when:
 		  def node = objectDifferBuilder.build().compare(working, base)
 		then:
@@ -64,7 +64,7 @@ class InclusionAT extends Specification {
 
 	def 'exclude an element by category'() {
 		given:
-		  objectDifferBuilder.configure().inclusion().exclude().category('foo')
+		  objectDifferBuilder.inclusion().exclude().category('foo')
 		when:
 		  def node = objectDifferBuilder.build().compare(working, base)
 		then:
@@ -74,7 +74,7 @@ class InclusionAT extends Specification {
 
 	def 'include an element by type'() {
 		given:
-		  objectDifferBuilder.configure().inclusion().include().type(ArrayList)
+		  objectDifferBuilder.inclusion().include().type(ArrayList)
 		when:
 		  def node = objectDifferBuilder.build().compare(working, base)
 		then:
@@ -84,7 +84,7 @@ class InclusionAT extends Specification {
 
 	def 'include an element by property name'() {
 		given:
-		  objectDifferBuilder.configure().inclusion().include().propertyName('songs')
+		  objectDifferBuilder.inclusion().include().propertyName('songs')
 		when:
 		  def node = objectDifferBuilder.build().compare(working, base)
 		then:
@@ -94,7 +94,7 @@ class InclusionAT extends Specification {
 
 	def 'include an element by node path'() {
 		given:
-		  objectDifferBuilder.configure().inclusion().include().node(NodePath.with('songs'))
+		  objectDifferBuilder.inclusion().include().node(NodePath.with('songs'))
 		when:
 		  def node = objectDifferBuilder.build().compare(working, base)
 		then:
@@ -104,7 +104,7 @@ class InclusionAT extends Specification {
 
 	def 'include an element by category'() {
 		given:
-		  objectDifferBuilder.configure().inclusion().include().category('foo')
+		  objectDifferBuilder.inclusion().include().category('foo')
 		when:
 		  def node = objectDifferBuilder.build().compare(working, base)
 		then:
@@ -114,7 +114,7 @@ class InclusionAT extends Specification {
 
 	def 'excludes always win over includes'() {
 		given:
-		  objectDifferBuilder.configure().inclusion()
+		  objectDifferBuilder.inclusion()
 				  .exclude().node(NodePath.with('songs'))
 				  .include().node(NodePath.startBuildingFrom(NodePath.with('songs')).collectionItem('Happy').build())
 		when:
@@ -125,7 +125,7 @@ class InclusionAT extends Specification {
 
 	def 'including an element implicitly excludes its siblings'() {
 		given:
-		  objectDifferBuilder.configure().inclusion().include().propertyName('artist')
+		  objectDifferBuilder.inclusion().include().propertyName('artist')
 		when:
 		  def node = objectDifferBuilder.build().compare(working, base)
 		then:
@@ -135,7 +135,7 @@ class InclusionAT extends Specification {
 
 	def 'including an element implicitly includes its children'() {
 		given:
-		  objectDifferBuilder.configure().inclusion().include().node(NodePath.with('songs'))
+		  objectDifferBuilder.inclusion().include().node(NodePath.with('songs'))
 		when:
 		  def node = objectDifferBuilder.build().compare(working, base)
 		then:
@@ -145,7 +145,7 @@ class InclusionAT extends Specification {
 
 	def 'including an element by path implicitly includes its parents'() {
 		given:
-		  objectDifferBuilder.configure().inclusion()
+		  objectDifferBuilder.inclusion()
 				  .include().node(NodePath.startBuilding().propertyName('songs').collectionItem('Happy').build())
 		when:
 		  def node = objectDifferBuilder.build().compare(working, base)

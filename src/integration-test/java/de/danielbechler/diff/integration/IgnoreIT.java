@@ -56,7 +56,7 @@ public class IgnoreIT
 
 		// verify that the node can't be found, when it's excluded
 		final ObjectDifferBuilder objectDifferBuilder = ObjectDifferBuilder.startBuilding();
-		objectDifferBuilder.configure().inclusion().exclude().node(nodePath);
+		objectDifferBuilder.inclusion().exclude().node(nodePath);
 		objectDiffer = objectDifferBuilder.build();
 		final DiffNode node = objectDiffer.compare(obj1, modifiedObj1);
 		node.visit(new PrintingVisitor(obj1, modifiedObj1));

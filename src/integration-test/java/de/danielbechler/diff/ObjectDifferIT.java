@@ -82,7 +82,7 @@ public class ObjectDifferIT
 		final ObjectWithCollection working = new ObjectWithCollection();
 		working.getCollection().add("foo");
 		final ObjectDifferBuilder objectDifferBuilder = ObjectDifferBuilder.startBuilding();
-		objectDifferBuilder.configure().inclusion()
+		objectDifferBuilder.inclusion()
 				.exclude()
 				.node(NodePath.with("collection"));
 		objectDiffer = objectDifferBuilder.build();
@@ -300,7 +300,7 @@ public class ObjectDifferIT
 	public void testCompareWithIgnoredProperty()
 	{
 		final ObjectDifferBuilder objectDifferBuilder = ObjectDifferBuilder.startBuilding();
-		objectDifferBuilder.configure().inclusion().exclude().node(NodePath.withRoot());
+		objectDifferBuilder.inclusion().exclude().node(NodePath.withRoot());
 		objectDiffer = objectDifferBuilder.build();
 
 		final DiffNode node = objectDiffer.compare("foo", "bar");

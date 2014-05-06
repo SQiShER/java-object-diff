@@ -40,7 +40,7 @@ class IgnoreExample
 		final ObjectDifferBuilder builder = ObjectDifferBuilder.startBuilding();
 
 		// (Option 1) Causes the ObjectDiffer to ignore the 'password' property of the root object
-		builder.configure().inclusion().exclude().node(NodePath.with("password"));
+		builder.inclusion().exclude().node(NodePath.with("password"));
 
 		final DiffNode node = builder.build().compare(working, base);
 

@@ -37,9 +37,7 @@ public class CircularReferenceDetectionBasedOnEqualsIT
 	public void setUp() throws Exception
 	{
 		final ObjectDifferBuilder configuration = ObjectDifferBuilder.startBuilding();
-		configuration.configure()
-				.circularReferenceHandling()
-				.matchCircularReferencesUsing(EQUALS_METHOD);
+		configuration.circularReferenceHandling().matchCircularReferencesUsing(EQUALS_METHOD);
 		objectDiffer = configuration.build();
 	}
 

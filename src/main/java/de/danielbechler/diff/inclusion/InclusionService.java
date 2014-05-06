@@ -16,7 +16,7 @@
 
 package de.danielbechler.diff.inclusion;
 
-import de.danielbechler.diff.Configuration;
+import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.category.CategoryResolver;
 import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.diff.node.Visit;
@@ -36,10 +36,10 @@ import static de.danielbechler.diff.inclusion.Inclusion.INCLUDED;
 /**
  *
  */
-public class InclusionService implements InclusionConfiguration, IsIgnoredResolver
+public class InclusionService implements InclusionConfigurer, IsIgnoredResolver
 {
 	private final CategoryResolver categoryResolver;
-	private final Configuration rootConfiguration;
+	private final ObjectDifferBuilder rootConfiguration;
 	private final InclusionNode nodeInclusions = new InclusionNode();
 	private final Map<Class<?>, Inclusion> typeInclusions = new HashMap<Class<?>, Inclusion>();
 	private final Map<String, Inclusion> categoryInclusions = new HashMap<String, Inclusion>();
@@ -47,7 +47,7 @@ public class InclusionService implements InclusionConfiguration, IsIgnoredResolv
 	private final ToInclude includeAndReturn = new ToIncludeAndReturnImpl();
 	private final ToExclude excludeAndReturn = new ToExcludeAndReturnImpl();
 
-	public InclusionService(final CategoryResolver categoryResolver, final Configuration rootConfiguration)
+	public InclusionService(final CategoryResolver categoryResolver, final ObjectDifferBuilder rootConfiguration)
 	{
 		Assert.notNull(categoryResolver, "categoryResolver");
 		Assert.notNull(rootConfiguration, "rootConfiguration");
@@ -274,7 +274,7 @@ public class InclusionService implements InclusionConfiguration, IsIgnoredResolv
 
 	private class ToExcludeAndReturnImpl implements ToExcludeAndReturn
 	{
-		public Configuration and()
+		public ObjectDifferBuilder and()
 		{
 			return rootConfiguration;
 		}
@@ -311,7 +311,7 @@ public class InclusionService implements InclusionConfiguration, IsIgnoredResolv
 
 	private class ToIncludeAndReturnImpl implements ToIncludeAndReturn
 	{
-		public Configuration and()
+		public ObjectDifferBuilder and()
 		{
 			return rootConfiguration;
 		}

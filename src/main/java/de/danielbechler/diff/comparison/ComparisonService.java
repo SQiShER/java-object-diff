@@ -16,6 +16,7 @@
 
 package de.danielbechler.diff.comparison;
 
+import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.introspection.ObjectDiffEqualsOnlyType;
 import de.danielbechler.diff.introspection.ObjectDiffProperty;
 import de.danielbechler.diff.node.DiffNode;
@@ -29,12 +30,18 @@ import java.util.Map;
 /**
  *
  */
-public class ComparisonService implements ComparisonConfiguration, ComparisonStrategyResolver, PrimitiveDefaultValueModeResolver
+public class ComparisonService implements ComparisonConfigurer, ComparisonStrategyResolver, PrimitiveDefaultValueModeResolver
 {
 	private final NodePathValueHolder<ComparisonStrategy> nodePathComparisonStrategies = NodePathValueHolder.of(ComparisonStrategy.class);
 	private final Map<Class<?>, ComparisonStrategy> typeComparisonStrategyMap = new HashMap<Class<?>, ComparisonStrategy>();
+	private final ObjectDifferBuilder objectDifferBuilder;
 
 	private PrimitiveDefaultValueMode primitiveDefaultValueMode = PrimitiveDefaultValueMode.UNASSIGNED;
+
+	public ComparisonService(final ObjectDifferBuilder objectDifferBuilder)
+	{
+		this.objectDifferBuilder = objectDifferBuilder;
+	}
 
 	public ComparisonStrategy resolveComparisonStrategy(final DiffNode node)
 	{
@@ -102,19 +109,24 @@ public class ComparisonService implements ComparisonConfiguration, ComparisonStr
 		return new OfPrimitiveTypesImpl();
 	}
 
+	public ObjectDifferBuilder and()
+	{
+		return objectDifferBuilder;
+	}
+
 	private abstract static class AbstractOf implements Of
 	{
-		public ComparisonConfiguration toUseEqualsMethod()
+		public ComparisonConfigurer toUseEqualsMethod()
 		{
 			return toUse(new EqualsOnlyComparisonStrategy());
 		}
 
-		public ComparisonConfiguration toUseEqualsMethodOfValueProvidedByMethod(final String propertyName)
+		public ComparisonConfigurer toUseEqualsMethodOfValueProvidedByMethod(final String propertyName)
 		{
 			return toUse(new EqualsOnlyComparisonStrategy(propertyName));
 		}
 
-		public ComparisonConfiguration toUseCompareToMethod()
+		public ComparisonConfigurer toUseCompareToMethod()
 		{
 			return toUse(new ComparableComparisonStrategy());
 		}
@@ -129,7 +141,7 @@ public class ComparisonService implements ComparisonConfiguration, ComparisonStr
 			this.type = type;
 		}
 
-		public ComparisonConfiguration toUse(final ComparisonStrategy comparisonStrategy)
+		public ComparisonConfigurer toUse(final ComparisonStrategy comparisonStrategy)
 		{
 			typeComparisonStrategyMap.put(type, comparisonStrategy);
 			return ComparisonService.this;
@@ -145,7 +157,7 @@ public class ComparisonService implements ComparisonConfiguration, ComparisonStr
 			this.nodePath = nodePath;
 		}
 
-		public ComparisonConfiguration toUse(final ComparisonStrategy comparisonStrategy)
+		public ComparisonConfigurer toUse(final ComparisonStrategy comparisonStrategy)
 		{
 			nodePathComparisonStrategies.put(nodePath, comparisonStrategy);
 			return ComparisonService.this;
@@ -154,7 +166,7 @@ public class ComparisonService implements ComparisonConfiguration, ComparisonStr
 
 	private class OfPrimitiveTypesImpl implements OfPrimitiveTypes
 	{
-		public ComparisonConfiguration toTreatDefaultValuesAs(final PrimitiveDefaultValueMode mode)
+		public ComparisonConfigurer toTreatDefaultValuesAs(final PrimitiveDefaultValueMode mode)
 		{
 			primitiveDefaultValueMode = mode;
 			return null;

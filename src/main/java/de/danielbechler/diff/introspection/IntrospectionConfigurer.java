@@ -16,7 +16,7 @@
 
 package de.danielbechler.diff.introspection;
 
-import de.danielbechler.diff.Configuration;
+import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.path.NodePath;
 
 /**
@@ -29,23 +29,22 @@ import de.danielbechler.diff.path.NodePath;
  *
  * @author Daniel Bechler
  */
-public interface IntrospectionConfiguration
+public interface IntrospectionConfigurer
 {
-	IntrospectionConfiguration setDefaultIntrospector(Introspector introspector);
+	IntrospectionConfigurer setDefaultIntrospector(Introspector introspector);
 
 	Of ofType(Class<?> type);
 
 	Of ofNode(NodePath path);
 
-	Configuration and();
+	ObjectDifferBuilder and();
 
 	public static interface Of
 	{
-		IntrospectionConfiguration toUse(Introspector introspector);
+		IntrospectionConfigurer toUse(Introspector introspector);
 
-		IntrospectionConfiguration toBeEnabled();
+		IntrospectionConfigurer toBeEnabled();
 
-		IntrospectionConfiguration toBeDisabled();
+		IntrospectionConfigurer toBeDisabled();
 	}
-
 }
