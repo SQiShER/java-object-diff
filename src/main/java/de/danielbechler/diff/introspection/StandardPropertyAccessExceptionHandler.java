@@ -21,12 +21,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("UnusedDeclaration")
-public class DefaultPropertyAccessExceptionHandler implements BeanPropertyAccessExceptionHandler
+public class StandardPropertyAccessExceptionHandler implements BeanPropertyAccessExceptionHandler
 {
-	private static final Logger logger = LoggerFactory.getLogger(DefaultPropertyAccessExceptionHandler.class);
+	private static final Logger logger = LoggerFactory.getLogger(StandardPropertyAccessExceptionHandler.class);
 
-	public DiffNode onPropertyWriteException(final BeanPropertyWriteException exception,
-											 final DiffNode propertyNode)
+	public DiffNode onPropertyWriteException(final BeanPropertyWriteException exception, final DiffNode node)
 	{
 		final Object newValue = exception.getNewValue();
 		final String propertyName = exception.getPropertyName();
@@ -34,8 +33,7 @@ public class DefaultPropertyAccessExceptionHandler implements BeanPropertyAccess
 		throw exception;
 	}
 
-	public DiffNode onPropertyReadException(final BeanPropertyReadException exception,
-											final DiffNode propertyNode)
+	public DiffNode onPropertyReadException(final BeanPropertyReadException exception, final DiffNode node)
 	{
 		throw exception;
 	}

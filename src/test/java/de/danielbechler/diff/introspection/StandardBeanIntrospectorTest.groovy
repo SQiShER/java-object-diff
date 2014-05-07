@@ -17,10 +17,7 @@
 package de.danielbechler.diff.introspection
 
 import de.danielbechler.diff.access.PropertyAwareAccessor
-import de.danielbechler.diff.mock.ObjectWithInheritedPropertyAnnotation
-import de.danielbechler.diff.mock.ObjectWithPropertyAnnotations
 import de.danielbechler.diff.mock.ObjectWithString
-import de.danielbechler.diff.selector.BeanPropertyElementSelector
 import spock.lang.Specification
 
 import java.beans.BeanInfo
@@ -30,92 +27,74 @@ import java.beans.IntrospectionException
  * @author Daniel Bechler
  */
 public class StandardBeanIntrospectorTest extends Specification {
-	StandardBeanIntrospector introspector = new StandardBeanIntrospector()
 
-//	@Test(enabled = false)
-//	public void testIntrospectWithEqualsOnlyPropertyType() throws Exception {
-//		final Iterable<PropertyAwareAccessor> accessors = introspector.introspect(ObjectWithEqualsOnlyPropertyType.class);
-//		assertThat(accessors.iterator().hasNext(), is(true));
-////		final PropertyAwareAccessor propertyAwareAccessor = accessors.iterator().next();
-////		assertThat(propertyAwareAccessor.getComparisonStrategy(), instanceOf(EqualsOnlyComparisonStrategy.class));
-//	}
-//
-//	@Test
-//	public void testIntrospectWithEqualsOnlyPropertyTypeAndValueProviderMethod() throws Exception {
-//		final Object object = new Object()
-//		{
-//			public ObjectWithObjectDiffEqualsOnlyTypeAnnotationAndValueProviderMethod getValue() {
-//				return null;
-//			}
-//		};
-//
-//		final Iterable<PropertyAwareAccessor> accessors = introspector.introspect(object.getClass());
-//		assertThat(accessors.iterator().hasNext(), is(true));
-//
-//		final PropertyAwareAccessor propertyAwareAccessor = accessors.iterator().next();
-//
-////		final ComparisonStrategy comparisonStrategy = propertyAwareAccessor.getComparisonStrategy();
-////		assertThat(comparisonStrategy, is(instanceOf(EqualsOnlyComparisonStrategy.class)));
-//
-////		final EqualsOnlyComparisonStrategy equalsOnlyComparisonStrategy = (EqualsOnlyComparisonStrategy) comparisonStrategy;
-////		assertThat(equalsOnlyComparisonStrategy.getEqualsValueProviderMethod(), is(IsEqual.equalTo("foo")));
-//	}
+	def introspector = new StandardBeanIntrospector()
 
-	class ObjectWithIgnoredProperty {
-		@ObjectDiffProperty(excluded = true)
-		def getProperty() {
+	private Map<String, PropertyAwareAccessor> introspect(Class<?> type) {
+		introspector.introspect(type).collectEntries {
+			accessor -> [accessor.propertyName, accessor]
 		}
 	}
 
-	def 'excluded property'() {
+	def 'should return proper accessor for property'() {
 		when:
-		  PropertyAwareAccessor propertyAccessor = introspector.introspect(ObjectWithIgnoredProperty).find({
-			  it.propertyName == 'property' ? it : null
-		  }) as PropertyAwareAccessor
+		  def accessor = introspect(TypeWithOnlyOneProperty).get('value')
 		then:
-		  propertyAccessor.isExcluded()
+		  accessor.propertyName == 'value'
+		and:
+		  def target = new TypeWithOnlyOneProperty()
+		  accessor.get(target) == null
+		and:
+		  accessor.set(target, 'bar')
+		  accessor.get(target) == 'bar'
+		and:
+		  accessor.excluded == false
+		and:
+		  accessor.categories.isEmpty()
 	}
 
-	def 'Introspect With Property Annotations'() {
+	def 'should return PropertyAwareAccessors for each property of the given class'() {
 		when:
-		  Iterable<PropertyAwareAccessor> accessors = introspector.introspect(ObjectWithPropertyAnnotations.class);
-
+		  def accessors = introspect(TypeWithTwoProperties)
 		then:
-		  for (final PropertyAwareAccessor accessor : accessors) {
-			  if (accessor.getElementSelector().equals(new BeanPropertyElementSelector("ignored"))) {
-				  assert accessor.isExcluded()
-			  } else if (accessor.getElementSelector().equals(new BeanPropertyElementSelector("categorized"))) {
-				  assert accessor.getCategories().size() == 1
-				  assert accessor.getCategories().containsAll(['foo'])
-			  } else if (accessor.getElementSelector().equals(new BeanPropertyElementSelector("item"))) {
-				  assert accessor.isExcluded() == false
-				  assert accessor.getCategories().isEmpty()
-			  } else if (accessor.getElementSelector().equals(new BeanPropertyElementSelector("key"))) {
-				  // no op
-			  } else if (accessor.getElementSelector().equals(new BeanPropertyElementSelector("value"))) {
-				  // no op
-			  } else {
-				  assert false: "Unexpected accessor: " + accessor.getElementSelector()
-			  }
-		  }
+		  accessors.size() == 2
+		  accessors.get('foo') != null
+		  accessors.get('bar') != null
 	}
 
-	def IntrospectWithInheritedPropertyAnnotations() {
+	def 'should apply categories of ObjectDiffProperty annotation to accessor'() {
 		when:
-		  PropertyAwareAccessor accessor = introspector.introspect(ObjectWithInheritedPropertyAnnotation).first();
+		  def accessor = introspect(TypeWithPropertyAnnotation).get('value')
 		then:
-		  accessor.getElementSelector() == new BeanPropertyElementSelector("value")
-		  accessor.isExcluded()
+		  accessor.categories.size() == 2
+		  accessor.categories.containsAll(['category1', 'category2'])
 	}
 
-	def IntrospectWithNullType() {
+	def 'should apply exclusion of ObjectDiffProperty annotation to accessor'() {
 		when:
-		  introspector.introspect(null);
+		  def accessor = introspect(TypeWithPropertyAnnotation).get('value')
+		then:
+		  accessor.excluded == true
+	}
+
+	def 'should throw exception when invoked without type'() {
+		when:
+		  introspector.introspect(null)
 		then:
 		  thrown(IllegalArgumentException)
 	}
 
-	def IntrospectWithSimulatedIntrospectionException() {
+	def 'should skip default class properties'() {
+		expect:
+		  introspect(TypeWithNothingButDefaultProperties).isEmpty()
+	}
+
+	def 'should skip properties without getter'() {
+		expect:
+		  introspect(TypeWithPropertyWithoutGetter).isEmpty()
+	}
+
+	def 'should wrap IntrospectionException with RuntimeException'() {
 		given:
 		  introspector = new StandardBeanIntrospector() {
 			  @Override
@@ -127,5 +106,38 @@ public class StandardBeanIntrospectorTest extends Specification {
 		  introspector.introspect(ObjectWithString.class);
 		then:
 		  thrown(RuntimeException)
+	}
+
+	private class TypeWithNothingButDefaultProperties {
+	}
+
+	private class TypeWithPropertyWithoutGetter {
+		private String value
+
+		void setValue(String value) {
+			this.value = value
+		}
+	}
+
+	private class TypeWithPropertyAnnotation {
+		private String value
+
+		@ObjectDiffProperty(excluded = true, categories = ['category1', 'category2'])
+		String getValue() {
+			return value
+		}
+
+		void setValue(String value) {
+			this.value = value
+		}
+	}
+
+	private class TypeWithOnlyOneProperty {
+		def value
+	}
+
+	private class TypeWithTwoProperties {
+		def foo
+		def bar
 	}
 }

@@ -19,8 +19,7 @@ package de.danielbechler.diff.introspection;
 /**
  * @author Daniel Bechler
  */
-@SuppressWarnings("UnusedDeclaration")
-public class BeanPropertyException extends RuntimeException
+public abstract class BeanPropertyException extends RuntimeException
 {
 	private static final long serialVersionUID = 1L;
 

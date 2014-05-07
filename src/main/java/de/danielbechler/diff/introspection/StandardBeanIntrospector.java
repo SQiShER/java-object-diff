@@ -89,7 +89,19 @@ public class StandardBeanIntrospector implements de.danielbechler.diff.introspec
 
 	private static boolean shouldSkip(final PropertyDescriptor descriptor)
 	{
-		return descriptor.getName().equals("class") || descriptor.getReadMethod() == null;
+		if (descriptor.getName().equals("class")) // Java & Groovy
+		{
+			return true;
+		}
+		if (descriptor.getName().equals("metaClass")) // Groovy
+		{
+			return true;
+		}
+		if (descriptor.getReadMethod() == null)
+		{
+			return true;
+		}
+		return false;
 	}
 
 	private static void handleObjectDiffPropertyAnnotation(final Method readMethod,

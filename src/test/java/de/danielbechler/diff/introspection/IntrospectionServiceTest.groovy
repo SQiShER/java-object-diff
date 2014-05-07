@@ -16,6 +16,7 @@
 
 package de.danielbechler.diff.introspection
 
+import de.danielbechler.diff.ObjectDifferBuilder
 import de.danielbechler.diff.access.RootAccessor
 import de.danielbechler.diff.access.TypeAwareAccessor
 import de.danielbechler.diff.circular.CircularReferenceMatchingMode
@@ -37,7 +38,8 @@ class IntrospectionServiceTest extends Specification {
 	@Shared
 	def primitiveWrapperTypes = [Integer, Short, Long, Boolean, Character, Byte, Double, Float]
 
-	def introspectionService = new IntrospectionService(null)
+	def objectDifferBuilder = Mock(ObjectDifferBuilder)
+	def introspectionService = new IntrospectionService(objectDifferBuilder)
 	def rootNode = new DiffNode(DiffNode.ROOT, RootAccessor.instance, ObjectWithString)
 	def childNode
 	def childAccessor = Mock(TypeAwareAccessor)
@@ -188,5 +190,13 @@ class IntrospectionServiceTest extends Specification {
 
 		expect:
 		  introspectionService.introspectorForNode(rootNode) == nodeIntrospector
+	}
+
+	def 'and() returns original ObjectDifferBuilder'() {
+		given:
+		  objectDifferBuilder = Mock(ObjectDifferBuilder)
+		  introspectionService = new IntrospectionService(objectDifferBuilder)
+		expect:
+		  introspectionService.and().is objectDifferBuilder
 	}
 }

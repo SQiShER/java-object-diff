@@ -22,7 +22,7 @@ package de.danielbechler.diff.introspection;
 public class BeanPropertyWriteException extends BeanPropertyException
 {
 	private static final long serialVersionUID = 1L;
-	private final Object newValue;
+	private Object newValue;
 
 	public BeanPropertyWriteException(final Throwable cause, final Object newValue)
 	{
@@ -33,7 +33,7 @@ public class BeanPropertyWriteException extends BeanPropertyException
 	@Override
 	public String getMessage()
 	{
-		return "Error while invoking write method. ";
+		return "Error while invoking write method. " + super.getMessage();
 	}
 
 	public Object getNewValue()
