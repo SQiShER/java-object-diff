@@ -18,7 +18,6 @@ package de.danielbechler.diff.introspection;
 
 import de.danielbechler.diff.access.PropertyAwareAccessor;
 import de.danielbechler.util.Assert;
-import de.danielbechler.util.Collections;
 import de.danielbechler.util.Exceptions;
 
 import java.beans.BeanInfo;
@@ -34,7 +33,7 @@ import java.util.Collection;
  *
  * @author Daniel Bechler
  */
-public class StandardBeanIntrospector implements de.danielbechler.diff.introspection.Introspector
+public class StandardIntrospector implements de.danielbechler.diff.introspection.Introspector
 {
 	public Iterable<PropertyAwareAccessor> introspect(final Class<?> type)
 	{
@@ -55,11 +54,14 @@ public class StandardBeanIntrospector implements de.danielbechler.diff.introspec
 		final Collection<PropertyAwareAccessor> accessors = new ArrayList<PropertyAwareAccessor>(descriptors.length);
 		for (final PropertyDescriptor descriptor : descriptors)
 		{
-			final PropertyAwareAccessor accessor = handlePropertyDescriptor(descriptor);
-			if (accessor != null)
+			if (shouldSkip(descriptor))
 			{
-				accessors.add(accessor);
+				continue;
 			}
+			final String propertyName = descriptor.getName();
+			final Method readMethod = descriptor.getReadMethod();
+			final Method writeMethod = descriptor.getWriteMethod();
+			accessors.add(new PropertyAccessor(propertyName, readMethod, writeMethod));
 		}
 		return accessors;
 	}
@@ -67,24 +69,6 @@ public class StandardBeanIntrospector implements de.danielbechler.diff.introspec
 	protected BeanInfo getBeanInfo(final Class<?> type) throws IntrospectionException
 	{
 		return Introspector.getBeanInfo(type);
-	}
-
-	private static PropertyAwareAccessor handlePropertyDescriptor(final PropertyDescriptor descriptor)
-	{
-		if (shouldSkip(descriptor))
-		{
-			return null;
-		}
-
-		final String propertyName = descriptor.getName();
-		final Method readMethod = descriptor.getReadMethod();
-		final Method writeMethod = descriptor.getWriteMethod();
-
-		final BeanPropertyAccessor accessor = new BeanPropertyAccessor(propertyName, readMethod, writeMethod);
-
-		handleObjectDiffPropertyAnnotation(readMethod, accessor);
-
-		return accessor;
 	}
 
 	private static boolean shouldSkip(final PropertyDescriptor descriptor)
@@ -102,16 +86,5 @@ public class StandardBeanIntrospector implements de.danielbechler.diff.introspec
 			return true;
 		}
 		return false;
-	}
-
-	private static void handleObjectDiffPropertyAnnotation(final Method readMethod,
-														   final BeanPropertyAccessor propertyAccessor)
-	{
-		final ObjectDiffProperty annotation = readMethod.getAnnotation(ObjectDiffProperty.class);
-		if (annotation != null)
-		{
-			propertyAccessor.setExcluded(annotation.excluded());
-			propertyAccessor.setCategories(Collections.setOf(annotation.categories()));
-		}
 	}
 }

@@ -16,7 +16,7 @@
 
 package de.danielbechler.diff.access;
 
-import de.danielbechler.diff.introspection.BeanPropertyAccessor;
+import de.danielbechler.diff.introspection.PropertyAccessor;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;
@@ -112,7 +112,7 @@ public class InstancesTest
 	public void testIsPrimitiveTypeReturnsPrimitiveClassForPrimitiveType() throws Exception
 	{
 		final Method readMethod = getClass().getDeclaredMethod("getTestValue");
-		final BeanPropertyAccessor accessor = new BeanPropertyAccessor("testValue", readMethod, null);
+		final PropertyAccessor accessor = new PropertyAccessor("testValue", readMethod, null);
 		final Instances instances = new Instances(accessor, 1L, 2L, 0L);
 		assertThat(instances.getType() == long.class).isTrue();
 	}

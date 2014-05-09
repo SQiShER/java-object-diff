@@ -26,8 +26,8 @@ import static java.util.Collections.singletonMap
 /**
  * @author Daniel Bechler
  */
-public class BeanPropertyAccessorMapTest extends Specification {
-	BeanPropertyAccessor accessor
+public class PropertyAccessorMapTest extends Specification {
+	PropertyAccessor accessor
 	Map<String, String> targetMap
 	ObjectWithMap target
 
@@ -64,9 +64,9 @@ public class BeanPropertyAccessorMapTest extends Specification {
 		  target.map == null
 	}
 
-	private static BeanPropertyAccessor createMapPropertyAccessor(boolean readOnly) throws NoSuchMethodException {
+	private static PropertyAccessor createMapPropertyAccessor(boolean readOnly) throws NoSuchMethodException {
 		final Method readMethod = ObjectWithMap.class.getMethod("getMap")
 		final Method writeMethod = readOnly ? null : ObjectWithMap.class.getMethod("setMap", Map.class)
-		return new BeanPropertyAccessor("map", readMethod, writeMethod)
+		return new PropertyAccessor("map", readMethod, writeMethod)
 	}
 }

@@ -23,5 +23,5 @@ import java.util.Set;
  */
 public interface CategoryAware
 {
-	Set<String> getCategories();
+	Set<String> getCategoriesFromAnnotation();
 }

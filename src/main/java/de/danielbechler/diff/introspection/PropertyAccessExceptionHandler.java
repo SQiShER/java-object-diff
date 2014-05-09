@@ -16,21 +16,14 @@
 
 package de.danielbechler.diff.introspection;
 
+import de.danielbechler.diff.node.DiffNode;
+
 /**
  * @author Daniel Bechler
  */
-public class BeanPropertyReadException extends BeanPropertyException
+public interface PropertyAccessExceptionHandler
 {
-	private static final long serialVersionUID = 1L;
+	DiffNode onPropertyWriteException(PropertyWriteException exception, DiffNode node);
 
-	public BeanPropertyReadException(final Throwable cause)
-	{
-		super(cause);
-	}
-
-	@Override
-	public String getMessage()
-	{
-		return "Failed to invoke read method. " + super.getMessage();
-	}
+	DiffNode onPropertyReadException(PropertyReadException exception, DiffNode node);
 }

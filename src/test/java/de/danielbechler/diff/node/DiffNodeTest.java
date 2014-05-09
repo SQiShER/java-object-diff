@@ -21,7 +21,7 @@ import de.danielbechler.diff.access.CollectionItemAccessor;
 import de.danielbechler.diff.access.PropertyAwareAccessor;
 import de.danielbechler.diff.access.RootAccessor;
 import de.danielbechler.diff.helper.NodeAssertions;
-import de.danielbechler.diff.introspection.BeanPropertyAccessor;
+import de.danielbechler.diff.introspection.PropertyAccessor;
 import de.danielbechler.diff.mock.ObjectDiffTest;
 import de.danielbechler.diff.path.NodePath;
 import de.danielbechler.diff.selector.BeanPropertyElementSelector;
@@ -182,7 +182,7 @@ public class DiffNodeTest
 	@Test
 	public void should_return_property_annotations_of_property_accessor() throws Exception
 	{
-		final BeanPropertyAccessor propertyAccessor = Mockito.mock(BeanPropertyAccessor.class);
+		final PropertyAccessor propertyAccessor = Mockito.mock(PropertyAccessor.class);
 		final Annotation annotation = Mockito.mock(Annotation.class);
 		Mockito.when(propertyAccessor.getReadMethodAnnotations()).thenReturn(new LinkedHashSet<Annotation>(Arrays.asList(annotation)));
 		final DiffNode node = new DiffNode(propertyAccessor, Object.class);
@@ -195,7 +195,7 @@ public class DiffNodeTest
 	@Test
 	public void should_return_empty_set_of_property_annotations_if_accessor_is_not_property_accessor() throws Exception
 	{
-		final BeanPropertyAccessor propertyAccessor = Mockito.mock(BeanPropertyAccessor.class);
+		final PropertyAccessor propertyAccessor = Mockito.mock(PropertyAccessor.class);
 		final Annotation annotation = Mockito.mock(Annotation.class);
 		Mockito.when(propertyAccessor.getReadMethodAnnotations()).thenReturn(new LinkedHashSet<Annotation>(Arrays.asList(annotation)));
 		final DiffNode node = new DiffNode(propertyAccessor, Object.class);
@@ -208,7 +208,7 @@ public class DiffNodeTest
 	@Test
 	public void getPropertyAnnotation_should_delegate_call_to_property_accessor()
 	{
-		final BeanPropertyAccessor propertyAccessor = Mockito.mock(BeanPropertyAccessor.class);
+		final PropertyAccessor propertyAccessor = Mockito.mock(PropertyAccessor.class);
 		Mockito.when(propertyAccessor.getReadMethodAnnotation(ObjectDiffTest.class)).thenReturn(null);
 
 		new DiffNode(propertyAccessor, Object.class).getPropertyAnnotation(ObjectDiffTest.class);

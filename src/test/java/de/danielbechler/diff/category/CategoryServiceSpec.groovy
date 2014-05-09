@@ -58,7 +58,7 @@ class CategoryServiceSpec extends Specification {
 
 	def "resolveCategories: should return categories configured via node"() {
 		given:
-		  accessor.categories >> ["Stark", "Lannister"]
+		  accessor.categoriesFromAnnotation >> ["Stark", "Lannister"]
 
 		expect:
 		  categoryService.resolveCategories(node) == ["Stark", "Lannister"] as Set
@@ -72,7 +72,7 @@ class CategoryServiceSpec extends Specification {
 		  categoryService.ofType(nodeType).toBe("B")
 
 		and:
-		  accessor.categories >> ["C"]
+		  accessor.categoriesFromAnnotation >> ["C"]
 
 		expect:
 		  categoryService.resolveCategories(node) == ["A", "B", "C"] as Set
@@ -80,7 +80,7 @@ class CategoryServiceSpec extends Specification {
 
 	def "resolveCategories: should also return categories of parent nodes"() {
 		given:
-		  accessor.categories >> ["B"]
+		  accessor.categoriesFromAnnotation >> ["B"]
 
 		and:
 		  categoryService.ofNode(NodePath.withRoot()).toBe("A")

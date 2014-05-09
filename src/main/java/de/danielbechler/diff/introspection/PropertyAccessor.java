@@ -24,28 +24,28 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import static java.util.Arrays.asList;
+
 /**
  * @author Daniel Bechler
  */
-public class BeanPropertyAccessor implements PropertyAwareAccessor
+public class PropertyAccessor implements PropertyAwareAccessor
 {
-	private static final Logger logger = LoggerFactory.getLogger(BeanPropertyAccessor.class);
+	private static final Logger logger = LoggerFactory.getLogger(PropertyAccessor.class);
 
 	private final String propertyName;
 	private final Class<?> type;
 	private final Method readMethod;
 	private final Method writeMethod;
-	private Set<String> categories = new TreeSet<String>();
-	private boolean excluded;
 
-	public BeanPropertyAccessor(final String propertyName, final Method readMethod, final Method writeMethod)
+	public PropertyAccessor(final String propertyName, final Method readMethod, final Method writeMethod)
 	{
 		Assert.notNull(propertyName, "propertyName");
 		Assert.notNull(readMethod, "readMethod");
@@ -57,31 +57,28 @@ public class BeanPropertyAccessor implements PropertyAwareAccessor
 
 	private static Method makeAccessible(final Method method)
 	{
-		if (method != null)
+		if (method != null && !method.isAccessible())
 		{
+			logger.debug("Making method accessible: {}", method.toString());
 			method.setAccessible(true);
 		}
 		return method;
 	}
 
-	public final Set<String> getCategories()
+	public final Set<String> getCategoriesFromAnnotation()
 	{
-		return categories;
+		final ObjectDiffProperty annotation = readMethod.getAnnotation(ObjectDiffProperty.class);
+		if (annotation != null)
+		{
+			return new TreeSet<String>(asList(annotation.categories()));
+		}
+		return Collections.emptySet();
 	}
 
-	public final void setCategories(final Set<String> categories)
+	public boolean isExcludedByAnnotation()
 	{
-		this.categories = categories;
-	}
-
-	public boolean isExcluded()
-	{
-		return excluded;
-	}
-
-	public void setExcluded(final boolean excluded)
-	{
-		this.excluded = excluded;
+		final ObjectDiffProperty annotation = readMethod.getAnnotation(ObjectDiffProperty.class);
+		return annotation != null && annotation.excluded();
 	}
 
 	public String getPropertyName()
@@ -94,7 +91,7 @@ public class BeanPropertyAccessor implements PropertyAwareAccessor
 	 */
 	public Set<Annotation> getReadMethodAnnotations()
 	{
-		return new LinkedHashSet<Annotation>(Arrays.asList(readMethod.getAnnotations()));
+		return new LinkedHashSet<Annotation>(asList(readMethod.getAnnotations()));
 	}
 
 	public <T extends Annotation> T getReadMethodAnnotation(final Class<T> annotationClass)
@@ -129,7 +126,7 @@ public class BeanPropertyAccessor implements PropertyAwareAccessor
 		}
 		catch (final Exception e)
 		{
-			final BeanPropertyReadException ex = new BeanPropertyReadException(e);
+			final PropertyReadException ex = new PropertyReadException(e);
 			ex.setPropertyName(propertyName);
 			ex.setTargetType(target.getClass());
 			throw ex;
@@ -191,7 +188,7 @@ public class BeanPropertyAccessor implements PropertyAwareAccessor
 		}
 		catch (final Exception e)
 		{
-			final BeanPropertyWriteException ex = new BeanPropertyWriteException(e, value);
+			final PropertyWriteException ex = new PropertyWriteException(e, value);
 			ex.setPropertyName(propertyName);
 			ex.setTargetType(getType());
 			throw ex;

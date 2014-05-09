@@ -19,12 +19,12 @@ package de.danielbechler.diff.introspection;
 /**
  * @author Daniel Bechler
  */
-public class BeanPropertyWriteException extends BeanPropertyException
+public class PropertyWriteException extends PropertyAccessException
 {
 	private static final long serialVersionUID = 1L;
 	private Object newValue;
 
-	public BeanPropertyWriteException(final Throwable cause, final Object newValue)
+	public PropertyWriteException(final Throwable cause, final Object newValue)
 	{
 		super(cause);
 		this.newValue = newValue;

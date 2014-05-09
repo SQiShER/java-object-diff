@@ -28,12 +28,12 @@ import java.lang.reflect.Method
 /**
  * @author Daniel Bechler
  */
-public class BeanPropertyAccessorTest extends Specification {
-	BeanPropertyAccessor beanPropertyAccessor
+public class PropertyAccessorTest extends Specification {
+	PropertyAccessor beanPropertyAccessor
 	ObjectWithHashCodeAndEquals item
 
 	def 'setup'() {
-		beanPropertyAccessor = BeanPropertyAccessorBuilder.forPropertyOf(ObjectWithHashCodeAndEquals)
+		beanPropertyAccessor = PropertyAccessorBuilder.forPropertyOf(ObjectWithHashCodeAndEquals)
 				.property("value", String)
 				.readOnly(false)
 				.build()
@@ -54,16 +54,16 @@ public class BeanPropertyAccessorTest extends Specification {
 		  ObjectWithStringAndUnsupportedWriteMethod target = new ObjectWithStringAndUnsupportedWriteMethod("foo")
 		  Method readMethod = target.getClass().getMethod("getValue")
 		  Method writeMethod = target.getClass().getMethod("setValue", String)
-		  beanPropertyAccessor = new BeanPropertyAccessor("value", readMethod, writeMethod)
+		  beanPropertyAccessor = new PropertyAccessor("value", readMethod, writeMethod)
 		when:
 		  beanPropertyAccessor.set(target, "bar")
 		then:
-		  thrown(BeanPropertyWriteException)
+		  thrown(PropertyWriteException)
 	}
 
 	def 'assign nothing if no write method is available'() {
 		given:
-		  beanPropertyAccessor = BeanPropertyAccessorBuilder.forPropertyOf(ObjectWithHashCodeAndEquals)
+		  beanPropertyAccessor = PropertyAccessorBuilder.forPropertyOf(ObjectWithHashCodeAndEquals)
 				  .property("value", String)
 				  .readOnly(true)
 				  .build()
@@ -96,14 +96,14 @@ public class BeanPropertyAccessorTest extends Specification {
 		when:
 		  beanPropertyAccessor.get(new Object())
 		then:
-		  thrown(BeanPropertyReadException)
+		  thrown(PropertyReadException)
 	}
 
 	def 'fail if target does not have expected write method'() {
 		when:
 		  beanPropertyAccessor.set(new Object(), "foo")
 		then:
-		  thrown(BeanPropertyWriteException)
+		  thrown(PropertyWriteException)
 	}
 
 	def 'unset property value'() {
@@ -137,7 +137,7 @@ public class BeanPropertyAccessorTest extends Specification {
 
 	def 'returns annotations of property getter'() {
 		setup:
-		  beanPropertyAccessor = BeanPropertyAccessorBuilder.forPropertyOf(ObjectWithAnnotatedProperty)
+		  beanPropertyAccessor = PropertyAccessorBuilder.forPropertyOf(ObjectWithAnnotatedProperty)
 				  .property("value", String)
 				  .readOnly(false)
 				  .build()
@@ -150,7 +150,7 @@ public class BeanPropertyAccessorTest extends Specification {
 
 	def 'returns specific annotation of property getter'() {
 		setup:
-		  beanPropertyAccessor = BeanPropertyAccessorBuilder.forPropertyOf(ObjectWithAnnotatedProperty)
+		  beanPropertyAccessor = PropertyAccessorBuilder.forPropertyOf(ObjectWithAnnotatedProperty)
 				  .property("value", String)
 				  .readOnly(false)
 				  .build()
@@ -163,7 +163,7 @@ public class BeanPropertyAccessorTest extends Specification {
 
 	def 'returns null if specific annotation of property getter does not exist'() {
 		given:
-		  beanPropertyAccessor = BeanPropertyAccessorBuilder.forPropertyOf(ObjectWithAnnotatedProperty.class)
+		  beanPropertyAccessor = PropertyAccessorBuilder.forPropertyOf(ObjectWithAnnotatedProperty.class)
 				  .property("value", String.class)
 				  .readOnly(false)
 				  .build()

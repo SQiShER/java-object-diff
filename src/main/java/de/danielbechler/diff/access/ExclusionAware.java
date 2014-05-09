@@ -21,5 +21,5 @@ package de.danielbechler.diff.access;
  */
 public interface ExclusionAware
 {
-	boolean isExcluded();
+	boolean isExcludedByAnnotation();
 }

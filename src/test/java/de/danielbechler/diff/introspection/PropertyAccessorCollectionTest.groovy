@@ -26,9 +26,9 @@ import static java.util.Collections.singletonList
 /**
  * @author Daniel Bechler
  */
-public class BeanPropertyAccessorCollectionTest extends Specification {
+public class PropertyAccessorCollectionTest extends Specification {
 
-	BeanPropertyAccessor beanPropertyAccessor
+	PropertyAccessor beanPropertyAccessor
 
 	def setup() {
 		beanPropertyAccessor = createCollectionPropertyAccessor(false)
@@ -68,10 +68,10 @@ public class BeanPropertyAccessorCollectionTest extends Specification {
 		  target.collection.isEmpty()
 	}
 
-	def BeanPropertyAccessor createCollectionPropertyAccessor(boolean readOnly) {
+	def PropertyAccessor createCollectionPropertyAccessor(boolean readOnly) {
 		Method readMethod = ObjectWithCollection.getMethod("getCollection")
 		Method writeMethod = readOnly ? null : ObjectWithCollection.getMethod("setCollection", Collection)
-		return new BeanPropertyAccessor("collection", readMethod, writeMethod)
+		return new PropertyAccessor("collection", readMethod, writeMethod)
 	}
 
 }

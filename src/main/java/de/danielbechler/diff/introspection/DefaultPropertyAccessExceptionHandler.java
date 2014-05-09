@@ -20,12 +20,11 @@ import de.danielbechler.diff.node.DiffNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@SuppressWarnings("UnusedDeclaration")
-public class StandardPropertyAccessExceptionHandler implements BeanPropertyAccessExceptionHandler
+public class DefaultPropertyAccessExceptionHandler implements PropertyAccessExceptionHandler
 {
-	private static final Logger logger = LoggerFactory.getLogger(StandardPropertyAccessExceptionHandler.class);
+	private static final Logger logger = LoggerFactory.getLogger(DefaultPropertyAccessExceptionHandler.class);
 
-	public DiffNode onPropertyWriteException(final BeanPropertyWriteException exception, final DiffNode node)
+	public DiffNode onPropertyWriteException(final PropertyWriteException exception, final DiffNode node)
 	{
 		final Object newValue = exception.getNewValue();
 		final String propertyName = exception.getPropertyName();
@@ -33,7 +32,7 @@ public class StandardPropertyAccessExceptionHandler implements BeanPropertyAcces
 		throw exception;
 	}
 
-	public DiffNode onPropertyReadException(final BeanPropertyReadException exception, final DiffNode node)
+	public DiffNode onPropertyReadException(final PropertyReadException exception, final DiffNode node)
 	{
 		throw exception;
 	}

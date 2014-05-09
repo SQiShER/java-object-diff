@@ -62,7 +62,7 @@ class InclusionServiceSpec extends Specification {
 
 	def "isIgnored: should return 'true' if node is marked as ignored"() {
 		given:
-		  accessor.isExcluded() >> true
+		  accessor.isExcludedByAnnotation() >> true
 
 		expect:
 		  inclusionService.isIgnored(node)

@@ -499,7 +499,7 @@ public class DiffNode
 	{
 		if (accessor instanceof ExclusionAware)
 		{
-			return ((ExclusionAware) accessor).isExcluded();
+			return ((ExclusionAware) accessor).isExcludedByAnnotation();
 		}
 		return false;
 	}
@@ -514,7 +514,7 @@ public class DiffNode
 		}
 		if (accessor instanceof CategoryAware)
 		{
-			final Set<String> categoriesFromAccessor = ((CategoryAware) accessor).getCategories();
+			final Set<String> categoriesFromAccessor = ((CategoryAware) accessor).getCategoriesFromAnnotation();
 			if (categoriesFromAccessor != null)
 			{
 				categories.addAll(categoriesFromAccessor);

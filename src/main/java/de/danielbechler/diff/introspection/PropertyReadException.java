@@ -19,14 +19,11 @@ package de.danielbechler.diff.introspection;
 /**
  * @author Daniel Bechler
  */
-public abstract class BeanPropertyException extends RuntimeException
+public class PropertyReadException extends PropertyAccessException
 {
 	private static final long serialVersionUID = 1L;
 
-	private String propertyName;
-	private Class<?> targetType;
-
-	public BeanPropertyException(final Throwable cause)
+	public PropertyReadException(final Throwable cause)
 	{
 		super(cause);
 	}
@@ -34,26 +31,6 @@ public abstract class BeanPropertyException extends RuntimeException
 	@Override
 	public String getMessage()
 	{
-		return String.format("Property '%s' on target of type %s.", propertyName, targetType);
-	}
-
-	public String getPropertyName()
-	{
-		return propertyName;
-	}
-
-	public void setPropertyName(final String propertyName)
-	{
-		this.propertyName = propertyName;
-	}
-
-	public Class<?> getTargetType()
-	{
-		return targetType;
-	}
-
-	public void setTargetType(final Class<?> targetType)
-	{
-		this.targetType = targetType;
+		return "Failed to invoke read method. " + super.getMessage();
 	}
 }

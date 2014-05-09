@@ -26,9 +26,9 @@ import java.beans.IntrospectionException
 /**
  * @author Daniel Bechler
  */
-public class StandardBeanIntrospectorTest extends Specification {
+public class StandardIntrospectorTest extends Specification {
 
-	def introspector = new StandardBeanIntrospector()
+	def introspector = new StandardIntrospector()
 
 	private Map<String, PropertyAwareAccessor> introspect(Class<?> type) {
 		introspector.introspect(type).collectEntries {
@@ -48,9 +48,9 @@ public class StandardBeanIntrospectorTest extends Specification {
 		  accessor.set(target, 'bar')
 		  accessor.get(target) == 'bar'
 		and:
-		  accessor.excluded == false
+		  accessor.excludedByAnnotation == false
 		and:
-		  accessor.categories.isEmpty()
+		  accessor.categoriesFromAnnotation.isEmpty()
 	}
 
 	def 'should return PropertyAwareAccessors for each property of the given class'() {
@@ -66,15 +66,15 @@ public class StandardBeanIntrospectorTest extends Specification {
 		when:
 		  def accessor = introspect(TypeWithPropertyAnnotation).get('value')
 		then:
-		  accessor.categories.size() == 2
-		  accessor.categories.containsAll(['category1', 'category2'])
+		  accessor.categoriesFromAnnotation.size() == 2
+		  accessor.categoriesFromAnnotation.containsAll(['category1', 'category2'])
 	}
 
 	def 'should apply exclusion of ObjectDiffProperty annotation to accessor'() {
 		when:
 		  def accessor = introspect(TypeWithPropertyAnnotation).get('value')
 		then:
-		  accessor.excluded == true
+		  accessor.excludedByAnnotation == true
 	}
 
 	def 'should throw exception when invoked without type'() {
@@ -96,7 +96,7 @@ public class StandardBeanIntrospectorTest extends Specification {
 
 	def 'should wrap IntrospectionException with RuntimeException'() {
 		given:
-		  introspector = new StandardBeanIntrospector() {
+		  introspector = new StandardIntrospector() {
 			  @Override
 			  protected BeanInfo getBeanInfo(final Class<?> type) throws IntrospectionException {
 				  throw new IntrospectionException(type.getCanonicalName());

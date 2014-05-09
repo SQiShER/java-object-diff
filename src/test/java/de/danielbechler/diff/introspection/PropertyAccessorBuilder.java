@@ -21,9 +21,9 @@ import java.lang.reflect.Method;
 /**
  * @author Daniel Bechler
  */
-final class BeanPropertyAccessorBuilder
+final class PropertyAccessorBuilder
 {
-	private BeanPropertyAccessorBuilder()
+	private PropertyAccessorBuilder()
 	{
 	}
 
@@ -36,7 +36,7 @@ final class BeanPropertyAccessorBuilder
 
 	public interface Buildable
 	{
-		BeanPropertyAccessor build();
+		PropertyAccessor build();
 	}
 
 	public interface NameAndType
@@ -69,7 +69,7 @@ final class BeanPropertyAccessorBuilder
 			return this;
 		}
 
-		public BeanPropertyAccessor build()
+		public PropertyAccessor build()
 		{
 			try
 			{
@@ -83,7 +83,7 @@ final class BeanPropertyAccessorBuilder
 				{
 					writeMethod = targetType.getDeclaredMethod(name("set"), propertyType);
 				}
-				return new BeanPropertyAccessor(propertyName, readMethod, writeMethod);
+				return new PropertyAccessor(propertyName, readMethod, writeMethod);
 			}
 			catch (final NoSuchMethodException e)
 			{

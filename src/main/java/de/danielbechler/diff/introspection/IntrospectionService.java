@@ -36,7 +36,7 @@ public class IntrospectionService implements IntrospectionConfigurer, IsIntrospe
 	private final NodePathValueHolder<Introspector> nodePathIntrospectorHolder = new NodePathValueHolder<Introspector>();
 	private final NodePathValueHolder<IntrospectionMode> nodePathIntrospectionModeHolder = new NodePathValueHolder<IntrospectionMode>();
 	private final ObjectDifferBuilder objectDifferBuilder;
-	private Introspector defaultIntrospector = new StandardBeanIntrospector();
+	private Introspector defaultIntrospector = new StandardIntrospector();
 
 	public IntrospectionService(final ObjectDifferBuilder objectDifferBuilder)
 	{
