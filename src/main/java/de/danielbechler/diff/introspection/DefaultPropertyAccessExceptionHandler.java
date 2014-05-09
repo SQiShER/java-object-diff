@@ -22,13 +22,11 @@ import org.slf4j.LoggerFactory;
 
 public class DefaultPropertyAccessExceptionHandler implements PropertyAccessExceptionHandler
 {
-	private static final Logger logger = LoggerFactory.getLogger(DefaultPropertyAccessExceptionHandler.class);
+	Logger logger = LoggerFactory.getLogger(DefaultPropertyAccessExceptionHandler.class);
 
 	public DiffNode onPropertyWriteException(final PropertyWriteException exception, final DiffNode node)
 	{
-		final Object newValue = exception.getNewValue();
-		final String propertyName = exception.getPropertyName();
-		logger.info("Couldn't set new value '{}' for property '{}'", newValue, propertyName);
+		logger.info(exception.getMessage());
 		throw exception;
 	}
 

@@ -22,18 +22,20 @@ package de.danielbechler.diff.introspection;
 public class PropertyWriteException extends PropertyAccessException
 {
 	private static final long serialVersionUID = 1L;
-	private Object newValue;
 
-	public PropertyWriteException(final Throwable cause, final Object newValue)
+	@SuppressWarnings("TransientFieldNotInitialized")
+	private final transient Object newValue;
+
+	public PropertyWriteException(final String propertyName, final Class<?> targetType, final Object newValue, final Throwable cause)
 	{
-		super(cause);
+		super(propertyName, targetType, cause);
 		this.newValue = newValue;
 	}
 
 	@Override
 	public String getMessage()
 	{
-		return "Error while invoking write method. " + super.getMessage();
+		return String.format("Failed to write new value '%s' to property '%s' of type '%s'", newValue, getPropertyName(), getTargetType().getCanonicalName());
 	}
 
 	public Object getNewValue()

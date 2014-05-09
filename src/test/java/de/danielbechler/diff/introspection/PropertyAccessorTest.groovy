@@ -29,11 +29,11 @@ import java.lang.reflect.Method
  * @author Daniel Bechler
  */
 public class PropertyAccessorTest extends Specification {
-	PropertyAccessor beanPropertyAccessor
+	PropertyAccessor propertyAccessor
 	ObjectWithHashCodeAndEquals item
 
 	def 'setup'() {
-		beanPropertyAccessor = PropertyAccessorBuilder.forPropertyOf(ObjectWithHashCodeAndEquals)
+		propertyAccessor = PropertyAccessorBuilder.forPropertyOf(ObjectWithHashCodeAndEquals)
 				.property("value", String)
 				.readOnly(false)
 				.build()
@@ -44,7 +44,7 @@ public class PropertyAccessorTest extends Specification {
 		given:
 		  item.value = null
 		when:
-		  beanPropertyAccessor.set(item, "bar")
+		  propertyAccessor.set(item, "bar")
 		then:
 		  item.value == 'bar'
 	}
@@ -54,21 +54,21 @@ public class PropertyAccessorTest extends Specification {
 		  ObjectWithStringAndUnsupportedWriteMethod target = new ObjectWithStringAndUnsupportedWriteMethod("foo")
 		  Method readMethod = target.getClass().getMethod("getValue")
 		  Method writeMethod = target.getClass().getMethod("setValue", String)
-		  beanPropertyAccessor = new PropertyAccessor("value", readMethod, writeMethod)
+		  propertyAccessor = new PropertyAccessor("value", readMethod, writeMethod)
 		when:
-		  beanPropertyAccessor.set(target, "bar")
+		  propertyAccessor.set(target, "bar")
 		then:
 		  thrown(PropertyWriteException)
 	}
 
 	def 'assign nothing if no write method is available'() {
 		given:
-		  beanPropertyAccessor = PropertyAccessorBuilder.forPropertyOf(ObjectWithHashCodeAndEquals)
+		  propertyAccessor = PropertyAccessorBuilder.forPropertyOf(ObjectWithHashCodeAndEquals)
 				  .property("value", String)
 				  .readOnly(true)
 				  .build()
 		when:
-		  beanPropertyAccessor.set(item, "bar")
+		  propertyAccessor.set(item, "bar")
 		then:
 		  item.value == null
 	}
@@ -77,31 +77,31 @@ public class PropertyAccessorTest extends Specification {
 		given:
 		  item.value = "bar"
 		when:
-		  final String value = (String) beanPropertyAccessor.get(item)
+		  final String value = (String) propertyAccessor.get(item)
 		then:
 		  value == "bar"
 	}
 
 	def 'retrieve null if target is null'() {
 		expect:
-		  beanPropertyAccessor.get(null) == null
+		  propertyAccessor.get(null) == null
 	}
 
 	def 'assign nothing if target is null'() {
 		expect:
-		  beanPropertyAccessor.set(null, "bar"); // just to make sure no exception is thrown
+		  propertyAccessor.set(null, "bar"); // just to make sure no exception is thrown
 	}
 
 	def 'fail if target does not have expected read method'() {
 		when:
-		  beanPropertyAccessor.get(new Object())
+		  propertyAccessor.get(new Object())
 		then:
 		  thrown(PropertyReadException)
 	}
 
 	def 'fail if target does not have expected write method'() {
 		when:
-		  beanPropertyAccessor.set(new Object(), "foo")
+		  propertyAccessor.set(new Object(), "foo")
 		then:
 		  thrown(PropertyWriteException)
 	}
@@ -110,34 +110,37 @@ public class PropertyAccessorTest extends Specification {
 		given:
 		  item.value = "bar"
 		when:
-		  beanPropertyAccessor.unset(item)
+		  propertyAccessor.unset(item)
 		then:
 		  item.value == null
 	}
 
 	def 'return property value type'() {
 		expect:
-		  beanPropertyAccessor.type == String
+		  propertyAccessor.type == String
 	}
 
 	def 'return proper path element'() {
 		expect:
-		  beanPropertyAccessor.elementSelector == new BeanPropertyElementSelector("value")
+		  propertyAccessor.elementSelector == new BeanPropertyElementSelector("value")
 	}
 
 	def 'returns proper property name'() {
 		expect:
-		  beanPropertyAccessor.propertyName == "value"
+		  propertyAccessor.propertyName == "value"
 	}
 
-	def 'includes accessor type in string representation'() {
+	def 'toString returns debug friendly string'() {
 		expect:
-		  beanPropertyAccessor.toString().startsWith("property ")
+		  propertyAccessor.toString() == 'PropertyAccessor{propertyName=\'value\'' +
+				  ', type=java.lang.String' +
+				  ', source=de.danielbechler.diff.mock.ObjectWithHashCodeAndEquals' +
+				  ', hasWriteMethod=true}'
 	}
 
 	def 'returns annotations of property getter'() {
 		setup:
-		  beanPropertyAccessor = PropertyAccessorBuilder.forPropertyOf(ObjectWithAnnotatedProperty)
+		  propertyAccessor = PropertyAccessorBuilder.forPropertyOf(ObjectWithAnnotatedProperty)
 				  .property("value", String)
 				  .readOnly(false)
 				  .build()
@@ -145,12 +148,12 @@ public class PropertyAccessorTest extends Specification {
 		expect:
 		  expectedAnnotations.length == 2
 		and:
-		  beanPropertyAccessor.readMethodAnnotations.containsAll(expectedAnnotations)
+		  propertyAccessor.readMethodAnnotations.containsAll(expectedAnnotations)
 	}
 
 	def 'returns specific annotation of property getter'() {
 		setup:
-		  beanPropertyAccessor = PropertyAccessorBuilder.forPropertyOf(ObjectWithAnnotatedProperty)
+		  propertyAccessor = PropertyAccessorBuilder.forPropertyOf(ObjectWithAnnotatedProperty)
 				  .property("value", String)
 				  .readOnly(false)
 				  .build()
@@ -158,16 +161,67 @@ public class PropertyAccessorTest extends Specification {
 		expect:
 		  expectedAnnotation != null
 		and:
-		  beanPropertyAccessor.getReadMethodAnnotation(ObjectDiffProperty) == expectedAnnotation
+		  propertyAccessor.getReadMethodAnnotation(ObjectDiffProperty) == expectedAnnotation
 	}
 
 	def 'returns null if specific annotation of property getter does not exist'() {
 		given:
-		  beanPropertyAccessor = PropertyAccessorBuilder.forPropertyOf(ObjectWithAnnotatedProperty.class)
+		  propertyAccessor = PropertyAccessorBuilder.forPropertyOf(ObjectWithAnnotatedProperty.class)
 				  .property("value", String.class)
 				  .readOnly(false)
 				  .build()
 		expect:
-		  beanPropertyAccessor.getReadMethodAnnotation(Override.class) == null
+		  propertyAccessor.getReadMethodAnnotation(Override.class) == null
+	}
+
+	def 'getCategoriesFromAnnotation returns empty set when annotation is absent'() {
+		given:
+		  propertyAccessor = PropertyAccessorBuilder.forPropertyOf(AnnotatedType)
+				  .property('unannotatedValue', String)
+				  .readOnly(true)
+				  .build()
+		expect:
+		  propertyAccessor.categoriesFromAnnotation == [] as Set
+	}
+
+	def 'getCategoriesFromAnnotation returns set of categories from annotation'() {
+		given:
+		  propertyAccessor = PropertyAccessorBuilder.forPropertyOf(AnnotatedType)
+				  .property('value', String)
+				  .readOnly(true)
+				  .build()
+		expect:
+		  propertyAccessor.categoriesFromAnnotation == ['A', 'B', 'C'] as Set
+	}
+
+	class AnnotatedType {
+		@ObjectDiffProperty(excluded = true, categories = ['A', 'B', 'C'])
+		public String getValue() {
+			return 'foo'
+		}
+
+		public String getUnannotatedValue() {
+			return 'foo'
+		}
+	}
+
+	def 'isExcludedByAnnotation returns value from annotation'() {
+		given:
+		  propertyAccessor = PropertyAccessorBuilder.forPropertyOf(AnnotatedType)
+				  .property('value', String)
+				  .readOnly(true)
+				  .build()
+		expect:
+		  propertyAccessor.excludedByAnnotation == true
+	}
+
+	def 'isExcludedByAnnotation returns false when annotation is absent'() {
+		given:
+		  propertyAccessor = PropertyAccessorBuilder.forPropertyOf(AnnotatedType)
+				  .property('unannotatedValue', String)
+				  .readOnly(true)
+				  .build()
+		expect:
+		  propertyAccessor.excludedByAnnotation == false
 	}
 }

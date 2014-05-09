@@ -124,12 +124,9 @@ public class PropertyAccessor implements PropertyAwareAccessor
 		{
 			return readMethod.invoke(target);
 		}
-		catch (final Exception e)
+		catch (final Exception cause)
 		{
-			final PropertyReadException ex = new PropertyReadException(e);
-			ex.setPropertyName(propertyName);
-			ex.setTargetType(target.getClass());
-			throw ex;
+			throw new PropertyReadException(propertyName, target.getClass(), cause);
 		}
 	}
 
@@ -161,22 +158,23 @@ public class PropertyAccessor implements PropertyAwareAccessor
 		logger.info("Couldn't set new value '{}' for property '{}'", value, propertyName);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void tryToReplaceContentOfCollectionTypes(final Object target, final Object value)
 	{
 		if (Collection.class.isAssignableFrom(readMethod.getReturnType()))
 		{
-			//noinspection unchecked
-			tryToReplaceCollectionContent((Collection<Object>) get(target), (Collection<Object>) value);
-			return;
+			if (tryToReplaceCollectionContent((Collection<Object>) get(target), (Collection<Object>) value))
+			{
+				return;
+			}
 		}
-
 		if (Map.class.isAssignableFrom(readMethod.getReturnType()))
 		{
-			//noinspection unchecked
-			tryToReplaceMapContent((Map<Object, Object>) get(target), (Map<Object, Object>) value);
-			return;
+			if (tryToReplaceMapContent((Map<Object, Object>) get(target), (Map<Object, Object>) value))
+			{
+				return;
+			}
 		}
-
 		logFailedSet(value);
 	}
 
@@ -186,12 +184,9 @@ public class PropertyAccessor implements PropertyAwareAccessor
 		{
 			writeMethod.invoke(target, value);
 		}
-		catch (final Exception e)
+		catch (final Exception cause)
 		{
-			final PropertyWriteException ex = new PropertyWriteException(e, value);
-			ex.setPropertyName(propertyName);
-			ex.setTargetType(getType());
-			throw ex;
+			throw new PropertyWriteException(propertyName, getType(), value, cause);
 		}
 	}
 
@@ -243,6 +238,12 @@ public class PropertyAccessor implements PropertyAwareAccessor
 	@Override
 	public String toString()
 	{
-		return "property '" + propertyName + "'";
+		final StringBuilder sb = new StringBuilder("PropertyAccessor{");
+		sb.append("propertyName='").append(propertyName).append('\'');
+		sb.append(", type=").append(type.getCanonicalName());
+		sb.append(", source=").append(readMethod.getDeclaringClass().getCanonicalName());
+		sb.append(", hasWriteMethod=").append(writeMethod != null);
+		sb.append('}');
+		return sb.toString();
 	}
 }

@@ -76,13 +76,13 @@ class InstancesSpec extends Specification {
 
 	def "getType() returns most specific shared type for non-primitive objects (except for Map and Collection)"() {
 		given:
-		  def instances = Instances.of(beanPropertyAccessor, working, base);
+		  def instances = Instances.of(propertyAccessor, working, base);
 
 		expect:
 		  instances.getType() == resultType
 
 		where:
-		  beanPropertyAccessor  | working                                    | base                                     | resultType
+		  propertyAccessor  | working                                    | base                                     | resultType
 		  RootAccessor.instance | BigInteger.ONE                             | BigDecimal.ONE                           | Number
 		  RootAccessor.instance | new LineNumberReader(new StringReader("")) | new BufferedReader(new StringReader("")) | BufferedReader
 		  RootAccessor.instance | new StringReader("")                       | new BufferedReader(new StringReader("")) | Reader

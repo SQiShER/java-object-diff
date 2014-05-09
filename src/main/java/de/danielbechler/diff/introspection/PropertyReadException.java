@@ -23,14 +23,14 @@ public class PropertyReadException extends PropertyAccessException
 {
 	private static final long serialVersionUID = 1L;
 
-	public PropertyReadException(final Throwable cause)
+	public PropertyReadException(final String propertyName, final Class<?> targetType, final Throwable cause)
 	{
-		super(cause);
+		super(propertyName, targetType, cause);
 	}
 
 	@Override
 	public String getMessage()
 	{
-		return "Failed to invoke read method. " + super.getMessage();
+		return String.format("Failed to read value from property '%s' of type '%s'", getPropertyName(), getTargetType().getCanonicalName());
 	}
 }

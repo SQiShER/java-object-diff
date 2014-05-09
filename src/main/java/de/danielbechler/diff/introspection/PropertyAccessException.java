@@ -23,18 +23,14 @@ public abstract class PropertyAccessException extends RuntimeException
 {
 	private static final long serialVersionUID = 1L;
 
-	private String propertyName;
-	private Class<?> targetType;
+	private final String propertyName;
+	private final Class<?> targetType;
 
-	public PropertyAccessException(final Throwable cause)
+	protected PropertyAccessException(final String propertyName, final Class<?> targetType, final Throwable cause)
 	{
 		super(cause);
-	}
-
-	@Override
-	public String getMessage()
-	{
-		return String.format("Property '%s' on target of type %s.", propertyName, targetType);
+		this.propertyName = propertyName;
+		this.targetType = targetType;
 	}
 
 	public String getPropertyName()
@@ -42,18 +38,8 @@ public abstract class PropertyAccessException extends RuntimeException
 		return propertyName;
 	}
 
-	public void setPropertyName(final String propertyName)
-	{
-		this.propertyName = propertyName;
-	}
-
 	public Class<?> getTargetType()
 	{
 		return targetType;
-	}
-
-	public void setTargetType(final Class<?> targetType)
-	{
-		this.targetType = targetType;
 	}
 }
