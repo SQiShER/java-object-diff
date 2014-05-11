@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * INTERNAL CLASS. DON'T USE UNLESS YOU ARE READY TO DEAL WITH API CHANGES
+ *
  * Created by Daniel Bechler.
  */
 public class ValueNode<V>

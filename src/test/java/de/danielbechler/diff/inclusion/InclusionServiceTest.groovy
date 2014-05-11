@@ -28,7 +28,7 @@ import spock.lang.Specification
 /**
  * @author Daniel Bechler
  */
-class InclusionServiceSpec extends Specification {
+class InclusionServiceTest extends Specification {
 	def categoryResolver = Mock(CategoryResolver)
 	def accessor = Mock(PropertyAwareAccessor)
 	def builder = Mock(ObjectDifferBuilder)

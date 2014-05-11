@@ -29,7 +29,7 @@ import static de.danielbechler.diff.inclusion.Inclusion.INCLUDED
 /**
  * Created by Daniel Bechler.
  */
-class InclusionNodeSpec extends Specification {
+class InclusionNodeTest extends Specification {
 
 	def node = new InclusionNode()
 
