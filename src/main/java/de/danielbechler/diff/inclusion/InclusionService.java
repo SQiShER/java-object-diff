@@ -19,7 +19,6 @@ package de.danielbechler.diff.inclusion;
 import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.category.CategoryResolver;
 import de.danielbechler.diff.node.DiffNode;
-import de.danielbechler.diff.node.Visit;
 import de.danielbechler.diff.path.NodePath;
 import de.danielbechler.diff.selector.BeanPropertyElementSelector;
 import de.danielbechler.diff.selector.ElementSelector;
@@ -28,7 +27,6 @@ import de.danielbechler.util.Assert;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static de.danielbechler.diff.inclusion.Inclusion.EXCLUDED;
 import static de.danielbechler.diff.inclusion.Inclusion.INCLUDED;
@@ -93,11 +91,7 @@ public class InclusionService implements InclusionConfigurer, IsIgnoredResolver
 	{
 		if (hasInclusions(EXCLUDED))
 		{
-			if (node.isExcluded())
-			{
-				return true;
-			}
-			else if (isExcludedByPath(node))
+			if (isExcludedByPath(node))
 			{
 				return true;
 			}
@@ -150,29 +144,15 @@ public class InclusionService implements InclusionConfigurer, IsIgnoredResolver
 
 	private boolean isIncludedByType(final DiffNode node)
 	{
-		final AtomicBoolean result = new AtomicBoolean(false);
-		node.visitParents(new DiffNode.Visitor()
+		if (typeInclusions.get(node.getValueType()) == INCLUDED)
 		{
-			public void node(final DiffNode node, final Visit visit)
-			{
-				if (node.getValueType() != null)
-				{
-					if (typeInclusions.get(node.getValueType()) == INCLUDED)
-					{
-						result.set(true);
-						visit.stop();
-					}
-				}
-			}
-		});
-		if (node.getValueType() != null)
-		{
-			if (typeInclusions.get(node.getValueType()) == INCLUDED)
-			{
-				result.set(true);
-			}
+			return true;
 		}
-		return result.get();
+//		else if (node.getParentNode() != null && typeInclusions.get(node.getParentNode().getValueType()) == INCLUDED)
+//		{
+//			return true;
+//		}
+		return false;
 	}
 
 	private boolean isIncludedByPropertyName(final DiffNode node)

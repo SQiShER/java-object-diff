@@ -128,6 +128,15 @@ class InclusionServiceTest extends Specification {
 		  inclusionService.isIgnored(node) == false
 	}
 
+	def "isIgnored: should return 'true' if node is excluded via annotation"() {
+		setup:
+		  accessor.isExcludedByAnnotation() >> true
+
+		expect:
+		  inclusionService.isIgnored(node) == true
+	}
+
+
 	def "isIgnored: should return 'true' if node is excluded via path"() {
 		setup:
 		  inclusionService.exclude().node(nodePath)

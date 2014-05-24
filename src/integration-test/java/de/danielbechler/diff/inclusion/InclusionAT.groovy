@@ -20,6 +20,7 @@ import de.danielbechler.diff.ObjectDifferBuilder
 import de.danielbechler.diff.introspection.ObjectDiffProperty
 import de.danielbechler.diff.path.NodePath
 import de.danielbechler.diff.selector.CollectionItemElementSelector
+import groovy.transform.EqualsAndHashCode
 import spock.lang.Specification
 
 /**
@@ -29,8 +30,8 @@ import spock.lang.Specification
 class InclusionAT extends Specification {
 
 	def objectDifferBuilder = ObjectDifferBuilder.startBuilding()
-	def base = new Album(artist: 'Pharrell Williams', songs: ['Happy'])
-	def working = new Album(artist: 'N.E.R.D.', songs: ['It'])
+	def base = new Album(artist: new Artist(name: 'Pharrell Williams'), songs: [new Song(durationInSeconds: 130, title: 'Happy')])
+	def working = new Album(artist: new Artist(name: 'N.E.R.D.'), songs: [new Song(durationInSeconds: 150, title: 'It')])
 
 	def 'exclude an element by type'() {
 		given:
@@ -74,7 +75,7 @@ class InclusionAT extends Specification {
 
 	def 'include an element by type'() {
 		given:
-		  objectDifferBuilder.inclusion().include().type(ArrayList)
+		  objectDifferBuilder.inclusion().include().type(ArrayList).type(Song)
 		when:
 		  def node = objectDifferBuilder.build().compare(working, base)
 		then:
@@ -139,32 +140,43 @@ class InclusionAT extends Specification {
 		when:
 		  def node = objectDifferBuilder.build().compare(working, base)
 		then:
-		  node.getChild('songs').getChild(new CollectionItemElementSelector('Happy')).removed
-		  node.getChild('songs').getChild(new CollectionItemElementSelector('It')).added
+		  node.getChild('songs').getChild(new CollectionItemElementSelector(new Song(title: 'Happy'))).removed
+		  node.getChild('songs').getChild(new CollectionItemElementSelector(new Song(title: 'It'))).added
 	}
 
 	def 'including an element by path implicitly includes its parents'() {
 		given:
 		  objectDifferBuilder.inclusion()
-				  .include().node(NodePath.startBuilding().propertyName('songs').collectionItem('Happy').build())
+				  .include().node(NodePath.startBuilding().propertyName('songs').collectionItem(new Song(title: 'Happy')).build())
 		when:
 		  def node = objectDifferBuilder.build().compare(working, base)
 		then:
-		  node.getChild('songs').getChild(new CollectionItemElementSelector('Happy')).removed
+		  node.getChild('songs').getChild(new CollectionItemElementSelector(new Song(title: 'Happy'))).removed
 		  node.getChild('songs').childCount() == 1
 	}
 
 	class Album {
-		def String artist
-		def ArrayList<String> songs
+		def Artist artist
+		def ArrayList<Song> songs
 
 		@ObjectDiffProperty(categories = ['foo'])
-		ArrayList<String> getSongs() {
+		ArrayList<Song> getSongs() {
 			return songs
 		}
 
-		void setSongs(ArrayList<String> songs) {
+		void setSongs(ArrayList<Song> songs) {
 			this.songs = songs
 		}
+	}
+
+	@EqualsAndHashCode(includeFields = true)
+	class Artist {
+		def String name
+	}
+
+	@EqualsAndHashCode(includeFields = true, includes = ['title'])
+	class Song {
+		def String title
+		def int durationInSeconds
 	}
 }

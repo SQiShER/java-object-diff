@@ -15,7 +15,8 @@
   ~ limitations under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>org.sonatype.oss</groupId>
@@ -55,8 +56,8 @@
         <url>https://github.com/SQiShER/java-object-diff</url>
         <connection>scm:git:ssh://git@github.com/SQiShER/java-object-diff.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/SQiShER/java-object-diff.git</developerConnection>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <issueManagement>
         <system>GitHub</system>
@@ -98,7 +99,7 @@
             <plugin>
                 <artifactId>maven-release-plugin</artifactId>
                 <configuration>
-                    <scmCommentPrefix />
+                    <scmCommentPrefix/>
                 </configuration>
             </plugin>
             <plugin>
@@ -435,7 +436,7 @@
                             <exclude>**/*Example.class</exclude>
                         </excludes>
                     </instrumentation>
-                    <check />
+                    <check/>
                 </configuration>
             </plugin>
             <plugin>
