@@ -1,5 +1,3 @@
-[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=SQiShER&url=https://github.com/SQiShER/java-object-diff&title=java-object-diff&language=&tags=github&category=software)
-
 ## Introduction
 
 `java-object-diff` is a simple, yet powerful library to find differences between Java objects. It takes two objects and generates a tree structure that represents any differences between the objects and their children. This tree can then be traversed to extract more information or apply changes to the underlying data structures.
@@ -63,3 +61,5 @@ This library has been battle-tested in a rather big project of mine, where I use
 If you’d like to support this project with a small donation, you can do so via  [Flattr](https://flattr.com/submit/auto?user_id=SQiShER&url=https://github.com/SQiShER/java-object-diff&title=java-object-diff&language=&tags=github&category=software) or [Bitcoin](https://blockchain.info/address/19kRmHJ4qMnYCY6rnY6kCf96Prj6WGxisk).
 
 Alternatively you could send me a [nice tweet](https://twitter.com/SQiShER), start contributing, write a blog post about this project, tell your friends about it or simply [**star**](https://github.com/SQiShER/java-object-diff) the main repository. I'm happy about everything that shows me that someone out there is actually using this library and appreciates all the hard work that goes into its development.
+
+[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=SQiShER&url=https://github.com/SQiShER/java-object-diff&title=java-object-diff&language=&tags=github&category=software)
