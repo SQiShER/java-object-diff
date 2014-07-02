@@ -50,12 +50,11 @@ This library has been battle-tested in a rather big project of mine, where I use
 
 ## Contribute
 
-* Make youself familiar with the [anatomy of java-object-diff](https://github.com/SQiShER/java-object-diff/wiki/The-Anatomy-of-Java-Object-Diff).
-* [Check for open issues](https://github.com/SQiShER/java-object-diff/issues) or open a fresh issue to start a discussion around a feature idea or a bug. There is a [Contributor Friendly](https://github.com/SQiShER/java-object-diff/issues?labels=Contributor+Friendly&page=1&state=open) tag for issues that should be ideal for people who are not very familiar with the codebase yet.
-* Fork the java-object-diff repository on Github to start making your changes.
-* Write some tests which show that the bug was fixed or that the feature works as expected.
-* Send a pull request and bug the maintainer until it gets merged and published. :)
- 
+You discovered a bug or have an idea for a new feature? Great, why don't you send me a [Pull 
+Request (PR)](https://help.github.com/articles/using-pull-requests) so everyone can benefit from it?
+
+To help you getting started, [here](https://github.com/SQiShER/java-object-diff/blob/master/CONTRIBUTING.md) is a brief guide with everyting you need to know to get involved!
+
 ## Donate
 
 If you’d like to support this project with a small donation, you can do so via  [Flattr](https://flattr.com/submit/auto?user_id=SQiShER&url=https://github.com/SQiShER/java-object-diff&title=java-object-diff&language=&tags=github&category=software) or [Bitcoin](https://blockchain.info/address/19kRmHJ4qMnYCY6rnY6kCf96Prj6WGxisk).
