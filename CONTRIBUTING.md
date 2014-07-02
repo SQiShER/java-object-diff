@@ -15,7 +15,7 @@ There are some things to help you getting started:
 
 * Make yourself familiar with the [anatomy of java-object-diff](https://github.com/SQiShER/java-object-diff/wiki/The-Anatomy-of-Java-Object-Diff), so you understand the basic architecture.
 * [Check for open issues](https://github.com/SQiShER/java-object-diff/issues) that interest you or look for issues with the [_Contributor Friendly_](https://github.com/SQiShER/java-object-diff/issues?labels=Contributor+Friendly&page=1&state=open) tag. These issues are especially well suited to get more familiar with the codebase without being overwhelming.
-* In case you have an idea for a new feature, check the issue tracker to see if there were already some discussions regarding that feature. If not, fell free to open a new discussion to see what others think about it.
+* In case you have an idea for a new feature, check the issue tracker to see if there were already some discussions regarding that feature. If not, feel free to open a new discussion to see what others think about it.
 
 So you found something you want to work on. That's great! If you run into any problems or are not entirely sure how to tackle the problem, feel free to just ask me on [Twitter](https://twitter.com/SQiShER) or post your question to the [issue tracker](https://github.com/SQiShER/java-object-diff/issues) if it is too big for Twitter.
 
