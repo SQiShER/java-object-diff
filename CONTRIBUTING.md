@@ -5,8 +5,8 @@ request so everyone can benefit from it?
 
 Getting started is easy:
 
-* Fork the java-object-diff repository on Github.
-* Clone the forked repository to your computer.
+* Fork the java-object-diff repository on Github
+* Clone the forked repository to your computer
 * Switch to the root project directory and run `mvn clean package`
 
 If everything went well, this should build, test and package the project. Now you can start making your changes.
