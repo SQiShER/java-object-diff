@@ -1,11 +1,11 @@
 # Contributing
 
-You discovered a bug or have an idea for a new feature? Great, why don't you send me a pull 
-request so everyone can benefit from it?
+You discovered a bug or have an idea for a new feature? Great, why don't you send me a [Pull 
+Request (PR)](https://help.github.com/articles/using-pull-requests) so everyone can benefit from it?
 
 Getting started is easy:
 
-* Fork the java-object-diff repository on Github
+* Fork the __java-object-diff__ repository on Github
 * Clone the forked repository to your computer
 * Switch to the root project directory and run `mvn clean package`
 
@@ -13,13 +13,13 @@ If everything went well, this should build, test and package the project. Now yo
   
 There are some things to help you getting started:
 
-* Make yourself familiar with the [anatomy of java-object-diff](https://github.com/SQiShER/java-object-diff/wiki/The-Anatomy-of-Java-Object-Diff), so you understand the basic architecture.
-* [Check for open issues](https://github.com/SQiShER/java-object-diff/issues) that interest you or look for issues with the [_Contributor Friendly_](https://github.com/SQiShER/java-object-diff/issues?labels=Contributor+Friendly&page=1&state=open) tag. These issues are especially well suited to get more familiar with the codebase without being overwhelming.
+* Make yourself familiar with the [__anatomy of java-object-diff__](https://github.com/SQiShER/java-object-diff/wiki/The-Anatomy-of-Java-Object-Diff), so you understand the basic architecture.
+* [__Check for open issues__](https://github.com/SQiShER/java-object-diff/issues) that interest you or look for issues with the [__Contributor Friendly__](https://github.com/SQiShER/java-object-diff/issues?labels=Contributor+Friendly&page=1&state=open) tag. These issues are especially well suited to get more familiar with the codebase without being overwhelming.
 * In case you have an idea for a new feature, check the issue tracker to see if there were already some discussions regarding that feature. If not, feel free to open a new discussion to see what others think about it.
 
 So you found something you want to work on? That's great! If you run into any problems or are not entirely sure how to tackle the problem, feel free to ask me on [Twitter](https://twitter.com/SQiShER) or post your question to the [issue tracker](https://github.com/SQiShER/java-object-diff/issues) if it is more complex.
 
-Before you submit your pull request with the result, please make sure to:
+Before you submit your PR with the result, please make sure to:
 
 * __Write at least one fully integrated test__ (no mocks and comparison done via public API) to show 
 that the fix or feature works as promised - from a user perspective. What you are doing here is 
