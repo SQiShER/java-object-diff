@@ -51,9 +51,7 @@ This library has been battle-tested in a rather big project of mine, where I use
 ## Contribute
 
 You discovered a bug or have an idea for a new feature? Great, why don't you send me a [Pull 
-Request (PR)](https://help.github.com/articles/using-pull-requests) so everyone can benefit from it?
-
-To help you getting started, [here](https://github.com/SQiShER/java-object-diff/blob/master/CONTRIBUTING.md) is a brief guide with everyting you need to know to get involved!
+Request (PR)](https://help.github.com/articles/using-pull-requests) so everyone can benefit from it? To help you getting started, [here](https://github.com/SQiShER/java-object-diff/blob/master/CONTRIBUTING.md) is a brief guide with everyting you need to know to get involved!
 
 ## Donate
 
