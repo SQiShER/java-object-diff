@@ -21,16 +21,15 @@ So you found something you want to work on. That's great! If you run into any pr
 
 Before you submit your pull request with the result, please make sure to:
 
-* Write at least one fully integrated test (no mocks and comparison done via public API) to show that the fix or feature works as promised - from a user perspective. What you are doing here is basically saying: "In case of X you can expect the library to behave like Y"
-
-	You shouldn't cover every possible execution path this way but rather focus on proving that the feature works and under which circumstances it will take effect.
-	
-	Doing this will help others to keep your feature intact, when the library evolves
-	
+* Write at least one fully integrated test (no mocks and comparison done via public API) to show 
+that the fix or feature works as promised - from a user perspective. What you are doing here is 
+basically saying: "In case of X you can expect the library to behave like Y". You shouldn't cover 
+every possible execution path this way but rather focus on proving that the feature works and under 
+which circumstances it will take effect. Doing this will help others to keep your feature intact, 
+when the library evolves.	
 * Write unit tests! Lots of them! Keep them small and readable and try to cover as much of your logic as possible. But don't go overboard: focus on actual logic and avoid testing simple getters and setters just to reach the magical 100% test coverage.
+* Write your tests with Groovy and [Spock](http://spock-framework.readthedocs.org/en/latest/data_driven_testing.html#introduction)! Spock is a phantastic testing framework that makes many things much, much easier to accomplish. It's not hard to learn and a lot of fun to use. Yes, I know that there are still some TestNG tests in the codebase, but they are getting replaced one by one until the dependenciy can finally be removed.
 
-* Write your tests in Groovy and with Spock! Spock is a phantastic testing framework that makes many things much, much easier to accomplish. It's not hard to learn and a lot of fun to use. Yes, I know that there are still some TestNG tests in the codebase, but they are getting replaced one by one until the dependenciy can finally be removed.
-
-When you've done that, nothing should hold you back from sending me a pull request and bug me it gets merged and published. :)
+When you've done that, nothing should hold you back from sending me a pull request and bug me until it gets merged and published. :wink:
 
 Thanks for your support and happy coding!
