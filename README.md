@@ -15,6 +15,24 @@
 * No runtime dependencies except for [SLF4J](http://www.slf4j.org/)
 * When needed, it leaves it up to you, whether you want to use declarative configuration or annotations
 
+## Quickstart
+
+### Maven
+
+```xml
+<dependency>
+    <groupId>de.danielbechler</groupId>
+    <artifactId>java-object-diff</artifactId>
+    <version>0.13.1</version>
+</dependency>
+```
+
+### Gradle
+
+```groovy
+compile 'de.danielbechler:java-object-diff:0.13.1'
+```
+
 ## Getting Started
 
 To learn how to use **Java Object Diff**, please have a look at the [Starter Guide](https://github.com/SQiShER/java-object-diff/wiki/Getting-Started).
