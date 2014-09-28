@@ -18,17 +18,11 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-    <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>7</version>
-    </parent>
-
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.danielbechler</groupId>
     <artifactId>java-object-diff</artifactId>
     <name>Java Object Diff</name>
-    <version>0.90.0-SNAPSHOT</version>
+    <version>0.90-SNAPSHOT</version>
 
     <prerequisites>
         <maven>2.2.1</maven>
@@ -455,4 +449,13 @@
             </plugin>
         </plugins>
     </reporting>
+
+    <distributionManagement>
+        <repository>
+            <id>bintray-sqisher-maven-java-object-diff</id>
+            <name>sqisher-maven-java-object-diff</name>
+            <url>https://api.bintray.com/maven/sqisher/maven/java-object-diff</url>
+        </repository>
+    </distributionManagement>
+
 </project>
