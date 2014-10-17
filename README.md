@@ -2,7 +2,7 @@
 
 `java-object-diff` is a simple, yet powerful library to find differences between Java objects. It takes two objects and generates a tree structure that represents any differences between the objects and their children. This tree can then be traversed to extract more information or apply changes to the underlying data structures.
 
-[![Build Status](https://travis-ci.org/SQiShER/java-object-diff.svg?branch=master)](https://travis-ci.org/SQiShER/java-object-diff)
+[![Build Status](https://travis-ci.org/SQiShER/java-object-diff.svg?branch=master)](https://travis-ci.org/SQiShER/java-object-diff) [ ![Download](https://api.bintray.com/packages/sqisher/maven/java-object-diff/images/download.svg) ](https://bintray.com/sqisher/maven/java-object-diff/_latestVersion)
 
 ## Features
 
@@ -23,14 +23,14 @@
 <dependency>
     <groupId>de.danielbechler</groupId>
     <artifactId>java-object-diff</artifactId>
-    <version>0.13.1</version>
+    <version>0.90</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```groovy
-compile 'de.danielbechler:java-object-diff:0.13.1'
+compile 'de.danielbechler:java-object-diff:0.90'
 ```
 
 ## Getting Started
@@ -50,7 +50,7 @@ While all this isn't exactly rocket science, it is complex enough to add quite a
 This library will hide all the complexities of deep object comparison behind one line of code:
 
 ```java
-Node root = ObjectDifferFactory.getInstance().compare(workingObject, baseObject);
+Node root = ObjectDifferBuilder.buildDefault().compare(workingObject, baseObject);
 ```
 
 This generates a tree structure of the given object type and lets you traverse its nodes via visitors. Each node represents  one property (or collection item) of the underlying object and tells you exactly if and how the value differs from the base version. It also  provides accessors to read, write and remove the value from or to any given instance. This way, all you need to worry about is **how to treat** changes and **not how to find** them.
