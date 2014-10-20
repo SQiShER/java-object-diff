@@ -20,6 +20,7 @@ import de.danielbechler.diff.ObjectDifferBuilder
 import de.danielbechler.diff.access.PropertyAwareAccessor
 import de.danielbechler.diff.access.RootAccessor
 import de.danielbechler.diff.category.CategoryResolver
+import de.danielbechler.diff.introspection.ObjectDiffProperty
 import de.danielbechler.diff.node.DiffNode
 import de.danielbechler.diff.path.NodePath
 import de.danielbechler.diff.selector.BeanPropertyElementSelector
@@ -29,9 +30,9 @@ import spock.lang.Specification
  * @author Daniel Bechler
  */
 class InclusionServiceTest extends Specification {
-	def categoryResolver = Mock(CategoryResolver)
+	def categoryResolver = Stub(CategoryResolver)
 	def accessor = Mock(PropertyAwareAccessor)
-	def builder = Mock(ObjectDifferBuilder)
+	def builder = Stub(ObjectDifferBuilder)
 	def inclusionService = new InclusionService(categoryResolver, builder)
 	def NodePath nodePath = NodePath.with("foo")
 	def DiffNode rootNode
@@ -62,10 +63,16 @@ class InclusionServiceTest extends Specification {
 
 	def "isIgnored: should return 'true' if node is marked as ignored"() {
 		given:
-		  accessor.isExcludedByAnnotation() >> true
+		  accessor.getReadMethodAnnotation(ObjectDiffProperty) >> annotation
 
 		expect:
 		  inclusionService.isIgnored(node)
+
+		where:
+		  annotation << [
+				  Stub(ObjectDiffProperty, { excluded() >> true }),
+				  Stub(ObjectDiffProperty, { inclusion() >> Inclusion.EXCLUDED })
+		  ]
 	}
 
 	def "isIgnored: should return 'false' if no include and exclude rules are defined"() {
@@ -129,11 +136,17 @@ class InclusionServiceTest extends Specification {
 	}
 
 	def "isIgnored: should return 'true' if node is excluded via annotation"() {
-		setup:
-		  accessor.isExcludedByAnnotation() >> true
+		given:
+		  accessor.getReadMethodAnnotation(ObjectDiffProperty) >> annotation
 
 		expect:
 		  inclusionService.isIgnored(node) == true
+
+		where:
+		  annotation << [
+				  Stub(ObjectDiffProperty, { excluded() >> true }),
+				  Stub(ObjectDiffProperty, { inclusion() >> Inclusion.EXCLUDED })
+		  ]
 	}
 
 

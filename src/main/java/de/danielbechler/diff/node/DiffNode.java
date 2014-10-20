@@ -22,6 +22,7 @@ import de.danielbechler.diff.access.ExclusionAware;
 import de.danielbechler.diff.access.PropertyAwareAccessor;
 import de.danielbechler.diff.access.RootAccessor;
 import de.danielbechler.diff.access.TypeAwareAccessor;
+import de.danielbechler.diff.introspection.TypeInfo;
 import de.danielbechler.diff.path.NodePath;
 import de.danielbechler.diff.selector.BeanPropertyElementSelector;
 import de.danielbechler.diff.selector.ElementSelector;
@@ -61,6 +62,7 @@ public class DiffNode
 	private NodePath circleStartPath;
 	private DiffNode circleStartNode;
 	private Class<?> valueType;
+	private TypeInfo valueTypeInfo;
 
 	public DiffNode(final Accessor accessor, final Class<?> valueType)
 	{
@@ -203,6 +205,10 @@ public class DiffNode
 		{
 			return valueType;
 		}
+		if (valueTypeInfo != null)
+		{
+			return valueTypeInfo.getType();
+		}
 		if (accessor instanceof TypeAwareAccessor)
 		{
 			return ((TypeAwareAccessor) accessor).getType();
@@ -219,6 +225,16 @@ public class DiffNode
 	public void setType(final Class<?> aClass)
 	{
 		this.valueType = aClass;
+	}
+
+	public TypeInfo getValueTypeInfo()
+	{
+		return valueTypeInfo;
+	}
+
+	public void setValueTypeInfo(final TypeInfo typeInfo)
+	{
+		this.valueTypeInfo = typeInfo;
 	}
 
 	/**
@@ -495,6 +511,14 @@ public class DiffNode
 		return state == State.IGNORED;
 	}
 
+	/**
+	 * @see de.danielbechler.diff.inclusion.TypePropertyAnnotationInclusionResolver
+	 * @deprecated This method was a shortcut to extract the "exclude" flag from the ObjectDiffProperty
+	 * annotation. Since we found a better way to do that, it is not needed anymore and will be removed in future
+	 * versions. The name is also misleading. It implies that here lies the truth about the exclusion, but only the
+	 * InclusionService can tell for sure. This flag is just only little piece of the puzzle.
+	 */
+	@Deprecated
 	public boolean isExcluded()
 	{
 		if (accessor instanceof ExclusionAware)

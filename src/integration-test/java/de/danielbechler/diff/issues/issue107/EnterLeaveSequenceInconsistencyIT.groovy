@@ -19,6 +19,11 @@ package de.danielbechler.diff.issues.issue107
 import de.danielbechler.diff.ObjectDiffer
 import de.danielbechler.diff.ObjectDifferBuilder
 import de.danielbechler.diff.circular.CircularReferenceDetector
+import de.danielbechler.diff.inclusion.Inclusion
+import de.danielbechler.diff.inclusion.InclusionResolver
+import de.danielbechler.diff.node.DiffNode
+import de.danielbechler.diff.node.PrintingVisitor
+import de.danielbechler.diff.selector.MapKeyElementSelector
 import spock.lang.Issue
 import spock.lang.Specification
 import spock.lang.Subject
@@ -31,9 +36,20 @@ class EnterLeaveSequenceInconsistencyIT extends Specification {
 
 		given: "ObjectDiffer with all properties named 'a' and 'map' excluded"
 		  ObjectDiffer differ = ObjectDifferBuilder.startBuilding()
-//				  .inclusion().exclude().node(NodePath.with("map", "a")).and()
-				  .inclusion().exclude().propertyName("map").propertyName("a").and()
-				  .build()
+				  .inclusion().resolveUsing(new InclusionResolver() {
+			  @Override
+			  Inclusion getInclusion(DiffNode node) {
+				  // TODO some convenience methods to avoid these nasty null-checks would be nice
+				  if (node.propertyName == "a" &&
+						  node.parentNode != null &&
+						  node.parentNode.elementSelector instanceof MapKeyElementSelector &&
+						  node.parentNode.parentNode != null &&
+						  node.parentNode.parentNode.propertyName == "map") {
+					  return Inclusion.EXCLUDED
+				  }
+				  return Inclusion.DEFAULT
+			  }
+		  }).and().build()
 
 		and: "a working version in which 'a2' and 'c2' reference each other"
 		  A a2 = new A(s1: "a2")
@@ -50,7 +66,7 @@ class EnterLeaveSequenceInconsistencyIT extends Specification {
 		  base.map.put(b1, c3)
 
 		when:
-		  differ.compare(working, base)
+		  differ.compare(working, base).visit(new PrintingVisitor(working, base))
 
 		then:
 		  noExceptionThrown()

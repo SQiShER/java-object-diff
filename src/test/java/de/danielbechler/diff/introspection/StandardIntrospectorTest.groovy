@@ -31,7 +31,7 @@ public class StandardIntrospectorTest extends Specification {
 	def introspector = new StandardIntrospector()
 
 	private Map<String, PropertyAwareAccessor> introspect(Class<?> type) {
-		introspector.introspect(type).collectEntries {
+		introspector.introspect(type).accessors.collectEntries {
 			accessor -> [accessor.propertyName, accessor]
 		}
 	}

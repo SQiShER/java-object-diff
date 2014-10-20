@@ -16,8 +16,6 @@
 
 package de.danielbechler.diff.introspection;
 
-import de.danielbechler.diff.access.PropertyAwareAccessor;
-
 /**
  * Resolves the accessors of a given type.
  *
@@ -26,10 +24,10 @@ import de.danielbechler.diff.access.PropertyAwareAccessor;
 public interface Introspector
 {
 	/**
-	 * Resolves the accessors of the given type.
+	 * Gathers information about a given type.
 	 *
 	 * @param type The type to introspect.
-	 * @return All valid accessors.
+	 * @return A summary of the given type containing all information needed to handle it's properties.
 	 */
-	Iterable<PropertyAwareAccessor> introspect(Class<?> type);
+	TypeInfo introspect(Class<?> type);
 }

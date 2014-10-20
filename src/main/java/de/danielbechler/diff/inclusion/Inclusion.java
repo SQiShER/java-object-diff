@@ -21,6 +21,7 @@ package de.danielbechler.diff.inclusion;
  */
 public enum Inclusion
 {
+	DEFAULT,
 	INCLUDED,
 	EXCLUDED
 }

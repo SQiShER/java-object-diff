@@ -24,6 +24,7 @@ import de.danielbechler.diff.filtering.IsReturnableResolver;
 import de.danielbechler.diff.introspection.Introspector;
 import de.danielbechler.diff.introspection.IntrospectorResolver;
 import de.danielbechler.diff.introspection.IsIntrospectableResolver;
+import de.danielbechler.diff.introspection.TypeInfo;
 import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.util.Assert;
 
@@ -71,11 +72,6 @@ public final class BeanDiffer implements Differ
 	public final DiffNode compare(final DiffNode parentNode, final Instances instances)
 	{
 		final DiffNode beanNode = new DiffNode(parentNode, instances.getSourceAccessor(), instances.getType());
-//		if (isIgnoredResolver.isIgnored(beanNode))
-//		{
-//			beanNode.setState(Node.State.IGNORED);
-//		}
-//		else
 		if (instances.areNull() || instances.areSame())
 		{
 			beanNode.setState(DiffNode.State.UNTOUCHED);
@@ -114,8 +110,9 @@ public final class BeanDiffer implements Differ
 	{
 		final Class<?> beanType = beanInstances.getType();
 		final Introspector introspector = introspectorResolver.introspectorForNode(beanNode);
-		final Iterable<PropertyAwareAccessor> propertyAccessors = introspector.introspect(beanType);
-		for (final PropertyAwareAccessor propertyAccessor : propertyAccessors)
+		final TypeInfo typeInfo = introspector.introspect(beanType);
+		beanNode.setValueTypeInfo(typeInfo);
+		for (final PropertyAwareAccessor propertyAccessor : typeInfo.getAccessors())
 		{
 			final DiffNode propertyNode = differDispatcher.dispatch(beanNode, beanInstances, propertyAccessor);
 			if (isReturnableResolver.isReturnable(propertyNode))

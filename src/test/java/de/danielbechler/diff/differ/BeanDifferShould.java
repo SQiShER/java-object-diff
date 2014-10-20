@@ -25,6 +25,7 @@ import de.danielbechler.diff.filtering.IsReturnableResolver;
 import de.danielbechler.diff.introspection.Introspector;
 import de.danielbechler.diff.introspection.IntrospectorResolver;
 import de.danielbechler.diff.introspection.IsIntrospectableResolver;
+import de.danielbechler.diff.introspection.TypeInfo;
 import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.diff.selector.BeanPropertyElementSelector;
 import org.fest.assertions.api.Assertions;
@@ -114,7 +115,7 @@ public class BeanDifferShould
 		when(instances.getWorking()).thenReturn("foo");
 		when(instances.getBase()).thenReturn("bar");
 		when(introspectorResolver.introspectorForNode(any(DiffNode.class))).thenReturn(introspector);
-		when(introspector.introspect(any(Class.class))).thenReturn(Collections.<PropertyAwareAccessor>emptyList());
+		when(introspector.introspect(any(Class.class))).thenReturn(new TypeInfo(Class.class));
 
 		beanDiffer = new BeanDiffer(differDispatcher, introspectableResolver, returnableResolver, comparisonStrategyResolver, introspectorResolver);
 	}
@@ -204,6 +205,35 @@ public class BeanDifferShould
 		Assertions.assertThat(node.getChild("foo")).isSameAs(propertyNode);
 	}
 
+	private void given_root_node_is_introspectable()
+	{
+		doReturn(true).when(introspectableResolver).isIntrospectable(node(withRoot()));
+	}
+
+	private PropertyAwareAccessor given_introspector_returns_PropertyAccessor(final String propertyName)
+	{
+		final BeanPropertyElementSelector propertyElement = new BeanPropertyElementSelector(propertyName);
+		final PropertyAwareAccessor propertyAccessor = mock(PropertyAwareAccessor.class);
+		when(propertyAccessor.getElementSelector()).thenReturn(propertyElement);
+		final TypeInfo typeInfo = new TypeInfo(Class.class);
+		typeInfo.addPropertyAccessor(propertyAccessor);
+		when(introspector.introspect(any(Class.class))).thenReturn(typeInfo);
+		return propertyAccessor;
+	}
+
+	private DiffNode given_DifferDispatcher_returns_Node_for_PropertyAccessor(final PropertyAwareAccessor propertyAccessor)
+	{
+		final DiffNode propertyNode = new DiffNode(propertyAccessor, String.class);
+		doReturn(propertyNode).when(differDispatcher)
+				.dispatch(any(DiffNode.class), any(Instances.class), same(propertyAccessor));
+		return propertyNode;
+	}
+
+	private void given_Node_is_returnable(final DiffNode node)
+	{
+		doReturn(true).when(returnableResolver).isReturnable(node);
+	}
+
 	@Test
 	public void do_not_add_property_nodes_to_bean_node_if_they_are_not_returnable()
 	{
@@ -215,6 +245,11 @@ public class BeanDifferShould
 		final DiffNode node = beanDiffer.compare(DiffNode.ROOT, instances);
 
 		Assertions.assertThat(node.hasChildren()).isFalse();
+	}
+
+	private void given_Node_is_not_returnable(final DiffNode node)
+	{
+		doReturn(false).when(returnableResolver).isReturnable(node);
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
@@ -245,38 +280,5 @@ public class BeanDifferShould
 	public void fail_construction_without_comparisonStrategyResolver()
 	{
 		new BeanDiffer(differDispatcher, introspectableResolver, returnableResolver, null, introspectorResolver);
-	}
-
-	private void given_Node_is_returnable(final DiffNode node)
-	{
-		doReturn(true).when(returnableResolver).isReturnable(node);
-	}
-
-	private void given_Node_is_not_returnable(final DiffNode node)
-	{
-		doReturn(false).when(returnableResolver).isReturnable(node);
-	}
-
-	private DiffNode given_DifferDispatcher_returns_Node_for_PropertyAccessor(final PropertyAwareAccessor propertyAccessor)
-	{
-		final DiffNode propertyNode = new DiffNode(propertyAccessor, String.class);
-		doReturn(propertyNode).when(differDispatcher)
-				.dispatch(any(DiffNode.class), any(Instances.class), same(propertyAccessor));
-		return propertyNode;
-	}
-
-	private void given_root_node_is_introspectable()
-	{
-		doReturn(true).when(introspectableResolver).isIntrospectable(node(withRoot()));
-	}
-
-	private PropertyAwareAccessor given_introspector_returns_PropertyAccessor(final String propertyName)
-	{
-		final BeanPropertyElementSelector propertyElement = new BeanPropertyElementSelector(propertyName);
-		final PropertyAwareAccessor propertyAccessor = mock(PropertyAwareAccessor.class);
-		when(propertyAccessor.getElementSelector()).thenReturn(propertyElement);
-		final Set<PropertyAwareAccessor> propertyAccessors = Collections.singleton(propertyAccessor);
-		when(introspector.introspect(any(Class.class))).thenReturn(propertyAccessors);
-		return propertyAccessor;
 	}
 }

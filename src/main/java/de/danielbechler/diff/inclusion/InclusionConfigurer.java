@@ -40,6 +40,10 @@ public interface InclusionConfigurer
 
 	ToExclude exclude();
 
+	InclusionConfigurer resolveUsing(InclusionResolver resolver);
+
+	ObjectDifferBuilder and();
+
 	public interface ToInclude
 	{
 		ToIncludeAndReturn category(String category);
@@ -49,6 +53,8 @@ public interface InclusionConfigurer
 		ToIncludeAndReturn node(NodePath nodePath);
 
 		ToIncludeAndReturn propertyName(String propertyName);
+
+		ToIncludeAndReturn propertyNameOfType(Class<?> type, String propertyName);
 
 		ToExclude exclude();
 	}
@@ -67,6 +73,8 @@ public interface InclusionConfigurer
 		ToExcludeAndReturn node(NodePath nodePath);
 
 		ToExcludeAndReturn propertyName(String property);
+
+		ToExcludeAndReturn propertyNameOfType(Class<?> type, String propertyName);
 
 		ToInclude include();
 	}

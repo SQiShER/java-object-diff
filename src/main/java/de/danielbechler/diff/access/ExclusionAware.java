@@ -18,8 +18,13 @@ package de.danielbechler.diff.access;
 
 /**
  * @author Daniel Bechler
+ * @see de.danielbechler.diff.inclusion.TypePropertyAnnotationInclusionResolver
+ * @deprecated This was a shortcut to extract the "exclude" flag from the ObjectDiffProperty annotation. Since we found
+ * a better way to do that, it is not needed anymore and will be removed in future versions.
  */
+@Deprecated
 public interface ExclusionAware
 {
+	@Deprecated
 	boolean isExcludedByAnnotation();
 }

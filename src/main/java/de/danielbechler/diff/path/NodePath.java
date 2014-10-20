@@ -41,34 +41,6 @@ public final class NodePath implements Comparable<NodePath>
 		this.elementSelectors = Collections.unmodifiableList(elementSelectors);
 	}
 
-	public static AppendableBuilder startBuildingFrom(final NodePath nodePath)
-	{
-		Assert.notNull(nodePath, "propertyPath");
-		return new AppendableBuilderImpl(new ArrayList<ElementSelector>(nodePath.getElementSelectors()));
-	}
-
-	public List<ElementSelector> getElementSelectors()
-	{
-		return elementSelectors;
-	}
-
-	public static NodePath with(final String propertyName, final String... additionalPropertyNames)
-	{
-		return startBuilding().propertyName(propertyName, additionalPropertyNames).build();
-	}
-
-	public static AppendableBuilder startBuilding()
-	{
-		final List<ElementSelector> elementSelectors1 = new LinkedList<ElementSelector>();
-		elementSelectors1.add(RootElementSelector.getInstance());
-		return new AppendableBuilderImpl(elementSelectors1);
-	}
-
-	public static NodePath withRoot()
-	{
-		return startBuilding().build();
-	}
-
 	public boolean isParentOf(final NodePath nodePath)
 	{
 		final List<ElementSelector> otherElementSelectors = nodePath.getElementSelectors();
@@ -176,6 +148,34 @@ public final class NodePath implements Comparable<NodePath>
 	public boolean matches(final NodePath nodePath)
 	{
 		return nodePath.equals(this);
+	}
+
+	public static AppendableBuilder startBuildingFrom(final NodePath nodePath)
+	{
+		Assert.notNull(nodePath, "propertyPath");
+		return new AppendableBuilderImpl(new ArrayList<ElementSelector>(nodePath.getElementSelectors()));
+	}
+
+	public List<ElementSelector> getElementSelectors()
+	{
+		return elementSelectors;
+	}
+
+	public static NodePath with(final String propertyName, final String... additionalPropertyNames)
+	{
+		return startBuilding().propertyName(propertyName, additionalPropertyNames).build();
+	}
+
+	public static AppendableBuilder startBuilding()
+	{
+		final List<ElementSelector> elementSelectors1 = new LinkedList<ElementSelector>();
+		elementSelectors1.add(RootElementSelector.getInstance());
+		return new AppendableBuilderImpl(elementSelectors1);
+	}
+
+	public static NodePath withRoot()
+	{
+		return startBuilding().build();
 	}
 
 	public static interface AppendableBuilder

@@ -16,6 +16,8 @@
 
 package de.danielbechler.diff.introspection;
 
+import de.danielbechler.diff.inclusion.Inclusion;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
@@ -37,8 +39,13 @@ public @interface ObjectDiffProperty
 	 * Causes the {@link de.danielbechler.diff.differ.Differ Differs} to skip the marked property and all its children.
 	 *
 	 * @return <code>true</code> if the property should be ignored.
+	 * @deprecated Please use {@linkplain #inclusion()} instead. When used in conjunction with {@linkplain
+	 * #inclusion()}, the latter one will win over {@linkplain #excluded()}.
 	 */
+	@Deprecated
 	public boolean excluded() default false;
+
+	public Inclusion inclusion() default Inclusion.DEFAULT;
 
 	/**
 	 * Causes the {@link de.danielbechler.diff.differ.Differ Differs} to compare the object by using the {@link

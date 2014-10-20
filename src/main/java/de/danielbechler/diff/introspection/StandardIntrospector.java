@@ -25,8 +25,6 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * Resolves the accessors of a given type by using the standard Java {@link Introspector}.
@@ -35,7 +33,7 @@ import java.util.Collection;
  */
 public class StandardIntrospector implements de.danielbechler.diff.introspection.Introspector
 {
-	public Iterable<PropertyAwareAccessor> introspect(final Class<?> type)
+	public TypeInfo introspect(final Class<?> type)
 	{
 		Assert.notNull(type, "type");
 		try
@@ -48,10 +46,10 @@ public class StandardIntrospector implements de.danielbechler.diff.introspection
 		}
 	}
 
-	private Iterable<PropertyAwareAccessor> internalIntrospect(final Class<?> type) throws IntrospectionException
+	private TypeInfo internalIntrospect(final Class<?> type) throws IntrospectionException
 	{
+		final TypeInfo typeInfo = new TypeInfo(type);
 		final PropertyDescriptor[] descriptors = getBeanInfo(type).getPropertyDescriptors();
-		final Collection<PropertyAwareAccessor> accessors = new ArrayList<PropertyAwareAccessor>(descriptors.length);
 		for (final PropertyDescriptor descriptor : descriptors)
 		{
 			if (shouldSkip(descriptor))
@@ -61,9 +59,10 @@ public class StandardIntrospector implements de.danielbechler.diff.introspection
 			final String propertyName = descriptor.getName();
 			final Method readMethod = descriptor.getReadMethod();
 			final Method writeMethod = descriptor.getWriteMethod();
-			accessors.add(new PropertyAccessor(propertyName, readMethod, writeMethod));
+			final PropertyAwareAccessor accessor = new PropertyAccessor(propertyName, readMethod, writeMethod);
+			typeInfo.addPropertyAccessor(accessor);
 		}
-		return accessors;
+		return typeInfo;
 	}
 
 	protected BeanInfo getBeanInfo(final Class<?> type) throws IntrospectionException
