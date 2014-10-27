@@ -71,12 +71,18 @@ public class InclusionService implements InclusionConfigurer, IsIgnoredResolver
 	private boolean isIncluded(final DiffNode node)
 	{
 		// Patched : Check if there are inclusions before browsing all included elements
-		if (hasInclusions()) {
-			if (node.isRootNode()) {
+		if (hasInclusions())
+		{
+			if (node.isRootNode())
+			{
 				return true;
-			} else if (isIncludedByPath(node) || isIncludedByCategory(node)) {
+			}
+			else if (isIncludedByPath(node) || isIncludedByCategory(node))
+			{
 				return true;
-			} else if (isIncludedByType(node) || isIncludedByPropertyName(node)) {
+			}
+			else if (isIncludedByType(node) || isIncludedByPropertyName(node))
+			{
 				return true;
 			}
 			return false;
@@ -87,30 +93,31 @@ public class InclusionService implements InclusionConfigurer, IsIgnoredResolver
 	private boolean isExcluded(final DiffNode node)
 	{
 		// Patched : Check if there are exclusions before browsing all excluded elements
-		if (hasExclusions()) {
-			if (isExcludedByPath(node) || isExcludedByCategory(node)) {
+		if (hasExclusions())
+		{
+			if (isExcludedByPath(node) || isExcludedByCategory(node))
+			{
 				return true;
-			} else if (isExcludedByType(node) || isExcludedByPropertyName(node)) {
+			}
+			else if (isExcludedByType(node) || isExcludedByPropertyName(node))
+			{
 				return true;
 			}
 		}
 		return false;
 	}
 
-	private boolean hasInclusions() {
+	private boolean hasInclusions()
+	{
 		// Patched : Now return if inclusions have been configured
 		return nodePathInclusion || categoryInclusion || typeInclusion || propertyNameInclusion;
-	}
-	
-	private boolean hasExclusions() {
-		// Patched (New method) : Now return if exclusions have been configured
-		return nodePathExclusion || categoryExclusion || typeExclusion || propertyNameExclusion;
 	}
 
 	private boolean isIncludedByPath(final DiffNode node)
 	{
 		// Patched : First check if nodePath inclusions have been configured
-		if (nodePathInclusion && nodeInclusions.getNodeForPath(node.getPath()).isIncluded()) {
+		if (nodePathInclusion && nodeInclusions.getNodeForPath(node.getPath()).isIncluded())
+		{
 			return true;
 		}
 		return false;
@@ -119,7 +126,8 @@ public class InclusionService implements InclusionConfigurer, IsIgnoredResolver
 	private boolean isIncludedByCategory(final DiffNode node)
 	{
 		// Patched : First check if category inclusions have been configured
-		if (categoryInclusion && hasCategoryWithInclusion(node, INCLUDED)) {
+		if (categoryInclusion && hasCategoryWithInclusion(node, INCLUDED))
+		{
 			return true;
 		}
 		return false;
@@ -128,7 +136,8 @@ public class InclusionService implements InclusionConfigurer, IsIgnoredResolver
 	private boolean isIncludedByType(final DiffNode node)
 	{
 		// Patched : First check if type inclusions have been configured
-		if (typeInclusion && typeInclusions.get(node.getValueType()) == INCLUDED) {
+		if (typeInclusion && typeInclusions.get(node.getValueType()) == INCLUDED)
+		{
 			return true;
 		}
 		return false;
@@ -137,22 +146,34 @@ public class InclusionService implements InclusionConfigurer, IsIgnoredResolver
 	private boolean isIncludedByPropertyName(final DiffNode node)
 	{
 		// Patched : First check if property name inclusions have been configured
-		if (propertyNameInclusion) {
-			if (isIncludedByOwnPropertyName(node)) {
+		if (propertyNameInclusion)
+		{
+			if (isIncludedByOwnPropertyName(node))
+			{
 				return true;
-			} else if (isIncludedByParentPropertyName(node)) {
+			}
+			else if (isIncludedByParentPropertyName(node))
+			{
 				return true;
 			}
 		}
 		return false;
 	}
 
+	private boolean hasExclusions()
+	{
+		// Patched (New method) : Now return if exclusions have been configured
+		return nodePathExclusion || categoryExclusion || typeExclusion || propertyNameExclusion;
+	}
+
 	private boolean isExcludedByPath(final DiffNode node)
 	{
 		// Patched : First check if node path exclusions have been configured
-		if (nodePathExclusion) {
+		if (nodePathExclusion)
+		{
 			final InclusionNode valueNode = nodeInclusions.getNodeForPath(node.getPath());
-			if (valueNode.isExcluded() && !valueNode.containsValue(INCLUDED)) {
+			if (valueNode.isExcluded() && !valueNode.containsValue(INCLUDED))
+			{
 				return true;
 			}
 		}
@@ -162,7 +183,8 @@ public class InclusionService implements InclusionConfigurer, IsIgnoredResolver
 	private boolean isExcludedByCategory(final DiffNode node)
 	{
 		// Patched : First check if category exclusions have been configured
-		if (categoryExclusion && hasCategoryWithInclusion(node, EXCLUDED)) {
+		if (categoryExclusion && hasCategoryWithInclusion(node, EXCLUDED))
+		{
 			return true;
 		}
 		return false;
@@ -171,7 +193,8 @@ public class InclusionService implements InclusionConfigurer, IsIgnoredResolver
 	private boolean isExcludedByType(final DiffNode node)
 	{
 		// Patched : First check if type exclusions have been configured
-		if (typeExclusion && node.getValueType() != null) {
+		if (typeExclusion && node.getValueType() != null)
+		{
 			return typeInclusions.get(node.getValueType()) == EXCLUDED;
 		}
 		return false;
@@ -180,9 +203,11 @@ public class InclusionService implements InclusionConfigurer, IsIgnoredResolver
 	private boolean isExcludedByPropertyName(final DiffNode node)
 	{
 		// Patched : First check if property name exclusions have been configured
-		if (propertyNameExclusion) {
+		if (propertyNameExclusion)
+		{
 			final String propertyName = node.getPropertyName();
-			if (propertyName != null) {
+			if (propertyName != null)
+			{
 				return propertyNameInclusions.get(propertyName) == EXCLUDED;
 			}
 		}
