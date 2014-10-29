@@ -27,6 +27,8 @@ import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.diff.path.NodePath;
 import de.danielbechler.diff.selector.ElementSelector;
 import de.danielbechler.util.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static de.danielbechler.diff.circular.CircularReferenceDetector.CircularReferenceException;
 
@@ -35,13 +37,14 @@ import static de.danielbechler.diff.circular.CircularReferenceDetector.CircularR
  */
 public class DifferDispatcher
 {
+	private static final Logger logger = LoggerFactory.getLogger(DifferDispatcher.class);
 	private final DifferProvider differProvider;
 	private final CircularReferenceDetectorFactory circularReferenceDetectorFactory;
 	private final CircularReferenceExceptionHandler circularReferenceExceptionHandler;
 	private final IsIgnoredResolver isIgnoredResolver;
 	private final IsReturnableResolver isReturnableResolver;
-	private CircularReferenceDetector workingCircularReferenceDetector;
-	private CircularReferenceDetector baseCircularReferenceDetector;
+	CircularReferenceDetector workingCircularReferenceDetector;
+	CircularReferenceDetector baseCircularReferenceDetector;
 
 	public DifferDispatcher(final DifferProvider differProvider,
 							final CircularReferenceDetectorFactory circularReferenceDetectorFactory,
@@ -66,30 +69,6 @@ public class DifferDispatcher
 	{
 		workingCircularReferenceDetector = circularReferenceDetectorFactory.createCircularReferenceDetector();
 		baseCircularReferenceDetector = circularReferenceDetectorFactory.createCircularReferenceDetector();
-	}
-
-	private static DiffNode findNodeMatchingPropertyPath(final DiffNode node, final NodePath nodePath)
-	{
-		if (node == null)
-		{
-			return null;
-		}
-		if (node.matches(nodePath))
-		{
-			return node;
-		}
-		return findNodeMatchingPropertyPath(node.getParentNode(), nodePath);
-	}
-
-	private static DiffNode newCircularNode(final DiffNode parentNode,
-											final Instances instances,
-											final NodePath circleStartPath)
-	{
-		final DiffNode node = new DiffNode(parentNode, instances.getSourceAccessor(), instances.getType());
-		node.setState(DiffNode.State.CIRCULAR);
-		node.setCircleStartPath(circleStartPath);
-		node.setCircleStartNode(findNodeMatchingPropertyPath(parentNode, circleStartPath));
-		return node;
 	}
 
 	/**
@@ -137,7 +116,7 @@ public class DifferDispatcher
 	private DiffNode compareWithCircularReferenceTracking(final DiffNode parentNode,
 														  final Instances instances)
 	{
-		DiffNode node;
+		DiffNode node = null;
 		try
 		{
 			rememberInstances(parentNode, instances);
@@ -147,7 +126,10 @@ public class DifferDispatcher
 			}
 			finally
 			{
-				forgetInstances(instances);
+				if (node != null)
+				{
+					forgetInstances(parentNode, instances);
+				}
 			}
 		}
 		catch (final CircularReferenceException e)
@@ -173,8 +155,20 @@ public class DifferDispatcher
 		return differ.compare(parentNode, instances);
 	}
 
-	protected void forgetInstances(final Instances instances)
+	protected void forgetInstances(final DiffNode parentNode, final Instances instances)
 	{
+		final NodePath nodePath;
+		if (parentNode != null)
+		{
+			final NodePath parentPath = parentNode.getPath();
+			final ElementSelector elementSelector = instances.getSourceAccessor().getElementSelector();
+			nodePath = NodePath.startBuildingFrom(parentPath).element(elementSelector).build();
+		}
+		else
+		{
+			nodePath = NodePath.withRoot();
+		}
+		logger.debug("[ {} ] Forgetting --- WORKING: {} <=> BASE: {}", nodePath, instances.getWorking(), instances.getBase());
 		workingCircularReferenceDetector.remove(instances.getWorking());
 		baseCircularReferenceDetector.remove(instances.getBase());
 	}
@@ -192,7 +186,49 @@ public class DifferDispatcher
 		{
 			nodePath = NodePath.withRoot();
 		}
+		logger.debug("[ {} ] Remembering --- WORKING: {} <=> BASE: {}", nodePath, instances.getWorking(), instances.getBase());
+
+		transactionalPushToCircularReferenceDetectors(nodePath, instances);
+	}
+
+	private void transactionalPushToCircularReferenceDetectors(final NodePath nodePath, final Instances instances)
+	{
 		workingCircularReferenceDetector.push(instances.getWorking(), nodePath);
-		baseCircularReferenceDetector.push(instances.getBase(), nodePath);
+
+		// TODO This needs to be solved more elegantly. If the push for one of these detectors fails,
+		// we need to make sure to revert the push to the other one, if it already happened.
+		try
+		{
+			baseCircularReferenceDetector.push(instances.getBase(), nodePath);
+		}
+		catch (final CircularReferenceException e)
+		{
+			workingCircularReferenceDetector.remove(instances.getWorking()); // rollback
+			throw e;
+		}
+	}
+
+	private static DiffNode findNodeMatchingPropertyPath(final DiffNode node, final NodePath nodePath)
+	{
+		if (node == null)
+		{
+			return null;
+		}
+		if (node.matches(nodePath))
+		{
+			return node;
+		}
+		return findNodeMatchingPropertyPath(node.getParentNode(), nodePath);
+	}
+
+	private static DiffNode newCircularNode(final DiffNode parentNode,
+											final Instances instances,
+											final NodePath circleStartPath)
+	{
+		final DiffNode node = new DiffNode(parentNode, instances.getSourceAccessor(), instances.getType());
+		node.setState(DiffNode.State.CIRCULAR);
+		node.setCircleStartPath(circleStartPath);
+		node.setCircleStartNode(findNodeMatchingPropertyPath(parentNode, circleStartPath));
+		return node;
 	}
 }

@@ -19,37 +19,20 @@ package de.danielbechler.diff.issues.issue107
 import de.danielbechler.diff.ObjectDiffer
 import de.danielbechler.diff.ObjectDifferBuilder
 import de.danielbechler.diff.circular.CircularReferenceDetector
-import de.danielbechler.diff.inclusion.Inclusion
-import de.danielbechler.diff.inclusion.InclusionResolver
-import de.danielbechler.diff.node.DiffNode
+import de.danielbechler.diff.differ.DifferDispatcher
 import de.danielbechler.diff.node.PrintingVisitor
-import de.danielbechler.diff.selector.MapKeyElementSelector
 import spock.lang.Issue
 import spock.lang.Specification
 import spock.lang.Subject
 
-@Subject(CircularReferenceDetector)
+@Subject([CircularReferenceDetector, DifferDispatcher])
 @Issue("https://github.com/SQiShER/java-object-diff/issues/107")
 class EnterLeaveSequenceInconsistencyIT extends Specification {
 
 	def "Causes: 'Detected inconsistency in enter/leave sequence. Must always be LIFO'"() {
 
-		given: "ObjectDiffer with all properties named 'a' and 'map' excluded"
-		  ObjectDiffer differ = ObjectDifferBuilder.startBuilding()
-				  .inclusion().resolveUsing(new InclusionResolver() {
-			  @Override
-			  Inclusion getInclusion(DiffNode node) {
-				  // TODO some convenience methods to avoid these nasty null-checks would be nice
-				  if (node.propertyName == "a" &&
-						  node.parentNode != null &&
-						  node.parentNode.elementSelector instanceof MapKeyElementSelector &&
-						  node.parentNode.parentNode != null &&
-						  node.parentNode.parentNode.propertyName == "map") {
-					  return Inclusion.EXCLUDED
-				  }
-				  return Inclusion.DEFAULT
-			  }
-		  }).and().build()
+		given:
+		  ObjectDiffer differ = ObjectDifferBuilder.buildDefault()
 
 		and: "a working version in which 'a2' and 'c2' reference each other"
 		  A a2 = new A(s1: "a2")
@@ -75,14 +58,29 @@ class EnterLeaveSequenceInconsistencyIT extends Specification {
 	static class A {
 		def String s1
 		def Map<B, C> map = [:]
+
+		@Override
+		String toString() {
+			"A(${s1})"
+		}
 	}
 
 	static class B {
 		def String s2
+
+		@Override
+		String toString() {
+			"B(${s2})"
+		}
 	}
 
 	static class C {
 		def String s3
 		def A a
+
+		@Override
+		String toString() {
+			"C(${s3})"
+		}
 	}
 }

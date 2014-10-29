@@ -70,6 +70,18 @@ public class CircularReferenceDetector
 		return false;
 	}
 
+	private Entry entryForInstance(final Object instance)
+	{
+		for (final Entry entry : stack)
+		{
+			if (isMatch(instance, entry.getInstance()))
+			{
+				return entry;
+			}
+		}
+		return null;
+	}
+
 	protected boolean isMatch(final Object anObject, final Object anotherObject)
 	{
 		if (referenceMatchingMode == ReferenceMatchingMode.EQUALITY_OPERATOR)
@@ -84,18 +96,6 @@ public class CircularReferenceDetector
 		{
 			throw new IllegalStateException("Missing reference matching mode");
 		}
-	}
-
-	private Entry entryForInstance(final Object instance)
-	{
-		for (final Entry entry : stack)
-		{
-			if (isMatch(instance, entry.getInstance()))
-			{
-				return entry;
-			}
-		}
-		return null;
 	}
 
 	public void remove(final Object instance)
@@ -151,6 +151,12 @@ public class CircularReferenceDetector
 		public Object getInstance()
 		{
 			return instance;
+		}
+
+		@Override
+		public String toString()
+		{
+			return nodePath.toString() + "{" + instance.toString() + "}";
 		}
 	}
 
