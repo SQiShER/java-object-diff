@@ -29,7 +29,7 @@ import static de.danielbechler.diff.inclusion.Inclusion.INCLUDED;
 /**
  * Created by Daniel Bechler.
  */
-public class TypePropertyConfigInclusionResolver implements InclusionResolver
+class TypePropertyConfigInclusionResolver implements InclusionResolver
 {
 	private final Map<PropertyId, Inclusion> inclusions = new HashMap<PropertyId, Inclusion>();
 

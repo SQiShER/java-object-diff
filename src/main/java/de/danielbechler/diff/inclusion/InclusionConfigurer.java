@@ -30,6 +30,7 @@ import de.danielbechler.diff.path.NodePath;
  *
  * @author Daniel Bechler
  */
+@SuppressWarnings("UnusedDeclaration")
 public interface InclusionConfigurer
 {
 	/**
@@ -54,7 +55,16 @@ public interface InclusionConfigurer
 
 		ToIncludeAndReturn propertyName(String propertyName);
 
-		ToIncludeAndReturn propertyNameOfType(Class<?> type, String propertyName);
+		/**
+		 * Include one or more properties of the given type. This automatically causes all other properties of that
+		 * type to be implicitly excluded. However, unlike other inclusion mechanisms, this doesn't exclude properties
+		 * of other types.
+		 *
+		 * @param type          The parent type for which the included properties should be specified.
+		 * @param propertyNames One or more property names to include.
+		 * @see de.danielbechler.diff.introspection.ObjectDiffProperty#inclusion()
+		 */
+		ToIncludeAndReturn propertyNameOfType(Class<?> type, String... propertyNames);
 
 		ToExclude exclude();
 	}
@@ -74,7 +84,15 @@ public interface InclusionConfigurer
 
 		ToExcludeAndReturn propertyName(String property);
 
-		ToExcludeAndReturn propertyNameOfType(Class<?> type, String propertyName);
+		/**
+		 * Excludes one or more properties of the given type.
+		 *
+		 * @param type          The parent type for which the excluded properties should be specified.
+		 * @param propertyNames One or more property names to exclude.
+		 * @see de.danielbechler.diff.introspection.ObjectDiffProperty#inclusion()
+		 * @see de.danielbechler.diff.introspection.ObjectDiffProperty#excluded()
+		 */
+		ToExcludeAndReturn propertyNameOfType(Class<?> type, String... propertyNames);
 
 		ToInclude include();
 	}

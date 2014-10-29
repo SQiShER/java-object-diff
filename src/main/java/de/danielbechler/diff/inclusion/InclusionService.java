@@ -32,6 +32,7 @@ import java.util.Map;
 
 import static de.danielbechler.diff.inclusion.Inclusion.EXCLUDED;
 import static de.danielbechler.diff.inclusion.Inclusion.INCLUDED;
+import static java.util.Arrays.asList;
 
 /**
  *
@@ -307,9 +308,15 @@ public class InclusionService implements InclusionConfigurer, IsIgnoredResolver
 			return this;
 		}
 
-		public ToExcludeAndReturn propertyNameOfType(final Class<?> type, final String propertyName)
+		public ToExcludeAndReturn propertyNameOfType(final Class<?> type, final String... propertyNames)
 		{
-			typePropertyConfigInclusionResolver.setInclusion(type, propertyName, EXCLUDED);
+			Assert.notNull(type, "type");
+			Assert.notEmpty(asList(propertyNames), "propertyNames");
+			for (final String propertyName : propertyNames)
+			{
+				Assert.hasText(propertyName, "propertyName in propertyNames");
+				typePropertyConfigInclusionResolver.setInclusion(type, propertyName, EXCLUDED);
+			}
 			return this;
 		}
 
@@ -346,13 +353,20 @@ public class InclusionService implements InclusionConfigurer, IsIgnoredResolver
 
 		public ToIncludeAndReturn propertyName(final String propertyName)
 		{
+			Assert.hasText(propertyName, "propertyName");
 			propertyNameInclusions.put(propertyName, INCLUDED);
 			return this;
 		}
 
-		public ToIncludeAndReturn propertyNameOfType(final Class<?> type, final String propertyName)
+		public ToIncludeAndReturn propertyNameOfType(final Class<?> type, final String... propertyNames)
 		{
-			typePropertyConfigInclusionResolver.setInclusion(type, propertyName, INCLUDED);
+			Assert.notNull(type, "type");
+			Assert.notEmpty(asList(propertyNames), "propertyNames");
+			for (final String propertyName : propertyNames)
+			{
+				Assert.hasText(propertyName, "propertyName in propertyNames");
+				typePropertyConfigInclusionResolver.setInclusion(type, propertyName, INCLUDED);
+			}
 			return this;
 		}
 

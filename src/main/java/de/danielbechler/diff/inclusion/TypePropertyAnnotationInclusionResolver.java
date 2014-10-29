@@ -28,7 +28,7 @@ import static java.util.Collections.emptyList;
 /**
  * Created by Daniel Bechler.
  */
-public class TypePropertyAnnotationInclusionResolver implements InclusionResolver
+class TypePropertyAnnotationInclusionResolver implements InclusionResolver
 {
 	public Inclusion getInclusion(final DiffNode node)
 	{
