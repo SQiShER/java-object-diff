@@ -22,6 +22,7 @@ import de.danielbechler.diff.introspection.TypeInfo;
 import de.danielbechler.diff.node.DiffNode;
 
 import static de.danielbechler.diff.inclusion.Inclusion.DEFAULT;
+import static de.danielbechler.diff.inclusion.Inclusion.EXCLUDED;
 import static de.danielbechler.diff.inclusion.Inclusion.INCLUDED;
 import static java.util.Collections.emptyList;
 
@@ -35,18 +36,18 @@ class TypePropertyAnnotationInclusionResolver implements InclusionResolver
 		final ObjectDiffProperty propertyAnnotation = node.getPropertyAnnotation(ObjectDiffProperty.class);
 		if (propertyAnnotation != null)
 		{
-			if (propertyAnnotation.inclusion() != Inclusion.DEFAULT)
+			if (propertyAnnotation.inclusion() == INCLUDED || propertyAnnotation.inclusion() == EXCLUDED)
 			{
 				return propertyAnnotation.inclusion();
 			}
 			else if (propertyAnnotation.excluded())
 			{
-				return Inclusion.EXCLUDED;
+				return EXCLUDED;
 			}
 		}
 		else if (hasIncludedSibling(node))
 		{
-			return Inclusion.EXCLUDED;
+			return EXCLUDED;
 		}
 		return DEFAULT;
 	}

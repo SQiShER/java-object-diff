@@ -286,6 +286,7 @@ public class InclusionService implements InclusionConfigurer, IsIgnoredResolver
 		return excludeAndReturn;
 	}
 
+	// TODO Write some ATs to document how this works
 	public InclusionConfigurer resolveUsing(final InclusionResolver resolver)
 	{
 		inclusionResolvers.add(resolver);
