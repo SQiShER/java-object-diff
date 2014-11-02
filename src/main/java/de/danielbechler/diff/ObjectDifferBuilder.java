@@ -38,7 +38,6 @@ import de.danielbechler.diff.inclusion.InclusionConfigurer;
 import de.danielbechler.diff.inclusion.InclusionService;
 import de.danielbechler.diff.introspection.IntrospectionConfigurer;
 import de.danielbechler.diff.introspection.IntrospectionService;
-import de.danielbechler.diff.introspection.Introspector;
 import de.danielbechler.diff.node.DiffNode;
 
 import java.util.ArrayList;
@@ -168,11 +167,6 @@ public class ObjectDifferBuilder
 		public Set<String> resolveCategories(final DiffNode node)
 		{
 			return categoryService.resolveCategories(node);
-		}
-
-		public Introspector introspectorForNode(final DiffNode node)
-		{
-			return introspectionService.introspectorForNode(node);
 		}
 
 		public boolean isIntrospectable(final DiffNode node)

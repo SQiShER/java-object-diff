@@ -21,7 +21,6 @@ import de.danielbechler.diff.comparison.ComparisonStrategyResolver;
 import de.danielbechler.diff.comparison.PrimitiveDefaultValueModeResolver;
 import de.danielbechler.diff.filtering.IsReturnableResolver;
 import de.danielbechler.diff.inclusion.IsIgnoredResolver;
-import de.danielbechler.diff.introspection.IntrospectorResolver;
 import de.danielbechler.diff.introspection.IsIntrospectableResolver;
 
 /**
@@ -29,9 +28,10 @@ import de.danielbechler.diff.introspection.IsIntrospectableResolver;
  */
 public interface NodeQueryService extends
 		CategoryResolver,
-		IntrospectorResolver, IsIntrospectableResolver,
+		IsIntrospectableResolver,
 		IsIgnoredResolver,
 		IsReturnableResolver,
-		ComparisonStrategyResolver, PrimitiveDefaultValueModeResolver
+		ComparisonStrategyResolver,
+		PrimitiveDefaultValueModeResolver
 {
 }

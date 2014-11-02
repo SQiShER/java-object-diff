@@ -22,10 +22,9 @@ import de.danielbechler.diff.access.RootAccessor;
 import de.danielbechler.diff.comparison.ComparisonStrategy;
 import de.danielbechler.diff.comparison.ComparisonStrategyResolver;
 import de.danielbechler.diff.filtering.IsReturnableResolver;
-import de.danielbechler.diff.introspection.Introspector;
-import de.danielbechler.diff.introspection.IntrospectorResolver;
 import de.danielbechler.diff.introspection.IsIntrospectableResolver;
 import de.danielbechler.diff.introspection.TypeInfo;
+import de.danielbechler.diff.introspection.TypeInfoResolver;
 import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.diff.selector.BeanPropertyElementSelector;
 import org.fest.assertions.api.Assertions;
@@ -36,9 +35,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import java.util.Collections;
 import java.util.Date;
-import java.util.Set;
 
 import static de.danielbechler.diff.helper.NodeAssertions.assertThat;
 import static de.danielbechler.diff.helper.NodeMatchers.node;
@@ -64,10 +61,6 @@ public class BeanDifferShould
 	@Mock
 	private DifferDispatcher differDispatcher;
 	@Mock
-	private Introspector introspector;
-	@Mock
-	private IntrospectorResolver introspectorResolver;
-	@Mock
 	private Instances instances;
 	@Mock
 	private IsIntrospectableResolver introspectableResolver;
@@ -77,6 +70,8 @@ public class BeanDifferShould
 	private ComparisonStrategyResolver comparisonStrategyResolver;
 	@Mock
 	private ComparisonStrategy comparisonStrategy;
+	@Mock
+	private TypeInfoResolver typeInfoResolver;
 
 	@DataProvider
 	public static Object[][] acceptableTypes()
@@ -114,10 +109,9 @@ public class BeanDifferShould
 		});
 		when(instances.getWorking()).thenReturn("foo");
 		when(instances.getBase()).thenReturn("bar");
-		when(introspectorResolver.introspectorForNode(any(DiffNode.class))).thenReturn(introspector);
-		when(introspector.introspect(any(Class.class))).thenReturn(new TypeInfo(Class.class));
+		when(typeInfoResolver.typeInfoForNode(any(DiffNode.class))).thenReturn(new TypeInfo(Class.class));
 
-		beanDiffer = new BeanDiffer(differDispatcher, introspectableResolver, returnableResolver, comparisonStrategyResolver, introspectorResolver);
+		beanDiffer = new BeanDiffer(differDispatcher, introspectableResolver, returnableResolver, comparisonStrategyResolver, typeInfoResolver);
 	}
 
 	@Test(dataProvider = "acceptableTypes")
@@ -183,13 +177,13 @@ public class BeanDifferShould
 	}
 
 	@Test
-	public void compare_via_introspector_if_introspectable()
+	public void compare_via_introspection_if_introspectable()
 	{
 		when(introspectableResolver.isIntrospectable(node(withRoot()))).thenReturn(true);
 
 		beanDiffer.compare(DiffNode.ROOT, instances);
 
-		verify(introspector).introspect(instances.getType());
+		verify(typeInfoResolver).typeInfoForNode(node(withRoot()));
 	}
 
 	@Test
@@ -217,7 +211,7 @@ public class BeanDifferShould
 		when(propertyAccessor.getElementSelector()).thenReturn(propertyElement);
 		final TypeInfo typeInfo = new TypeInfo(Class.class);
 		typeInfo.addPropertyAccessor(propertyAccessor);
-		when(introspector.introspect(any(Class.class))).thenReturn(typeInfo);
+		when(typeInfoResolver.typeInfoForNode(any(DiffNode.class))).thenReturn(typeInfo);
 		return propertyAccessor;
 	}
 
@@ -255,30 +249,30 @@ public class BeanDifferShould
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void fail_construction_without_DifferDispatcher()
 	{
-		new BeanDiffer(null, introspectableResolver, returnableResolver, comparisonStrategyResolver, introspectorResolver);
-	}
-
-	@Test(expectedExceptions = IllegalArgumentException.class)
-	public void fail_construction_without_IntrospectorResolver()
-	{
-		new BeanDiffer(differDispatcher, introspectableResolver, returnableResolver, comparisonStrategyResolver, null);
+		new BeanDiffer(null, introspectableResolver, returnableResolver, comparisonStrategyResolver, typeInfoResolver);
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void fail_construction_without_introspectableResolver()
 	{
-		new BeanDiffer(differDispatcher, null, returnableResolver, comparisonStrategyResolver, introspectorResolver);
+		new BeanDiffer(differDispatcher, null, returnableResolver, comparisonStrategyResolver, typeInfoResolver);
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void fail_construction_without_returnableResolver()
 	{
-		new BeanDiffer(differDispatcher, introspectableResolver, null, comparisonStrategyResolver, introspectorResolver);
+		new BeanDiffer(differDispatcher, introspectableResolver, null, comparisonStrategyResolver, typeInfoResolver);
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void fail_construction_without_comparisonStrategyResolver()
 	{
-		new BeanDiffer(differDispatcher, introspectableResolver, returnableResolver, null, introspectorResolver);
+		new BeanDiffer(differDispatcher, introspectableResolver, returnableResolver, null, typeInfoResolver);
+	}
+
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void fail_construction_without_typeInfoResolver()
+	{
+		new BeanDiffer(differDispatcher, introspectableResolver, returnableResolver, comparisonStrategyResolver, null);
 	}
 }

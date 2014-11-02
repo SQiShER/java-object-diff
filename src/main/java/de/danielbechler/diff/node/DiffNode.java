@@ -49,6 +49,7 @@ import static java.util.Collections.unmodifiableSet;
  *
  * @author Daniel Bechler
  */
+// TODO This thing is massive and needs to be broken down into subclasses
 @SuppressWarnings("UnusedDeclaration")
 public class DiffNode
 {
@@ -597,9 +598,24 @@ public class DiffNode
 	{
 		if (parentNode != null)
 		{
-			target = parentNode.canonicalGet(target);
+			Object parent = parentNode.canonicalGet(target);
+			if (parent == null)
+			{
+				parent = parentNode.newInstance();
+				parentNode.canonicalSet(target, parent);
+			}
+			target = parent;
 		}
 		accessor.set(target, value);
+	}
+
+	private Object newInstance()
+	{
+		if (valueTypeInfo != null)
+		{
+			return valueTypeInfo.newInstance();
+		}
+		return null;
 	}
 
 	public void canonicalUnset(Object target)

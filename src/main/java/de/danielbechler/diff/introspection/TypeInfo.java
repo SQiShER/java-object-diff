@@ -28,6 +28,7 @@ public class TypeInfo
 {
 	private final Class<?> type;
 	private final Collection<PropertyAwareAccessor> propertyAwareAccessors = new LinkedList<PropertyAwareAccessor>();
+	private InstanceFactory instanceFactory;
 
 	public TypeInfo(final Class<?> type)
 	{
@@ -44,8 +45,18 @@ public class TypeInfo
 		return type;
 	}
 
+	public Object newInstance()
+	{
+		return instanceFactory.newInstanceOfType(type);
+	}
+
 	public Collection<PropertyAwareAccessor> getAccessors()
 	{
 		return propertyAwareAccessors;
+	}
+
+	void setInstanceFactory(final InstanceFactory instanceFactory)
+	{
+		this.instanceFactory = instanceFactory;
 	}
 }

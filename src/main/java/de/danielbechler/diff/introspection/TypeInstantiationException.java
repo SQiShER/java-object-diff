@@ -16,12 +16,26 @@
 
 package de.danielbechler.diff.introspection;
 
-import de.danielbechler.diff.node.DiffNode;
-
-/**
- * @author Daniel Bechler
- */
-public interface IntrospectorResolver
+public class TypeInstantiationException extends RuntimeException
 {
-	Introspector introspectorForNode(DiffNode node);
+	private static final long serialVersionUID = -2392512029757334687L;
+	private final Class<?> type;
+	private final String reason;
+
+	public TypeInstantiationException(final Class<?> type, final String reason, final Throwable cause)
+	{
+		super("Failed to create instance of type '" + type + "'. Reason: " + reason, cause);
+		this.type = type;
+		this.reason = reason;
+	}
+
+	public Class<?> getType()
+	{
+		return type;
+	}
+
+	public String getReason()
+	{
+		return reason;
+	}
 }

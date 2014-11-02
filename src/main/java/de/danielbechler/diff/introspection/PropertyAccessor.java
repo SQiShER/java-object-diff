@@ -134,8 +134,8 @@ public class PropertyAccessor implements PropertyAwareAccessor
 	{
 		if (target == null)
 		{
-			logger.debug("The target object is null");
-			logFailedSet(value);
+			logger.info("Couldn't set new value '{}' for property '{}' " +
+					"because the target object is null", value, propertyName);
 		}
 		else if (writeMethod == null)
 		{
@@ -151,11 +151,6 @@ public class PropertyAccessor implements PropertyAwareAccessor
 	public void unset(final Object target)
 	{
 		set(target, null);
-	}
-
-	private void logFailedSet(final Object value)
-	{
-		logger.info("Couldn't set new value '{}' for property '{}'", value, propertyName);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -175,7 +170,7 @@ public class PropertyAccessor implements PropertyAwareAccessor
 				return;
 			}
 		}
-		logFailedSet(value);
+		logger.info("Couldn't set new value '{}' for property '{}'", value, propertyName);
 	}
 
 	private void invokeWriteMethod(final Object target, final Object value)

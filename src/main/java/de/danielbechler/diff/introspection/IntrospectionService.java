@@ -29,7 +29,7 @@ import java.util.Map;
 /**
  * @author Daniel Bechler
  */
-public class IntrospectionService implements IntrospectionConfigurer, IsIntrospectableResolver, IntrospectorResolver
+public class IntrospectionService implements IntrospectionConfigurer, IsIntrospectableResolver, TypeInfoResolver
 {
 	private final Map<Class<?>, Introspector> typeIntrospectorMap = new HashMap<Class<?>, Introspector>();
 	private final Map<Class<?>, IntrospectionMode> typeIntrospectionModeMap = new HashMap<Class<?>, IntrospectionMode>();
@@ -37,6 +37,7 @@ public class IntrospectionService implements IntrospectionConfigurer, IsIntrospe
 	private final NodePathValueHolder<IntrospectionMode> nodePathIntrospectionModeHolder = new NodePathValueHolder<IntrospectionMode>();
 	private final ObjectDifferBuilder objectDifferBuilder;
 	private Introspector defaultIntrospector = new StandardIntrospector();
+	private InstanceFactory instanceFactory = new PublicNoArgsConstructorInstanceFactory();
 
 	public IntrospectionService(final ObjectDifferBuilder objectDifferBuilder)
 	{
@@ -73,6 +74,15 @@ public class IntrospectionService implements IntrospectionConfigurer, IsIntrospe
 				|| nodeType.isArray();
 	}
 
+	public TypeInfo typeInfoForNode(final DiffNode node)
+	{
+		final Class<?> beanType = node.getValueType();
+		final Introspector introspector = introspectorForNode(node);
+		final TypeInfo typeInfo = introspector.introspect(beanType);
+		typeInfo.setInstanceFactory(instanceFactory);
+		return typeInfo;
+	}
+
 	public Introspector introspectorForNode(final DiffNode node)
 	{
 		final Introspector typeIntrospector = typeIntrospectorMap.get(node.getValueType());
@@ -88,6 +98,13 @@ public class IntrospectionService implements IntrospectionConfigurer, IsIntrospe
 		}
 
 		return defaultIntrospector;
+	}
+
+	public IntrospectionConfigurer setInstanceFactory(final InstanceFactory instanceFactory)
+	{
+		Assert.notNull(instanceFactory, "instanceFactory");
+		this.instanceFactory = new InstanceFactoryFallbackDecorator(instanceFactory);
+		return this;
 	}
 
 	public IntrospectionConfigurer setDefaultIntrospector(final Introspector introspector)

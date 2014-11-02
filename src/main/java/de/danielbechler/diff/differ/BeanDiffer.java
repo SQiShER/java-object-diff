@@ -21,10 +21,9 @@ import de.danielbechler.diff.access.PropertyAwareAccessor;
 import de.danielbechler.diff.comparison.ComparisonStrategy;
 import de.danielbechler.diff.comparison.ComparisonStrategyResolver;
 import de.danielbechler.diff.filtering.IsReturnableResolver;
-import de.danielbechler.diff.introspection.Introspector;
-import de.danielbechler.diff.introspection.IntrospectorResolver;
 import de.danielbechler.diff.introspection.IsIntrospectableResolver;
 import de.danielbechler.diff.introspection.TypeInfo;
+import de.danielbechler.diff.introspection.TypeInfoResolver;
 import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.util.Assert;
 
@@ -39,14 +38,14 @@ public final class BeanDiffer implements Differ
 	private final IsIntrospectableResolver isIntrospectableResolver;
 	private final IsReturnableResolver isReturnableResolver;
 	private final ComparisonStrategyResolver comparisonStrategyResolver;
-	private final IntrospectorResolver introspectorResolver;
 	private final DifferDispatcher differDispatcher;
+	private final TypeInfoResolver typeInfoResolver;
 
 	public BeanDiffer(final DifferDispatcher differDispatcher,
 					  final IsIntrospectableResolver introspectableResolver,
 					  final IsReturnableResolver returnableResolver,
 					  final ComparisonStrategyResolver comparisonStrategyResolver,
-					  final IntrospectorResolver introspectorResolver)
+					  final TypeInfoResolver typeInfoResolver)
 	{
 		Assert.notNull(differDispatcher, "differDispatcher");
 		this.differDispatcher = differDispatcher;
@@ -60,8 +59,8 @@ public final class BeanDiffer implements Differ
 		Assert.notNull(comparisonStrategyResolver, "comparisonStrategyResolver");
 		this.comparisonStrategyResolver = comparisonStrategyResolver;
 
-		Assert.notNull(introspectorResolver, "introspectorResolver");
-		this.introspectorResolver = introspectorResolver;
+		Assert.notNull(typeInfoResolver, "typeInfoResolver");
+		this.typeInfoResolver = typeInfoResolver;
 	}
 
 	public boolean accepts(final Class<?> type)
@@ -108,9 +107,7 @@ public final class BeanDiffer implements Differ
 
 	private void compareUsingIntrospection(final DiffNode beanNode, final Instances beanInstances)
 	{
-		final Class<?> beanType = beanInstances.getType();
-		final Introspector introspector = introspectorResolver.introspectorForNode(beanNode);
-		final TypeInfo typeInfo = introspector.introspect(beanType);
+		final TypeInfo typeInfo = typeInfoResolver.typeInfoForNode(beanNode);
 		beanNode.setValueTypeInfo(typeInfo);
 		for (final PropertyAwareAccessor propertyAccessor : typeInfo.getAccessors())
 		{
