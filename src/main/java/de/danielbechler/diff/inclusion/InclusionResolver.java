@@ -26,8 +26,6 @@ import de.danielbechler.diff.node.DiffNode;
  * Keep in mind that every single node in the object graph will be checked against each and every registered {@link
  * de.danielbechler.diff.inclusion.InclusionResolver}. If performance is important to you, make sure that calling its
  * methods is as cheap as possible.
- *
- * @author Daniel Bechler
  */
 public interface InclusionResolver
 {
