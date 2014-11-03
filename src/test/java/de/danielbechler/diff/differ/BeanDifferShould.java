@@ -23,7 +23,7 @@ import de.danielbechler.diff.comparison.ComparisonStrategy;
 import de.danielbechler.diff.comparison.ComparisonStrategyResolver;
 import de.danielbechler.diff.filtering.IsReturnableResolver;
 import de.danielbechler.diff.introspection.IsIntrospectableResolver;
-import de.danielbechler.diff.introspection.TypeInfo;
+import de.danielbechler.diff.instantiation.TypeInfo;
 import de.danielbechler.diff.introspection.TypeInfoResolver;
 import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.diff.selector.BeanPropertyElementSelector;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.danielbechler.diff.introspection;
+package de.danielbechler.diff.instantiation;
 
 public class PublicNoArgsConstructorInstanceFactory implements InstanceFactory
 {

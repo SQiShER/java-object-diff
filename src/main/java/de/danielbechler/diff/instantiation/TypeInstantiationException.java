@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package de.danielbechler.diff.introspection;
+package de.danielbechler.diff.instantiation;
 
 public class TypeInstantiationException extends RuntimeException
 {
-	private static final long serialVersionUID = -2392512029757334687L;
+	private static final long serialVersionUID = 2794794949615814237L;
 	private final Class<?> type;
 	private final String reason;
 

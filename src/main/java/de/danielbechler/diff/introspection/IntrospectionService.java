@@ -17,7 +17,10 @@
 package de.danielbechler.diff.introspection;
 
 import de.danielbechler.diff.ObjectDifferBuilder;
+import de.danielbechler.diff.instantiation.PublicNoArgsConstructorInstanceFactory;
 import de.danielbechler.diff.node.DiffNode;
+import de.danielbechler.diff.instantiation.InstanceFactory;
+import de.danielbechler.diff.instantiation.TypeInfo;
 import de.danielbechler.diff.path.NodePath;
 import de.danielbechler.diff.path.NodePathValueHolder;
 import de.danielbechler.util.Assert;

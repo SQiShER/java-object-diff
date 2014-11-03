@@ -17,6 +17,7 @@
 package de.danielbechler.diff.introspection;
 
 import de.danielbechler.diff.node.DiffNode;
+import de.danielbechler.diff.instantiation.TypeInfo;
 
 public interface TypeInfoResolver
 {

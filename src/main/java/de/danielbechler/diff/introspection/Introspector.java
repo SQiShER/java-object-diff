@@ -16,6 +16,8 @@
 
 package de.danielbechler.diff.introspection;
 
+import de.danielbechler.diff.instantiation.TypeInfo;
+
 /**
  * Resolves the accessors of a given type.
  *

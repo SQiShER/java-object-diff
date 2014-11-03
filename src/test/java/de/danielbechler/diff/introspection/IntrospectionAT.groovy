@@ -17,6 +17,7 @@
 package de.danielbechler.diff.introspection
 
 import de.danielbechler.diff.ObjectDifferBuilder
+import de.danielbechler.diff.instantiation.TypeInfo
 import de.danielbechler.diff.path.NodePath
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
@@ -43,7 +44,7 @@ class IntrospectionAT extends Specification {
 		when:
 		  objectDifferBuilder.build().compare(working, base)
 		then:
-		  1 * introspector.introspect(Role) >> []
+		  1 * introspector.introspect(Role) >> new TypeInfo(Role)
 	}
 
 	def 'disable introspection for node'() {
@@ -94,7 +95,7 @@ class IntrospectionAT extends Specification {
 		then:
 		  0 * introspector.introspect(Role)
 		and:
-		  1 * introspector.introspect(Actor) >> []
+		  1 * introspector.introspect(Actor) >> new TypeInfo(Actor)
 	}
 
 	def 'configure custom introspector for type'() {
@@ -105,7 +106,7 @@ class IntrospectionAT extends Specification {
 		then:
 		  0 * introspector.introspect(Role)
 		and:
-		  1 * introspector.introspect(Actor) >> []
+		  1 * introspector.introspect(Actor) >> new TypeInfo(Actor)
 	}
 
 	@ToString

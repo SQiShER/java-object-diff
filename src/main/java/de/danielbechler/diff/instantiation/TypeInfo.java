@@ -14,30 +14,35 @@
  * limitations under the License.
  */
 
-package de.danielbechler.diff.introspection;
+package de.danielbechler.diff.instantiation;
 
 import de.danielbechler.diff.access.PropertyAwareAccessor;
+import de.danielbechler.util.Assert;
 
 import java.util.Collection;
 import java.util.LinkedList;
 
 /**
- * Created by Daniel Bechler.
+ * Holds type information gathered during introspection and serves as factory for new instances of that type.
  */
 public class TypeInfo
 {
 	private final Class<?> type;
-	private final Collection<PropertyAwareAccessor> propertyAwareAccessors = new LinkedList<PropertyAwareAccessor>();
+	private final Collection<PropertyAwareAccessor> accessors = new LinkedList<PropertyAwareAccessor>();
 	private InstanceFactory instanceFactory;
 
 	public TypeInfo(final Class<?> type)
 	{
+		Assert.notNull(type, "type");
 		this.type = type;
 	}
 
 	public void addPropertyAccessor(final PropertyAwareAccessor propertyAccessor)
 	{
-		propertyAwareAccessors.add(propertyAccessor);
+		if (propertyAccessor != null)
+		{
+			accessors.add(propertyAccessor);
+		}
 	}
 
 	public Class<?> getType()
@@ -45,6 +50,9 @@ public class TypeInfo
 		return type;
 	}
 
+	/**
+	 * Creates a new instance of the represented type using the underlying {@link de.danielbechler.diff.instantiation.InstanceFactory}.
+	 */
 	public Object newInstance()
 	{
 		return instanceFactory.newInstanceOfType(type);
@@ -52,10 +60,10 @@ public class TypeInfo
 
 	public Collection<PropertyAwareAccessor> getAccessors()
 	{
-		return propertyAwareAccessors;
+		return accessors;
 	}
 
-	void setInstanceFactory(final InstanceFactory instanceFactory)
+	public void setInstanceFactory(final InstanceFactory instanceFactory)
 	{
 		this.instanceFactory = instanceFactory;
 	}

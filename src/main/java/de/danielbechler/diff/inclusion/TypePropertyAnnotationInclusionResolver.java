@@ -18,7 +18,7 @@ package de.danielbechler.diff.inclusion;
 
 import de.danielbechler.diff.access.PropertyAwareAccessor;
 import de.danielbechler.diff.introspection.ObjectDiffProperty;
-import de.danielbechler.diff.introspection.TypeInfo;
+import de.danielbechler.diff.instantiation.TypeInfo;
 import de.danielbechler.diff.node.DiffNode;
 
 import static de.danielbechler.diff.inclusion.Inclusion.DEFAULT;

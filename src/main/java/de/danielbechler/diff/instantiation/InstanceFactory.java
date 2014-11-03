@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.danielbechler.diff.introspection;
+package de.danielbechler.diff.instantiation;
 
 /**
  * Serves as factory for objects. It is mainly used when {@link de.danielbechler.diff.node.DiffNode#canonicalSet(Object,
@@ -28,7 +28,7 @@ public interface InstanceFactory
 	 * @param type The type for which a new instance should be created
 	 * @return A new instance of the given <code>type</code> or <code>null</code> if it doesn't know how to instantiate
 	 * the type. In case of the latter, the {@link de.danielbechler.diff.ObjectDiffer} will automatically fallback to
-	 * instantiation via public non-arg constructor. If that also fails, an {@link de.danielbechler.diff.introspection.TypeInstantiationException}
+	 * instantiation via public non-arg constructor. If that also fails, an {@link TypeInstantiationException}
 	 * will be thrown.
 	 * <p/>
 	 * <b>Note from the author:</b> it wasn't an easy decision, but in the end I favored an exception over

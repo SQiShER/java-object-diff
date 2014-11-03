@@ -16,6 +16,8 @@
 
 package de.danielbechler.diff.introspection;
 
+import de.danielbechler.diff.instantiation.InstanceFactory;
+import de.danielbechler.diff.instantiation.PublicNoArgsConstructorInstanceFactory;
 import de.danielbechler.util.Assert;
 
 class InstanceFactoryFallbackDecorator implements InstanceFactory

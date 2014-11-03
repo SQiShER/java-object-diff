@@ -17,6 +17,7 @@
 package de.danielbechler.diff.introspection;
 
 import de.danielbechler.diff.access.PropertyAwareAccessor;
+import de.danielbechler.diff.instantiation.TypeInfo;
 import de.danielbechler.util.Assert;
 import de.danielbechler.util.Exceptions;
 

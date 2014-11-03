@@ -17,8 +17,8 @@
 package de.danielbechler.diff.node
 
 import de.danielbechler.diff.ObjectDifferBuilder
-import de.danielbechler.diff.introspection.InstanceFactory
-import de.danielbechler.diff.introspection.TypeInstantiationException
+import de.danielbechler.diff.instantiation.InstanceFactory
+import de.danielbechler.diff.instantiation.TypeInstantiationException
 import de.danielbechler.diff.path.NodePath
 import spock.lang.Specification
 import spock.lang.Subject
