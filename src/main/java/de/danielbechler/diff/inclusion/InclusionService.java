@@ -20,270 +20,252 @@ import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.category.CategoryResolver;
 import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.diff.path.NodePath;
-import de.danielbechler.diff.selector.BeanPropertyElementSelector;
-import de.danielbechler.diff.selector.ElementSelector;
 import de.danielbechler.util.Assert;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
+import static de.danielbechler.diff.inclusion.Inclusion.DEFAULT;
 import static de.danielbechler.diff.inclusion.Inclusion.EXCLUDED;
 import static de.danielbechler.diff.inclusion.Inclusion.INCLUDED;
-import static java.util.Arrays.asList;
 
+@SuppressWarnings("OverlyComplexAnonymousInnerClass")
 public class InclusionService implements InclusionConfigurer, IsIgnoredResolver
 {
-	private final CategoryResolver categoryResolver;
 	private final ObjectDifferBuilder rootConfiguration;
-	private final InclusionNode nodeInclusions = new InclusionNode();
-	private final Map<Class<?>, Inclusion> typeInclusions = new HashMap<Class<?>, Inclusion>();
-	private final Map<String, Inclusion> categoryInclusions = new HashMap<String, Inclusion>();
-	private final Map<String, Inclusion> propertyNameInclusions = new HashMap<String, Inclusion>();
-	private final ToInclude includeAndReturn = new ToIncludeAndReturnImpl();
-	private final ToExclude excludeAndReturn = new ToExcludeAndReturnImpl();
-	private final TypePropertyConfigInclusionResolver typePropertyConfigInclusionResolver = new TypePropertyConfigInclusionResolver();
+	private final CategoryResolver categoryResolver;
 	private final Collection<InclusionResolver> inclusionResolvers = new LinkedList<InclusionResolver>();
-	// Patched : Inclusion boolean properties
-	private boolean categoryInclusion = false;
-	private boolean propertyNameInclusion = false;
-	private boolean nodePathInclusion = false;
-	private boolean typeInclusion = false;
-	// Patched : Exclusion boolean properties
-	private boolean categoryExclusion = false;
-	private boolean nodePathExclusion = false;
-	private boolean propertyNameExclusion = false;
-	private boolean typeExclusion = false;
+	private TypeInclusionResolver typeInclusionResolver;
+	private TypePropertyConfigInclusionResolver typePropertyConfigInclusionResolver;
+	private CategoryInclusionResolver categoryInclusionResolver;
+	private NodePathInclusionResolver nodePathInclusionResolver;
+	private PropertyNameInclusionResolver propertyNameInclusionResolver;
 
 	public InclusionService(final CategoryResolver categoryResolver, final ObjectDifferBuilder rootConfiguration)
 	{
-		Assert.notNull(categoryResolver, "categoryResolver");
 		Assert.notNull(rootConfiguration, "rootConfiguration");
-		this.categoryResolver = categoryResolver;
+		Assert.notNull(categoryResolver, "categoryResolver");
 		this.rootConfiguration = rootConfiguration;
-		this.inclusionResolvers.add(new TypePropertyAnnotationInclusionResolver());
-		this.inclusionResolvers.add(typePropertyConfigInclusionResolver);
+		this.categoryResolver = categoryResolver;
+		addAlwaysOnInclusionResolvers();
+	}
+
+	private void addAlwaysOnInclusionResolvers()
+	{
+		inclusionResolvers.add(new TypePropertyAnnotationInclusionResolver());
+	}
+
+	Collection<InclusionResolver> getInclusionResolvers()
+	{
+		return inclusionResolvers;
 	}
 
 	public boolean isIgnored(final DiffNode node)
 	{
-		return isExcluded(node) || !isIncluded(node);
-	}
-
-	private boolean isExcluded(final DiffNode node)
-	{
-		for (final InclusionResolver inclusionResolver : inclusionResolvers)
-		{
-			if (inclusionResolver.getInclusion(node) == EXCLUDED)
-			{
-				return true;
-			}
-		}
-		// Patched : Check if there are exclusions before browsing all excluded elements
-		if (hasExclusions())
-		{
-			if (isExcludedByPath(node) || isExcludedByCategory(node))
-			{
-				return true;
-			}
-			else if (isExcludedByType(node) || isExcludedByPropertyName(node))
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private boolean isIncluded(final DiffNode node)
-	{
 		if (node.isRootNode())
 		{
-			return true;
-		}
-		for (final InclusionResolver inclusionResolver : inclusionResolvers)
-		{
-			if (inclusionResolver.getInclusion(node) == INCLUDED)
-			{
-				return true;
-			}
-		}
-		// Patched : Check if there are inclusions before browsing all included elements
-		if (hasInclusions())
-		{
-			if (node.isRootNode())
-			{
-				return true;
-			}
-			else if (isIncludedByPath(node) || isIncludedByCategory(node))
-			{
-				return true;
-			}
-			else if (isIncludedByType(node) || isIncludedByPropertyName(node))
-			{
-				return true;
-			}
 			return false;
 		}
-		return true;
-	}
-
-	private boolean hasExclusions()
-	{
-		// Patched (New method) : Now return if exclusions have been configured
-		return nodePathExclusion || categoryExclusion || typeExclusion || propertyNameExclusion;
-	}
-
-	private boolean isExcludedByPath(final DiffNode node)
-	{
-		// Patched : First check if node path exclusions have been configured
-		if (nodePathExclusion)
+		boolean strictIncludeModeEnabled = false;
+		boolean isExplicitlyIncluded = false;
+		for (final InclusionResolver inclusionResolver : inclusionResolvers)
 		{
-			final InclusionNode valueNode = nodeInclusions.getNodeForPath(node.getPath());
-			if (valueNode.isExcluded() && !valueNode.containsValue(INCLUDED))
+			if (inclusionResolver.enablesStrictIncludeMode())
 			{
-				return true;
+				strictIncludeModeEnabled = true;
 			}
-		}
-		return false;
-	}
-
-	private boolean isExcludedByCategory(final DiffNode node)
-	{
-		// Patched : First check if category exclusions have been configured
-		if (categoryExclusion && hasCategoryWithInclusion(node, EXCLUDED))
-		{
-			return true;
-		}
-		return false;
-	}
-
-	private boolean isExcludedByType(final DiffNode node)
-	{
-		// Patched : First check if type exclusions have been configured
-		if (typeExclusion && node.getValueType() != null)
-		{
-			return typeInclusions.get(node.getValueType()) == EXCLUDED;
-		}
-		return false;
-	}
-
-	private boolean isExcludedByPropertyName(final DiffNode node)
-	{
-		// Patched : First check if property name exclusions have been configured
-		if (propertyNameExclusion)
-		{
-			final String propertyName = node.getPropertyName();
-			if (propertyName != null)
+			switch (getInclusion(node, inclusionResolver))
 			{
-				return propertyNameInclusions.get(propertyName) == EXCLUDED;
-			}
-		}
-		return false;
-	}
-
-	private boolean hasInclusions()
-	{
-		// Patched : Now return if inclusions have been configured
-		return nodePathInclusion || categoryInclusion || typeInclusion || propertyNameInclusion;
-	}
-
-	private boolean isIncludedByPath(final DiffNode node)
-	{
-		// Patched : First check if nodePath inclusions have been configured
-		if (nodePathInclusion && nodeInclusions.getNodeForPath(node.getPath()).isIncluded())
-		{
-			return true;
-		}
-		return false;
-	}
-
-	private boolean isIncludedByCategory(final DiffNode node)
-	{
-		// Patched : First check if category inclusions have been configured
-		if (categoryInclusion && hasCategoryWithInclusion(node, INCLUDED))
-		{
-			return true;
-		}
-		return false;
-	}
-
-	private boolean isIncludedByType(final DiffNode node)
-	{
-		// Patched : First check if type inclusions have been configured
-		if (typeInclusion && typeInclusions.get(node.getValueType()) == INCLUDED)
-		{
-			return true;
-		}
-		return false;
-	}
-
-	private boolean isIncludedByPropertyName(final DiffNode node)
-	{
-		// Patched : First check if property name inclusions have been configured
-		if (propertyNameInclusion)
-		{
-			if (isIncludedByOwnPropertyName(node))
-			{
-				return true;
-			}
-			else if (isIncludedByParentPropertyName(node))
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private boolean hasCategoryWithInclusion(final DiffNode node, final Inclusion inclusion)
-	{
-		for (final String category : categoryResolver.resolveCategories(node))
-		{
-			if (categoryInclusions.get(category) == inclusion)
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private boolean isIncludedByOwnPropertyName(final DiffNode node)
-	{
-		final String propertyName = node.getPropertyName();
-		if (propertyName != null)
-		{
-			return propertyNameInclusions.get(propertyName) == INCLUDED;
-		}
-		return false;
-	}
-
-	private boolean isIncludedByParentPropertyName(final DiffNode node)
-	{
-		final List<ElementSelector> pathElementSelectors = node.getPath().getElementSelectors();
-		for (final ElementSelector elementSelector : pathElementSelectors)
-		{
-			if (elementSelector instanceof BeanPropertyElementSelector)
-			{
-				final BeanPropertyElementSelector beanPropertyElement = (BeanPropertyElementSelector) elementSelector;
-				final String propertyName = beanPropertyElement.getPropertyName();
-				if (propertyName != null && propertyNameInclusions.get(propertyName) == INCLUDED)
-				{
+				case EXCLUDED:
 					return true;
-				}
+				case INCLUDED:
+					isExplicitlyIncluded = true;
+					break;
 			}
 		}
+		if (strictIncludeModeEnabled && !isExplicitlyIncluded)
+		{
+			return true;
+		}
 		return false;
+	}
+
+	private static Inclusion getInclusion(final DiffNode node, final InclusionResolver inclusionResolver)
+	{
+		final Inclusion inclusion = inclusionResolver.getInclusion(node);
+		return inclusion != null ? inclusion : DEFAULT;
 	}
 
 	public ToInclude include()
 	{
-		return includeAndReturn;
+		return new ToInclude()
+		{
+			public ToInclude category(final String category)
+			{
+				setCategoryInclusion(INCLUDED, category);
+				return this;
+			}
+
+			public ToInclude type(final Class<?> type)
+			{
+				setTypeInclusion(INCLUDED, type);
+				return this;
+			}
+
+			public ToInclude node(final NodePath nodePath)
+			{
+				setNodePathInclusion(INCLUDED, nodePath);
+				return this;
+			}
+
+			public ToInclude propertyName(final String propertyName)
+			{
+				setPropertyNameInclusion(INCLUDED, propertyName);
+				return this;
+			}
+
+			public ToInclude propertyNameOfType(final Class<?> type, final String... propertyNames)
+			{
+				setPropertyNameOfTypeInclusion(INCLUDED, type, propertyNames);
+				return this;
+			}
+
+			public InclusionConfigurer also()
+			{
+				return InclusionService.this;
+			}
+
+			public ObjectDifferBuilder and()
+			{
+				return rootConfiguration;
+			}
+		};
+	}
+
+	void setCategoryInclusion(final Inclusion inclusion, final String category)
+	{
+		if (categoryInclusionResolver == null)
+		{
+			categoryInclusionResolver = newCategoryInclusionResolver();
+			inclusionResolvers.add(categoryInclusionResolver);
+		}
+		categoryInclusionResolver.setInclusion(category, inclusion);
+	}
+
+	void setTypeInclusion(final Inclusion inclusion, final Class<?> type)
+	{
+		if (typeInclusionResolver == null)
+		{
+			typeInclusionResolver = newTypeInclusionResolver();
+			inclusionResolvers.add(typeInclusionResolver);
+		}
+		typeInclusionResolver.setInclusion(type, inclusion);
+	}
+
+	void setNodePathInclusion(final Inclusion inclusion, final NodePath nodePath)
+	{
+		if (nodePathInclusionResolver == null)
+		{
+			nodePathInclusionResolver = newNodePathInclusionResolver();
+			inclusionResolvers.add(nodePathInclusionResolver);
+		}
+		nodePathInclusionResolver.setInclusion(nodePath, inclusion);
+	}
+
+	void setPropertyNameInclusion(final Inclusion inclusion, final String propertyName)
+	{
+		if (propertyNameInclusionResolver == null)
+		{
+			propertyNameInclusionResolver = newPropertyNameInclusionResolver();
+			inclusionResolvers.add(propertyNameInclusionResolver);
+		}
+		propertyNameInclusionResolver.setInclusion(propertyName, inclusion);
+	}
+
+	private void setPropertyNameOfTypeInclusion(final Inclusion inclusion, final Class<?> type, final String... propertyNames)
+	{
+		Assert.notNull(type, "type");
+		for (final String propertyName : propertyNames)
+		{
+			Assert.hasText(propertyName, "propertyName in propertyNames");
+			if (typePropertyConfigInclusionResolver == null)
+			{
+				typePropertyConfigInclusionResolver = newTypePropertyConfigInclusionResolver();
+				inclusionResolvers.add(typePropertyConfigInclusionResolver);
+			}
+			typePropertyConfigInclusionResolver.setInclusion(type, propertyName, inclusion);
+		}
+	}
+
+	CategoryInclusionResolver newCategoryInclusionResolver()
+	{
+		return new CategoryInclusionResolver(categoryResolver);
+	}
+
+	TypeInclusionResolver newTypeInclusionResolver()
+	{
+		return new TypeInclusionResolver();
+	}
+
+	NodePathInclusionResolver newNodePathInclusionResolver()
+	{
+		return new NodePathInclusionResolver();
+	}
+
+	PropertyNameInclusionResolver newPropertyNameInclusionResolver()
+	{
+		return new PropertyNameInclusionResolver();
+	}
+
+	TypePropertyConfigInclusionResolver newTypePropertyConfigInclusionResolver()
+	{
+		return new TypePropertyConfigInclusionResolver();
 	}
 
 	public ToExclude exclude()
 	{
-		return excludeAndReturn;
+		return new ToExclude()
+		{
+			public ToExclude category(final String category)
+			{
+				setCategoryInclusion(EXCLUDED, category);
+				return this;
+			}
+
+			public ToExclude type(final Class<?> type)
+			{
+				setTypeInclusion(EXCLUDED, type);
+				return this;
+			}
+
+			public ToExclude node(final NodePath nodePath)
+			{
+				setNodePathInclusion(EXCLUDED, nodePath);
+				return this;
+			}
+
+			public ToExclude propertyName(final String propertyName)
+			{
+				setPropertyNameInclusion(EXCLUDED, propertyName);
+				return this;
+			}
+
+			public ToExclude propertyNameOfType(final Class<?> type, final String... propertyNames)
+			{
+				setPropertyNameOfTypeInclusion(EXCLUDED, type, propertyNames);
+				return this;
+			}
+
+			public InclusionConfigurer also()
+			{
+				return InclusionService.this;
+			}
+
+			public ObjectDifferBuilder and()
+			{
+				return rootConfiguration;
+			}
+		};
 	}
 
 	public InclusionConfigurer resolveUsing(final InclusionResolver inclusionResolver)
@@ -296,120 +278,5 @@ public class InclusionService implements InclusionConfigurer, IsIgnoredResolver
 	public ObjectDifferBuilder and()
 	{
 		return rootConfiguration;
-	}
-
-	private class ToExcludeAndReturnImpl implements ToExcludeAndReturn
-	{
-		public ObjectDifferBuilder and()
-		{
-			return rootConfiguration;
-		}
-
-		public ToExcludeAndReturn category(final String category)
-		{
-			// Patched : Indicates that there are category exclusions
-			categoryExclusion = true;
-			categoryInclusions.put(category, EXCLUDED);
-			return this;
-		}
-
-		public ToExcludeAndReturn type(final Class<?> type)
-		{
-			// Patched : Indicates that there are type exclusions
-			typeExclusion = true;
-			typeInclusions.put(type, EXCLUDED);
-			return this;
-		}
-
-		public ToExcludeAndReturn node(final NodePath nodePath)
-		{
-			// Patched : Indicates that there are nodePath exclusions
-			nodePathExclusion = true;
-			nodeInclusions.getNodeForPath(nodePath).setValue(EXCLUDED);
-			return this;
-		}
-
-		public ToExcludeAndReturn propertyName(final String propertyName)
-		{
-			// Patched : Indicates that there are property name exclusions
-			propertyNameExclusion = true;
-			propertyNameInclusions.put(propertyName, EXCLUDED);
-			return this;
-		}
-
-		public ToExcludeAndReturn propertyNameOfType(final Class<?> type, final String... propertyNames)
-		{
-			Assert.notNull(type, "type");
-			Assert.notEmpty(asList(propertyNames), "propertyNames");
-			for (final String propertyName : propertyNames)
-			{
-				Assert.hasText(propertyName, "propertyName in propertyNames");
-				typePropertyConfigInclusionResolver.setInclusion(type, propertyName, EXCLUDED);
-			}
-			return this;
-		}
-
-		public ToInclude include()
-		{
-			return InclusionService.this.include();
-		}
-	}
-
-	private class ToIncludeAndReturnImpl implements ToIncludeAndReturn
-	{
-		public ObjectDifferBuilder and()
-		{
-			return rootConfiguration;
-		}
-
-		public ToIncludeAndReturn category(final String category)
-		{
-			// Patched : Indicates that there are category inclusions
-			categoryInclusion = true;
-			categoryInclusions.put(category, INCLUDED);
-			return this;
-		}
-
-		public ToIncludeAndReturn type(final Class<?> type)
-		{
-			// Patched : Indicates that there are type inclusions
-			typeInclusion = true;
-			typeInclusions.put(type, INCLUDED);
-			return this;
-		}
-
-		public ToIncludeAndReturn node(final NodePath nodePath)
-		{
-			// Patched : Indicates that there are nodePath inclusions
-			nodePathInclusion = true;
-			nodeInclusions.getNodeForPath(nodePath).setValue(INCLUDED);
-			return this;
-		}
-
-		public ToIncludeAndReturn propertyName(final String propertyName)
-		{
-			Assert.hasText(propertyName, "propertyName");
-			// Patched : Indicates that there are property name inclusions
-			propertyNameInclusion = true;
-			propertyNameInclusions.put(propertyName, INCLUDED);
-			return this;
-		}
-
-		public ToIncludeAndReturn propertyNameOfType(final Class<?> type, final String... propertyNames)
-		{
-			Assert.notNull(type, "type");
-			Assert.notEmpty(asList(propertyNames), "propertyNames");
-			for (final String propertyName : propertyNames)
-			{
-				Assert.hasText(propertyName, "propertyName in propertyNames");
-				typePropertyConfigInclusionResolver.setInclusion(type, propertyName, INCLUDED);
-			}
-			return this;
-		}
-
-		public ToExclude exclude()
-		{
-			return InclusionService.this.exclude();
-		}
 	}
 }

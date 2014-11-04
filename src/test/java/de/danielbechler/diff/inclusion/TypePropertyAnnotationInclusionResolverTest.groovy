@@ -17,8 +17,8 @@
 package de.danielbechler.diff.inclusion
 
 import de.danielbechler.diff.access.PropertyAwareAccessor
-import de.danielbechler.diff.introspection.ObjectDiffProperty
 import de.danielbechler.diff.instantiation.TypeInfo
+import de.danielbechler.diff.introspection.ObjectDiffProperty
 import de.danielbechler.diff.node.DiffNode
 import spock.lang.Specification
 import spock.lang.Subject
@@ -146,4 +146,8 @@ class TypePropertyAnnotationInclusionResolverTest extends Specification {
 		})
 	}
 
+	def "EnabledStrictIncludeMode: should always be false"() {
+		expect:
+		  !inclusionResolver.enablesStrictIncludeMode()
+	}
 }

@@ -107,6 +107,11 @@ class TypePropertyConfigInclusionResolverTest extends Specification {
 		  inclusionResolver.getInclusion(node) == DEFAULT
 	}
 
+	def "EnabledStrictIncludeMode: should always be false"() {
+		expect:
+		  !inclusionResolver.enablesStrictIncludeMode()
+	}
+
 	DiffNode createPropertyNode(Class<?> parentType, String propertyName) {
 		def parentNode = new DiffNode(parentType)
 		def accessor = Stub(PropertyAwareAccessor, { getPropertyName() >> propertyName })

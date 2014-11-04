@@ -17,8 +17,8 @@
 package de.danielbechler.diff.inclusion;
 
 import de.danielbechler.diff.access.PropertyAwareAccessor;
-import de.danielbechler.diff.introspection.ObjectDiffProperty;
 import de.danielbechler.diff.instantiation.TypeInfo;
+import de.danielbechler.diff.introspection.ObjectDiffProperty;
 import de.danielbechler.diff.node.DiffNode;
 
 import static de.danielbechler.diff.inclusion.Inclusion.DEFAULT;
@@ -31,6 +31,11 @@ import static java.util.Collections.emptyList;
  */
 class TypePropertyAnnotationInclusionResolver implements InclusionResolver
 {
+	public boolean enablesStrictIncludeMode()
+	{
+		return false;
+	}
+
 	public Inclusion getInclusion(final DiffNode node)
 	{
 		final ObjectDiffProperty propertyAnnotation = node.getPropertyAnnotation(ObjectDiffProperty.class);

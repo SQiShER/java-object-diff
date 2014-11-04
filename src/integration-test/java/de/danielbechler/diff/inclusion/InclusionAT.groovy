@@ -116,7 +116,7 @@ class InclusionAT extends Specification {
 	def 'excludes always win over includes'() {
 		given:
 		  objectDifferBuilder.inclusion()
-				  .exclude().node(NodePath.with('songs'))
+				  .exclude().node(NodePath.with('songs')).also()
 				  .include().node(NodePath.startBuildingFrom(NodePath.with('songs')).collectionItem('Happy').build())
 		when:
 		  def node = objectDifferBuilder.build().compare(working, base)
@@ -146,8 +146,10 @@ class InclusionAT extends Specification {
 
 	def 'including an element by path implicitly includes its parents'() {
 		given:
-		  objectDifferBuilder.inclusion()
-				  .include().node(NodePath.startBuilding().propertyName('songs').collectionItem(new Song(title: 'Happy')).build())
+		  def includedNodePath = NodePath.startBuilding()
+				  .propertyName('songs')
+				  .collectionItem(new Song(title: 'Happy'))
+		  objectDifferBuilder.inclusion().include().node(includedNodePath.build())
 		when:
 		  def node = objectDifferBuilder.build().compare(working, base)
 		then:

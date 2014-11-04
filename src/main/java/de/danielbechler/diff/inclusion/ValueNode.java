@@ -26,10 +26,8 @@ import java.util.Map;
 
 /**
  * INTERNAL CLASS. DON'T USE UNLESS YOU ARE READY TO DEAL WITH API CHANGES
- *
- * Created by Daniel Bechler.
  */
-public class ValueNode<V>
+class ValueNode<V>
 {
 	protected final Map<ElementSelector, ValueNode<V>> children = new HashMap<ElementSelector, ValueNode<V>>();
 	protected final ValueNode<V> parent;
@@ -66,15 +64,9 @@ public class ValueNode<V>
 			{
 				return getChild(elementSelectors.subList(1, elementSelectors.size()));
 			}
-			else
-			{
-				return this;
-			}
+			return this;
 		}
-		else
-		{
-			return parent.getNodeForPath(nodePath);
-		}
+		return parent.getNodeForPath(nodePath);
 	}
 
 	public ValueNode<V> getChild(final ElementSelector childSelector)
@@ -102,17 +94,15 @@ public class ValueNode<V>
 
 	private ValueNode<V> getChild(final List<ElementSelector> childSelectors)
 	{
-		assert !childSelectors.isEmpty();
-		if (childSelectors.contains(RootElementSelector.getInstance()))
-		{
-			throw new IllegalArgumentException("Child nodes can never match the RootElementSelector");
-		}
-		else if (childSelectors.size() == 1)
+		if (childSelectors.size() == 1)
 		{
 			return getChild(childSelectors.get(0));
 		}
-		final ValueNode<V> child = getChild(childSelectors.get(0));
-		return child.getChild(childSelectors.subList(1, childSelectors.size()));
+		else
+		{
+			final ValueNode<V> child = getChild(childSelectors.get(0));
+			return child.getChild(childSelectors.subList(1, childSelectors.size()));
+		}
 	}
 
 	public boolean hasChild(final ElementSelector childSelector)
@@ -147,14 +137,11 @@ public class ValueNode<V>
 		{
 			return true;
 		}
-		else
+		for (final ValueNode<V> child : children.values())
 		{
-			for (final ValueNode<V> child : children.values())
+			if (child.containsValue(value))
 			{
-				if (child.containsValue(value))
-				{
-					return true;
-				}
+				return true;
 			}
 		}
 		return false;

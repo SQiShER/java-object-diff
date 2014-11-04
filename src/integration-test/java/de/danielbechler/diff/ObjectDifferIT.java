@@ -299,13 +299,17 @@ public class ObjectDifferIT
 	@Test(groups = INTEGRATION)
 	public void testCompareWithIgnoredProperty()
 	{
-		final ObjectDifferBuilder objectDifferBuilder = ObjectDifferBuilder.startBuilding();
-		objectDifferBuilder.inclusion().exclude().node(NodePath.withRoot());
-		objectDiffer = objectDifferBuilder.build();
+		objectDiffer = ObjectDifferBuilder.startBuilding()
+				.inclusion()
+				.exclude().node(NodePath.with("value")).and()
+				.filtering().returnNodesWithState(DiffNode.State.IGNORED).and()
+				.build();
 
-		final DiffNode node = objectDiffer.compare("foo", "bar");
+		final ObjectWithIdentityAndValue working = new ObjectWithIdentityAndValue("1", "foo");
+		final ObjectWithIdentityAndValue base = new ObjectWithIdentityAndValue("1", "bar");
+		final DiffNode node = objectDiffer.compare(working, base);
 
-		NodeAssertions.assertThat(node).self().hasState(DiffNode.State.IGNORED);
+		NodeAssertions.assertThat(node).child("value").hasState(DiffNode.State.IGNORED);
 	}
 
 	@Test(groups = INTEGRATION)

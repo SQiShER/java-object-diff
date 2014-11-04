@@ -56,13 +56,13 @@ public interface InclusionConfigurer
 
 	public interface ToInclude
 	{
-		ToIncludeAndReturn category(String category);
+		ToInclude category(String category);
 
-		ToIncludeAndReturn type(Class<?> type);
+		ToInclude type(Class<?> type);
 
-		ToIncludeAndReturn node(NodePath nodePath);
+		ToInclude node(NodePath nodePath);
 
-		ToIncludeAndReturn propertyName(String propertyName);
+		ToInclude propertyName(String propertyName);
 
 		/**
 		 * Include one or more properties of the given type. This automatically causes all other properties of that
@@ -73,25 +73,22 @@ public interface InclusionConfigurer
 		 * @param propertyNames One or more property names to include.
 		 * @see de.danielbechler.diff.introspection.ObjectDiffProperty#inclusion()
 		 */
-		ToIncludeAndReturn propertyNameOfType(Class<?> type, String... propertyNames);
+		ToInclude propertyNameOfType(Class<?> type, String... propertyNames);
 
-		ToExclude exclude();
-	}
+		InclusionConfigurer also();
 
-	public interface ToIncludeAndReturn extends ToInclude
-	{
 		ObjectDifferBuilder and();
 	}
 
 	public interface ToExclude
 	{
-		ToExcludeAndReturn category(String category);
+		ToExclude category(String category);
 
-		ToExcludeAndReturn type(Class<?> type);
+		ToExclude type(Class<?> type);
 
-		ToExcludeAndReturn node(NodePath nodePath);
+		ToExclude node(NodePath nodePath);
 
-		ToExcludeAndReturn propertyName(String property);
+		ToExclude propertyName(String property);
 
 		/**
 		 * Excludes one or more properties of the given type.
@@ -101,13 +98,11 @@ public interface InclusionConfigurer
 		 * @see de.danielbechler.diff.introspection.ObjectDiffProperty#inclusion()
 		 * @see de.danielbechler.diff.introspection.ObjectDiffProperty#excluded()
 		 */
-		ToExcludeAndReturn propertyNameOfType(Class<?> type, String... propertyNames);
+		ToExclude propertyNameOfType(Class<?> type, String... propertyNames);
 
-		ToInclude include();
-	}
+		InclusionConfigurer also();
 
-	public interface ToExcludeAndReturn extends ToExclude
-	{
 		ObjectDifferBuilder and();
 	}
+
 }

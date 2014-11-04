@@ -17,216 +17,213 @@
 package de.danielbechler.diff.inclusion
 
 import de.danielbechler.diff.ObjectDifferBuilder
-import de.danielbechler.diff.access.PropertyAwareAccessor
-import de.danielbechler.diff.access.RootAccessor
 import de.danielbechler.diff.category.CategoryResolver
-import de.danielbechler.diff.introspection.ObjectDiffProperty
 import de.danielbechler.diff.node.DiffNode
 import de.danielbechler.diff.path.NodePath
-import de.danielbechler.diff.selector.BeanPropertyElementSelector
 import spock.lang.Specification
+import spock.lang.Subject
+import spock.lang.Unroll
 
-/**
- * @author Daniel Bechler
- */
+import static de.danielbechler.diff.inclusion.Inclusion.*
+
+@SuppressWarnings("GroovyAssignabilityCheck")
+@Subject(InclusionService)
 class InclusionServiceTest extends Specification {
-	def categoryResolver = Stub(CategoryResolver)
-	def accessor = Mock(PropertyAwareAccessor)
-	def builder = Stub(ObjectDifferBuilder)
-	def inclusionService = new InclusionService(categoryResolver, builder)
-	def NodePath nodePath = NodePath.with("foo")
-	def DiffNode rootNode
-	def DiffNode node
 
-	def "setup"() {
-		accessor.elementSelector >> new BeanPropertyElementSelector("foo")
-		rootNode = new DiffNode(RootAccessor.instance, null)
-		node = new DiffNode(rootNode, accessor, null)
-		categoryResolver.resolveCategories(_ as DiffNode) >> []
+	def categoryResolver = Stub CategoryResolver
+	def rootConfiguration = Stub ObjectDifferBuilder
+	def categoryInclusionResolver = Mock CategoryInclusionResolver
+	def typePropertyConfigInclusionResolver = Mock TypePropertyConfigInclusionResolver
+	def typeInclusionResolver = Mock TypeInclusionResolver
+	def nodePathInclusionResolver = Mock NodePathInclusionResolver
+	def propertyNameInclusionResolver = Mock PropertyNameInclusionResolver
+
+	InclusionService inclusionService = new InclusionService(categoryResolver, rootConfiguration) {
+		@Override
+		def CategoryInclusionResolver newCategoryInclusionResolver() {
+			return categoryInclusionResolver
+		}
+
+		@Override
+		def TypePropertyConfigInclusionResolver newTypePropertyConfigInclusionResolver() {
+			return typePropertyConfigInclusionResolver
+		}
+
+		@Override
+		def TypeInclusionResolver newTypeInclusionResolver() {
+			return typeInclusionResolver
+		}
+
+		@Override
+		def NodePathInclusionResolver newNodePathInclusionResolver() {
+			return nodePathInclusionResolver
+		}
+
+		@Override
+		def PropertyNameInclusionResolver newPropertyNameInclusionResolver() {
+			return propertyNameInclusionResolver
+		}
 	}
 
-	def "construction: should fail when no categoryResolver is given"() {
+	def 'construction: should fail if categoryResolver is null'() {
 		when:
-		  new InclusionService(null, builder)
-
+		  new InclusionService(null, rootConfiguration);
 		then:
 		  thrown(IllegalArgumentException)
 	}
 
-	def "construction: should fail when no root configuration is given"() {
+	def 'construction: should fail if objectDifferBuilder is null'() {
 		when:
-		  new InclusionService(categoryResolver, null)
-
+		  new InclusionService(categoryResolver, null);
 		then:
 		  thrown(IllegalArgumentException)
 	}
 
-	def "isIgnored: should return 'true' if node is marked as ignored"() {
+	def 'isIgnored: should never return true for the root node'() {
 		given:
-		  accessor.getReadMethodAnnotation(ObjectDiffProperty) >> annotation
-
-		expect:
-		  inclusionService.isIgnored(node)
-
-		where:
-		  annotation << [
-				  Stub(ObjectDiffProperty, { excluded() >> true }),
-				  Stub(ObjectDiffProperty, { inclusion() >> Inclusion.EXCLUDED })
-		  ]
-	}
-
-	def "isIgnored: should return 'false' if no include and exclude rules are defined"() {
-		expect:
-		  inclusionService.isIgnored(node) == false
-	}
-
-	def "isIgnored: should return 'true' if node doesn't match defined inclusion rules"() {
-		setup:
-		  inclusionService.include().category("unknown-category")
-
-		expect:
-		  inclusionService.isIgnored(node) == true
-	}
-
-	def "isIgnored: should return 'false' if node doesn't match defined inclusion rules but is root node"() {
-		given:
-		  inclusionService.include().category("unknown-category")
-
-		expect:
-		  !inclusionService.isIgnored(rootNode)
-	}
-
-	def "isIgnored: should return 'false' if node is included via path"() {
-		setup:
-		  inclusionService.include().node(nodePath)
-
-		expect:
-		  inclusionService.isIgnored(node) == false
-	}
-
-	def "isIgnored: should return 'false' if node is included via category"() {
-		given:
-		  categoryResolver.resolveCategories(node) >> ["test-category"]
-
-		when:
-		  def ignored = inclusionService.isIgnored(node)
-
-		then:
-		  inclusionService.include().category("test-category")
-
+		  def rootNode = new DiffNode()
 		and:
-		  ignored == false
-	}
-
-	def "isIgnored: should return 'false' if node is included via type"() {
-		setup:
-		  node.setType(URL)
-		  inclusionService.include().type(URL)
-
-		expect:
-		  inclusionService.isIgnored(node) == false
-	}
-
-	def "isIgnored: should return 'false' if node doesn't match exclusion rules"() {
-		setup:
-		  inclusionService.exclude().category("unknown-category")
-
-		expect:
-		  inclusionService.isIgnored(node) == false
-	}
-
-	def "isIgnored: should return 'true' if node is excluded via annotation"() {
-		given:
-		  accessor.getReadMethodAnnotation(ObjectDiffProperty) >> annotation
-
-		expect:
-		  inclusionService.isIgnored(node) == true
-
-		where:
-		  annotation << [
-				  Stub(ObjectDiffProperty, { excluded() >> true }),
-				  Stub(ObjectDiffProperty, { inclusion() >> Inclusion.EXCLUDED })
-		  ]
-	}
-
-
-	def "isIgnored: should return 'true' if node is excluded via path"() {
-		setup:
-		  inclusionService.exclude().node(nodePath)
-
-		expect:
-		  inclusionService.isIgnored(node) == true
-	}
-
-	def "isIgnored: should return 'true' if node is excluded via type"() {
-		setup:
-		  node.setType(URL)
-		  inclusionService.exclude().type(URL)
-
-		expect:
-		  inclusionService.isIgnored(node)
-	}
-
-	def "isIgnored: should return 'true' if node is excluded via category"() {
-		given:
-		  inclusionService.exclude().category("test-category")
-
-		when:
-		  def ignored = inclusionService.isIgnored(node)
-
-		then:
-		  categoryResolver.resolveCategories(node) >> ["test-category"]
-
-		and:
-		  ignored == true
-	}
-
-	def "isIgnored: should return 'true' when node is excluded via property name"() {
-		given:
-		  def propertyName = "foo"
-		  def propertyAwareAccessor = mockPropertyAwareAccessor(propertyName)
-		  def node = new DiffNode(propertyAwareAccessor, null)
-
-		and:
-		  inclusionService.exclude().propertyName(propertyName)
-
-		expect:
-		  inclusionService.isIgnored(node) == true
-	}
-
-	def "isIgnored: should return 'false' when node is included via property name"() {
-		given:
-		  def propertyName = "foo"
-		  def propertyAwareAccessor = mockPropertyAwareAccessor(propertyName)
-		  def node = new DiffNode(propertyAwareAccessor, null)
-
-		and:
-		  inclusionService.include().propertyName(propertyName)
-
-		expect:
-		  inclusionService.isIgnored(node) == false
-	}
-
-	def mockPropertyAwareAccessor(String name) {
-		def propertyAwareAccessor = Mock(PropertyAwareAccessor)
-		propertyAwareAccessor.elementSelector >> new BeanPropertyElementSelector(name)
-		propertyAwareAccessor.propertyName >> name
-		propertyAwareAccessor
-	}
-
-	def "isIgnored: should return 'false' for children of included nodes"() {
-		given:
 		  inclusionService.include().node(NodePath.withRoot())
-
 		expect:
-		  inclusionService.isIgnored(node) == false
+		  inclusionService.isIgnored(rootNode) == false
 	}
 
-	def "isIgnored: should return 'true' for children of excluded nodes"() {
+	@Unroll
+	def 'isIgnored: should return #expectIgnored for nodes with #inclusion inclusion if strict include mode is #strictIncludeModeState'() {
 		given:
-		  inclusionService.exclude().node(NodePath.withRoot())
-
+		  inclusionService.resolveUsing(Stub(InclusionResolver, {
+			  getInclusion(_) >> inclusion
+			  enablesStrictIncludeMode() >> strictMode
+		  }))
 		expect:
-		  inclusionService.isIgnored(node) == true
+		  inclusionService.isIgnored(Mock(DiffNode)) == expectIgnored
+		where:
+		  inclusion | strictMode || expectIgnored
+		  null      | true       || true
+		  DEFAULT   | true       || true
+		  INCLUDED  | true       || false
+		  EXCLUDED  | true       || true
+		  null      | false      || false
+		  DEFAULT   | false      || false
+		  INCLUDED  | false      || false
+		  EXCLUDED  | false      || true
+
+		  strictIncludeModeState = strictMode ? 'enabled' : 'disabled'
+		  ignoreState = expectIgnored ? 'ignore' : 'not ignore'
+	}
+
+	@Unroll
+	def '#name: #inclusionText creates and activates (exactly one) #resolverType'() {
+		expect:
+		  inclusionService.inclusionResolvers.findAll { resolverType.isInstance(it) }.size() == 0
+		when:
+		  stimulus.call(inclusionService)
+		  stimulus.call(inclusionService)
+		then:
+		  inclusionService.inclusionResolvers.findAll { resolverType.isInstance(it) }.size() == 1
+		where:
+		  name                 | inclusion | resolverType                        | stimulus
+		  'propertyName'       | INCLUDED  | PropertyNameInclusionResolver       | { InclusionService service -> service.include().propertyName('foo') }
+		  'propertyName'       | EXCLUDED  | PropertyNameInclusionResolver       | { InclusionService service -> service.exclude().propertyName('foo') }
+		  'propertyNameOfType' | INCLUDED  | TypePropertyConfigInclusionResolver | { InclusionService service -> service.include().propertyNameOfType(String, 'foo') }
+		  'propertyNameOfType' | EXCLUDED  | TypePropertyConfigInclusionResolver | { InclusionService service -> service.exclude().propertyNameOfType(String, 'foo') }
+		  'category'           | INCLUDED  | CategoryInclusionResolver           | { InclusionService service -> service.include().category('foo') }
+		  'category'           | EXCLUDED  | CategoryInclusionResolver           | { InclusionService service -> service.exclude().category('foo') }
+		  'node'               | INCLUDED  | NodePathInclusionResolver           | { InclusionService service -> service.include().node(NodePath.with('foo')) }
+		  'node'               | EXCLUDED  | NodePathInclusionResolver           | { InclusionService service -> service.exclude().node(NodePath.with('foo')) }
+		  'type'               | INCLUDED  | TypeInclusionResolver               | { InclusionService service -> service.include().type(Object) }
+		  'type'               | EXCLUDED  | TypeInclusionResolver               | { InclusionService service -> service.exclude().type(Object) }
+		  inclusionText = inclusion == INCLUDED ? 'including' : 'excluding'
+	}
+
+	@Unroll
+	def 'type: #inclusionText delegates to TypeInclusionResolver'() {
+		when:
+		  performInclusion.call(inclusionService)
+		then:
+		  1 * typeInclusionResolver.setInclusion(type, inclusion)
+		where:
+		  inclusion | type   | performInclusion
+		  INCLUDED  | String | { InclusionService service -> service.include().type(String) }
+		  EXCLUDED  | Date   | { InclusionService service -> service.exclude().type(Date) }
+		  inclusionText = inclusion == INCLUDED ? 'including' : 'excluding'
+	}
+
+	@Unroll
+	def 'category: #inclusionText delegates to CategoryInclusionResolver'() {
+		given:
+		  def expectedCategory = 'some-category'
+		when:
+		  stimulus.call(inclusionService, expectedCategory)
+		then:
+		  1 * categoryInclusionResolver.setInclusion(expectedCategory, inclusion)
+		where:
+		  inclusion | stimulus
+		  INCLUDED  | { InclusionService service, String category -> service.include().category(category) }
+		  EXCLUDED  | { InclusionService service, String category -> service.exclude().category(category) }
+
+		  inclusionText = inclusion == INCLUDED ? 'including' : 'excluding'
+	}
+
+	@Unroll
+	def 'propertyName: #inclusionText delegates to PropertyNameInclusionResolver'() {
+		when:
+		  performInclusion.call(inclusionService, 'some-property-name')
+		then:
+		  1 * propertyNameInclusionResolver.setInclusion('some-property-name', inclusion)
+		where:
+		  inclusion | performInclusion
+		  INCLUDED  | { InclusionService service, String name -> service.include().propertyName(name) }
+		  EXCLUDED  | { InclusionService service, String name -> service.exclude().propertyName(name) }
+
+		  inclusionText = inclusion == INCLUDED ? 'including' : 'excluding'
+	}
+
+	@Unroll
+	def 'node: #inclusionText delegates to NodePathInclusionResolver'() {
+		def nodePath = NodePath.with('foo', 'bar')
+		when:
+		  performInclusion.call(inclusionService, nodePath)
+		then:
+		  1 * nodePathInclusionResolver.setInclusion(nodePath, inclusion)
+		where:
+		  inclusion | performInclusion
+		  INCLUDED  | { InclusionService service, NodePath path -> service.include().node(path) }
+		  EXCLUDED  | { InclusionService service, NodePath path -> service.exclude().node(path) }
+
+		  inclusionText = inclusion == INCLUDED ? 'including' : 'excluding'
+	}
+
+	@Unroll
+	def 'propertyNameOfType: #inclusionMethodName delegates to TypePropertyConfigInclusionResolver'() {
+		when:
+		  inclusionService.invokeMethod(inclusionMethodName, null).propertyNameOfType(String, 'foo')
+		then:
+		  1 * typePropertyConfigInclusionResolver.setInclusion(String, 'foo', inclusion)
+		where:
+		  inclusion << [INCLUDED, EXCLUDED]
+		  inclusionMethodName = inclusion == INCLUDED ? 'include' : 'exclude'
+	}
+
+	def 'construction order of inclusion resolvers should be reflected by the collection'() {
+		given:
+		  inclusionService = new InclusionService(categoryResolver, rootConfiguration)
+		when:
+		  inclusionService
+				  .include().propertyNameOfType(String, 'foo').also()
+				  .include().propertyName('foo').also()
+				  .include().type(Date).also()
+				  .include().category('foo').also()
+				  .include().node(NodePath.with('foo'))
+		then:
+		  inclusionService.with {
+			  inclusionResolvers.size() == 6
+			  inclusionResolvers[0] instanceof TypePropertyAnnotationInclusionResolver
+			  inclusionResolvers[1] instanceof TypePropertyConfigInclusionResolver
+			  inclusionResolvers[2] instanceof PropertyNameInclusionResolver
+			  inclusionResolvers[3] instanceof TypeInclusionResolver
+			  inclusionResolvers[4] instanceof CategoryInclusionResolver
+			  inclusionResolvers[5] instanceof NodePathInclusionResolver
+		  }
 	}
 }

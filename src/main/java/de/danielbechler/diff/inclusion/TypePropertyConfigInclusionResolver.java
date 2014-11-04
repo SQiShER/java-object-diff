@@ -54,6 +54,11 @@ class TypePropertyConfigInclusionResolver implements InclusionResolver
 		return DEFAULT;
 	}
 
+	public boolean enablesStrictIncludeMode()
+	{
+		return false;
+	}
+
 	private static boolean isQualified(final DiffNode node)
 	{
 		if (node.isPropertyAware())

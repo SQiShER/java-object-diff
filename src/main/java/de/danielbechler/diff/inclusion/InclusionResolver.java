@@ -29,18 +29,6 @@ import de.danielbechler.diff.node.DiffNode;
  */
 public interface InclusionResolver
 {
-
-// 	TODO Integrate this!
-// 		 Add this to the interface in order to support inclusions that implicitly exclude
-// 		 properties that have not been explicitly included.
-//
-//	/**
-//	 * When this method returns <code>true</code>, it causes the inclusion service to exclude all nodes that are not
-//	 * explicitly included via {@link de.danielbechler.diff.inclusion.Inclusion#INCLUDED}. Otherwise nodes with {@link
-//	 * de.danielbechler.diff.inclusion.Inclusion#DEFAULT} will also be included.
-//	 */
-//	boolean hasExclusiveInclude();
-
 	/**
 	 * Determines whether a given {@link de.danielbechler.diff.node.DiffNode} should be included into the comparison
 	 * process.
@@ -55,8 +43,13 @@ public interface InclusionResolver
 	 * inclusion, {@link de.danielbechler.diff.inclusion.Inclusion#EXCLUDED} to inidicate an explicit exclusion or
 	 * {@link de.danielbechler.diff.inclusion.Inclusion#DEFAULT} in case this resolver doesn't want to influence the
 	 * decision. This method should never return <code>null</code>.
-	 * @throws java.lang.NullPointerException if the given {@link de.danielbechler.diff.node.DiffNode} is
-	 *                                        <code>null</code>.
 	 */
 	Inclusion getInclusion(DiffNode node);
+
+	/**
+	 * When this method returns <code>true</code>, it causes the inclusion service to exclude all nodes that are not
+	 * explicitly included via {@link de.danielbechler.diff.inclusion.Inclusion#INCLUDED}. Otherwise nodes with {@link
+	 * de.danielbechler.diff.inclusion.Inclusion#DEFAULT} will also be included.
+	 */
+	boolean enablesStrictIncludeMode();
 }

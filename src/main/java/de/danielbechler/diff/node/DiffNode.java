@@ -174,7 +174,7 @@ public class DiffNode
 	/**
 	 * @return The absolute property path from the object root up to this node.
 	 */
-	public final NodePath getPath()
+	public NodePath getPath()
 	{
 		if (parentNode != null)
 		{

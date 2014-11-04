@@ -31,6 +31,11 @@ class PropertyInclusionViaInclusionResolverAT extends Specification {
 		given: "custom inclusion resolver that excludes all properties named 'foo'"
 		  def inclusionResolver = new InclusionResolver() {
 			  @Override
+			  boolean enablesStrictIncludeMode() {
+				  return false
+			  }
+
+			  @Override
 			  Inclusion getInclusion(DiffNode node) {
 				  if (node.propertyAware && node.propertyName == 'foo') {
 					  return Inclusion.EXCLUDED
