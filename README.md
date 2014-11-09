@@ -25,14 +25,14 @@
 <dependency>
     <groupId>de.danielbechler</groupId>
     <artifactId>java-object-diff</artifactId>
-    <version>0.90</version>
+    <version>0.91</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```groovy
-compile 'de.danielbechler:java-object-diff:0.90'
+compile 'de.danielbechler:java-object-diff:0.91'
 ```
 
 ## Getting Started
