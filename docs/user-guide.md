@@ -1,3 +1,7 @@
+# User Guide
+
+This guide will give you a brief overview over the most important parts of the public API.
+
 ## ObjectDifferBuilder
 
 The `ObjectDifferBuilder` is the entry point of every diffing operation. It acts as a factory to get hold of an actual `ObjectDiffer` instance and exposes a powerful configuration API in order to customize its behavior to suit your needs.
