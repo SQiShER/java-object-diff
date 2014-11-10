@@ -1,5 +1,0 @@
-`java-object-diff` not only makes it easy to find differences between objects, it also allows you to merge them, by providing a simple, yet effective assignment mechanism. Every node in the object graph returned by the `ObjectDiffer` provides setter methods, which can be used to change the state of an underlying object instance, as long as it is of the same type as the compared objects.
-
-Since the requirements to a merging mechanism can vary strongly, this library doesn't try to implement every possible way and rather strives to make it as easy as possible to implement your own one. However, as a starting point, here is a simple [Example Merger](https://github.com/SQiShER/java-object-diff/blob/master/src/main/java/de/danielbechler/diff/ObjectMerger.java)  to show you how easily it can be done.
-
-I hope the code is self-explanatory. If not, please let me know.
