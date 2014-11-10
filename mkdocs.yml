@@ -4,5 +4,5 @@ pages:
 - ['index.md', 'Home']
 - ['maven.md', 'Using with Maven']
 - ['getting-started.md', 'Getting Started']
-- ['user-guide.md', 'User Guide']
-- ['merging.md', 'Merge Example']
+- ['user-guide.md', 'User Guide', 'User Guide']
+- ['merging.md', 'Merging']
