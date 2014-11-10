@@ -1,0 +1,10 @@
+site_name: java-object-diff Documentation
+repo_url: https://github.com/SQiShER/java-object-diff
+include_search: true
+pages:
+- ['index.md', 'Introduction']
+- ['maven.md', 'Using with Maven']
+- ['getting-started.md', 'User Guide', 'Getting Started']
+- ['anatomy.md', 'User Guide', 'Anatomy of java-object-diff']
+- ['nodes.md', 'User Guide', 'This is the DiffNode']
+- ['merging.md', 'User Guide', 'Merging']
