@@ -15,12 +15,14 @@
 * Works with almost any kind of object (Beans, Lists, Maps, Primitives, Strings, etc.)
 * Properties can be marked with category tags to easily filter for specific subsets
 * No configuration needed (but possible)
-* No runtime dependencies except for [SLF4J](http://www.slf4j.org/)
+* No runtime dependencies except for [slf4j](http://www.slf4j.org/)
 * When needed, it leaves it up to you, whether you want to use declarative configuration or annotations
 
-## Quickstart
+## Getting Started
 
-### Maven
+To learn how to use **Java Object Diff** have a look at the [Getting Started Guide](http://java-object-diff.readthedocs.org/en/latest/getting-started/).
+
+### Using with Maven
 
 ```xml
 <dependency>
@@ -30,15 +32,15 @@
 </dependency>
 ```
 
-### Gradle
+### Using with Gradle
 
 ```groovy
 compile 'de.danielbechler:java-object-diff:0.91'
 ```
 
-## Getting Started
+## Documentation
 
-To learn how to use **Java Object Diff**, please have a look at the [Starter Guide](https://github.com/SQiShER/java-object-diff/wiki/Getting-Started).
+The documentation can be found over at [ReadTheDocs](http://java-object-diff.readthedocs.org/en/latest/).
 
 ## Why would you need this?
 
