@@ -5,6 +5,7 @@
 [![Build Status](https://travis-ci.org/SQiShER/java-object-diff.svg?branch=master)](https://travis-ci.org/SQiShER/java-object-diff) 
 [![Coverage Status](https://coveralls.io/repos/SQiShER/java-object-diff/badge.png?branch=master)](https://coveralls.io/r/SQiShER/java-object-diff?branch=master)
 [![Download](https://api.bintray.com/packages/sqisher/maven/java-object-diff/images/download.svg)](https://bintray.com/sqisher/maven/java-object-diff/_latestVersion)
+[![Documentation Status](https://readthedocs.org/projects/java-object-diff/badge/?version=latest)](https://readthedocs.org/projects/java-object-diff/?badge=latest)
 
 ## Features
 
