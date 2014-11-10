@@ -1,14 +1,12 @@
-1. In order to use this framework, all you need to do is to add this dependency to your POM:
+In order to use java-object-diff with Maven, all you need to do is to add this dependency to your POM:
 
-  ```xml
-<dependency>
-        <groupId>de.danielbechler</groupId>
-        <artifactId>java-object-diff</artifactId>
-        <version>0.91</version>
-</dependency>
-```
+	<dependency>
+		<groupId>de.danielbechler</groupId>
+		<artifactId>java-object-diff</artifactId>
+		<version>0.91</version>
+	</dependency>
 
-2. That's it! Now you're ready to go!
+That's it! Now you're ready to go!
 
 ## Dependency not found?
 
