@@ -2,17 +2,6 @@
 
 `java-object-diff` is a simple, yet powerful library to find differences between Java objects. It takes two objects and generates a tree structure that represents any differences between the objects and their children. This tree can then be traversed to extract more information or apply changes to the underlying data structures.
 
-## Features
-
-* Generates an easily traversable tree structure to analyze and modify with surgical precision
-* Detects whether a value or item has been added, removed or changed and shows the changes
-* Allows to manipulate the underlying objects directly through the generated tree nodes
-* Works with almost any kind of object (Beans, Lists, Maps, Primitives, Strings, etc.)
-* Properties can be marked with category tags to easily filter for specific subsets
-* No configuration needed (but possible)
-* No runtime dependencies except for [SLF4J](http://www.slf4j.org/)
-* When needed, it leaves it up to you, whether you want to use declarative configuration or annotations
-
 ## Why would you need this?
 
 Sometimes you need to figure out, how one version of an object differs from another one. One of the simplest solutions that'll cross your mind is most certainly to use reflection to scan the object for fields or getters and use them to compare the values of the different object instances. In many cases this is a perfectly valid strategy and the way to go. After all, we want to keep things simple, don't we?
@@ -30,19 +19,3 @@ Node root = ObjectDifferBuilder.buildDefault().compare(workingObject, baseObject
 ```
 
 This generates a tree structure of the given object type and lets you traverse its nodes via visitors. Each node represents  one property (or collection item) of the underlying object and tells you exactly if and how the value differs from the base version. It also  provides accessors to read, write and remove the value from or to any given instance. This way, all you need to worry about is **how to treat** changes and **not how to find** them.
-
-This library has been battle-tested in a rather big project of mine, where I use it to generate **activity streams**, resolve database **update conflics**, display **change logs** and limit the scope of entity updates to only a **subset of properties**, based on the context or user permissions. It didn't let me down so far and I hope that it can help you too!
-
-## Use Cases
-
-**Java Object Diff** is currently used (but not limited) to...
-
-* Generate Facebook-like activity streams
-* Visualize the differences between object versions
-* Automatically resolve conflicts on concurrent database updates
-* Detect and persist only properties that were actually changed
-
-## Contribute
-
-You discovered a bug or have an idea for a new feature? Great, why don't you send me a [Pull 
-Request (PR)](https://help.github.com/articles/using-pull-requests) so everyone can benefit from it? To help you getting started, [here](https://github.com/SQiShER/java-object-diff/blob/master/CONTRIBUTING.md) is a brief guide with everyting you need to know to get involved!
