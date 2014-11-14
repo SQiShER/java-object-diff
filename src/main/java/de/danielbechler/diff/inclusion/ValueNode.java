@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.danielbechler.diff.node;
+package de.danielbechler.diff.inclusion;
 
 import de.danielbechler.diff.path.NodePath;
 import de.danielbechler.diff.selector.ElementSelector;
