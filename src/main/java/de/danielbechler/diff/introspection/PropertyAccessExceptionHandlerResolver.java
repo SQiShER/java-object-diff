@@ -16,15 +16,11 @@
 
 package de.danielbechler.diff.introspection;
 
-import de.danielbechler.diff.node.DiffNode;
-
-public interface PropertyAccessExceptionHandler
+public interface PropertyAccessExceptionHandlerResolver
 {
 	/**
-	 * Will be called whenever the value of a property could not be retrieved due to an underlying exception.
-	 *
-	 * @param exception This exception object contains more details about the property.
-	 * @param node      The {@link DiffNode} for which the exception occured.
+	 * @param parentType   The type of the object to which the property belongs.
+	 * @param propertyName The name of the property.
 	 */
-	void onPropertyReadException(PropertyReadException exception, DiffNode node);
+	PropertyAccessExceptionHandler resolvePropertyAccessExceptionHandler(Class<?> parentType, String propertyName);
 }

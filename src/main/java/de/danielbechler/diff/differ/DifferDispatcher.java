@@ -18,11 +18,15 @@ package de.danielbechler.diff.differ;
 
 import de.danielbechler.diff.access.Accessor;
 import de.danielbechler.diff.access.Instances;
+import de.danielbechler.diff.access.PropertyAwareAccessor;
+import de.danielbechler.diff.introspection.PropertyReadException;
 import de.danielbechler.diff.circular.CircularReferenceDetector;
 import de.danielbechler.diff.circular.CircularReferenceDetectorFactory;
 import de.danielbechler.diff.circular.CircularReferenceExceptionHandler;
 import de.danielbechler.diff.filtering.IsReturnableResolver;
 import de.danielbechler.diff.inclusion.IsIgnoredResolver;
+import de.danielbechler.diff.introspection.PropertyAccessExceptionHandler;
+import de.danielbechler.diff.introspection.PropertyAccessExceptionHandlerResolver;
 import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.diff.path.NodePath;
 import de.danielbechler.diff.selector.ElementSelector;
@@ -43,6 +47,7 @@ public class DifferDispatcher
 	private final CircularReferenceExceptionHandler circularReferenceExceptionHandler;
 	private final IsIgnoredResolver isIgnoredResolver;
 	private final IsReturnableResolver isReturnableResolver;
+	private final PropertyAccessExceptionHandlerResolver propertyAccessExceptionHandlerResolver;
 	CircularReferenceDetector workingCircularReferenceDetector;
 	CircularReferenceDetector baseCircularReferenceDetector;
 
@@ -50,7 +55,8 @@ public class DifferDispatcher
 							final CircularReferenceDetectorFactory circularReferenceDetectorFactory,
 							final CircularReferenceExceptionHandler circularReferenceExceptionHandler,
 							final IsIgnoredResolver ignoredResolver,
-							final IsReturnableResolver returnableResolver)
+							final IsReturnableResolver returnableResolver,
+							final PropertyAccessExceptionHandlerResolver propertyAccessExceptionHandlerResolver)
 	{
 		Assert.notNull(differProvider, "differFactory");
 		this.differProvider = differProvider;
@@ -61,6 +67,7 @@ public class DifferDispatcher
 		this.circularReferenceDetectorFactory = circularReferenceDetectorFactory;
 		this.circularReferenceExceptionHandler = circularReferenceExceptionHandler;
 		this.isReturnableResolver = returnableResolver;
+		this.propertyAccessExceptionHandlerResolver = propertyAccessExceptionHandlerResolver;
 
 		resetInstanceMemory();
 	}
@@ -102,7 +109,33 @@ public class DifferDispatcher
 			return node;
 		}
 
-		final Instances accessedInstances = parentInstances.access(accessor);
+		final Instances accessedInstances;
+		if (accessor instanceof PropertyAwareAccessor)
+		{
+			final PropertyAwareAccessor propertyAwareAccessor = (PropertyAwareAccessor) accessor;
+			try
+			{
+				accessedInstances = parentInstances.access(accessor);
+			}
+			catch (final PropertyReadException e)
+			{
+				node.setState(DiffNode.State.INACCESSIBLE);
+				final Class<?> parentType = parentInstances.getType();
+				final String propertyName = propertyAwareAccessor.getPropertyName();
+				final PropertyAccessExceptionHandler exceptionHandler = propertyAccessExceptionHandlerResolver
+						.resolvePropertyAccessExceptionHandler(parentType, propertyName);
+				if (exceptionHandler != null)
+				{
+					exceptionHandler.onPropertyReadException(e, node);
+				}
+				return node;
+			}
+		}
+		else
+		{
+			accessedInstances = parentInstances.access(accessor);
+		}
+
 		if (accessedInstances.areNull())
 		{
 			return new DiffNode(parentNode, accessedInstances.getSourceAccessor(), accessedInstances.getType());

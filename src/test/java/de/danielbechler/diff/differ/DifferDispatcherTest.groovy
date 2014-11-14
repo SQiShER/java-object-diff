@@ -16,14 +16,15 @@
 
 package de.danielbechler.diff.differ
 
-import de.danielbechler.diff.access.Accessor
-import de.danielbechler.diff.access.Instances
-import de.danielbechler.diff.access.RootAccessor
+import de.danielbechler.diff.access.*
 import de.danielbechler.diff.circular.CircularReferenceDetector
 import de.danielbechler.diff.circular.CircularReferenceDetectorFactory
 import de.danielbechler.diff.circular.CircularReferenceExceptionHandler
 import de.danielbechler.diff.filtering.IsReturnableResolver
 import de.danielbechler.diff.inclusion.IsIgnoredResolver
+import de.danielbechler.diff.introspection.PropertyAccessExceptionHandler
+import de.danielbechler.diff.introspection.PropertyAccessExceptionHandlerResolver
+import de.danielbechler.diff.introspection.PropertyReadException
 import de.danielbechler.diff.node.DiffNode
 import spock.lang.Ignore
 import spock.lang.Specification
@@ -35,7 +36,7 @@ import static de.danielbechler.diff.circular.CircularReferenceDetector.Reference
  * Created by Daniel Bechler.
  */
 @Subject(DifferDispatcher)
-@Ignore("Man, this class is a pain in the ass to test. Need to find a better way to do it.")
+//@Ignore("Man, this class is a pain in the ass to test. Need to find a better way to do it.")
 class DifferDispatcherTest extends Specification {
 
 	def differ = Stub Differ
@@ -52,13 +53,16 @@ class DifferDispatcherTest extends Specification {
 	def isReturnableResolver = Stub IsReturnableResolver, {
 		isReturnable(_ as DiffNode) >> true
 	}
+	def propertyAccessExceptionHandlerResolver = Mock PropertyAccessExceptionHandlerResolver
 	def differDispatcher = new DifferDispatcher(
 			differProvider,
 			circularReferenceDetectorFactory,
 			circularReferenceExceptionHandler,
 			isIgnoredResolver,
-			isReturnableResolver)
+			isReturnableResolver,
+			propertyAccessExceptionHandlerResolver)
 
+	@Ignore
 	def "when a circular reference is detected"() {
 		given:
 		  def accessor = Stub Accessor
@@ -79,5 +83,36 @@ class DifferDispatcherTest extends Specification {
 		then:
 		  differDispatcher.workingCircularReferenceDetector.size() == 1
 		  differDispatcher.baseCircularReferenceDetector.size() == 1
+	}
+
+	def 'should delegate property read exception to exception handler'() {
+		def propertyExceptionHandler = Mock PropertyAccessExceptionHandler
+		def propertyAccessor = Mock(PropertyAwareAccessor) {
+			getPropertyName() >> 'foo'
+		}
+		def propertyAccessException = new PropertyReadException('foo', Date, new RuntimeException())
+		def instances = Mock Instances, {
+			access(propertyAccessor) >> { throw propertyAccessException }
+			getType() >> Date
+		}
+		when:
+		  differDispatcher.dispatch(DiffNode.ROOT, instances, propertyAccessor)
+		then:
+		  1 * propertyAccessExceptionHandlerResolver.resolvePropertyAccessExceptionHandler(Date, 'foo') >> propertyExceptionHandler
+		and:
+		  1 * propertyExceptionHandler.onPropertyReadException(propertyAccessException, _ as DiffNode)
+	}
+
+	def 'should change node state to INACESSIBLE when reading a property value caused an exception'() {
+		def propertyAccessor = Mock(PropertyAwareAccessor)
+		def instances = Mock Instances, {
+			access(propertyAccessor) >> {
+				throw new PropertyReadException('foo', Date, new RuntimeException())
+			}
+		}
+		when:
+		  def node = differDispatcher.dispatch(DiffNode.ROOT, instances, propertyAccessor)
+		then:
+		  node.state == DiffNode.State.INACCESSIBLE
 	}
 }

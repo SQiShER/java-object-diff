@@ -17,20 +17,10 @@
 package de.danielbechler.diff.introspection;
 
 import de.danielbechler.diff.node.DiffNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DefaultPropertyAccessExceptionHandler implements PropertyAccessExceptionHandler
 {
-	Logger logger = LoggerFactory.getLogger(DefaultPropertyAccessExceptionHandler.class);
-
-	public DiffNode onPropertyWriteException(final PropertyWriteException exception, final DiffNode node)
-	{
-		logger.info(exception.getMessage());
-		throw exception;
-	}
-
-	public DiffNode onPropertyReadException(final PropertyReadException exception, final DiffNode node)
+	public void onPropertyReadException(final PropertyReadException exception, final DiffNode node)
 	{
 		throw exception;
 	}

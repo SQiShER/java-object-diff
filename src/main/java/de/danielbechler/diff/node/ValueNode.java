@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.danielbechler.diff.inclusion;
+package de.danielbechler.diff.node;
 
 import de.danielbechler.diff.path.NodePath;
 import de.danielbechler.diff.selector.ElementSelector;
@@ -27,7 +27,7 @@ import java.util.Map;
 /**
  * INTERNAL CLASS. DON'T USE UNLESS YOU ARE READY TO DEAL WITH API CHANGES
  */
-class ValueNode<V>
+public class ValueNode<V>
 {
 	protected final Map<ElementSelector, ValueNode<V>> children = new HashMap<ElementSelector, ValueNode<V>>();
 	protected final ValueNode<V> parent;

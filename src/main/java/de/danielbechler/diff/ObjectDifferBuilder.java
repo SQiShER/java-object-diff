@@ -80,7 +80,8 @@ public class ObjectDifferBuilder
 				circularReferenceService,
 				circularReferenceService,
 				inclusionService,
-				returnableNodeService);
+				returnableNodeService,
+				introspectionService);
 		differProvider.push(new BeanDiffer(differDispatcher, introspectionService, returnableNodeService, comparisonService, introspectionService));
 		differProvider.push(new CollectionDiffer(differDispatcher, comparisonService));
 		differProvider.push(new MapDiffer(differDispatcher, comparisonService));

@@ -50,6 +50,8 @@ public interface IntrospectionConfigurer
 
 	IntrospectionConfigurer setDefaultIntrospector(Introspector introspector);
 
+	IntrospectionConfigurer handlePropertyAccessExceptionsUsing(PropertyAccessExceptionHandler exceptionHandler);
+
 	Of ofType(Class<?> type);
 
 	Of ofNode(NodePath path);

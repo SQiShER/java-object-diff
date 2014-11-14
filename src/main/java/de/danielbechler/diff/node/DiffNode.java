@@ -591,7 +591,7 @@ public class DiffNode
 		{
 			target = parentNode.canonicalGet(target);
 		}
-		return accessor.get(target);
+		return get(target);
 	}
 
 	public void canonicalSet(Object target, final Object value)
@@ -606,7 +606,7 @@ public class DiffNode
 			}
 			target = parent;
 		}
-		accessor.set(target, value);
+		set(target, value);
 	}
 
 	private Object newInstance()
@@ -624,7 +624,7 @@ public class DiffNode
 		{
 			target = parentNode.canonicalGet(target);
 		}
-		accessor.unset(target);
+		unset(target);
 	}
 
 	@Override
@@ -717,35 +717,25 @@ public class DiffNode
 	 */
 	public enum State
 	{
-		/**
-		 * The value has been added to the working object.
-		 */
-		ADDED,
+		ADDED("The value has been added to the working object"),
+		CHANGED("The value exists but differs between the base and working object"),
+		REMOVED("The value has been removed from the working object"),
+		UNTOUCHED("The value is identical in the working and base object"),
+		CIRCULAR("Special state to mark circular references"),
+		IGNORED("The value has not been looked at and has been ignored"),
+		INACCESSIBLE("When a comparison was not possible because the underlying value was not accessible");
 
-		/**
-		 * The value has been changed compared to the base object.
-		 */
-		CHANGED,
+		private final String reason;
 
-		/**
-		 * The value has been removed from the working object.
-		 */
-		REMOVED,
+		private State(final String reason)
+		{
+			this.reason = reason;
+		}
 
-		/**
-		 * The value is identical between working and base
-		 */
-		UNTOUCHED,
-
-		/**
-		 * Special state to mark circular references
-		 */
-		CIRCULAR,
-
-		/**
-		 * The value has not been looked at and has been ignored.
-		 */
-		IGNORED
+		public String getReason()
+		{
+			return reason;
+		}
 	}
 
 	/**

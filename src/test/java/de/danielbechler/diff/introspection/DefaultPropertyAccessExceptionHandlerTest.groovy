@@ -17,21 +17,12 @@
 package de.danielbechler.diff.introspection
 
 import de.danielbechler.diff.node.DiffNode
-import org.slf4j.Logger
 import spock.lang.Specification
 
-/**
- * Created by Daniel Bechler.
- */
 class DefaultPropertyAccessExceptionHandlerTest extends Specification {
-	def exceptionHandler
-	def diffNode = Mock(DiffNode)
-	def logger = Mock(Logger)
 
-	def setup() {
-		exceptionHandler = new DefaultPropertyAccessExceptionHandler()
-		exceptionHandler.logger = logger
-	}
+	def exceptionHandler = new DefaultPropertyAccessExceptionHandler()
+	def diffNode = Mock DiffNode
 
 	def 'onPropertyReadException should rethrow the PropertyReadException'() {
 		given:
@@ -41,26 +32,5 @@ class DefaultPropertyAccessExceptionHandlerTest extends Specification {
 		then:
 		  def thrownException = thrown(PropertyReadException)
 		  thrownException.is readException
-	}
-
-	def 'onPropertyWriteException should rethrow the PropertyWriteException'() {
-		given:
-		  def writeException = new PropertyWriteException('foo', Object, 'bar', null)
-		when:
-		  exceptionHandler.onPropertyWriteException(writeException, diffNode)
-		then:
-		  def thrownException = thrown(PropertyWriteException)
-		  thrownException.is writeException
-	}
-
-	def 'onPropertyWriteException should log exception message'() {
-		given:
-		  def writeException = new PropertyWriteException('foo', Object, 'bar', null)
-		when:
-		  exceptionHandler.onPropertyWriteException(writeException, diffNode)
-		then:
-		  1 * logger.info(writeException.message);
-		and:
-		  thrown(PropertyWriteException)
 	}
 }

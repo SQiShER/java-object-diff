@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.91.1
+
+### Features
+- **Exception Handling:** Reimplemented property access exception handling
+
 ## 0.91
 
 ### Features

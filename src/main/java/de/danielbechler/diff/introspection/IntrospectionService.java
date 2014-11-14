@@ -17,10 +17,10 @@
 package de.danielbechler.diff.introspection;
 
 import de.danielbechler.diff.ObjectDifferBuilder;
-import de.danielbechler.diff.instantiation.PublicNoArgsConstructorInstanceFactory;
-import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.diff.instantiation.InstanceFactory;
+import de.danielbechler.diff.instantiation.PublicNoArgsConstructorInstanceFactory;
 import de.danielbechler.diff.instantiation.TypeInfo;
+import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.diff.path.NodePath;
 import de.danielbechler.diff.path.NodePathValueHolder;
 import de.danielbechler.util.Assert;
@@ -32,7 +32,7 @@ import java.util.Map;
 /**
  * @author Daniel Bechler
  */
-public class IntrospectionService implements IntrospectionConfigurer, IsIntrospectableResolver, TypeInfoResolver
+public class IntrospectionService implements IntrospectionConfigurer, IsIntrospectableResolver, TypeInfoResolver, PropertyAccessExceptionHandlerResolver
 {
 	private final Map<Class<?>, Introspector> typeIntrospectorMap = new HashMap<Class<?>, Introspector>();
 	private final Map<Class<?>, IntrospectionMode> typeIntrospectionModeMap = new HashMap<Class<?>, IntrospectionMode>();
@@ -41,6 +41,7 @@ public class IntrospectionService implements IntrospectionConfigurer, IsIntrospe
 	private final ObjectDifferBuilder objectDifferBuilder;
 	private Introspector defaultIntrospector = new StandardIntrospector();
 	private InstanceFactory instanceFactory = new PublicNoArgsConstructorInstanceFactory();
+	private PropertyAccessExceptionHandler defaultPropertyAccessExceptionHandler = new DefaultPropertyAccessExceptionHandler();
 
 	public IntrospectionService(final ObjectDifferBuilder objectDifferBuilder)
 	{
@@ -75,6 +76,11 @@ public class IntrospectionService implements IntrospectionConfigurer, IsIntrospe
 				|| Classes.isPrimitiveWrapperType(nodeType)
 				|| nodeType.isEnum()
 				|| nodeType.isArray();
+	}
+
+	public PropertyAccessExceptionHandler resolvePropertyAccessExceptionHandler(final Class<?> parentType, final String propertyName)
+	{
+		return defaultPropertyAccessExceptionHandler;
 	}
 
 	public TypeInfo typeInfoForNode(final DiffNode node)
@@ -114,6 +120,13 @@ public class IntrospectionService implements IntrospectionConfigurer, IsIntrospe
 	{
 		Assert.notNull(introspector, "The default introspector must not be null");
 		defaultIntrospector = introspector;
+		return this;
+	}
+
+	public IntrospectionConfigurer handlePropertyAccessExceptionsUsing(final PropertyAccessExceptionHandler exceptionHandler)
+	{
+		Assert.notNull(exceptionHandler, "exceptionHandler");
+		defaultPropertyAccessExceptionHandler = exceptionHandler;
 		return this;
 	}
 

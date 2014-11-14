@@ -33,9 +33,6 @@ import java.util.TreeSet;
 
 import static java.util.Arrays.asList;
 
-/**
- * @author Daniel Bechler
- */
 public class PropertyAccessor implements PropertyAwareAccessor
 {
 	private static final Logger logger = LoggerFactory.getLogger(PropertyAccessor.class);
@@ -181,7 +178,7 @@ public class PropertyAccessor implements PropertyAwareAccessor
 		}
 		catch (final Exception cause)
 		{
-			throw new PropertyWriteException(propertyName, getType(), value, cause);
+			throw new PropertyWriteException(propertyName, target.getClass(), value, cause);
 		}
 	}
 

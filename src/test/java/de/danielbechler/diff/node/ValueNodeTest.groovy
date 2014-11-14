@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package de.danielbechler.diff.inclusion
+package de.danielbechler.diff.node
 
+import de.danielbechler.diff.inclusion.Inclusion
 import de.danielbechler.diff.path.NodePath
 import de.danielbechler.diff.selector.BeanPropertyElementSelector
 import de.danielbechler.diff.selector.RootElementSelector

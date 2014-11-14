@@ -41,6 +41,7 @@ public class ReturnableNodeService implements FilteringConfigurer, IsReturnableR
 		this.objectDifferBuilder = objectDifferBuilder;
 		this.stateFilterSettings = new EnumMap<DiffNode.State, Boolean>(DiffNode.State.class);
 		this.stateFilterSettings.put(DiffNode.State.IGNORED, false);
+		this.stateFilterSettings.put(DiffNode.State.INACCESSIBLE, false);
 		this.stateFilterSettings.put(DiffNode.State.UNTOUCHED, false);
 		this.stateFilterSettings.put(DiffNode.State.CIRCULAR, true);
 		this.stateFilterSettings.put(DiffNode.State.ADDED, true);

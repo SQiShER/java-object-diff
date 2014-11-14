@@ -24,6 +24,7 @@ import de.danielbechler.diff.circular.CircularReferenceDetectorFactory;
 import de.danielbechler.diff.circular.CircularReferenceExceptionHandler;
 import de.danielbechler.diff.filtering.IsReturnableResolver;
 import de.danielbechler.diff.inclusion.IsIgnoredResolver;
+import de.danielbechler.diff.introspection.PropertyAccessExceptionHandlerResolver;
 import de.danielbechler.diff.mock.ObjectWithCircularReference;
 import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.diff.path.NodePath;
@@ -43,9 +44,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-/**
- * @author Daniel Bechler
- */
+@Deprecated
 public class DifferDispatcherShould
 {
 	private DifferDispatcher differDispatcher;
@@ -68,17 +67,8 @@ public class DifferDispatcherShould
 	private Instances instances;
 	@Mock
 	private Instances accessedInstances;
-
-	private static <T> Answer<Class<T>> returnType(final Class<T> type)
-	{
-		return new Answer<Class<T>>()
-		{
-			public Class<T> answer(final InvocationOnMock invocation) throws Throwable
-			{
-				return type;
-			}
-		};
-	}
+	@Mock
+	private PropertyAccessExceptionHandlerResolver propertyAccessExceptionHandlerResolver;
 
 	@BeforeMethod
 	public void setUp() throws Exception
@@ -89,7 +79,18 @@ public class DifferDispatcherShould
 		when(instances.access(any(Accessor.class))).thenReturn(accessedInstances);
 		when(accessedInstances.getSourceAccessor()).thenReturn(accessor);
 
-		differDispatcher = new DifferDispatcher(differProvider, circularReferenceDetectorFactory, circularReferenceExceptionHandler, ignoredResolver, returnableResolver);
+		differDispatcher = new DifferDispatcher(differProvider, circularReferenceDetectorFactory, circularReferenceExceptionHandler, ignoredResolver, returnableResolver, propertyAccessExceptionHandlerResolver);
+	}
+
+	@Test
+	public void assign_the_circular_start_path_if_the_delegated_node_is_circular() throws Exception
+	{
+		final NodePath circularStartPath = NodePath.withRoot();
+		given_the_delegated_node_is_circular(circularStartPath);
+
+		final DiffNode node = differDispatcher.dispatch(DiffNode.ROOT, instances, accessor);
+
+		assertThat(node.getCircleStartPath()).isEqualTo(circularStartPath);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -105,15 +106,15 @@ public class DifferDispatcherShould
 		when(differProvider.retrieveDifferForType(ObjectWithCircularReference.class)).thenReturn(mock(Differ.class));
 	}
 
-	@Test
-	public void assign_the_circular_start_path_if_the_delegated_node_is_circular() throws Exception
+	private static <T> Answer<Class<T>> returnType(final Class<T> type)
 	{
-		final NodePath circularStartPath = NodePath.withRoot();
-		given_the_delegated_node_is_circular(circularStartPath);
-
-		final DiffNode node = differDispatcher.dispatch(DiffNode.ROOT, instances, accessor);
-
-		assertThat(node.getCircleStartPath()).isEqualTo(circularStartPath);
+		return new Answer<Class<T>>()
+		{
+			public Class<T> answer(final InvocationOnMock invocation) throws Throwable
+			{
+				return type;
+			}
+		};
 	}
 
 	@Test
