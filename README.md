@@ -9,14 +9,28 @@
 
 ## Features
 
-* Generates an easily traversable tree structure to analyze and modify with surgical precision
-* Detects whether a value or item has been added, removed or changed and shows the changes
-* Allows to manipulate the underlying objects directly through the generated tree nodes
-* Works with almost any kind of object (Beans, Lists, Maps, Primitives, Strings, etc.)
-* Properties can be marked with category tags to easily filter for specific subsets
-* No configuration needed (but possible)
-* No runtime dependencies except for [slf4j](http://www.slf4j.org/)
-* When needed, it leaves it up to you, whether you want to use declarative configuration or annotations
+* Works out-of-the-box with with almost any kind of object and arbitrarily deep nesting
+* Finds the differences between two objects
+* Returns the differences in shape of an easily traversable tree structure
+* Tells you everything there is to know about the detected changes
+* Provides read and write access to the underlying objects, allowing you to use the diff as a patch and apply it to another instance
+* Requires no changes to your existing classes (in most cases)
+* Provides a very flexbile configuration API to tailor everything to your needs
+* Tiny, straightforward, yet very powerful API
+* Detects and handles circular references in the object graph
+* No runtime dependencies except for [SLF4J](http://www.slf4j.org/)
+
+## Support this Project
+
+If you like this project, there are a few things you can do to show your support:
+
+* [**Follow me** on Twitter (@SQiShER)](https://twitter.com/SQiShER)
+* [**Surprise me** with something from my Amazon Wishlist](http://www.amazon.de/registry/wishlist/2JFW27V71CBGM)
+* [**Contribute** code, documentation, ideas, or insights into your use-case](https://github.com/SQiShER/java-object-diff/blob/master/CONTRIBUTING.md)
+* Star this repository (stars make me very happy!)
+* Talk about it, write about it, recommend it to others
+
+But most importantly: **don't ever hesitate to ask me for help**, if you're having trouble getting this library to work. The only way to make it better is by hearing about your use-cases and pushing the limits!
 
 ## Getting Started
 
@@ -28,19 +42,27 @@ To learn how to use **Java Object Diff** have a look at the [Getting Started Gui
 <dependency>
     <groupId>de.danielbechler</groupId>
     <artifactId>java-object-diff</artifactId>
-    <version>0.91</version>
+    <version>0.91.1</version>
 </dependency>
 ```
 
 ### Using with Gradle
 
 ```groovy
-compile 'de.danielbechler:java-object-diff:0.91'
+compile 'de.danielbechler:java-object-diff:0.91.1'
 ```
 
 ## Documentation
 
 The documentation can be found over at [ReadTheDocs](http://java-object-diff.readthedocs.org/en/latest/).
+
+## Caveats
+
+* Introspection of values other than primitives and collection types is curently done via standard JavaBean introspection, which requires your objects to provide getters and setters for their properties. However, you don't need to provide setters, if you don't need write access to the properties (e.g. you don't intend to apply the diff as a patch.)
+
+	If this does not work for you, don't worry: you can easily write your own introspectors and just plug them in via configuration API.
+
+* Ordered lists are currently not properly supported (they are just treated as Sets). While this is something I definitely want to add before version `1.0` comes out, its a pretty big task and will be very time consuming. So far there have been quite a few people who needed this feature, but not as many as I imagined. So your call to action: if you need to diff and/or merge collection types like `ArrayList`, perhaps even with multiple occurence of the same value, please let me know. The more I'm aware of the demand and about the use-cases, the more likely it is, that I start working on it.
 
 ## Why would you need this?
 
@@ -60,26 +82,9 @@ Node root = ObjectDifferBuilder.buildDefault().compare(workingObject, baseObject
 
 This generates a tree structure of the given object type and lets you traverse its nodes via visitors. Each node represents  one property (or collection item) of the underlying object and tells you exactly if and how the value differs from the base version. It also  provides accessors to read, write and remove the value from or to any given instance. This way, all you need to worry about is **how to treat** changes and **not how to find** them.
 
-This library has been battle-tested in a rather big project of mine, where I use it to generate **activity streams**, resolve database **update conflics**, display **change logs** and limit the scope of entity updates to only a **subset of properties**, based on the context or user permissions. It didn't let me down so far and I hope that it can help you too!
-
-## Use Cases
-
-**Java Object Diff** is currently used (but not limited) to...
-
-* Generate Facebook-like activity streams
-* Visualize the differences between object versions
-* Automatically resolve conflicts on concurrent database updates
-* Detect and persist only properties that were actually changed
+This library has been battle-tested in a rather big project of mine, where I use it to generate **activity streams**, resolve database **update conflics**, display **change logs** and limit the scope of entity updates to only a **subset of properties**, based on the context or user permissions. It didn't let me down so far and I hope it can help you too!
 
 ## Contribute
 
 You discovered a bug or have an idea for a new feature? Great, why don't you send me a [Pull 
-Request (PR)](https://help.github.com/articles/using-pull-requests) so everyone can benefit from it? To help you getting started, [here](https://github.com/SQiShER/java-object-diff/blob/master/CONTRIBUTING.md) is a brief guide with everyting you need to know to get involved!
-
-## Donate
-
-If you’d like to support this project with a small donation, you can do so via  [Flattr](https://flattr.com/submit/auto?user_id=SQiShER&url=https://github.com/SQiShER/java-object-diff&title=java-object-diff&language=&tags=github&category=software) or [Bitcoin](https://blockchain.info/address/19kRmHJ4qMnYCY6rnY6kCf96Prj6WGxisk).
-
-Alternatively you could send me a [nice tweet](https://twitter.com/SQiShER), start contributing, write a blog post about this project, tell your friends about it or simply star [this repository](https://github.com/SQiShER/java-object-diff). I'm happy about everything that shows me that someone out there is actually using this library and appreciates all the hard work that goes into its development.
-
-[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=SQiShER&url=https://github.com/SQiShER/java-object-diff&title=java-object-diff&language=&tags=github&category=software)
+Request](https://help.github.com/articles/using-pull-requests) so everyone can benefit from it? To help you getting started, [here](https://github.com/SQiShER/java-object-diff/blob/master/CONTRIBUTING.md) is a brief guide with everyting you need to know to get involved!
