@@ -13,7 +13,7 @@
 * Finds the differences between two objects
 * Returns the differences in shape of an easily traversable tree structure
 * Tells you everything there is to know about the detected changes
-* Provides read and write access to the underlying objects, allowing you not only to extract the changes but even to apply the diff as a patch to any other instance
+* Provides read and write access to the underlying objects, allowing you not only to extract the changed values but even to apply the diff as a patch
 * Requires no changes to your existing classes (in most cases)
 * Provides a very flexible configuration API to tailor everything to your needs
 * Tiny, straightforward, yet very powerful API
