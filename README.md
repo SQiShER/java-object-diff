@@ -13,9 +13,9 @@
 * Finds the differences between two objects
 * Returns the differences in shape of an easily traversable tree structure
 * Tells you everything there is to know about the detected changes
-* Provides read and write access to the underlying objects, allowing you to use the diff as a patch and apply it to another instance
+* Provides read and write access to the underlying objects, allowing you not only to extract the changes but even to apply the diff as a patch to any other instance
 * Requires no changes to your existing classes (in most cases)
-* Provides a very flexbile configuration API to tailor everything to your needs
+* Provides a very flexible configuration API to tailor everything to your needs
 * Tiny, straightforward, yet very powerful API
 * Detects and handles circular references in the object graph
 * No runtime dependencies except for [SLF4J](http://www.slf4j.org/)
