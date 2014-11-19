@@ -59,7 +59,7 @@ The documentation can be found over at [ReadTheDocs](http://java-object-diff.rea
 
 ## Caveats
 
-* Introspection of values other than primitives and collection types is curently done via standard JavaBean introspection, which requires your objects to provide getters and setters for their properties. However, you don't need to provide setters, if you don't need write access to the properties (e.g. you don't intend to apply the diff as a patch.)
+* Introspection of values other than primitives and collection types is curently done via standard JavaBean introspection, which requires your objects to provide getters and setters for their properties. However, you don't need to provide setters, if you don't need write access to the properties (e.g. you don't want to apply the diff as a patch.)
 
 	If this does not work for you, don't worry: you can easily write your own introspectors and just plug them in via configuration API.
 
