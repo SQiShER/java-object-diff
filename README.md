@@ -19,6 +19,7 @@
 * Tiny, straightforward, yet very powerful API
 * Detects and handles circular references in the object graph
 * No runtime dependencies except for [SLF4J](http://www.slf4j.org/)
+* Compatible with Java 1.5 and above
 
 ## Support this Project
 
