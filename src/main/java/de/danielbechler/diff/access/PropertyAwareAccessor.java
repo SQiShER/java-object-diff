@@ -29,4 +29,8 @@ public interface PropertyAwareAccessor extends TypeAwareAccessor, CategoryAware,
 	Set<Annotation> getReadMethodAnnotations();
 
 	<T extends Annotation> T getReadMethodAnnotation(Class<T> annotationClass);
+
+   <T extends Annotation> T getAnnotation(Class<T> annotationClass);
+
+   int getFieldModifiers();
 }
