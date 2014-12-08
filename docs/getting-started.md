@@ -1,113 +1,88 @@
-**This article is a little outdated, as it refers to the versions prior to 0.90. The most important change is that the `ObjectDifferFactory` doesn't exist anymore and has been replaced with a more flexible `ObjectDifferBuilder`. I'll try to update this post as soon as I can. Until then please refer to the [Integration Tests](https://github.com/SQiShER/java-object-diff/tree/master/src/integration-test/java/de/danielbechler/diff) for some working examples.**
+# Starter Guide
 
-***
+_java-object-diff_ provides a very simple API and tries to make everything as self-explanatory as possible. It can handle a wide variety of object structures without the need for any configuration. However, in more complex scenarios it is flexible enough to let you tailor it to your needs.
 
-Before we get started, you need to [add the dependency](https://github.com/SQiShER/java-object-diff/wiki/Maven) to your projects POM.
-
-## First Steps
-
-Now that you have the framework at hand, let’s have a look at the API. The most important class you need to know about is the `ObjectDifferFactory`. This is the one and only way to create new `ObjectDiffer` instances.
-
-```java
-ObjectDiffer objectDiffer = ObjectDifferFactory.getInstance();
-```
-
-Great, so there we have our `ObjectDiffer`. Now what? Let’s see what we can do with it! The only method you need to care about right now is `<T> Node compare(T, T)`. It will do all magic and return a root node, representing the objects, you passed as arguments. Lets test it out with simple `String`s.
-
-```java
-final String working = "Hello";
-final String base = "World";
-final Node root = objectDiffer.compare(working, base);
-```
-
-As you can see, we are thinking in terms of a working (or potentially modified) and its corresponding base version. Terms like `ADDED` or `REMOVED` will always relate to the working version.
-
-So how can we see, if the above code returns the expected result? It would be nice to simply print the entire `Node` hierarchy in a readable form. Fortunately, there is a `Visitor` for this:
-
-```java
-root.visit(new PrintingVisitor(working, base));
-```
-
-This will print the following output to the console:
+Now let's start with a very easy scenario: Comparing two maps.
 
 ```
-Property at path '/' has been changed from [ World ] to [ Hello ]
+Map<String, String> working = Collections.singletonMap("item", "foo");
+Map<String, String> base = Collections.singletonMap("item", "bar");
+DiffNode diff = ObjectDifferBuilder.buildDefault().compare(working, base);
 ```
 
-That’s great! It works just as expected. Unfortunately this example is pretty boring, considering that you could have gotten to the same result using the `equals` method of one of the Strings. So lets move on to a more complicated example.
+Let's break down what we did here. We created a new `ObjectDiffer` and invoked its `compare` method, passing it two `java.util.Map` objects as arguments. The call returned a `DiffNode`. This represents the root of the object graph and contains other `DiffNode` instances, which represent the next level in the graph. In this case this means they represent the entries of the maps. Each node contains information about how the associated object has changed between the two given objects:
 
-## Advanced Example
-
-The following example uses classes from the [test package](https://github.com/SQiShER/java-object-diff/tree/master/src/test/java/de/danielbechler/diff/integration), in case you want to see their implementation details.
-
-Let us start with setting up a simple phone book:
-
-```java
-final PhoneBook phoneBook = new PhoneBook("Breaking Bad");
+```
+assert diff.hasChanges();
+assert diff.childCount() == 1;
+NodePath itemPath = NodePath.startBuilding().mapKey("item").build();
+assert diff.getChild(itemPath).getState() == DiffNode.State.CHANGED;
 ```
 
-Now we add some contacts.
+In this case it's very simple. The map contains one entry with the same key and different values. So the root object (the map) contains changes. Since only one item has changed, the root node has one child node. That's the node representing the map entry with key `"item"`. And since its value differs between the base and the working object, `getState` returns the state `CHANGED`.
 
-```java
-final Contact walterWhite = new Contact("Walter", "White");
-walterWhite.setPhoneNumber("Home", new PhoneNumber("1", "505", "316-7871"));
-walterWhite.setPhoneNumber("Work", new PhoneNumber("1", "505", "456-3788"));
-phoneBook.addContact(walterWhite);
+In this example we query the child node directly via `NodePath`, but in most cases you probably just want to iterate over all changes. Of course there is an easy way to do that, too. 
 
-final Contact jessePinkman = new Contact("Jesse", "Pinkman");
-jessePinkman.setPhoneNumber("Home", new PhoneNumber("1", "505", "234-4628"));
-phoneBook.addContact(jessePinkman);
+Let's say we want to print the path of each node along with its state:
+
 ```
-
-In order to make some changes, we create a copy of the original phone book.
-
-```java
-final PhoneBook modifiedPhoneBook = PhoneBook.from(phoneBook);
-```
-
-The `from` method is a simple cloning factory. Now lets add middle names to our contacts:
-
-```java
-modifiedPhoneBook.getContact("Jesse", "Pinkman").setMiddleName("Bruce");
-modifiedPhoneBook.getContact("Walter", "White").setMiddleName("Hartwell");
-```
-
-The setup is complete. Time to fire up the `ObjectDiffer`:
-
-```java
-final ObjectDiffer objectDiffer = ObjectDifferFactory.getInstance();
-final Node root = objectDiffer.compare(modifiedPhoneBook, phoneBook);
-```
-
-To visualize the changes, we use the `PrintingVisitor` again.
-
-```java
-final Node.Visitor visitor = new PrintingVisitor(modifiedPhoneBook, phoneBook);
-root.visit(visitor);
-```
-
-And it prints the expected result:
-
-	Property at path '/contacts/item[Walter White]/middleName' has been added => [ Hartwell ]
-	Property at path '/contacts/item[Jesse Pinkman]/middleName' has been added => [ Bruce ]
-
-As you can see, the `ObjectDiffer` can handle any kind of object regardless of its complexity. Of course there is much more to it, than just printing the changes. In order to unleash the full power of this framework, we need to take a look at the `Visitor` interface.
-
-## Visitors
-
-The `Node` interface provides the `void visit(Visitor)` method. As unremarkable as it looks, it is the most powerful tool, in order to build impressive programs like activity stream generators or automatic conflict resolvers. The `Visitor` interface looks like this:
-
-```java
-public interface Visitor
+diff.visit(new DiffNode.Visitor()
 {
-	void accept(Node difference, Visit visit);
-}
+	public void node(DiffNode node, Visit visit)
+	{
+		System.out.println(node.getPath() + " => " + node.getState());
+	}
+});
 ```
 
-Once you invoke the `visit` method on any node, it will traverse the whole node graph and pass the visitor to all its children, which will do the same, until every `Node` has been visited. But what exactly can we do with a node?
+The `DiffNode` provides a `visit` method which takes a `Visitor` as argument. This visitor will be called for every single node, including the root node itself. This way you don't need to know the structure of the objects your are diffing and can simply deal with the returned nodes how you see fit. This visitor pattern is very powerful when combined with the next feature: object accessors. 
 
-A node contains everything you need, in order to decide how you want to treat it. It contains a state, which indicated whether the underlying property has been changed, removed, added, etc. It also provides accessors to `get`, `set` and `unset` the value on any object instance of the underlying type. And, of course, it knows its parent and child nodes.
+Let's say we want to expand the example above by printing the actual values of the base and the working version. In order to do that, we need to extract those values from the input objects. Thankfully the `DiffNode` provides a method called `canonicalGet`, which knows exactly how to do that.
 
-## Conclusion
+```
+diff.visit(new DiffNode.Visitor()
+{
+	public void node(DiffNode node, Visit visit)
+	{
+		final Object baseValue = node.canonicalGet(base);
+		final Object workingValue = node.canonicalGet(working);
+		final String message = node.getPath() + " changed from " + 
+							   baseValue + " to " + workingValue;
+		System.out.println(message);
+	}
+});
+```
+This will generate the following output:
 
-As you can see, the API really is very simple and getting started is a easy as adding a Maven dependency. However, the tree structure in combination with the visitor pattern allows for some very sophisticated uses. For more examples, please check out the [unit tests](https://github.com/SQiShER/java-object-diff/tree/master/src/test/java/de/danielbechler/diff).
+```
+/ changed from {item=bar} to {item=foo}
+/{item} changed from bar to foo
+```
+
+The output not only contains a line for the changed map entry, but also for the changed map itself. In order to avoid that, we could add a check for child nodes and only print nodes that don't contain any child nodes, as those are the ones that represent the actual change. Since that onle isn't very interesting, let's do it while looking at another feature: object write access.
+
+So far we have created a nice diff, but you know what's cooler than diffing? Patching! Imagine we want to merge our changes into a new map. We can easily do that:
+
+```
+final Map<String, String> head = new HashMap<String, String>(base);
+head.put("another", "map");
+diff.visit(new DiffNode.Visitor()
+{
+	public void node(DiffNode node, Visit visit)
+	{
+		// only leave-nodes with changes
+		if (node.hasChanges() && !node.hasChildren()) {
+			node.canonicalSet(head, node.canonicalGet(working));
+		}
+	}
+});
+
+assert head.get("item").equals("foo");
+assert head.get("another").equals("map");
+```
+
+The method `canonicalSet` provides write access to the value at the location of the node in the object graph, just as `canonicalGet` provides read access. There is a third method called `canonicalUnset`, which behaves differently based on the underlying object. It removes items from collections, nulls out objects and assigns default values to primitives. On top of that there are non-canonical versions of those methods, what act relative to their parent object. They can be useful in more advanced scenarios, but most of the time you'll probably not need them.
+
+You now know how to create a diff, how to extract information from it and how to apply it as a patch. Congratulations, you are ready to try it out on your own objects. This example was pretty simple and we only worked on a simple `Map`. But don't let this foul you. Working with other objects isn't any different.
+
+Of course there is much more to cover. Depending on your objects, there may be the need to do do some adjustments and tell _java-object-diff_ how certain values should be handled. There are tons of configuration options that allow you to tame almost any kind of object. If you run into any trouble, check the documentation for more information, as more and more features and frequently asked questions will get documented there. If that doesn't help, check out the [issue tracker](https://github.com/SQiShER/java-object-diff/issues) over at GitHub and ask for help.
