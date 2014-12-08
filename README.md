@@ -89,3 +89,9 @@ This library has been battle-tested in a rather big project of mine, where I use
 
 You discovered a bug or have an idea for a new feature? Great, why don't you send me a [Pull 
 Request](https://help.github.com/articles/using-pull-requests) so everyone can benefit from it? To help you getting started, [here](https://github.com/SQiShER/java-object-diff/blob/master/CONTRIBUTING.md) is a brief guide with everyting you need to know to get involved!
+
+---
+
+Thanks to JetBrains for supporting this project with a free open source license for their amazing IDE **IntelliJ IDEA**.
+
+[![IntelliJ IDEA](https://www.jetbrains.com/idea/docs/logo_intellij_idea.png)](https://www.jetbrains.com/idea/)
