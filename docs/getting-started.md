@@ -65,7 +65,7 @@ This will generate the following output:
 /{item} changed from bar to foo
 ```
 
-The output not only contains a line for the changed map entry, but also for the changed map itself. In order to avoid that, we could add a check for child nodes and only print nodes that don't contain any child nodes, as those are the ones that represent the actual change. Since that onle isn't very interesting, let's do it while looking at another feature: object write access.
+The output not only contains a line for the changed map entry, but also for the changed map itself. In order to avoid that, we could add a check for child nodes and only print nodes that don't contain any child nodes, as those are the ones that represent the actual change. Since that alone isn't very interesting, let's do it while looking at another feature: changing values.
 
 ## Changing Values
 
