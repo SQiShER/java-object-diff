@@ -54,7 +54,7 @@ public class PropertyAccessorTest extends Specification {
 		  ObjectWithStringAndUnsupportedWriteMethod target = new ObjectWithStringAndUnsupportedWriteMethod("foo")
 		  Method readMethod = target.getClass().getMethod("getValue")
 		  Method writeMethod = target.getClass().getMethod("setValue", String)
-		  propertyAccessor = new PropertyAccessor("value", readMethod, writeMethod)
+		  propertyAccessor = new PropertyAccessor("value", null, readMethod, writeMethod)
 		when:
 		  propertyAccessor.set(target, "bar")
 		then:

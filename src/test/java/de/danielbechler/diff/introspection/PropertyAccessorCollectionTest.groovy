@@ -71,7 +71,7 @@ public class PropertyAccessorCollectionTest extends Specification {
 	def PropertyAccessor createCollectionPropertyAccessor(boolean readOnly) {
 		Method readMethod = ObjectWithCollection.getMethod("getCollection")
 		Method writeMethod = readOnly ? null : ObjectWithCollection.getMethod("setCollection", Collection)
-		return new PropertyAccessor("collection", readMethod, writeMethod)
+		return new PropertyAccessor("collection", null, readMethod, writeMethod)
 	}
 
 }
