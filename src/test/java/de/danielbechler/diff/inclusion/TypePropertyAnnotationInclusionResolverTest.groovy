@@ -15,7 +15,6 @@
  */
 
 package de.danielbechler.diff.inclusion
-
 import de.danielbechler.diff.access.PropertyAwareAccessor
 import de.danielbechler.diff.instantiation.TypeInfo
 import de.danielbechler.diff.introspection.ObjectDiffProperty
@@ -25,7 +24,6 @@ import spock.lang.Subject
 import spock.lang.Unroll
 
 import static de.danielbechler.diff.inclusion.Inclusion.*
-
 /**
  * Created by Daniel Bechler.
  */
@@ -50,10 +48,13 @@ class TypePropertyAnnotationInclusionResolverTest extends Specification {
 
 	@Unroll
 	def 'should return #expected when annotated inclusion is #inclusion'() {
+		def annotation = Mock(ObjectDiffProperty)
+		annotation.inclusion() >> inclusion
+
 		when:
 		  def result = inclusionResolver.getInclusion(node)
 		then:
-		  node.getPropertyAnnotation(ObjectDiffProperty) >> Stub(ObjectDiffProperty, { inclusion() >> inclusion })
+		  node.getPropertyAnnotation(ObjectDiffProperty) >> annotation
 		and:
 		  result == expected
 		where:
