@@ -67,6 +67,6 @@ public class PropertyAccessorMapTest extends Specification {
 	private static PropertyAccessor createMapPropertyAccessor(boolean readOnly) throws NoSuchMethodException {
 		final Method readMethod = ObjectWithMap.class.getMethod("getMap")
 		final Method writeMethod = readOnly ? null : ObjectWithMap.class.getMethod("setMap", Map.class)
-		return new PropertyAccessor("map", readMethod, writeMethod)
+		return new PropertyAccessor("map", null, readMethod, writeMethod)
 	}
 }

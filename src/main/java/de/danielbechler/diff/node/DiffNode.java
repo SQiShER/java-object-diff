@@ -16,6 +16,17 @@
 
 package de.danielbechler.diff.node;
 
+import static java.util.Collections.unmodifiableSet;
+
+import java.lang.annotation.Annotation;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import de.danielbechler.diff.access.Accessor;
 import de.danielbechler.diff.access.CategoryAware;
 import de.danielbechler.diff.access.ExclusionAware;
@@ -28,17 +39,6 @@ import de.danielbechler.diff.selector.BeanPropertyElementSelector;
 import de.danielbechler.diff.selector.ElementSelector;
 import de.danielbechler.diff.selector.RootElementSelector;
 import de.danielbechler.util.Assert;
-
-import java.lang.annotation.Annotation;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import static java.util.Collections.unmodifiableSet;
 
 /**
  * Represents a part of an object. It could be the object itself, one of its properties, an item in a
@@ -467,6 +467,20 @@ public class DiffNode
 		}
 		return null;
 	}
+
+   public <T extends Annotation> T getAnnotation(final Class<T> annotationClass) {
+      if (accessor instanceof PropertyAwareAccessor) {
+         return ((PropertyAwareAccessor) accessor).getAnnotation(annotationClass);
+      }
+      return null;
+   }
+
+   public int getFieldModifiers() {
+      if (accessor instanceof PropertyAwareAccessor) {
+         return ((PropertyAwareAccessor) accessor).getFieldModifiers();
+      }
+      return 0;
+   }
 
 	/**
 	 * If this node represents a bean property, this method will simply return its name. Otherwise it will return the

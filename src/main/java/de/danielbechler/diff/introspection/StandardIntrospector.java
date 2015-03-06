@@ -16,16 +16,20 @@
 
 package de.danielbechler.diff.introspection;
 
-import de.danielbechler.diff.access.PropertyAwareAccessor;
-import de.danielbechler.diff.instantiation.TypeInfo;
-import de.danielbechler.util.Assert;
-import de.danielbechler.util.Exceptions;
-
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.danielbechler.diff.access.PropertyAwareAccessor;
+import de.danielbechler.diff.instantiation.TypeInfo;
+import de.danielbechler.util.Assert;
+import de.danielbechler.util.Exceptions;
 
 /**
  * Resolves the accessors of a given type by using the standard Java {@link Introspector}.
@@ -34,6 +38,9 @@ import java.lang.reflect.Method;
  */
 public class StandardIntrospector implements de.danielbechler.diff.introspection.Introspector
 {
+
+   private static final Logger log = LoggerFactory.getLogger(StandardIntrospector.class);
+
 	public TypeInfo introspect(final Class<?> type)
 	{
 		Assert.notNull(type, "type");
@@ -58,9 +65,10 @@ public class StandardIntrospector implements de.danielbechler.diff.introspection
 				continue;
 			}
 			final String propertyName = descriptor.getName();
+         Field field = findField(type, propertyName);
 			final Method readMethod = descriptor.getReadMethod();
 			final Method writeMethod = descriptor.getWriteMethod();
-			final PropertyAwareAccessor accessor = new PropertyAccessor(propertyName, readMethod, writeMethod);
+         final PropertyAwareAccessor accessor = new PropertyAccessor(propertyName, field, readMethod, writeMethod);
 			typeInfo.addPropertyAccessor(accessor);
 		}
 		return typeInfo;
@@ -87,4 +95,19 @@ public class StandardIntrospector implements de.danielbechler.diff.introspection
 		}
 		return false;
 	}
+
+   private Field findField(final Class<?> type, final String propertyName) throws IntrospectionException {
+      String fieldName = propertyName.substring(0, 1).toLowerCase() + propertyName.substring(1);
+      Class<?> clazz = type;
+      while (clazz != null) {
+         try {
+            return clazz.getDeclaredField(fieldName);
+         } catch (NoSuchFieldException e) {
+         }
+         clazz = clazz.getSuperclass();
+      }
+      log.info("No Java Bean: No such field " + fieldName + " in " + type + " class hierarchy");
+      return null;
+   }
+
 }

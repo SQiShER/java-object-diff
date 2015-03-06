@@ -16,13 +16,10 @@
 
 package de.danielbechler.diff.introspection;
 
-import de.danielbechler.diff.access.PropertyAwareAccessor;
-import de.danielbechler.diff.selector.BeanPropertyElementSelector;
-import de.danielbechler.util.Assert;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static java.util.Arrays.asList;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Collections;
@@ -31,7 +28,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import static java.util.Arrays.asList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.danielbechler.diff.access.PropertyAwareAccessor;
+import de.danielbechler.diff.selector.BeanPropertyElementSelector;
+import de.danielbechler.util.Assert;
 
 public class PropertyAccessor implements PropertyAwareAccessor
 {
@@ -41,12 +43,14 @@ public class PropertyAccessor implements PropertyAwareAccessor
 	private final Class<?> type;
 	private final Method readMethod;
 	private final Method writeMethod;
+   private final Field field;
 
-	public PropertyAccessor(final String propertyName, final Method readMethod, final Method writeMethod)
+	public PropertyAccessor(final String propertyName, final Field f, final Method readMethod, final Method writeMethod)
 	{
 		Assert.notNull(propertyName, "propertyName");
 		Assert.notNull(readMethod, "readMethod");
 		this.propertyName = propertyName;
+      this.field = f;
 		this.readMethod = makeAccessible(readMethod);
 		this.writeMethod = makeAccessible(writeMethod);
 		this.type = this.readMethod.getReturnType();
@@ -238,4 +242,17 @@ public class PropertyAccessor implements PropertyAwareAccessor
 		sb.append('}');
 		return sb.toString();
 	}
+
+   public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
+      T ann = getReadMethodAnnotation(annotationClass);
+      if (ann != null) {
+         return ann;
+      }
+      return field == null ? null : field.getAnnotation(annotationClass);
+   }
+
+   public int getFieldModifiers() {
+      return field == null ? 0 : field.getModifiers();
+   }
+
 }
