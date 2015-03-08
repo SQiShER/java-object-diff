@@ -22,31 +22,67 @@ import org.slf4j.LoggerFactory;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URI;
 import java.net.URL;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.UUID;
 
-/**
- * @author Daniel Bechler
- */
+import static java.util.Arrays.asList;
+
 public final class Classes
 {
 	private static final Logger logger = LoggerFactory.getLogger(Classes.class);
-
-	private static final Set<Class<?>> WRAPPER_TYPES = getWrapperTypes();
+	private static final Set<Class<?>> PRIMITIVE_WRAPPER_TYPES = getPrimitiveWrapperTypes();
 	private static final Collection<Class<?>> PRIMITIVE_NUMERIC_TYPES = getPrimitiveNumericTypes();
+	//	private static final List<?> COMPARABLE_TYPES = Arrays.asList(
+	//			// The Extendables
+	//			// since Java 1.8
+	//			Duration.class,
+	//			Instant.class,
+	//			LocalDate.class,
+	//			LocalDateTime.class,
+	//			LocalTime.class,
+	//			MonthDay.class,
+	//			OffsetDateTime.class,
+	//			OffsetTime.class,
+	//			Year.class,
+	//			YearMonth.class,
+	//			ZonedDateTime.class,
+	//			ZoneOffset.class
+	//	);
+	@SuppressWarnings("unchecked")
+	private static final Collection<Class<?>> EXTENDABLE_SIMPLE_TYPES = asList(
+			BigDecimal.class,
+			BigInteger.class,
+			CharSequence.class, // String, StringBuilder, etc.
+			Calendar.class, // GregorianCalendar, etc.
+			Date.class, // java.sql.Date, java.util.Date, java.util.Time, etc.
+			Enum.class // enums... duh
+
+	);
+	@SuppressWarnings("unchecked")
+	private static final List<Class<? extends Serializable>> FINAL_SIMPLE_TYPES = asList(
+			Class.class,
+			URI.class,
+			URL.class,
+			Locale.class,
+			UUID.class
+	);
 
 	private Classes()
 	{
 	}
 
-	private static Set<Class<?>> getWrapperTypes()
+	private static Set<Class<?>> getPrimitiveWrapperTypes()
 	{
 		final Set<Class<?>> wrapperTypes = new HashSet<Class<?>>();
 		wrapperTypes.add(Boolean.class);
@@ -76,50 +112,44 @@ public final class Classes
 		numericTypes.add(long.class);
 		numericTypes.add(float.class);
 		numericTypes.add(double.class);
+//
+// The following are not numeric types and tests fail when they are commented in. Feels weird...
+//
+//		numericTypes.add(boolean.class);
+//		numericTypes.add(void.class);
+//
 		return numericTypes;
+	}
+
+	public static boolean isComparableType(final Class<?> clazz)
+	{
+		return Comparable.class.isAssignableFrom(clazz);
 	}
 
 	public static boolean isSimpleType(final Class<?> clazz)
 	{
-		if (clazz != null)
+		if (clazz == null)
 		{
-			if (isPrimitiveType(clazz))
+			return false;
+		}
+		else if (isPrimitiveType(clazz))
+		{
+			return true;
+		}
+		else if (isPrimitiveWrapperType(clazz))
+		{
+			return true;
+		}
+		for (final Class<?> type : FINAL_SIMPLE_TYPES)
+		{
+			if (type.equals(clazz))
 			{
 				return true;
 			}
-			else if (isPrimitiveWrapperType(clazz))
-			{
-				return true;
-			}
-			else if (clazz.isEnum())
-			{
-				return true;
-			}
-			else if (CharSequence.class.isAssignableFrom(clazz))
-			{
-				return true;
-			}
-			else if (Number.class.isAssignableFrom(clazz))
-			{
-				return true;
-			}
-			else if (Date.class.isAssignableFrom(clazz))
-			{
-				return true;
-			}
-			else if (URI.class.equals(clazz))
-			{
-				return true;
-			}
-			else if (URL.class.equals(clazz))
-			{
-				return true;
-			}
-			else if (Locale.class.equals(clazz))
-			{
-				return true;
-			}
-			else if (Class.class.equals(clazz))
+		}
+		for (final Class<?> type : EXTENDABLE_SIMPLE_TYPES)
+		{
+			if (type.isAssignableFrom(clazz))
 			{
 				return true;
 			}
@@ -134,12 +164,7 @@ public final class Classes
 
 	public static boolean isPrimitiveWrapperType(final Class<?> clazz)
 	{
-		return clazz != null && WRAPPER_TYPES.contains(clazz);
-	}
-
-	public static boolean isComparableType(final Class<?> clazz)
-	{
-		return BigDecimal.class.equals(clazz);
+		return clazz != null && PRIMITIVE_WRAPPER_TYPES.contains(clazz);
 	}
 
 	public static <T> T freshInstanceOf(final Class<T> clazz)
@@ -269,6 +294,51 @@ public final class Classes
 			else
 			{
 				return 0;
+			}
+		}
+	}
+
+	private static final class TypeConfig
+	{
+		private final Class<?> type;
+		private final boolean simple;
+		private final boolean boxed;
+		private final boolean comparable;
+		private final boolean extendable;
+
+		public TypeConfig(final Class<?> type, final boolean simple, final boolean boxed, final boolean comparable, final boolean extendable)
+		{
+			this.type = type;
+			this.simple = simple;
+			this.boxed = boxed;
+			this.comparable = comparable;
+			this.extendable = extendable;
+		}
+
+		public boolean isSimple()
+		{
+			return simple;
+		}
+
+		public boolean isBoxed()
+		{
+			return boxed;
+		}
+
+		public boolean isComparable()
+		{
+			return comparable;
+		}
+
+		public boolean appliesTo(final Class<?> otherType)
+		{
+			if (extendable)
+			{
+				return type.isAssignableFrom(otherType);
+			}
+			else
+			{
+				return type.equals(otherType);
 			}
 		}
 	}

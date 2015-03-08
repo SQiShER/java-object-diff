@@ -27,11 +27,11 @@ import de.danielbechler.util.Classes;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- *
- */
 public class ComparisonService implements ComparisonConfigurer, ComparisonStrategyResolver, PrimitiveDefaultValueModeResolver
 {
+	private static final ComparisonStrategy COMPARABLE_COMPARISON_STRATEGY = new ComparableComparisonStrategy();
+	private static final ComparisonStrategy EQUALS_ONLY_COMPARISON_STRATEGY = new EqualsOnlyComparisonStrategy();
+
 	private final NodePathValueHolder<ComparisonStrategy> nodePathComparisonStrategies = NodePathValueHolder.of(ComparisonStrategy.class);
 	private final Map<Class<?>, ComparisonStrategy> typeComparisonStrategyMap = new HashMap<Class<?>, ComparisonStrategy>();
 	private final ObjectDifferBuilder objectDifferBuilder;
@@ -57,14 +57,18 @@ public class ComparisonService implements ComparisonConfigurer, ComparisonStrate
 			return typeComparisonStrategyMap.get(valueType);
 		}
 
-		if (Classes.isComparableType(valueType))
-		{
-			return new ComparableComparisonStrategy();
-		}
-
 		if (Classes.isSimpleType(valueType))
 		{
-			return new EqualsOnlyComparisonStrategy();
+			// if the simple type implements comparable we use that, since its contract
+			// dictates that compareTo == zero carries the same semantics as equals
+			if (Classes.isComparableType(valueType))
+			{
+				return COMPARABLE_COMPARISON_STRATEGY;
+			}
+			else
+			{
+				return EQUALS_ONLY_COMPARISON_STRATEGY;
+			}
 		}
 
 		final ObjectDiffPropertyComparisonStrategyResolver comparisonStrategyResolver = ObjectDiffPropertyComparisonStrategyResolver.instance;

@@ -21,31 +21,58 @@ import spock.lang.Specification
 /**
  * @author Daniel Bechler
  */
-class ComparablesSpec extends Specification
-{
-  def "isEqualByComparison should return true when both parameters are null"()
-  {
-    expect:
-    Comparables.isEqualByComparison(null, null)
-  }
+class ComparablesSpec extends Specification {
 
-  def "isEqualByComparison should return true when both arguments are equal by comparison"()
-  {
-    expect:
-    Comparables.isEqualByComparison(new BigDecimal(10), new BigDecimal(10))
-  }
+	def "isEqualByComparison: should return true when both parameters are null"() {
+		expect:
+		  Comparables.isEqualByComparison(null, null)
+	}
 
-  def "isEqualByComparison should be null-safe even if compareTo method of comparable types is not"()
-  {
-    when:
-    def result = Comparables.isEqualByComparison(a, b)
+	def "isEqualByComparison: should return true when both arguments are equal by comparison"() {
+		expect:
+		  Comparables.isEqualByComparison(new BigDecimal(10), new BigDecimal(10))
+	}
 
-    then:
-    !result
+	def "isEqualByComparison: should be null-safe even if compareTo method of comparable types is not"() {
+		when:
+		  def result = Comparables.isEqualByComparison(a, b)
 
-    where:
-    a              | b
-    BigDecimal.ONE | null
-    null           | BigDecimal.TEN
-  }
+		then:
+		  !result
+
+		where:
+		  a              | b
+		  BigDecimal.ONE | null
+		  null           | BigDecimal.TEN
+	}
+
+	def "isEqualByComparison: should return true when either a.compareTo(b) == 0 or b.compareTo(a) == 0"() {
+		given:
+		  def a = Mock(Comparable)
+		  def b = Mock(Comparable)
+
+		when:
+		  Comparables.isEqualByComparison(a, b)
+		then:
+		  1 * a.compareTo(b) >> 0
+		  0 * b.compareTo(a)
+
+		when:
+		  Comparables.isEqualByComparison(a, b)
+		then:
+		  1 * a.compareTo(b) >> -1
+		  1 * b.compareTo(a) >> 0
+	}
+
+	def "isEqualByComparison: should return false when neither a.compareTo(b) == 0 or b.compareTo(a) == 0"() {
+		given:
+		  def a = Mock(Comparable)
+		  def b = Mock(Comparable)
+		when:
+		  !Comparables.isEqualByComparison(a, b)
+		then:
+		  1 * a.compareTo(b) >> -1
+		  1 * b.compareTo(a) >> -1
+	}
+
 }

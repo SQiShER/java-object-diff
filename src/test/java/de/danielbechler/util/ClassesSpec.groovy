@@ -16,17 +16,32 @@
 
 package de.danielbechler.util
 
+import de.danielbechler.diff.mock.ObjectWithExceptionThrowingDefaultConstructor
+import de.danielbechler.diff.mock.ObjectWithPrivateDefaultConstructor
+import de.danielbechler.diff.mock.ObjectWithString
+import de.danielbechler.diff.mock.ObjectWithoutDefaultConstructor
+import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import java.text.Collator
 import java.util.concurrent.ConcurrentSkipListMap
 
-/**
- * @author Daniel Bechler
- */
 class ClassesSpec extends Specification {
+
+	@Shared
+	static def BOXED_PRIMITIVE_TYPES = [Integer, Short, Character, Long, Boolean, Byte, Float, Double]
+	@Shared
+	static def COMPLEX_TYPES = [Scanner, Collator, List, Object]
+	@Shared
+	static def SIMPLE_TYPES = [
+			int, short, char, long, boolean, byte, float, double,
+			Integer, Short, Character, Long, Boolean, Byte, Float, Double,
+			CharSequence, String, URL, Locale, Class
+	]
+
 	@Unroll
-	def "Classes.mostSpecificSharedType should return #expectedResult for #types"() {
+	def "mostSpecificSharedType: should return #expectedResult for #types"() {
 		expect:
 		  Classes.mostSpecificSharedType(types) == expectedResult
 
@@ -39,5 +54,76 @@ class ClassesSpec extends Specification {
 		  [CharSequence, String]                    || CharSequence
 		  [Serializable, Serializable]              || Serializable
 		  [String, Map, Date]                       || null
+	}
+
+	def 'allAssignableFrom: should return true if all items share the expected type'() {
+		given:
+		  def types = [ArrayList, LinkedList]
+		expect:
+		  Classes.allAssignableFrom(List, types) == true;
+	}
+
+	def 'allAssignableFrom: should return false if not all items share the expected type'() {
+		given:
+		  def types = [Object, LinkedList]
+		expect:
+		  Classes.allAssignableFrom(List, types) == false
+	}
+
+	@Unroll
+	def 'isBoxedPrimitiveType: should return true for #type'() {
+		expect:
+		  Classes.isPrimitiveWrapperType(type) == true
+		where:
+		  type << BOXED_PRIMITIVE_TYPES
+	}
+
+	def 'isBoxedPrimitiveType: should return false for other types'() {
+		expect:
+		  Classes.isPrimitiveWrapperType(type) == false
+		where:
+		  type << COMPLEX_TYPES
+	}
+
+	@Unroll
+	def 'isSimpleType: should return true for type #type'() {
+		expect:
+		  Classes.isSimpleType(type)
+		where:
+		  type << SIMPLE_TYPES
+	}
+
+	def 'isSimpleType: should return false for other types'() {
+		expect:
+		  !Classes.isSimpleType(type)
+		where:
+		  type << COMPLEX_TYPES
+	}
+
+	def 'freshInstanceOf: should return new instance of desired type'() {
+		expect:
+		  Classes.freshInstanceOf(ObjectWithString) instanceof ObjectWithString
+	}
+
+	def 'freshInstanceOf: should return new instance of desired type (even if it has a private default constructor)'() {
+		expect:
+		  Classes.freshInstanceOf(ObjectWithPrivateDefaultConstructor) instanceof ObjectWithPrivateDefaultConstructor
+	}
+
+	def 'freshInstanceOf: should return null when desired type has no default constructor'() {
+		expect:
+		  Classes.freshInstanceOf(ObjectWithoutDefaultConstructor) == null
+	}
+
+	def 'freshInstanceOf: should return null when desired type is null'() {
+		expect:
+		  Classes.freshInstanceOf(null) == null
+	}
+
+	def 'freshInstanceOf: should fail with exception if constructor throws exception'() {
+		when:
+		  Classes.freshInstanceOf(ObjectWithExceptionThrowingDefaultConstructor)
+		then:
+		  thrown(RuntimeException)
 	}
 }

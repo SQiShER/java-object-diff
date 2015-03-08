@@ -34,7 +34,13 @@ public class Comparables
 		}
 		else if (a != null && b != null)
 		{
-			return a.compareTo(b) == 0;
+			// When testing the comparison of java.util.Date and java.sql.Timestamp I noticed,
+			// that they were never considered equal, because java.util.Date was used as the
+			// working object. This way only its compareTo method was used, but never the one
+			// of java.sql.Date, although the subclass added some magic to make the objects
+			// compatible. To remedy this, this method tests both objects against each other and
+			// returns true when one of the comparisons returns true.
+			return a.compareTo(b) == 0 || b.compareTo(a) == 0;
 		}
 		return false;
 	}

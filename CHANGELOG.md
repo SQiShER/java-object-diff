@@ -1,5 +1,40 @@
 # Changelog
 
+## 0.91.2
+
+### Improvements
+
+- **Comparison:** Enable ComparableComparisonStrategy for more types
+
+	So far this strategy only applied to BigDecimals. It has now been extended
+	to automatically apply to all simple types that implement `java.lang.Comparable`.
+
+	The list of types that qualify as _simple_ has also been extended. It now
+	looks as follows:
+
+	* all primitive types (int, short, byte, etc.)
+	* all primitive wrapper types (Integer, Short, Byte, etc.)
+	* enums
+	* subclasses of:
+		* `java.math.BigDecimal`
+		* `java.math.BigInteger`
+		* `java.lang.CharSequence`
+		* `java.util.Calendar`
+		* `java.util.Date`
+	* `java.lang.Class`
+	* `java.net.URI`
+	* `java.net.URL`
+	* `java.util.Locale`
+	* `java.util.UUID`
+
+	Of course this behaviour can be overriden via configuration API or
+	property annotations.
+
+    To make comparison via `compareTo` more reliable, from now on `compareTo`
+    will be invoked on the `working` and the `base` object and both will be
+    considered equal if either one of this comparisons returns `true`.
+- **Comparison:** Dates are now compared via compareTo method to workaround the strictness of java.util.Date's equals method, which only returns true for other java.util.Dates, but not for extending classes like java.sql.Date. [#85]
+
 ## 0.91.1
 
 ### Features
