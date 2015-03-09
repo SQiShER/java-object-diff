@@ -26,9 +26,6 @@ import java.util.Set;
 
 import static de.danielbechler.util.Objects.isEqual;
 
-/**
- * @author Daniel Bechler
- */
 public class Instances
 {
 	private final Accessor sourceAccessor;
@@ -118,6 +115,7 @@ public class Instances
 		return fresh;
 	}
 
+	@SuppressWarnings("UnusedDeclaration")
 	public <T> T getFresh(final Class<T> type)
 	{
 		final Object o = getFresh();
