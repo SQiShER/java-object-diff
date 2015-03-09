@@ -30,7 +30,7 @@ import java.util.concurrent.ConcurrentSkipListMap
 class ClassesSpec extends Specification {
 
 	@Shared
-	static def BOXED_PRIMITIVE_TYPES = [Integer, Short, Character, Long, Boolean, Byte, Float, Double]
+	static def PRIMITIVE_WRAPPER_TYPE = [Integer, Short, Character, Long, Boolean, Byte, Float, Double]
 	@Shared
 	static def COMPLEX_TYPES = [Scanner, Collator, List, Object]
 	@Shared
@@ -71,14 +71,14 @@ class ClassesSpec extends Specification {
 	}
 
 	@Unroll
-	def 'isBoxedPrimitiveType: should return true for #type'() {
+	def 'isPrimitiveWrapperType: should return true for #type'() {
 		expect:
 		  Classes.isPrimitiveWrapperType(type) == true
 		where:
-		  type << BOXED_PRIMITIVE_TYPES
+		  type << PRIMITIVE_WRAPPER_TYPE
 	}
 
-	def 'isBoxedPrimitiveType: should return false for other types'() {
+	def 'isPrimitiveWrapperType: should return false for other types'() {
 		expect:
 		  Classes.isPrimitiveWrapperType(type) == false
 		where:
