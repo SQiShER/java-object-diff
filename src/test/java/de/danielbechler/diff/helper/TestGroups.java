@@ -16,6 +16,7 @@
 
 package de.danielbechler.diff.helper;
 
+@Deprecated
 public final class TestGroups
 {
 	public static final String INTEGRATION = "integration";

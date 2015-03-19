@@ -27,6 +27,7 @@ import org.fest.assertions.core.Condition;
 /**
  * @author Daniel Bechler
  */
+@Deprecated
 public final class NodeAssertions
 {
 	private NodeAssertions()

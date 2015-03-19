@@ -24,7 +24,7 @@ import spock.lang.Specification
 /**
  * @author Daniel Bechler
  */
-class MapEntryAccessorSpec extends Specification {
+class MapEntryAccessorTest extends Specification {
 
 	@Shared
 	def key1 = new ObjectWithIdentityAndValue("key", "1")

@@ -153,6 +153,7 @@ public class Instances
 		return Classes.isPrimitiveType(getType());
 	}
 
+	@SuppressWarnings("UnusedDeclaration")
 	public boolean isPrimitiveWrapperType()
 	{
 		return Classes.isPrimitiveWrapperType(getType());

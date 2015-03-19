@@ -29,6 +29,7 @@ import static org.mockito.Matchers.argThat;
 /**
  * @author Daniel Bechler
  */
+@Deprecated
 public class NodeMatchers
 {
 	private NodeMatchers()

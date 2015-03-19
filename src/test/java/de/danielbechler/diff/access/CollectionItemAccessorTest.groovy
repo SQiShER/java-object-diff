@@ -21,7 +21,7 @@ import de.danielbechler.diff.selector.CollectionItemElementSelector
 import spock.lang.Specification
 import spock.lang.Unroll
 
-public class CollectionItemAccessorSpec extends Specification {
+public class CollectionItemAccessorTest extends Specification {
 
 	private static final def ANY_REFERENCE_ITEM = new Object()
 

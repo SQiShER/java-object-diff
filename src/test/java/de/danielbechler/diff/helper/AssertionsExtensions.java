@@ -19,6 +19,7 @@ package de.danielbechler.diff.helper;
 import org.fest.assertions.core.*;
 
 /** @author Daniel Bechler */
+@Deprecated
 public class AssertionsExtensions
 {
 	public static Condition<Class<?>> ofType(final Class<Long> aClass)

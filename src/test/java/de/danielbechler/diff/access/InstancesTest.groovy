@@ -19,7 +19,7 @@ package de.danielbechler.diff.access
 import spock.lang.Specification
 import spock.lang.Unroll
 
-class InstancesSpec extends Specification {
+class InstancesTest extends Specification {
 
 	def "getType: throws IllegalArgumentException if base and working have incompatible types"() {
 		setup:
@@ -259,5 +259,29 @@ class InstancesSpec extends Specification {
 		  1       | 1     | 1     | int              || false
 		  0       | 1     | 1     | int              || false
 		  1       | 2     | 1     | int              || true
+	}
+
+	def 'access: fails with IllegalArgumentException when accessor is null'() {
+		when:
+		  new Instances(Mock(Accessor), 'a', 'b', 'c').access(null)
+		then:
+		  thrown IllegalArgumentException
+	}
+
+	def 'access: returns new instance created by using the given accessor'() {
+		given:
+		  def instances = new Instances(Mock(Accessor), 'working', 'base', 'fresh')
+		  def accessor = Stub Accessor, {
+			  get('working') >> 'working2'
+			  get('base') >> 'base2'
+			  get('fresh') >> 'fresh2'
+		  }
+		when:
+		  def accessedInstances = instances.access(accessor)
+		then:
+		  accessedInstances.working == 'working2'
+		  accessedInstances.base == 'base2'
+		  accessedInstances.fresh == 'fresh2'
+		  accessedInstances.sourceAccessor.is accessor
 	}
 }

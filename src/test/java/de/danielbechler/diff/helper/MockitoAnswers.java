@@ -4,6 +4,7 @@ import org.mockito.invocation.*;
 import org.mockito.stubbing.*;
 
 /** @author Daniel Bechler */
+@Deprecated
 public class MockitoAnswers
 {
 	private MockitoAnswers()
