@@ -17,6 +17,8 @@
 package de.danielbechler.diff.path
 
 import de.danielbechler.diff.selector.BeanPropertyElementSelector
+import de.danielbechler.diff.selector.CollectionItemElementSelector
+import de.danielbechler.diff.selector.MapKeyElementSelector
 import de.danielbechler.diff.selector.RootElementSelector
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -91,5 +93,73 @@ class NodePathTest extends Specification {
 		  NodePath.with('a')      | NodePath.with('a', 'b') || -1
 		  NodePath.with('a', 'b') | NodePath.with('a')      || 1
 		  NodePath.with('a')      | NodePath.with('b')      || 1
+	}
+
+	def 'startBuilding without elements'() {
+		expect:
+		  NodePath.startBuilding().build().elementSelectors == [RootElementSelector.instance]
+	}
+
+	def 'startBuilding with element'() {
+		def elementSelector = new CollectionItemElementSelector("foo")
+		expect:
+		  NodePath.startBuilding().element(elementSelector).build().elementSelectors == [
+				  RootElementSelector.instance,
+				  elementSelector
+		  ]
+	}
+
+	def 'startBuilding with propertyName'() {
+		expect:
+		  NodePath.startBuilding().propertyName("foo", "bar").build().elementSelectors == [
+				  RootElementSelector.getInstance(),
+				  new BeanPropertyElementSelector("foo"),
+				  new BeanPropertyElementSelector("bar")
+		  ]
+	}
+
+	def 'startBuilding with mapKey'() {
+		expect:
+		  NodePath.startBuilding().mapKey("foo").build().elementSelectors == [
+				  RootElementSelector.instance,
+				  new MapKeyElementSelector("foo")
+		  ]
+	}
+
+	def 'startBuilding with mapKey throws IllegalArgumentException when key is null'() {
+		when:
+		  NodePath.startBuilding().mapKey(null).build()
+		then:
+		  thrown IllegalArgumentException
+	}
+
+	def 'startBuilding with collectionItem'() {
+		expect:
+		  NodePath.startBuilding().collectionItem("foo").build().elementSelectors == [
+				  RootElementSelector.instance,
+				  new CollectionItemElementSelector("foo")
+		  ]
+	}
+
+	def 'startBuildingFrom'() {
+		expect:
+		  NodePath.startBuildingFrom(NodePath.with("foo")).build().elementSelectors == [
+				  RootElementSelector.getInstance(),
+				  new BeanPropertyElementSelector("foo")
+		  ]
+	}
+
+	def 'startBuildingFrom: throws IllegalArgumentException when called with null'() {
+		when:
+		  NodePath.startBuildingFrom(null).build()
+		then:
+		  thrown IllegalArgumentException
+	}
+
+	def 'withRoot: build path with only the root element'() {
+		expect:
+		  NodePath.withRoot().elementSelectors == [
+				  RootElementSelector.instance
+		  ]
 	}
 }
