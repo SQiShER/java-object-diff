@@ -21,9 +21,6 @@ import de.danielbechler.diff.selector.RootElementSelector
 import spock.lang.Specification
 import spock.lang.Unroll
 
-/**
- * Created by Daniel Bechler.
- */
 class NodePathTest extends Specification {
 
 	def 'matches'() {
@@ -70,5 +67,29 @@ class NodePathTest extends Specification {
 		  path                         || expected
 		  NodePath.withRoot()          || RootElementSelector.instance
 		  NodePath.with('a', 'b', 'c') || new BeanPropertyElementSelector('c')
+	}
+
+	def 'equals'() {
+		expect:
+		  path1.equals(path2) == result
+		where:
+		  path1                   | path2                   || result
+		  NodePath.withRoot()     | NodePath.withRoot()     || true
+		  NodePath.with('a')      | NodePath.with('a')      || true
+		  NodePath.with('a')      | NodePath.with('a', 'b') || false
+		  NodePath.with('a', 'b') | NodePath.with('a')      || false
+		  NodePath.with('a')      | NodePath.with('b')      || false
+	}
+
+	def 'compareTo'() {
+		expect:
+		  path1.compareTo(path2) == result
+		where:
+		  path1                   | path2                   || result
+		  NodePath.withRoot()     | NodePath.withRoot()     || 0
+		  NodePath.with('a')      | NodePath.with('a')      || 0
+		  NodePath.with('a')      | NodePath.with('a', 'b') || -1
+		  NodePath.with('a', 'b') | NodePath.with('a')      || 1
+		  NodePath.with('a')      | NodePath.with('b')      || 1
 	}
 }

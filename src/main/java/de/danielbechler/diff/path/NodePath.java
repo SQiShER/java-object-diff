@@ -51,6 +51,11 @@ public final class NodePath implements Comparable<NodePath>
 		return false;
 	}
 
+	public List<ElementSelector> getElementSelectors()
+	{
+		return elementSelectors;
+	}
+
 	public boolean isChildOf(final NodePath nodePath)
 	{
 		final List<ElementSelector> otherElementSelectors = nodePath.getElementSelectors();
@@ -127,21 +132,18 @@ public final class NodePath implements Comparable<NodePath>
 
 	public int compareTo(final NodePath that)
 	{
-		if (this.getElementSelectors().size() <= that.getElementSelectors().size())
+		final int distance = getElementSelectors().size() - that.getElementSelectors().size();
+		if (distance == 0)
 		{
-			return -1;
+			return matches(that) ? 0 : 1;
 		}
-		else if (this.matches(that))
-		{
-			return 0;
-		}
-		else if (this.getElementSelectors().size() > that.getElementSelectors().size())
+		else if (distance > 0)
 		{
 			return 1;
 		}
 		else
 		{
-			return 1;
+			return -1;
 		}
 	}
 
@@ -154,11 +156,6 @@ public final class NodePath implements Comparable<NodePath>
 	{
 		Assert.notNull(nodePath, "propertyPath");
 		return new AppendableBuilderImpl(new ArrayList<ElementSelector>(nodePath.getElementSelectors()));
-	}
-
-	public List<ElementSelector> getElementSelectors()
-	{
-		return elementSelectors;
 	}
 
 	public static NodePath with(final String propertyName, final String... additionalPropertyNames)
