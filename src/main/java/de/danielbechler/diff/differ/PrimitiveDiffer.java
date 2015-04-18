@@ -19,6 +19,7 @@ package de.danielbechler.diff.differ;
 import de.danielbechler.diff.access.Instances;
 import de.danielbechler.diff.comparison.PrimitiveDefaultValueModeResolver;
 import de.danielbechler.diff.node.DiffNode;
+import de.danielbechler.util.Assert;
 import de.danielbechler.util.Classes;
 
 import static de.danielbechler.diff.comparison.PrimitiveDefaultValueMode.UNASSIGNED;
@@ -32,6 +33,7 @@ public final class PrimitiveDiffer implements Differ
 
 	public PrimitiveDiffer(final PrimitiveDefaultValueModeResolver primitiveDefaultValueModeResolver)
 	{
+		Assert.notNull(primitiveDefaultValueModeResolver, "primitiveDefaultValueModeResolver");
 		this.primitiveDefaultValueModeResolver = primitiveDefaultValueModeResolver;
 	}
 
@@ -42,7 +44,7 @@ public final class PrimitiveDiffer implements Differ
 
 	public final DiffNode compare(final DiffNode parentNode, final Instances instances)
 	{
-		if (!instances.getType().isPrimitive())
+		if (!accepts(instances.getType()))
 		{
 			throw new IllegalArgumentException("The primitive differ can only deal with primitive types.");
 		}

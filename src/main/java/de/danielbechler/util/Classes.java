@@ -297,49 +297,4 @@ public final class Classes
 			}
 		}
 	}
-
-	private static final class TypeConfig
-	{
-		private final Class<?> type;
-		private final boolean simple;
-		private final boolean boxed;
-		private final boolean comparable;
-		private final boolean extendable;
-
-		public TypeConfig(final Class<?> type, final boolean simple, final boolean boxed, final boolean comparable, final boolean extendable)
-		{
-			this.type = type;
-			this.simple = simple;
-			this.boxed = boxed;
-			this.comparable = comparable;
-			this.extendable = extendable;
-		}
-
-		public boolean isSimple()
-		{
-			return simple;
-		}
-
-		public boolean isBoxed()
-		{
-			return boxed;
-		}
-
-		public boolean isComparable()
-		{
-			return comparable;
-		}
-
-		public boolean appliesTo(final Class<?> otherType)
-		{
-			if (extendable)
-			{
-				return type.isAssignableFrom(otherType);
-			}
-			else
-			{
-				return type.equals(otherType);
-			}
-		}
-	}
 }
