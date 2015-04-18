@@ -15,14 +15,11 @@
  */
 
 package de.danielbechler.diff.category
-
 import de.danielbechler.diff.access.PropertyAwareAccessor
-import de.danielbechler.diff.access.RootAccessor
 import de.danielbechler.diff.node.DiffNode
 import de.danielbechler.diff.path.NodePath
 import de.danielbechler.diff.selector.BeanPropertyElementSelector
 import spock.lang.Specification
-
 /**
  * @author Daniel Bechler
  */
@@ -36,7 +33,7 @@ class CategoryServiceSpec extends Specification {
 
 	def "setup"() {
 		accessor.elementSelector >> new BeanPropertyElementSelector("foo")
-		rootNode = new DiffNode(DiffNode.ROOT, RootAccessor.instance, null)
+		rootNode = DiffNode.newRootNode()
 		node = new DiffNode(rootNode, accessor, nodeType)
 	}
 

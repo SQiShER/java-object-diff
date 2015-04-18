@@ -70,14 +70,11 @@ public class DiffNode
 		return new DiffNode();
 	}
 
-	/**
-	 * @deprecated Only used in tests. Doesn't really make sense in the real world, as no parent node implies the
-	 * RootAccessor
-	 */
-	@Deprecated
-	DiffNode(final Accessor accessor, final Class<?> valueType)
+	public static DiffNode newRootNodeWithType(final Class<?> valueType)
 	{
-		this(ROOT, accessor, valueType);
+		final DiffNode rootNode = newRootNode();
+		rootNode.setType(valueType);
+		return rootNode;
 	}
 
 	public DiffNode(final DiffNode parentNode, final Accessor accessor, final Class<?> valueType)
@@ -93,23 +90,10 @@ public class DiffNode
 		this(parentNode, accessor, null);
 	}
 
-	public DiffNode(final Accessor accessor)
-	{
-		this(null, accessor, null);
-	}
-
-	/**
-	 * @deprecated Only used in tests
-	 */
-	@Deprecated
-	public DiffNode(final Class<?> valueType)
-	{
-		this(ROOT, RootAccessor.getInstance(), valueType);
-	}
-
 	private DiffNode()
 	{
-		this(ROOT, RootAccessor.getInstance(), null);
+		this.parentNode = ROOT;
+		this.accessor = RootAccessor.getInstance();
 	}
 
 	/**
@@ -242,12 +226,12 @@ public class DiffNode
 	}
 
 	/**
-	 * Allows for explicit type definition. However, if the accessor is TypeAware, {@link #getValueType()} will
-	 * always return the type returned by the accessor.
+	 * Allows to explicity set the type of this node. This will overshadow the type returned by {@linkplain
+	 * #getValueTypeInfo()} as well as the one returned by the accessor.
 	 *
 	 * @param aClass The type of the value represented by this node.
 	 */
-	public void setType(final Class<?> aClass)
+	public final void setType(final Class<?> aClass)
 	{
 		this.valueType = aClass;
 	}

@@ -118,12 +118,8 @@ class DiffNodeTest extends Specification {
 
 	def 'addChild: fails with exception when attempting to add node that is already child of another node'() {
 		given:
-		  def childNode = new DiffNode(Stub(Accessor), Object)
-		when:
-		  DiffNode.newRootNode().addChild(childNode)
-		then:
-		  notThrown IllegalArgumentException
-		when: 'adding the child node again, but to another node'
+		  def childNode = new DiffNode(DiffNode.newRootNode(), Stub(Accessor), Object)
+		when: 'adding the child to another node'
 		  DiffNode.newRootNode().addChild(childNode)
 		then:
 		  thrown IllegalArgumentException
@@ -145,7 +141,7 @@ class DiffNodeTest extends Specification {
 		  def childAccessor = Stub Accessor, {
 			  getElementSelector() >> new BeanPropertyElementSelector('foo')
 		  }
-		  def child = new DiffNode(childAccessor, String)
+		  def child = new DiffNode(null, childAccessor, String)
 		when:
 		  parent.addChild(child)
 		then: 'child has been added to parent'
@@ -176,7 +172,7 @@ class DiffNodeTest extends Specification {
 		  PropertyAwareAccessor accessor = Stub(PropertyAwareAccessor) {
 			  getReadMethodAnnotations() >> [annotation]
 		  }
-		  def node = new DiffNode(accessor, Object)
+		  def node = new DiffNode(null, accessor, Object)
 		expect:
 		  node.propertyAnnotations.size() == 1
 		  node.propertyAnnotations.contains(annotation)
@@ -184,7 +180,7 @@ class DiffNodeTest extends Specification {
 
 	def 'getPropertyAnnotations: returns empty set if accessor is not property aware'() {
 		given:
-		  def node = new DiffNode(Stub(Accessor), Object)
+		  def node = new DiffNode(null, Stub(Accessor), Object)
 		expect:
 		  node.propertyAnnotations.isEmpty()
 	}
@@ -194,7 +190,7 @@ class DiffNodeTest extends Specification {
 		  ObjectDiffTest annotation = Mock(ObjectDiffTest)
 		  PropertyAwareAccessor accessor = Mock(PropertyAwareAccessor)
 		when:
-		  def node = new DiffNode(accessor)
+		  def node = new DiffNode(DiffNode.newRootNode(), accessor)
 		  node.getPropertyAnnotation(ObjectDiffTest) == annotation
 		then:
 		  1 * accessor.getReadMethodAnnotation(ObjectDiffTest) >> annotation
@@ -204,14 +200,14 @@ class DiffNodeTest extends Specification {
 		given:
 		  def accessor = Mock(Accessor)
 		expect:
-		  def node = new DiffNode(accessor, Object)
+		  def node = new DiffNode(null, accessor, Object)
 		  node.getPropertyAnnotation(ObjectDiffTest) == null
 	}
 
 	def 'getPropertyName: returns name from PropertyAwareAccessor'() {
 		given:
 		  def expectedPropertyName = 'foo';
-		  def nodeWithPropertyName = new DiffNode(Stub(PropertyAwareAccessor, {
+		  def nodeWithPropertyName = new DiffNode(null, Stub(PropertyAwareAccessor, {
 			  getPropertyName() >> expectedPropertyName
 		  }), Object)
 		expect:
@@ -221,7 +217,7 @@ class DiffNodeTest extends Specification {
 	def 'getPropertyName: returns name of parent node if it doesn\'t have one itself'() {
 		given:
 		  def expectedPropertyName = 'foo'
-		  def parentNodeWithPropertyName = new DiffNode(Stub(PropertyAwareAccessor, {
+		  def parentNodeWithPropertyName = new DiffNode(null, Stub(PropertyAwareAccessor, {
 			  getPropertyName() >> expectedPropertyName
 		  }), Object)
 		and:
@@ -232,14 +228,14 @@ class DiffNodeTest extends Specification {
 
 	def 'getPropertyName: returns null when property name can not be resolved from accessor'() {
 		expect:
-		  def node = new DiffNode(Mock(Accessor), Object)
+		  def node = new DiffNode(null, Mock(Accessor), Object)
 		  node.propertyName == null
 	}
 
 	@Unroll
 	def 'isPropertyAware: returns #expectedResult when acessor #doesOrDoesNotImplement PropertyAwareAccessor interface'() {
 		given:
-		  def node = new DiffNode(Stub(accessorType), Object)
+		  def node = new DiffNode(null, Stub(accessorType), Object)
 		expect:
 		  node.isPropertyAware() == expectedResult
 		where:

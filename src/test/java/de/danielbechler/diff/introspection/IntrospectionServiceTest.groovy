@@ -15,19 +15,17 @@
  */
 
 package de.danielbechler.diff.introspection
-
 import de.danielbechler.diff.ObjectDifferBuilder
-import de.danielbechler.diff.access.RootAccessor
 import de.danielbechler.diff.access.TypeAwareAccessor
 import de.danielbechler.diff.circular.CircularReferenceMatchingMode
 import de.danielbechler.diff.inclusion.Inclusion
+import de.danielbechler.diff.instantiation.TypeInfo
 import de.danielbechler.diff.mock.ObjectWithString
 import de.danielbechler.diff.node.DiffNode
 import de.danielbechler.diff.path.NodePath
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
-
 /**
  * @author Daniel Bechler
  */
@@ -40,7 +38,7 @@ class IntrospectionServiceTest extends Specification {
 
 	def objectDifferBuilder = Mock(ObjectDifferBuilder)
 	def introspectionService = new IntrospectionService(objectDifferBuilder)
-	def rootNode = new DiffNode(DiffNode.ROOT, RootAccessor.instance, ObjectWithString)
+	def rootNode = DiffNode.newRootNodeWithType(ObjectWithString)
 	def childNode
 	def childAccessor = Mock(TypeAwareAccessor)
 	def defaultIntrospector = Mock(Introspector)
@@ -65,7 +63,7 @@ class IntrospectionServiceTest extends Specification {
 
 	def 'introspection should always be disabled for Arrays'() {
 		given:
-		  rootNode = new DiffNode(DiffNode.ROOT, RootAccessor.instance, type);
+		  rootNode = DiffNode.newRootNodeWithType(type)
 		  introspectionService.ofType(type).toBeEnabled()
 
 		expect:
@@ -78,7 +76,7 @@ class IntrospectionServiceTest extends Specification {
 
 	def 'introspection should always be disabled for Enums'() {
 		given:
-		  rootNode = new DiffNode(DiffNode.ROOT, RootAccessor.instance, type);
+		  rootNode = DiffNode.newRootNodeWithType(type)
 		  introspectionService.ofType(type).toBeEnabled()
 
 		expect:
@@ -90,7 +88,7 @@ class IntrospectionServiceTest extends Specification {
 
 	def 'introspection should always be disabled for nodes with unknown type (null)'() {
 		given:
-		  rootNode = new DiffNode(DiffNode.ROOT, RootAccessor.instance, null);
+		  rootNode = DiffNode.newRootNode()
 		  introspectionService.ofType(null).toBeEnabled()
 
 		expect:
@@ -177,7 +175,8 @@ class IntrospectionServiceTest extends Specification {
 		given:
 		  def typeIntrospector = Mock(Introspector)
 		  introspectionService.ofType(String).toUse(typeIntrospector)
-		  rootNode = new DiffNode(String)
+		  rootNode = DiffNode.newRootNode()
+		  rootNode.setValueTypeInfo(new TypeInfo(String))
 
 		expect:
 		  introspectionService.introspectorForNode(rootNode) == typeIntrospector

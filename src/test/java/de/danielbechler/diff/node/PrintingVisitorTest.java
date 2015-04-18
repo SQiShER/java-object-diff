@@ -30,7 +30,7 @@ public class PrintingVisitorTest
 	@Test
 	public void prints_root_node_if_unchanged_and_without_children()
 	{
-		final DiffNode rootNode = new DiffNode(String.class);
+		final DiffNode rootNode = DiffNode.newRootNodeWithType(String.class);
 		final TestablePrintingVisitor visitor = new TestablePrintingVisitor("foo", "foo");
 		rootNode.visit(visitor);
 		final String output = visitor.getOutput();

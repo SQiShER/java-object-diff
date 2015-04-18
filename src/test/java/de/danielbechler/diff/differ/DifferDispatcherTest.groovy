@@ -75,7 +75,7 @@ class DifferDispatcherTest extends Specification {
 			  access(_ as Accessor) >> accessedInstances
 			  getSourceAccessor() >> accessor
 		  }
-		  def node = new DiffNode(RootAccessor.instance, Object)
+		  def node = DiffNode.newRootNode()
 
 		when:
 		  differDispatcher.dispatch(node, instances, accessor)

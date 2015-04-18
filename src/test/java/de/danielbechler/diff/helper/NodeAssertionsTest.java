@@ -36,7 +36,7 @@ public class NodeAssertionsTest
 	@Test
 	public void testAssertThat_node_does_exist_succeeds_when_node_exists() throws Exception
 	{
-		final DiffNode node = new DiffNode(String.class);
+		final DiffNode node = DiffNode.newRootNodeWithType(String.class);
 		assertThat(node).root().doesExist();
 	}
 
@@ -55,14 +55,14 @@ public class NodeAssertionsTest
 	@Test(expectedExceptions = AssertionError.class)
 	public void testAssertThat_node_does_not_exist_fails_when_node_exist() throws Exception
 	{
-		final DiffNode node = new DiffNode(String.class);
+		final DiffNode node = DiffNode.newRootNodeWithType(String.class);
 		assertThat(node).root().doesNotExist();
 	}
 
 	@Test
 	public void testAssertThat_node_has_children_succeeds_when_children_are_present() throws Exception
 	{
-		final DiffNode root = new DiffNode(String.class);
+		final DiffNode root = DiffNode.newRootNodeWithType(String.class);
 		final DiffNode child = new DiffNode(root, mock(Accessor.class), String.class);
 		root.addChild(child);
 		assertThat(root).root().hasChildren();
@@ -71,7 +71,7 @@ public class NodeAssertionsTest
 	@Test(expectedExceptions = AssertionError.class)
 	public void testAssertThat_node_has_children_fails_when_no_children_are_present() throws Exception
 	{
-		final DiffNode node = new DiffNode(String.class);
+		final DiffNode node = DiffNode.newRootNodeWithType(String.class);
 		assertThat(node).root().hasChildren();
 	}
 
@@ -80,7 +80,7 @@ public class NodeAssertionsTest
 	{
 		final Accessor accessor = mock(Accessor.class);
 		when(accessor.getElementSelector()).thenReturn(new BeanPropertyElementSelector("value"));
-		final DiffNode node = new DiffNode(ObjectWithString.class);
+		final DiffNode node = DiffNode.newRootNodeWithType(ObjectWithString.class);
 		final DiffNode child = new DiffNode(node, accessor, String.class);
 		node.addChild(child);
 		assertThat(node).child("value").doesExist();
@@ -125,14 +125,14 @@ public class NodeAssertionsTest
 	@Test
 	public void testAssertThat_node_has_no_children_succeeds_when_node_has_no_children()
 	{
-		final DiffNode node = new DiffNode(String.class);
+		final DiffNode node = DiffNode.newRootNodeWithType(String.class);
 		assertThat(node).root().hasNoChildren();
 	}
 
 	@Test(expectedExceptions = AssertionError.class)
 	public void testAssertThat_node_has_no_children_fails_when_node_has_children()
 	{
-		final DiffNode root = new DiffNode(String.class);
+		final DiffNode root = DiffNode.newRootNodeWithType(String.class);
 		final DiffNode child = new DiffNode(root, mock(Accessor.class), String.class);
 		root.addChild(child);
 		assertThat(root).root().hasNoChildren();
@@ -141,14 +141,14 @@ public class NodeAssertionsTest
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void testAssertThat_node_has_children_with_negative_count_throws_IllegalArgumentException()
 	{
-		final DiffNode node = new DiffNode(String.class);
+		final DiffNode node = DiffNode.newRootNodeWithType(String.class);
 		assertThat(node).root().hasChildren(-1);
 	}
 
 	@Test
 	public void testAssertThat_node_has_changed_state_succeeds_when_node_has_changed()
 	{
-		final DiffNode node = new DiffNode(String.class);
+		final DiffNode node = DiffNode.newRootNodeWithType(String.class);
 		node.setState(DiffNode.State.CHANGED);
 		assertThat(node).root().hasState(DiffNode.State.CHANGED);
 	}
@@ -156,7 +156,7 @@ public class NodeAssertionsTest
 	@Test(expectedExceptions = AssertionError.class)
 	public void testAssertThat_node_has_changed_state_fails_when_node_has_different_state()
 	{
-		final DiffNode node = new DiffNode(String.class);
+		final DiffNode node = DiffNode.newRootNodeWithType(String.class);
 		node.setState(DiffNode.State.UNTOUCHED);
 		assertThat(node).root().hasState(DiffNode.State.CHANGED);
 	}

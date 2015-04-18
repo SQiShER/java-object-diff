@@ -44,7 +44,7 @@ public class ToMapPrintingVisitorTest
 	@Test
 	public void testGetMessages_returns_map_with_accepted_messages() throws Exception
 	{
-		final DiffNode node = new DiffNode(String.class);
+		final DiffNode node = DiffNode.newRootNodeWithType(String.class);
 		node.setState(DiffNode.State.CHANGED);
 		node.visit(visitor);
 		assertThat(visitor.getMessages()).hasSize(1).containsKey(NodePath.withRoot());
@@ -59,7 +59,7 @@ public class ToMapPrintingVisitorTest
 	@Test
 	public void testGetMessages_returns_modifiable_map_when_messages_exist() throws Exception
 	{
-		final DiffNode node = new DiffNode(String.class);
+		final DiffNode node = DiffNode.newRootNodeWithType(String.class);
 		node.setState(DiffNode.State.CHANGED);
 		node.visit(visitor);
 		assertThat(visitor.getMessages()).hasSize(1);
@@ -78,7 +78,7 @@ public class ToMapPrintingVisitorTest
 	@Test
 	public void testGetMessage_returns_message_when_message_present() throws Exception
 	{
-		final DiffNode node = new DiffNode(String.class);
+		final DiffNode node = DiffNode.newRootNodeWithType(String.class);
 		node.setState(DiffNode.State.CHANGED);
 		node.visit(visitor);
 		final NodePath path = NodePath.withRoot();
@@ -88,7 +88,7 @@ public class ToMapPrintingVisitorTest
 	@Test
 	public void testGetMessage_returns_null_when_message_absend() throws Exception
 	{
-		final DiffNode node = new DiffNode(String.class);
+		final DiffNode node = DiffNode.newRootNodeWithType(String.class);
 		node.setState(DiffNode.State.CHANGED);
 		node.visit(visitor);
 		final NodePath path = NodePath.with("doesn't-exist");
@@ -98,7 +98,7 @@ public class ToMapPrintingVisitorTest
 	@Test
 	public void testHasMessages_returns_true_when_messages_exist() throws Exception
 	{
-		final DiffNode node = new DiffNode(String.class);
+		final DiffNode node = DiffNode.newRootNodeWithType(String.class);
 		node.setState(DiffNode.State.CHANGED);
 		node.visit(visitor);
 		assertThat(visitor.hasMessages()).isTrue();
@@ -113,7 +113,7 @@ public class ToMapPrintingVisitorTest
 	@Test
 	public void testGetMessagesAsString_returns_line_break_separated_list_of_messages_when_messages_exist() throws Exception
 	{
-		final DiffNode node = new DiffNode(String.class);
+		final DiffNode node = DiffNode.newRootNodeWithType(String.class);
 		node.setState(DiffNode.State.CHANGED);
 		node.visit(visitor);
 		assertThat(visitor.getMessagesAsString()).isEqualTo(visitor.getMessage(NodePath.withRoot()) + "\n");
@@ -128,7 +128,7 @@ public class ToMapPrintingVisitorTest
 	@Test
 	public void testToString_is_analogous_to_getMessagesAsString() throws Exception
 	{
-		final DiffNode node = new DiffNode(String.class);
+		final DiffNode node = DiffNode.newRootNodeWithType(String.class);
 		node.setState(DiffNode.State.CHANGED);
 		node.visit(visitor);
 		assertThat(visitor.toString()).isEqualTo(visitor.getMessage(NodePath.withRoot()) + "\n");

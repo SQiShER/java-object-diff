@@ -32,7 +32,7 @@ class TypePropertyConfigInclusionResolverTest extends Specification {
 
 	def 'should return DEFAULT when node is not property aware'() {
 		given:
-		  def node = new DiffNode(Stub(Accessor), null)
+		  def node = new DiffNode(null, Stub(Accessor), null)
 		expect:
 		  inclusionResolver.getInclusion(node) == DEFAULT
 	}
@@ -40,16 +40,15 @@ class TypePropertyConfigInclusionResolverTest extends Specification {
 	def 'should return DEFAULT when node has no parent'() {
 		given:
 		  def propertyAwareAccessor = Stub(PropertyAwareAccessor)
-		  def node = new DiffNode(propertyAwareAccessor, null)
+		  def node = new DiffNode(null, propertyAwareAccessor, null)
 		expect:
 		  inclusionResolver.getInclusion(node) == DEFAULT
 	}
 
 	def 'should return DEFAULT when parent node has no type'() {
 		given:
-		  def propertyAwareAccessor = Stub(PropertyAwareAccessor)
-		  def parentNode = new DiffNode(null)
-		  def node = new DiffNode(parentNode, propertyAwareAccessor, null)
+		  def parentNode = DiffNode.newRootNode()
+		  def node = new DiffNode(parentNode, Stub(PropertyAwareAccessor), null)
 		expect:
 		  inclusionResolver.getInclusion(node) == DEFAULT
 	}
@@ -113,7 +112,7 @@ class TypePropertyConfigInclusionResolverTest extends Specification {
 	}
 
 	DiffNode createPropertyNode(Class<?> parentType, String propertyName) {
-		def parentNode = new DiffNode(parentType)
+		def parentNode = DiffNode.newRootNodeWithType(parentType)
 		def accessor = Stub(PropertyAwareAccessor, { getPropertyName() >> propertyName })
 		return new DiffNode(parentNode, accessor, null)
 	}
