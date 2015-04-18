@@ -41,7 +41,7 @@ public final class NodeAssertions
 
 	private interface Syntax
 	{
-		public interface SelectNode
+		interface SelectNode
 		{
 			AssertNode root();
 
@@ -58,7 +58,7 @@ public final class NodeAssertions
 			AssertNode collectionChild(Object referenceItem);
 		}
 
-		public interface AssertNode
+		interface AssertNode
 		{
 			AssertNode doesExist();
 

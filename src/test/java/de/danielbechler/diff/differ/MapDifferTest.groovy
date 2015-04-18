@@ -174,7 +174,7 @@ public class MapDifferTest extends Specification {
 
 	def "return node with proper parent"() {
 		given:
-		  def DiffNode parentNode = new DiffNode()
+		  def DiffNode parentNode = DiffNode.newRootNode()
 
 		when:
 		  node = mapDiffer.compare(parentNode, instances)

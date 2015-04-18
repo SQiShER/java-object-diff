@@ -81,7 +81,7 @@ class InclusionServiceTest extends Specification {
 
 	def 'isIgnored: should never return true for the root node'() {
 		given:
-		  def rootNode = new DiffNode()
+		  def rootNode = DiffNode.newRootNode()
 		and:
 		  inclusionService.include().node(NodePath.withRoot())
 		expect:

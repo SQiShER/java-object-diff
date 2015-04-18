@@ -91,7 +91,7 @@ class CategoryServiceSpec extends Specification {
 
 	def "resolveCategories: should return empty Set if no category is defined"() {
 		given:
-		  node = new DiffNode()
+		  node = DiffNode.newRootNode()
 
 		expect:
 		  categoryService.resolveCategories(node) == [] as Set

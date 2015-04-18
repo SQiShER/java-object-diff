@@ -65,7 +65,17 @@ public class DiffNode
 	private Class<?> valueType;
 	private TypeInfo valueTypeInfo;
 
-	public DiffNode(final Accessor accessor, final Class<?> valueType)
+	public static DiffNode newRootNode()
+	{
+		return new DiffNode();
+	}
+
+	/**
+	 * @deprecated Only used in tests. Doesn't really make sense in the real world, as no parent node implies the
+	 * RootAccessor
+	 */
+	@Deprecated
+	DiffNode(final Accessor accessor, final Class<?> valueType)
 	{
 		this(ROOT, accessor, valueType);
 	}
@@ -78,12 +88,26 @@ public class DiffNode
 		setParentNode(parentNode);
 	}
 
+	public DiffNode(final DiffNode parentNode, final Accessor accessor)
+	{
+		this(parentNode, accessor, null);
+	}
+
+	public DiffNode(final Accessor accessor)
+	{
+		this(null, accessor, null);
+	}
+
+	/**
+	 * @deprecated Only used in tests
+	 */
+	@Deprecated
 	public DiffNode(final Class<?> valueType)
 	{
 		this(ROOT, RootAccessor.getInstance(), valueType);
 	}
 
-	public DiffNode()
+	private DiffNode()
 	{
 		this(ROOT, RootAccessor.getInstance(), null);
 	}
@@ -336,17 +360,17 @@ public class DiffNode
 	 *
 	 * @param node The node to add.
 	 */
-	public boolean addChild(final DiffNode node)
+	public void addChild(final DiffNode node)
 	{
-		if (node.isRootNode())
-		{
-			throw new IllegalArgumentException("Detected attempt to add root node as child. " +
-					"This is not allowed and must be a mistake.");
-		}
-		else if (node == this)
+		if (node == this)
 		{
 			throw new IllegalArgumentException("Detected attempt to add a node to itself. " +
 					"This would cause inifite loops and must never happen.");
+		}
+		else if (node.isRootNode())
+		{
+			throw new IllegalArgumentException("Detected attempt to add root node as child. " +
+					"This is not allowed and must be a mistake.");
 		}
 		else if (node.getParentNode() != null && node.getParentNode() != this)
 		{
@@ -354,25 +378,15 @@ public class DiffNode
 					"child of another node. Adding nodes multiple times is not allowed, since it could " +
 					"cause infinite loops.");
 		}
-		final ElementSelector pathElementSelector = node.getElementSelector();
 		if (node.getParentNode() == null)
 		{
 			node.setParentNode(this);
-			children.put(pathElementSelector, node);
 		}
-		else if (node.getParentNode() == this)
-		{
-			children.put(pathElementSelector, node);
-		}
-		else
-		{
-			throw new IllegalStateException("Detected attempt to replace the parent node of node at path '" + getPath() + "'");
-		}
+		children.put(node.getElementSelector(), node);
 		if (state == State.UNTOUCHED && node.hasChanges())
 		{
 			state = State.CHANGED;
 		}
-		return true;
 	}
 
 	/**
