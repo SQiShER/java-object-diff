@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Daniel Bechler
+ * Copyright 2015 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,33 +14,29 @@
  * limitations under the License.
  */
 
-package de.danielbechler.diff.node;
+package de.danielbechler.diff.node
 
-import de.danielbechler.diff.access.Accessor;
-import de.danielbechler.diff.access.CollectionItemAccessor;
-import de.danielbechler.diff.access.PropertyAwareAccessor;
-import de.danielbechler.diff.access.RootAccessor;
-import de.danielbechler.diff.helper.NodeAssertions;
-import de.danielbechler.diff.introspection.PropertyAccessor;
-import de.danielbechler.diff.mock.ObjectDiffTest;
-import de.danielbechler.diff.path.NodePath;
-import de.danielbechler.diff.selector.BeanPropertyElementSelector;
-import de.danielbechler.diff.selector.CollectionItemElementSelector;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.core.Is;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import de.danielbechler.diff.access.Accessor
+import de.danielbechler.diff.access.CollectionItemAccessor
+import de.danielbechler.diff.access.PropertyAwareAccessor
+import de.danielbechler.diff.access.RootAccessor
+import de.danielbechler.diff.helper.NodeAssertions
+import de.danielbechler.diff.introspection.PropertyAccessor
+import de.danielbechler.diff.mock.ObjectDiffTest
+import de.danielbechler.diff.path.NodePath
+import de.danielbechler.diff.selector.BeanPropertyElementSelector
+import de.danielbechler.diff.selector.CollectionItemElementSelector
+import org.hamcrest.MatcherAssert
+import org.hamcrest.core.Is
+import org.mockito.Mockito
+import org.mockito.MockitoAnnotations
+import org.testng.annotations.BeforeMethod
+import org.testng.annotations.Test
 
-import java.lang.annotation.Annotation;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.lang.annotation.Annotation
 
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.MockitoAnnotations.Mock;
+import static org.fest.assertions.api.Assertions.assertThat
+import static org.mockito.MockitoAnnotations.Mock
 
 /**
  * @author Daniel Bechler
