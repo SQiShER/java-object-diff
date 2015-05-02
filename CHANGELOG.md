@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.91.2
+## 0.92
 
 ### Improvements
 
@@ -33,7 +33,14 @@
     To make comparison via `compareTo` more reliable, from now on `compareTo`
     will be invoked on the `working` and the `base` object and both will be
     considered equal if either one of this comparisons returns `true`.
-- **Comparison:** Dates are now compared via compareTo method to workaround the strictness of java.util.Date's equals method, which only returns true for other java.util.Dates, but not for extending classes like java.sql.Date. [#85]
+- **Comparison:** Dates are now compared via compareTo method to workaround 
+	the strictness of java.util.Date's equals method, which only returns true 
+	for other java.util.Dates, but not for extending classes like java.sql.Date. [#85]
+- **DiffNode:** Replaced some constructors with factory methods to better 
+	express their intentions.
+- **Utilities:** Removed some unused collection utility methods.
+- **Tests:** Migrated many, many more tests from TestNG to Spock.
+- **Tests:** Upgraded to Groovy 2.3 and Spock 1.0.
 
 ## 0.91.1
 
