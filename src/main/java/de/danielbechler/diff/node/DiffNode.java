@@ -444,6 +444,37 @@ public class DiffNode
 	}
 
 	/**
+	 * If this node represents a bean property this method returns all annotations of its field.
+	 *
+	 * Only works for fields having a name that matches the name derived from the getter.
+	 *
+	 * @return The annotations of the field, or an empty set if there is no field with the name derived from the getter.
+	 */
+	public Set<Annotation> getFieldAnnotations()
+	{
+		if (accessor instanceof PropertyAwareAccessor)
+		{
+			return unmodifiableSet(((PropertyAwareAccessor) accessor).getFieldAnnotations());
+		}
+		return unmodifiableSet(Collections.<Annotation>emptySet());
+	}
+
+	/**
+	 * @param annotationClass the annotation we are looking for
+	 * @param <T>
+	 * @return The given annotation of the field, or null if not annotated or if there is no field with the name derived
+	 * from the getter.
+	 */
+	public <T extends Annotation> T getFieldAnnotation(final Class<T> annotationClass)
+	{
+		if (accessor instanceof PropertyAwareAccessor)
+		{
+			return ((PropertyAwareAccessor) accessor).getFieldAnnotation(annotationClass);
+		}
+		return null;
+	}
+
+	/**
 	 * If this node represents a bean property this method returns all annotations of its getter.
 	 *
 	 * @return A set of annotations of this nodes property getter or an empty set.

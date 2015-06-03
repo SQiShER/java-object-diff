@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Daniel Bechler
+ * Copyright 2013 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,14 @@
  * limitations under the License.
  */
 
-package de.danielbechler.diff.access;
+package de.danielbechler.diff.node;
 
-import java.lang.annotation.Annotation;
-import java.util.Set;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-/**
- * @author Daniel Bechler
- */
-public interface PropertyAwareAccessor extends TypeAwareAccessor, CategoryAware, ExclusionAware
-{
-	String getPropertyName();
-
-	Set<Annotation> getFieldAnnotations();
-
-	<T extends Annotation> T getFieldAnnotation(Class<T> annotationClass);
-
-	Set<Annotation> getReadMethodAnnotations();
-
-	<T extends Annotation> T getReadMethodAnnotation(Class<T> annotationClass);
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+public @interface SomeFieldAnnotation {
 }

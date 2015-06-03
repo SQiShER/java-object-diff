@@ -84,6 +84,58 @@ public class PropertyAccessor implements PropertyAwareAccessor
 	}
 
 	/**
+	 * Private function to allow looking for the field recursively up the superclasses.
+	 *
+	 * @param clazz
+	 * @return
+	 */
+	private Set<Annotation> getFieldAnnotations(final Class<?> clazz)
+	{
+		try
+		{
+			return new LinkedHashSet<Annotation>(asList(clazz.getDeclaredField(propertyName).getAnnotations()));
+		} catch (NoSuchFieldException e)
+		{
+			if (clazz.getSuperclass() != null)
+			{
+				return getFieldAnnotations(clazz.getSuperclass());
+			}
+			else
+			{
+				logger.debug("Cannot find propertyName: {}, declaring class: {}", propertyName, clazz);
+				return new LinkedHashSet<Annotation>(0);
+			}
+		}
+	}
+
+	/**
+	 * @return The annotations of the field, or an empty set if there is no field with the name derived from the getter.
+	 */
+	public Set<Annotation> getFieldAnnotations()
+	{
+		return getFieldAnnotations(readMethod.getDeclaringClass());
+	}
+
+	/**
+	 * @return The given annotation of the field, or null if not annotated or if there is no field with the name derived
+	 * from the getter.
+	 */
+	public <T extends Annotation> T getFieldAnnotation(final Class<T> annotationClass)
+	{
+		final Set<? extends Annotation> annotations = getFieldAnnotations();
+		assert (annotations != null) : "Something is wrong here. " +
+				"The contract of getReadAnnotations() guarantees a non-null return value.";
+		for (final Annotation annotation : annotations)
+		{
+			if (annotationClass.isAssignableFrom(annotation.annotationType()))
+			{
+				return annotationClass.cast(annotation);
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * @return The annotations of the getter used to access this property.
 	 */
 	public Set<Annotation> getReadMethodAnnotations()
