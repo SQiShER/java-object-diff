@@ -25,70 +25,70 @@ class DiffNodeFieldAnnotationsTest extends Specification {
 
 	def 'getFieldAnnotation(): returns null if not PropertyAwareAccessor'() {
 		given:
-            def accessor = Mock(Accessor) {
-                getElementSelector() >> new BeanPropertyElementSelector('f')
-            }
-		    def diffNode = new DiffNode(null, accessor, A)
+		  def accessor = Mock(Accessor) {
+			  getElementSelector() >> new BeanPropertyElementSelector('f')
+		  }
+		  def diffNode = new DiffNode(null, accessor, A)
 		expect:
-			diffNode.fieldAnnotations.size() == 0
-		    diffNode.getFieldAnnotation(SomeFieldAnnotation) == null
+		  diffNode.fieldAnnotations.size() == 0
+		  diffNode.getFieldAnnotation(SomeFieldAnnotation) == null
 	}
 
 	def 'getFieldAnnotation(): class has the field and annotated'() {
 		given:
-			def accessor = new PropertyAccessor("f", A.getMethod("getF"), A.getMethod("setF", String))
-			def diffNode = new DiffNode(null, accessor, A)
+		  def accessor = new PropertyAccessor("f", A.getMethod("getF"), A.getMethod("setF", String))
+		  def diffNode = new DiffNode(null, accessor, A)
 		expect:
-			diffNode.fieldAnnotations.size() == 1
-			diffNode.getFieldAnnotation(SomeFieldAnnotation) != null
-			diffNode.getFieldAnnotation(SomeFieldAnnotation).annotationType() == SomeFieldAnnotation
+		  diffNode.fieldAnnotations.size() == 1
+		  diffNode.getFieldAnnotation(SomeFieldAnnotation) != null
+		  diffNode.getFieldAnnotation(SomeFieldAnnotation).annotationType() == SomeFieldAnnotation
 	}
 
 	def 'getFieldAnnotation(): class does not have the field, or different name'() {
 		given:
-            def accessor = new PropertyAccessor("F", ADiffName.getMethod("getF"), null)
-            def diffNode = new DiffNode(null, accessor, ADiffName)
+		  def accessor = new PropertyAccessor("F", ADiffName.getMethod("getF"), null)
+		  def diffNode = new DiffNode(null, accessor, ADiffName)
 		expect:
-			diffNode.fieldAnnotations.size() == 0
-            diffNode.getFieldAnnotation(SomeFieldAnnotation) == null
+		  diffNode.fieldAnnotations.size() == 0
+		  diffNode.getFieldAnnotation(SomeFieldAnnotation) == null
 	}
 
 	def 'getFieldAnnotation(): inheritance'() {
 		given:
-		def accessor = new PropertyAccessor("f", AB.getMethod("getF"), AB.getMethod("setF", String))
-		def diffNode = new DiffNode(null, accessor, AB)
+		  def accessor = new PropertyAccessor("f", AB.getMethod("getF"), AB.getMethod("setF", String))
+		  def diffNode = new DiffNode(null, accessor, AB)
 		expect:
-		diffNode.fieldAnnotations.size() == 1
-		diffNode.getFieldAnnotation(SomeFieldAnnotation) != null
-		diffNode.getFieldAnnotation(SomeFieldAnnotation).annotationType() == SomeFieldAnnotation
+		  diffNode.fieldAnnotations.size() == 1
+		  diffNode.getFieldAnnotation(SomeFieldAnnotation) != null
+		  diffNode.getFieldAnnotation(SomeFieldAnnotation).annotationType() == SomeFieldAnnotation
 	}
 
 	def 'getFieldAnnotation(): inheritance, overridden getter'() {
 		given:
-		def accessor = new PropertyAccessor("f", ABGetter.getMethod("getF"), ABGetter.getMethod("setF", String))
-		def diffNode = new DiffNode(null, accessor, ABGetter)
+		  def accessor = new PropertyAccessor("f", ABGetter.getMethod("getF"), ABGetter.getMethod("setF", String))
+		  def diffNode = new DiffNode(null, accessor, ABGetter)
 		expect:
-		diffNode.fieldAnnotations.size() == 1
-		diffNode.getFieldAnnotation(SomeFieldAnnotation) != null
-		diffNode.getFieldAnnotation(SomeFieldAnnotation).annotationType() == SomeFieldAnnotation
+		  diffNode.fieldAnnotations.size() == 1
+		  diffNode.getFieldAnnotation(SomeFieldAnnotation) != null
+		  diffNode.getFieldAnnotation(SomeFieldAnnotation).annotationType() == SomeFieldAnnotation
 	}
 
 	def 'getFieldAnnotation(): inheritance, not annotated'() {
 		given:
-		def accessor = new PropertyAccessor("f", NAB.getMethod("getF"), NAB.getMethod("setF", String))
-		def diffNode = new DiffNode(null, accessor, NAB)
+		  def accessor = new PropertyAccessor("f", NAB.getMethod("getF"), NAB.getMethod("setF", String))
+		  def diffNode = new DiffNode(null, accessor, NAB)
 		expect:
-		diffNode.fieldAnnotations.size() == 0
-		diffNode.getFieldAnnotation(SomeFieldAnnotation) == null
+		  diffNode.fieldAnnotations.size() == 0
+		  diffNode.getFieldAnnotation(SomeFieldAnnotation) == null
 	}
 
 	def 'getFieldAnnotation(): inheritance, overridden getter, not annotated'() {
 		given:
-		def accessor = new PropertyAccessor("f", NABGetter.getMethod("getF"), NABGetter.getMethod("setF", String))
-		def diffNode = new DiffNode(null, accessor, NABGetter)
+		  def accessor = new PropertyAccessor("f", NABGetter.getMethod("getF"), NABGetter.getMethod("setF", String))
+		  def diffNode = new DiffNode(null, accessor, NABGetter)
 		expect:
-		diffNode.fieldAnnotations.size() == 0
-		diffNode.getFieldAnnotation(SomeFieldAnnotation) == null
+		  diffNode.fieldAnnotations.size() == 0
+		  diffNode.getFieldAnnotation(SomeFieldAnnotation) == null
 	}
 
 	public static class A {
@@ -100,11 +100,11 @@ class DiffNodeFieldAnnotationsTest extends Specification {
 		String f;
 	}
 
-    public static class ADiffName {
-        public String getF() {
-            return null;
-        }
-    }
+	public static class ADiffName {
+		public String getF() {
+			return null;
+		}
+	}
 
 	public static class AB extends A {
 	}

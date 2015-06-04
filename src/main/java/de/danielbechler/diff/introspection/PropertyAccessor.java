@@ -94,7 +94,8 @@ public class PropertyAccessor implements PropertyAwareAccessor
 		try
 		{
 			return new LinkedHashSet<Annotation>(asList(clazz.getDeclaredField(propertyName).getAnnotations()));
-		} catch (NoSuchFieldException e)
+		}
+		catch (final NoSuchFieldException e)
 		{
 			if (clazz.getSuperclass() != null)
 			{

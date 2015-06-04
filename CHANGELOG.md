@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.92.1
+
+- **Feature:** Allow for checking field level annotations via DiffNode (Thanks [@NagyGa1](https://github.com/NagyGa1)) [#134]
+
 ## 0.92
 
 ### Improvements

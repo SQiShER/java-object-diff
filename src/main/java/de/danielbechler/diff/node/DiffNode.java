@@ -445,7 +445,7 @@ public class DiffNode
 
 	/**
 	 * If this node represents a bean property this method returns all annotations of its field.
-	 *
+	 * <p/>
 	 * Only works for fields having a name that matches the name derived from the getter.
 	 *
 	 * @return The annotations of the field, or an empty set if there is no field with the name derived from the getter.
