@@ -21,7 +21,7 @@
     <groupId>de.danielbechler</groupId>
     <artifactId>java-object-diff</artifactId>
     <name>Java Object Diff</name>
-    <version>0.93-SNAPSHOT</version>
+    <version>0.92.1</version>
 
     <prerequisites>
         <maven>2.2.1</maven>
@@ -49,7 +49,7 @@
         <url>https://github.com/SQiShER/java-object-diff</url>
         <connection>scm:git:ssh://git@github.com/SQiShER/java-object-diff.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/SQiShER/java-object-diff.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>java-object-diff-0.92.1</tag>
     </scm>
 
     <issueManagement>
