@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package de.danielbechler.diff.differ;
+package de.danielbechler.diff.sequence;
 
-class Sequence
+public final class Sequence
 {
+	private static final Sequence EMPTY_SEQUENCE = new Sequence(0, 0, 0);
 	private final int workingOffset;
 	private final int baseOffset;
 	private final int length;
+
+	public static Sequence emptySequence()
+	{
+		return EMPTY_SEQUENCE;
+	}
 
 	public Sequence(final int workingOffset, final int baseOffset, final int length)
 	{
@@ -54,20 +60,10 @@ class Sequence
 		return length;
 	}
 
-	public Sequence shiftedCopy(final int distance)
-	{
-		return new Sequence(workingOffset + distance, baseOffset + distance, length);
-	}
-
 	@Override
 	public String toString()
 	{
-		final StringBuilder sb = new StringBuilder("Sequence{");
-		sb.append("workingOffset=").append(workingOffset);
-		sb.append(", baseOffset=").append(baseOffset);
-		sb.append(", length=").append(length);
-		sb.append('}');
-		return sb.toString();
+		return "Sequence{" + "workingOffset=" + workingOffset + ", baseOffset=" + baseOffset + ", length=" + length + '}';
 	}
 
 	@Override

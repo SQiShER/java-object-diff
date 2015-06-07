@@ -19,6 +19,8 @@ package de.danielbechler.diff.differ;
 import de.danielbechler.diff.access.Instances;
 import de.danielbechler.diff.access.ListItemAccessor;
 import de.danielbechler.diff.node.DiffNode;
+import de.danielbechler.diff.sequence.LongestCommonSequencesDetector;
+import de.danielbechler.diff.sequence.Sequence;
 
 import java.util.BitSet;
 import java.util.Collection;
@@ -38,7 +40,7 @@ public class ListDiffer implements Differ
 		final DiffNode node = new DiffNode(parentNode, instances.getSourceAccessor(), instances.getType());
 		final List working = instances.getWorking(List.class);
 		final List base = instances.getBase(List.class);
-		final List<Sequence> sequences = Sequencer.findSequences(working, base);
+		final List<Sequence> sequences = LongestCommonSequencesDetector.findSequences(working, base);
 		System.out.println(sequences);
 		final BitSet baseMask = baseMask(base, sequences);
 		final Map<Object, Integer> ordinals = new HashMap<Object, Integer>();
