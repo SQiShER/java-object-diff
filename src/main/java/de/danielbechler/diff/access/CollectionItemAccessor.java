@@ -16,8 +16,11 @@
 
 package de.danielbechler.diff.access;
 
+import de.danielbechler.diff.comparison.EqualsIdentityStrategy;
+import de.danielbechler.diff.comparison.IdentityStrategy;
 import de.danielbechler.diff.selector.CollectionItemElementSelector;
 import de.danielbechler.diff.selector.ElementSelector;
+import de.danielbechler.util.Assert;
 
 import java.util.Collection;
 
@@ -27,29 +30,65 @@ import java.util.Collection;
 public class CollectionItemAccessor implements TypeAwareAccessor, Accessor
 {
 	private final Object referenceItem;
+	private final IdentityStrategy identityStrategy;
 
+	/**
+	 * Default implementation uses IdentityService.EQUALS_IDENTITY_STRATEGY.
+	 *
+	 * @param referenceItem
+	 */
 	public CollectionItemAccessor(final Object referenceItem)
 	{
 		this.referenceItem = referenceItem;
+		this.identityStrategy = EqualsIdentityStrategy.getInstance();
 	}
 
-	@SuppressWarnings("unchecked")
-	private static Collection<Object> objectAsCollection(final Object object)
+	/**
+	 * Allows for custom IdentityStrategy.
+	 *
+	 * @param referenceItem
+	 * @param identityStrategy
+	 */
+	public CollectionItemAccessor(final Object referenceItem,
+								  final IdentityStrategy identityStrategy)
 	{
-		if (object == null)
-		{
-			return null;
-		}
-		else if (object instanceof Collection)
-		{
-			return (Collection<Object>) object;
-		}
-		throw new IllegalArgumentException(object.getClass().toString());
+		this.referenceItem = referenceItem;
+		Assert.notNull(identityStrategy, "identityStrategy");
+		this.identityStrategy = identityStrategy;
+	}
+
+	public Class<?> getType()
+	{
+		return referenceItem != null ? referenceItem.getClass() : null;
+	}
+
+	@Override
+	public String toString()
+	{
+		return "collection item " + getElementSelector();
 	}
 
 	public ElementSelector getElementSelector()
 	{
-		return new CollectionItemElementSelector(referenceItem);
+		return new CollectionItemElementSelector(referenceItem,
+				identityStrategy);
+	}
+
+	public Object get(final Object target)
+	{
+		final Collection targetCollection = objectAsCollection(target);
+		if (targetCollection == null)
+		{
+			return null;
+		}
+		for (final Object item : targetCollection)
+		{
+			if (item != null && identityStrategy.equals(item, referenceItem))
+			{
+				return item;
+			}
+		}
+		return null;
 	}
 
 	public void set(final Object target, final Object value)
@@ -67,26 +106,18 @@ public class CollectionItemAccessor implements TypeAwareAccessor, Accessor
 		targetCollection.add(value);
 	}
 
-	public Object get(final Object target)
+	@SuppressWarnings("unchecked")
+	private static Collection<Object> objectAsCollection(final Object object)
 	{
-		final Collection targetCollection = objectAsCollection(target);
-		if (targetCollection == null)
+		if (object == null)
 		{
 			return null;
 		}
-		for (final Object item : targetCollection)
+		else if (object instanceof Collection)
 		{
-			if (item != null && item.equals(referenceItem))
-			{
-				return item;
-			}
+			return (Collection<Object>) object;
 		}
-		return null;
-	}
-
-	public Class<?> getType()
-	{
-		return referenceItem != null ? referenceItem.getClass() : null;
+		throw new IllegalArgumentException(object.getClass().toString());
 	}
 
 	public void unset(final Object target)
@@ -96,11 +127,5 @@ public class CollectionItemAccessor implements TypeAwareAccessor, Accessor
 		{
 			targetCollection.remove(referenceItem);
 		}
-	}
-
-	@Override
-	public String toString()
-	{
-		return "collection item " + getElementSelector();
 	}
 }
