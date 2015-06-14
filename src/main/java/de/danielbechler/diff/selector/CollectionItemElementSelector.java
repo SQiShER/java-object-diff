@@ -71,6 +71,6 @@ public final class CollectionItemElementSelector extends ElementSelector
 	@Override
 	public int hashCode()
 	{
-		return item != null ? item.hashCode() : 0;
+		return 31;
 	}
 }

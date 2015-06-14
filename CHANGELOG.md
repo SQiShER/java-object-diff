@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.92.2
+
+- **ElementSelector:** `CollectionItemElementSelector` now returns a constant hashCode
+
+	...instead of the one of its reference item.
+
+	The ElementSelector `hashCode` is only needed to use it as key in a 
+    Map. With introduction of the `IdentityStrategy` this adds an 
+    unnecessary source of confusion and complexity when implementing custom
+    IdentityStrategies. 
+    
+    To avoid this, returning a constant hashCode seems like a small price
+    to pay. Yes, it may have a small performance impact, but we can still
+    optimize when that turns out to be a problem.
+
 ## 0.92.1
 
 - **Feature:** Allow for checking field level annotations via DiffNode (Thanks [@NagyGa1](https://github.com/NagyGa1)) [#134]
