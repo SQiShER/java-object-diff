@@ -1,8 +1,9 @@
 site_name: java-object-diff Documentation
 repo_url: https://github.com/SQiShER/java-object-diff
 pages:
-- ['index.md', 'Home']
-- ['maven.md', 'Using with Maven']
-- ['getting-started.md', 'Getting Started']
-- ['user-guide.md', 'User Guide', 'User Guide']
-- ['merging.md', 'Merging']
+- Home: index.md
+- Using with Maven: maven.md
+- Getting Started: getting-started.md
+- User Guide:
+  - User Guide: user-guide.md
+- Merging: merging.md
