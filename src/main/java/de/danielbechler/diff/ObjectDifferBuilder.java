@@ -45,9 +45,9 @@ import java.util.Collection;
 import java.util.Set;
 
 /**
- * This is the entry point of every diffing operation. It acts as a factory to get hold of an actual {@link
- * ObjectDiffer} instance and exposes a configuration API to customize its behavior to
- * suit your needs.
+ * This is the entry point of every diffing operation. It acts as a factory to
+ * get hold of an actual {@link ObjectDiffer} instance and exposes a
+ * configuration API to customize its behavior to suit your needs.
  *
  * @author Daniel Bechler
  */
@@ -67,40 +67,10 @@ public class ObjectDifferBuilder
 	{
 	}
 
-	public static ObjectDiffer buildDefault()
-	{
-		return startBuilding().build();
-	}
-
-	public ObjectDiffer build()
-	{
-		final DifferProvider differProvider = new DifferProvider();
-		final DifferDispatcher differDispatcher = new DifferDispatcher(
-				differProvider,
-				circularReferenceService,
-				circularReferenceService,
-				inclusionService,
-				returnableNodeService,
-				introspectionService);
-		differProvider.push(new BeanDiffer(differDispatcher, introspectionService, returnableNodeService, comparisonService, introspectionService));
-		differProvider.push(new CollectionDiffer(differDispatcher, comparisonService));
-		differProvider.push(new MapDiffer(differDispatcher, comparisonService));
-		differProvider.push(new PrimitiveDiffer(comparisonService));
-		for (final DifferFactory differFactory : differFactories)
-		{
-			differProvider.push(differFactory.createDiffer(differDispatcher, nodeQueryService));
-		}
-		return new ObjectDiffer(differDispatcher);
-	}
-
-	public static ObjectDifferBuilder startBuilding()
-	{
-		return new ObjectDifferBuilder();
-	}
-
 	/**
-	 * Allows to exclude nodes from being added to the object graph based on criteria that are only known after
-	 * the diff for the affected node and all its children has been determined.
+	 * Allows to exclude nodes from being added to the object graph based on
+	 * criteria that are only known after the diff for the affected node and all
+	 * its children has been determined.
 	 */
 	public FilteringConfigurer filtering()
 	{
@@ -108,7 +78,8 @@ public class ObjectDifferBuilder
 	}
 
 	/**
-	 * Allows to replace the default bean introspector with a custom implementation.
+	 * Allows to replace the default bean introspector with a custom
+	 * implementation.
 	 */
 	public IntrospectionConfigurer introspection()
 	{
@@ -116,7 +87,8 @@ public class ObjectDifferBuilder
 	}
 
 	/**
-	 * Allows to define how the circular reference detector compares object instances.
+	 * Allows to define how the circular reference detector compares object
+	 * instances.
 	 */
 	public CircularReferenceConfigurer circularReferenceHandling()
 	{
@@ -124,8 +96,8 @@ public class ObjectDifferBuilder
 	}
 
 	/**
-	 * Allows to in- or exclude nodes based on property name, object type, category or location in the object
-	 * graph.
+	 * Allows to in- or exclude nodes based on property name, object type,
+	 * category or location in the object graph.
 	 */
 	public InclusionConfigurer inclusion()
 	{
@@ -141,7 +113,8 @@ public class ObjectDifferBuilder
 	}
 
 	/**
-	 * Allows to assign custom categories (or tags) to entire types or selected elements and properties.
+	 * Allows to assign custom categories (or tags) to entire types or selected
+	 * elements and properties.
 	 */
 	public CategoryConfigurer categories()
 	{
@@ -151,6 +124,42 @@ public class ObjectDifferBuilder
 	public DifferConfigurer differs()
 	{
 		return differConfigurer;
+	}
+
+	public static ObjectDiffer buildDefault()
+	{
+		return startBuilding().build();
+	}
+
+	public ObjectDiffer build()
+	{
+		final DifferProvider differProvider = new DifferProvider();
+		final DifferDispatcher differDispatcher = new DifferDispatcher(
+				differProvider,
+				circularReferenceService,
+				circularReferenceService,
+				inclusionService,
+				returnableNodeService,
+				introspectionService);
+		differProvider.push(new BeanDiffer(
+				differDispatcher,
+				introspectionService,
+				returnableNodeService,
+				comparisonService,
+				introspectionService));
+		differProvider.push(new CollectionDiffer(differDispatcher, comparisonService, comparisonService));
+		differProvider.push(new MapDiffer(differDispatcher, comparisonService));
+		differProvider.push(new PrimitiveDiffer(comparisonService));
+		for (final DifferFactory differFactory : differFactories)
+		{
+			differProvider.push(differFactory.createDiffer(differDispatcher, nodeQueryService));
+		}
+		return new ObjectDiffer(differDispatcher);
+	}
+
+	public static ObjectDifferBuilder startBuilding()
+	{
+		return new ObjectDifferBuilder();
 	}
 
 	public class DifferConfigurerImpl implements DifferConfigurer
@@ -190,7 +199,8 @@ public class ObjectDifferBuilder
 			return comparisonService.resolveComparisonStrategy(node);
 		}
 
-		public PrimitiveDefaultValueMode resolvePrimitiveDefaultValueMode(final DiffNode node)
+		public PrimitiveDefaultValueMode resolvePrimitiveDefaultValueMode(
+				final DiffNode node)
 		{
 			return comparisonService.resolvePrimitiveDefaultValueMode(node);
 		}

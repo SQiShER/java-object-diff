@@ -16,6 +16,9 @@
 
 package de.danielbechler.diff.selector;
 
+import de.danielbechler.diff.comparison.EqualsIdentityStrategy;
+import de.danielbechler.diff.comparison.IdentityStrategy;
+import de.danielbechler.util.Assert;
 import de.danielbechler.util.Strings;
 
 /**
@@ -24,14 +27,36 @@ import de.danielbechler.util.Strings;
 public final class CollectionItemElementSelector extends ElementSelector
 {
 	private final Object item;
+	private final IdentityStrategy identityStrategy;
 
+	/**
+	 * Default implementation uses IdentityService.EQUALS_IDENTITY_STRATEGY.
+	 *
+	 * @param item
+	 */
 	public CollectionItemElementSelector(final Object item)
 	{
 		this.item = item;
+		this.identityStrategy = EqualsIdentityStrategy.getInstance();
 	}
 
 	/**
-	 * @deprecated Low-level API. Don't use in production code. May be removed in future versions.
+	 * Allows for custom IdentityStrategy.
+	 *
+	 * @param item
+	 * @param identityStrategy
+	 */
+	public CollectionItemElementSelector(final Object item,
+										 final IdentityStrategy identityStrategy)
+	{
+		this.item = item;
+		Assert.notNull(identityStrategy, "identityStrategy");
+		this.identityStrategy = identityStrategy;
+	}
+
+	/**
+	 * @deprecated Low-level API. Don't use in production code. May be removed
+	 * in future versions.
 	 */
 	@SuppressWarnings({"UnusedDeclaration"})
 	@Deprecated
@@ -60,7 +85,9 @@ public final class CollectionItemElementSelector extends ElementSelector
 
 		final CollectionItemElementSelector that = (CollectionItemElementSelector) o;
 
-		if (item != null ? !item.equals(that.item) : that.item != null)
+		if (item != null
+				? !identityStrategy.equals(item, that.item)
+				: that.item != null)
 		{
 			return false;
 		}
