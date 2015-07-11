@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Daniel Bechler
+ * Copyright 2015 Daniel Bechler
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,6 +65,10 @@ public final class CollectionDiffer implements Differ
 	{
 		final DiffNode collectionNode = newNode(parentNode, collectionInstances);
 		final IdentityStrategy identityStrategy = identityStrategyResolver.resolveIdentityStrategy(collectionNode);
+		if (identityStrategy != null)
+		{
+			collectionNode.setItemIdentityStrategy(identityStrategy);
+		}
 		if (collectionInstances.hasBeenAdded())
 		{
 			final Collection addedItems = collectionInstances.getWorking(Collection.class);
