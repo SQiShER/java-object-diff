@@ -19,6 +19,7 @@ package de.danielbechler.diff.identity
 import de.danielbechler.diff.ObjectDiffer
 import de.danielbechler.diff.ObjectDifferBuilder
 import de.danielbechler.diff.comparison.IdentityStrategy
+import de.danielbechler.diff.path.NodePath
 import spock.lang.Specification
 
 class IdentityStrategyAT extends Specification {
@@ -35,11 +36,27 @@ class IdentityStrategyAT extends Specification {
 		}
 	}
 
-	def 'configuring identity strategy for property of specific type'() {
+	def 'configure IdentityStrategy for property of specific type'() {
 		def strategy = new SimpleIdentityStrategy()
 		ObjectDiffer objectDiffer = ObjectDifferBuilder.startBuilding()
 				.comparison()
 				.ofCollectionItems(ObjectWithListProperty, 'collection').toUse(strategy)
+				.and().build()
+
+		def working = new ObjectWithListProperty(collection: ['a'])
+		def base = new ObjectWithListProperty(collection: ['a'])
+
+		when:
+		  def node = objectDiffer.compare(working, base)
+		then:
+		  node.untouched
+	}
+
+	def 'configure IdentityStrategy for element at specific path'() {
+		def strategy = new SimpleIdentityStrategy()
+		ObjectDiffer objectDiffer = ObjectDifferBuilder.startBuilding()
+				.comparison()
+				.ofCollectionItems(NodePath.with('collection')).toUse(strategy)
 				.and().build()
 
 		def working = new ObjectWithListProperty(collection: ['a'])

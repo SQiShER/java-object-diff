@@ -39,8 +39,7 @@ public class CollectionItemAccessor implements TypeAwareAccessor, Accessor
 	 */
 	public CollectionItemAccessor(final Object referenceItem)
 	{
-		this.referenceItem = referenceItem;
-		this.identityStrategy = EqualsIdentityStrategy.getInstance();
+		this(referenceItem, EqualsIdentityStrategy.getInstance());
 	}
 
 	/**
@@ -70,8 +69,7 @@ public class CollectionItemAccessor implements TypeAwareAccessor, Accessor
 
 	public ElementSelector getElementSelector()
 	{
-		return new CollectionItemElementSelector(referenceItem,
-				identityStrategy);
+		return new CollectionItemElementSelector(referenceItem).copyWithIdentityStrategy(identityStrategy);
 	}
 
 	public Object get(final Object target)
@@ -101,8 +99,10 @@ public class CollectionItemAccessor implements TypeAwareAccessor, Accessor
 		final Object previous = get(target);
 		if (previous != null)
 		{
+			// TODO IdentityStrategy?
 			targetCollection.remove(previous);
 		}
+		// TODO IdentityStrategy?
 		targetCollection.add(value);
 	}
 
@@ -125,6 +125,7 @@ public class CollectionItemAccessor implements TypeAwareAccessor, Accessor
 		final Collection targetCollection = objectAsCollection(target);
 		if (targetCollection != null)
 		{
+			// TODO IdentityStrategy?
 			targetCollection.remove(referenceItem);
 		}
 	}

@@ -67,7 +67,7 @@ public final class CollectionDiffer implements Differ
 		final IdentityStrategy identityStrategy = identityStrategyResolver.resolveIdentityStrategy(collectionNode);
 		if (identityStrategy != null)
 		{
-			collectionNode.setItemIdentityStrategy(identityStrategy);
+			collectionNode.setChildIdentityStrategy(identityStrategy);
 		}
 		if (collectionInstances.hasBeenAdded())
 		{
@@ -127,26 +127,23 @@ public final class CollectionDiffer implements Differ
 		final Collection<?> working = collectionInstances.getWorking(Collection.class);
 		final Collection<?> base = collectionInstances.getBase(Collection.class);
 
-		final Collection<?> added = new LinkedList<Object>(working);
-		final Collection<?> removed = new LinkedList<Object>(base);
-		final Collection<?> known = new LinkedList<Object>(base);
+		final Iterable<?> added = new LinkedList<Object>(working);
+		final Iterable<?> removed = new LinkedList<Object>(base);
+		final Iterable<?> known = new LinkedList<Object>(base);
 
 		remove(added, base, identityStrategy);
 		remove(removed, working, identityStrategy);
 		remove(known, added, identityStrategy);
 		remove(known, removed, identityStrategy);
 
-		// TODO I am not sure why these are separate exactly? (NagyGa1)
-		// TODO Neither am I... (SQiShER)
-		// TODO cool (NagyGa1)
 		compareItems(collectionNode, collectionInstances, added, identityStrategy);
 		compareItems(collectionNode, collectionInstances, removed, identityStrategy);
 		compareItems(collectionNode, collectionInstances, known, identityStrategy);
 	}
 
-	private static void compareUsingComparisonStrategy(
-			final DiffNode collectionNode, final Instances collectionInstances,
-			final ComparisonStrategy comparisonStrategy)
+	private static void compareUsingComparisonStrategy(final DiffNode collectionNode,
+													   final Instances collectionInstances,
+													   final ComparisonStrategy comparisonStrategy)
 	{
 		comparisonStrategy.compare(collectionNode,
 				collectionInstances.getType(),

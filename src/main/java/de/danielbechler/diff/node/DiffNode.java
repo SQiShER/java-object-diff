@@ -22,9 +22,11 @@ import de.danielbechler.diff.access.ExclusionAware;
 import de.danielbechler.diff.access.PropertyAwareAccessor;
 import de.danielbechler.diff.access.RootAccessor;
 import de.danielbechler.diff.access.TypeAwareAccessor;
+import de.danielbechler.diff.comparison.IdentityStrategy;
 import de.danielbechler.diff.instantiation.TypeInfo;
 import de.danielbechler.diff.path.NodePath;
 import de.danielbechler.diff.selector.BeanPropertyElementSelector;
+import de.danielbechler.diff.selector.CollectionItemElementSelector;
 import de.danielbechler.diff.selector.ElementSelector;
 import de.danielbechler.diff.selector.RootElementSelector;
 import de.danielbechler.util.Assert;
@@ -64,6 +66,12 @@ public class DiffNode
 	private DiffNode circleStartNode;
 	private Class<?> valueType;
 	private TypeInfo valueTypeInfo;
+	private IdentityStrategy childIdentityStrategy;
+
+	public void setChildIdentityStrategy(final IdentityStrategy identityStrategy)
+	{
+		this.childIdentityStrategy = identityStrategy;
+	}
 
 	public static DiffNode newRootNode()
 	{
@@ -273,12 +281,20 @@ public class DiffNode
 	/**
 	 * Retrieve a child that matches the given path element relative to this node.
 	 *
-	 * @param pathElementSelector The path element of the child node to get.
+	 * @param elementSelector The path element of the child node to get.
 	 * @return The requested child node or <code>null</code>.
 	 */
-	public DiffNode getChild(final ElementSelector pathElementSelector)
+	public DiffNode getChild(final ElementSelector elementSelector)
 	{
-		return children.get(pathElementSelector);
+		if (childIdentityStrategy != null && elementSelector instanceof CollectionItemElementSelector)
+		{
+			final CollectionItemElementSelector elementSelectorWithIdentityStrategy = ((CollectionItemElementSelector) elementSelector).copyWithIdentityStrategy(childIdentityStrategy);
+			return children.get(elementSelectorWithIdentityStrategy);
+		}
+		else
+		{
+			return children.get(elementSelector);
+		}
 	}
 
 	/**

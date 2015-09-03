@@ -30,14 +30,13 @@ public final class CollectionItemElementSelector extends ElementSelector
 	private final IdentityStrategy identityStrategy;
 
 	/**
-	 * Default implementation uses IdentityService.EQUALS_IDENTITY_STRATEGY.
+	 * Default implementation uses {@linkplain EqualsIdentityStrategy}.
 	 *
 	 * @param item
 	 */
 	public CollectionItemElementSelector(final Object item)
 	{
-		this.item = item;
-		this.identityStrategy = EqualsIdentityStrategy.getInstance();
+		this(item, EqualsIdentityStrategy.getInstance());
 	}
 
 	/**
@@ -46,12 +45,16 @@ public final class CollectionItemElementSelector extends ElementSelector
 	 * @param item
 	 * @param identityStrategy
 	 */
-	public CollectionItemElementSelector(final Object item,
-										 final IdentityStrategy identityStrategy)
+	CollectionItemElementSelector(final Object item, final IdentityStrategy identityStrategy)
 	{
-		this.item = item;
 		Assert.notNull(identityStrategy, "identityStrategy");
+		this.item = item;
 		this.identityStrategy = identityStrategy;
+	}
+
+	public CollectionItemElementSelector copyWithIdentityStrategy(final IdentityStrategy identityStrategy)
+	{
+		return new CollectionItemElementSelector(item, identityStrategy);
 	}
 
 	/**
@@ -98,4 +101,5 @@ public final class CollectionItemElementSelector extends ElementSelector
 	{
 		return 31;
 	}
+
 }

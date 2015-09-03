@@ -15,7 +15,6 @@
  */
 
 package de.danielbechler.diff.identity
-
 import de.danielbechler.diff.ObjectDifferBuilder
 import de.danielbechler.diff.comparison.IdentityStrategy
 import de.danielbechler.diff.node.DiffNode
@@ -26,8 +25,8 @@ import de.danielbechler.diff.selector.MapKeyElementSelector
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import spock.lang.Specification
-import spock.lang.Unroll
 
+// TODO(SQiShER) Rewrite!
 class IdentityStrategyConfigIT extends Specification {
 
 	def working = new Container(
@@ -238,6 +237,6 @@ class IdentityStrategyConfigIT extends Specification {
 	def PV4Selector = new CollectionItemElementSelector(new ProductVersion(id: "ID4"));
 
 	// need to fill code as well because that's used for the codeIdentity cases
-	def PV1CodeSelector = new CollectionItemElementSelector(new ProductVersion(code: "PVC1"), codeIdentity);
-	def PV2CodeSelector = new CollectionItemElementSelector(new ProductVersion(code: "PVC2"), codeIdentity);
+	def PV1CodeSelector = new CollectionItemElementSelector(new ProductVersion(code: "PVC1"));
+	def PV2CodeSelector = new CollectionItemElementSelector(new ProductVersion(code: "PVC2"));
 }

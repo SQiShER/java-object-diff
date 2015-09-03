@@ -2,17 +2,17 @@ package de.danielbechler.diff.comparison;
 
 /**
  * Allows to configure the way objects identities are established when comparing
- * collections by CollectionDiffer.
+ * collections via {@linkplain de.danielbechler.diff.differ.CollectionDiffer}.
  */
 public interface IdentityStrategy
 {
-
 	/**
-	 * @param working never null
+	 * TODO Contract: {@linkplain IdentityStrategy#equals(Object working, Object base)} must always be <code>true</code>
+	 * when <code>working == base</code>
+	 *
+	 * @param working
 	 * @param base
 	 * @return
 	 */
-	// TODO Idea: change name to a less overloaded term
 	boolean equals(Object working, Object base);
-
 }
