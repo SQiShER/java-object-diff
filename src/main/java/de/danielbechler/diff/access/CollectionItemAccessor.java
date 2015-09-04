@@ -23,6 +23,7 @@ import de.danielbechler.diff.selector.ElementSelector;
 import de.danielbechler.util.Assert;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * @author Daniel Bechler
@@ -51,8 +52,8 @@ public class CollectionItemAccessor implements TypeAwareAccessor, Accessor
 	public CollectionItemAccessor(final Object referenceItem,
 								  final IdentityStrategy identityStrategy)
 	{
-		this.referenceItem = referenceItem;
 		Assert.notNull(identityStrategy, "identityStrategy");
+		this.referenceItem = referenceItem;
 		this.identityStrategy = identityStrategy;
 	}
 
@@ -69,7 +70,8 @@ public class CollectionItemAccessor implements TypeAwareAccessor, Accessor
 
 	public ElementSelector getElementSelector()
 	{
-		return new CollectionItemElementSelector(referenceItem).copyWithIdentityStrategy(identityStrategy);
+		final CollectionItemElementSelector selector = new CollectionItemElementSelector(referenceItem);
+		return identityStrategy == null ? selector : selector.copyWithIdentityStrategy(identityStrategy);
 	}
 
 	public Object get(final Object target)
@@ -99,10 +101,8 @@ public class CollectionItemAccessor implements TypeAwareAccessor, Accessor
 		final Object previous = get(target);
 		if (previous != null)
 		{
-			// TODO IdentityStrategy?
-			targetCollection.remove(previous);
+			unset(target);
 		}
-		// TODO IdentityStrategy?
 		targetCollection.add(value);
 	}
 
@@ -122,11 +122,20 @@ public class CollectionItemAccessor implements TypeAwareAccessor, Accessor
 
 	public void unset(final Object target)
 	{
-		final Collection targetCollection = objectAsCollection(target);
-		if (targetCollection != null)
+		final Collection<?> targetCollection = objectAsCollection(target);
+		if (targetCollection == null)
 		{
-			// TODO IdentityStrategy?
-			targetCollection.remove(referenceItem);
+			return;
+		}
+		final Iterator<?> iterator = targetCollection.iterator();
+		while (iterator.hasNext())
+		{
+			final Object item = iterator.next();
+			if (item != null && identityStrategy.equals(item, referenceItem))
+			{
+				iterator.remove();
+				break;
+			}
 		}
 	}
 }

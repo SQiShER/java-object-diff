@@ -286,10 +286,9 @@ public class DiffNode
 	 */
 	public DiffNode getChild(final ElementSelector elementSelector)
 	{
-		if (childIdentityStrategy != null && elementSelector instanceof CollectionItemElementSelector)
+		if (elementSelector instanceof CollectionItemElementSelector && childIdentityStrategy != null)
 		{
-			final CollectionItemElementSelector elementSelectorWithIdentityStrategy = ((CollectionItemElementSelector) elementSelector).copyWithIdentityStrategy(childIdentityStrategy);
-			return children.get(elementSelectorWithIdentityStrategy);
+			return children.get(((CollectionItemElementSelector) elementSelector).copyWithIdentityStrategy(childIdentityStrategy));
 		}
 		else
 		{

@@ -18,7 +18,9 @@ package de.danielbechler.diff.identity
 
 import de.danielbechler.diff.ObjectDiffer
 import de.danielbechler.diff.ObjectDifferBuilder
+import de.danielbechler.diff.access.CollectionItemAccessor
 import de.danielbechler.diff.comparison.IdentityStrategy
+import de.danielbechler.diff.differ.CollectionDiffer
 import de.danielbechler.diff.node.DiffNode
 import de.danielbechler.diff.path.NodePath
 import de.danielbechler.diff.selector.CollectionItemElementSelector
@@ -27,7 +29,9 @@ import groovy.transform.AutoClone
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import spock.lang.Specification
+import spock.lang.Subject
 
+@Subject([IdentityStrategy, CollectionItemElementSelector, CollectionItemAccessor, CollectionDiffer])
 class IdentityStrategyIT extends Specification {
 
 	def '#scenario IdentityStrategy to determine item identity'() {
@@ -59,11 +63,69 @@ class IdentityStrategyIT extends Specification {
 		  node.getChild(workingSelector).state == expectedWorkingState
 
 		where:
-		  identityStrategyEnabled || expectedBaseState 		| expectedWorkingState
-		  false                   || DiffNode.State.CHANGED | DiffNode.State.CHANGED
-		  true                    || DiffNode.State.REMOVED | DiffNode.State.ADDED
+		  identityStrategyEnabled | expectedBaseState      | expectedWorkingState
+		  false                   | DiffNode.State.CHANGED | DiffNode.State.CHANGED
+		  true                    | DiffNode.State.REMOVED | DiffNode.State.ADDED
 
 		  scenario = identityStrategyEnabled ? 'should use' : 'should not use'
+	}
+
+	def 'should properly get item'() {
+		given:
+		  def identityStrategy = new CodeIdentityStrategy()
+		  def working = [new Code(id: 'working', code: '1')]
+		  def base = [new Code(id: 'base', code: '1')]
+		  def node = ObjectDifferBuilder.startBuilding()
+				  .comparison().ofCollectionItems(NodePath.withRoot()).toUse(identityStrategy)
+				  .and().build()
+				  .compare(working, base)
+		and:
+		  def targetCode = new Code(code: '1')
+		  def target = [targetCode]
+		  def itemPath = NodePath.startBuilding().collectionItem(targetCode).build()
+
+		expect:
+		  node.getChild(itemPath).canonicalGet(target).is(targetCode)
+	}
+
+	def 'should properly set item'() {
+		given:
+		  def identityStrategy = new CodeIdentityStrategy()
+		  def working = [new Code(id: 'working', code: '1')]
+		  def base = [new Code(id: 'base', code: '1')]
+		  def node = ObjectDifferBuilder.startBuilding()
+				  .comparison().ofCollectionItems(NodePath.withRoot()).toUse(identityStrategy)
+				  .and().build()
+				  .compare(working, base)
+		and:
+		  def targetCode = new Code(code: '1')
+		  def target = [targetCode]
+		  def itemPath = NodePath.startBuilding().collectionItem(targetCode).build()
+
+		when:
+		  node.getChild(itemPath).canonicalSet(target, new Code(id: 'set', code: '1'))
+		then:
+		  node.getChild(itemPath).canonicalGet(target) == new Code(id: 'set', code: '1')
+	}
+
+	def 'should properly unset (remove) item'() {
+		given:
+		  def identityStrategy = new CodeIdentityStrategy()
+		  def working = [new Code(id: 'working', code: '1')]
+		  def base = [new Code(id: 'base', code: '1')]
+		  def node = ObjectDifferBuilder.startBuilding()
+				  .comparison().ofCollectionItems(NodePath.withRoot()).toUse(identityStrategy)
+				  .and().build()
+				  .compare(working, base)
+		and:
+		  def targetCode = new Code(code: '1')
+		  def target = [targetCode]
+		  def itemPath = NodePath.startBuilding().collectionItem(targetCode).build()
+
+		when:
+		  node.getChild(itemPath).canonicalUnset(target)
+		then:
+		  node.getChild(itemPath).canonicalGet(target) == null
 	}
 
 	@AutoClone
