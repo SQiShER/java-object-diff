@@ -35,16 +35,6 @@ public interface ComparisonConfigurer
 
 	OfPrimitiveTypes ofPrimitiveTypes();
 
-	/**
-	 * Allows to configure the way object identities are established between collection items.
-	 */
-	OfCollectionItems ofCollectionItems(NodePath nodePath);
-
-	/**
-	 * Allows to configure the way object identities are established between collection items.
-	 */
-	OfCollectionItems ofCollectionItems(Class<?> type, String propertyName);
-
 	ObjectDifferBuilder and();
 
 	interface Of
@@ -56,11 +46,6 @@ public interface ComparisonConfigurer
 		ComparisonConfigurer toUseEqualsMethodOfValueProvidedByMethod(String propertyName);
 
 		ComparisonConfigurer toUseCompareToMethod();
-	}
-
-	interface OfCollectionItems
-	{
-		ComparisonConfigurer toUse(IdentityStrategy identityStrategy);
 	}
 
 	interface OfPrimitiveTypes

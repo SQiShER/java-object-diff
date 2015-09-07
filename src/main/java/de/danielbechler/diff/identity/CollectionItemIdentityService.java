@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package de.danielbechler.diff.comparison;
+package de.danielbechler.diff.identity;
 
 import de.danielbechler.diff.inclusion.ValueNode;
 import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.diff.path.NodePath;
 
-public class CollectionComparisonService implements IdentityStrategyResolver
+class CollectionItemIdentityService implements IdentityStrategyResolver
 {
 	private final ValueNode<IdentityStrategy> nodePathIdentityStrategies;
 	private final TypePropertyIdentityStrategyResolver typePropertyIdentityStrategyResolver;
-	private final ComparisonConfigurer comparisonConfigurer;
+	private final IdentityConfigurer identityConfigurer;
 
-	public CollectionComparisonService(final ComparisonConfigurer comparisonConfigurer)
+	public CollectionItemIdentityService(final IdentityConfigurer identityConfigurer)
 	{
-		this.comparisonConfigurer = comparisonConfigurer;
+		this.identityConfigurer = identityConfigurer;
 		this.nodePathIdentityStrategies = new ValueNode<IdentityStrategy>();
 		this.typePropertyIdentityStrategyResolver = new TypePropertyIdentityStrategyResolver();
 	}
@@ -48,17 +48,17 @@ public class CollectionComparisonService implements IdentityStrategyResolver
 		return EqualsIdentityStrategy.getInstance();
 	}
 
-	public ComparisonConfigurer.OfCollectionItems ofCollectionItems(final NodePath nodePath)
+	public IdentityConfigurer.OfCollectionItems ofCollectionItems(final NodePath nodePath)
 	{
 		return new OfCollectionItemsByNodePath(nodePath);
 	}
 
-	public ComparisonConfigurer.OfCollectionItems ofCollectionItems(final Class<?> type, final String propertyName)
+	public IdentityConfigurer.OfCollectionItems ofCollectionItems(final Class<?> type, final String propertyName)
 	{
 		return new OfCollectionItemsByTypeProperty(type, propertyName);
 	}
 
-	private class OfCollectionItemsByNodePath implements ComparisonConfigurer.OfCollectionItems
+	private class OfCollectionItemsByNodePath implements IdentityConfigurer.OfCollectionItems
 	{
 		private final NodePath nodePath;
 
@@ -67,14 +67,14 @@ public class CollectionComparisonService implements IdentityStrategyResolver
 			this.nodePath = nodePath;
 		}
 
-		public ComparisonConfigurer toUse(final IdentityStrategy identityStrategy)
+		public IdentityConfigurer via(final IdentityStrategy identityStrategy)
 		{
 			nodePathIdentityStrategies.getNodeForPath(nodePath).setValue(identityStrategy);
-			return comparisonConfigurer;
+			return identityConfigurer;
 		}
 	}
 
-	private class OfCollectionItemsByTypeProperty implements ComparisonConfigurer.OfCollectionItems
+	private class OfCollectionItemsByTypeProperty implements IdentityConfigurer.OfCollectionItems
 	{
 		private final Class<?> type;
 		private final String propertyName;
@@ -85,10 +85,10 @@ public class CollectionComparisonService implements IdentityStrategyResolver
 			this.propertyName = propertyName;
 		}
 
-		public ComparisonConfigurer toUse(final IdentityStrategy identityStrategy)
+		public IdentityConfigurer via(final IdentityStrategy identityStrategy)
 		{
 			typePropertyIdentityStrategyResolver.setStrategy(identityStrategy, type, propertyName);
-			return comparisonConfigurer;
+			return identityConfigurer;
 		}
 	}
 }

@@ -27,13 +27,12 @@ import de.danielbechler.util.Classes;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ComparisonService implements ComparisonConfigurer, ComparisonStrategyResolver, PrimitiveDefaultValueModeResolver, IdentityStrategyResolver
+public class ComparisonService implements ComparisonConfigurer, ComparisonStrategyResolver, PrimitiveDefaultValueModeResolver
 {
 	private static final ComparisonStrategy COMPARABLE_COMPARISON_STRATEGY = new ComparableComparisonStrategy();
 	private static final ComparisonStrategy EQUALS_ONLY_COMPARISON_STRATEGY = new EqualsOnlyComparisonStrategy();
 
 	private final NodePathValueHolder<ComparisonStrategy> nodePathComparisonStrategies = NodePathValueHolder.of(ComparisonStrategy.class);
-	private final CollectionComparisonService collectionComparisonService = new CollectionComparisonService(this);
 	private final Map<Class<?>, ComparisonStrategy> typeComparisonStrategyMap = new HashMap<Class<?>, ComparisonStrategy>();
 	private final ObjectDifferBuilder objectDifferBuilder;
 
@@ -114,24 +113,9 @@ public class ComparisonService implements ComparisonConfigurer, ComparisonStrate
 		return new OfPrimitiveTypesImpl();
 	}
 
-	public OfCollectionItems ofCollectionItems(final NodePath nodePath)
-	{
-		return collectionComparisonService.ofCollectionItems(nodePath);
-	}
-
-	public OfCollectionItems ofCollectionItems(final Class<?> type, final String propertyName)
-	{
-		return collectionComparisonService.ofCollectionItems(type, propertyName);
-	}
-
 	public ObjectDifferBuilder and()
 	{
 		return objectDifferBuilder;
-	}
-
-	public IdentityStrategy resolveIdentityStrategy(final DiffNode node)
-	{
-		return collectionComparisonService.resolveIdentityStrategy(node);
 	}
 
 	private abstract static class AbstractOf implements Of

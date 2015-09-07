@@ -19,7 +19,6 @@ package de.danielbechler.diff.identity
 import de.danielbechler.diff.ObjectDiffer
 import de.danielbechler.diff.ObjectDifferBuilder
 import de.danielbechler.diff.access.CollectionItemAccessor
-import de.danielbechler.diff.comparison.IdentityStrategy
 import de.danielbechler.diff.differ.CollectionDiffer
 import de.danielbechler.diff.node.DiffNode
 import de.danielbechler.diff.path.NodePath
@@ -47,9 +46,9 @@ class IdentityStrategyIT extends Specification {
 		expect:
 		  if (identityStrategyEnabled) {
 			  def identityStrategy = new CodeIdentityStrategy()
-			  objectDiffer = objectDifferBuilder.comparison()
+			  objectDiffer = objectDifferBuilder.identity()
 					  .ofCollectionItems(NodePath.withRoot())
-					  .toUse(identityStrategy)
+					  .via(identityStrategy)
 					  .and().build()
 			  baseSelector = new CollectionItemElementSelector(baseCode.clone())
 			  workingSelector = new CollectionItemElementSelector(workingCode.clone())
@@ -76,7 +75,7 @@ class IdentityStrategyIT extends Specification {
 		  def working = [new Code(id: 'working', code: '1')]
 		  def base = [new Code(id: 'base', code: '1')]
 		  def node = ObjectDifferBuilder.startBuilding()
-				  .comparison().ofCollectionItems(NodePath.withRoot()).toUse(identityStrategy)
+				  .identity().ofCollectionItems(NodePath.withRoot()).via(identityStrategy)
 				  .and().build()
 				  .compare(working, base)
 		and:
@@ -94,7 +93,7 @@ class IdentityStrategyIT extends Specification {
 		  def working = [new Code(id: 'working', code: '1')]
 		  def base = [new Code(id: 'base', code: '1')]
 		  def node = ObjectDifferBuilder.startBuilding()
-				  .comparison().ofCollectionItems(NodePath.withRoot()).toUse(identityStrategy)
+				  .identity().ofCollectionItems(NodePath.withRoot()).via(identityStrategy)
 				  .and().build()
 				  .compare(working, base)
 		and:
@@ -114,7 +113,7 @@ class IdentityStrategyIT extends Specification {
 		  def working = [new Code(id: 'working', code: '1')]
 		  def base = [new Code(id: 'base', code: '1')]
 		  def node = ObjectDifferBuilder.startBuilding()
-				  .comparison().ofCollectionItems(NodePath.withRoot()).toUse(identityStrategy)
+				  .identity().ofCollectionItems(NodePath.withRoot()).via(identityStrategy)
 				  .and().build()
 				  .compare(working, base)
 		and:

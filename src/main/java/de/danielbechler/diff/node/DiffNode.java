@@ -22,7 +22,7 @@ import de.danielbechler.diff.access.ExclusionAware;
 import de.danielbechler.diff.access.PropertyAwareAccessor;
 import de.danielbechler.diff.access.RootAccessor;
 import de.danielbechler.diff.access.TypeAwareAccessor;
-import de.danielbechler.diff.comparison.IdentityStrategy;
+import de.danielbechler.diff.identity.IdentityStrategy;
 import de.danielbechler.diff.instantiation.TypeInfo;
 import de.danielbechler.diff.path.NodePath;
 import de.danielbechler.diff.selector.BeanPropertyElementSelector;

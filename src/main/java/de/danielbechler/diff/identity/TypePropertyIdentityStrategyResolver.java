@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.danielbechler.diff.comparison;
+package de.danielbechler.diff.identity;
 
 import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.util.Assert;

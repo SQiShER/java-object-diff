@@ -21,8 +21,8 @@ import de.danielbechler.diff.access.CollectionItemAccessor;
 import de.danielbechler.diff.access.Instances;
 import de.danielbechler.diff.comparison.ComparisonStrategy;
 import de.danielbechler.diff.comparison.ComparisonStrategyResolver;
-import de.danielbechler.diff.comparison.IdentityStrategy;
-import de.danielbechler.diff.comparison.IdentityStrategyResolver;
+import de.danielbechler.diff.identity.IdentityStrategy;
+import de.danielbechler.diff.identity.IdentityStrategyResolver;
 import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.util.Assert;
 

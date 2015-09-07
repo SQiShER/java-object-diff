@@ -34,6 +34,7 @@ import de.danielbechler.diff.differ.MapDiffer;
 import de.danielbechler.diff.differ.PrimitiveDiffer;
 import de.danielbechler.diff.filtering.FilteringConfigurer;
 import de.danielbechler.diff.filtering.ReturnableNodeService;
+import de.danielbechler.diff.identity.IdentityService;
 import de.danielbechler.diff.inclusion.InclusionConfigurer;
 import de.danielbechler.diff.inclusion.InclusionService;
 import de.danielbechler.diff.introspection.IntrospectionConfigurer;
@@ -57,6 +58,7 @@ public class ObjectDifferBuilder
 	private final CategoryService categoryService = new CategoryService(this);
 	private final InclusionService inclusionService = new InclusionService(categoryService, this);
 	private final ComparisonService comparisonService = new ComparisonService(this);
+	private final IdentityService identityService = new IdentityService(this);
 	private final ReturnableNodeService returnableNodeService = new ReturnableNodeService(this);
 	private final CircularReferenceService circularReferenceService = new CircularReferenceService(this);
 	private final DifferConfigurer differConfigurer = new DifferConfigurerImpl();
@@ -113,6 +115,24 @@ public class ObjectDifferBuilder
 	}
 
 	/**
+	 * <b>EXPERT FEATURE</b>: Allows to configure the way the identity of objects is determined in order to establish
+	 * the relationship between different versions. By default this is done via the <code>equals</code> method; but
+	 * sometimes that's just not possible. For example when you are dealing with generated classes or you are dealing
+	 * with third-party code.
+	 * <p/>
+	 * Please keep in mind that this only alters the way this library establishes the connection between two objects.
+	 * This doesn't extend to the underlying collections. So keep what in mind when you start merging your collections
+	 * and weird things start to happen.
+	 * <p/>
+	 * <b>WARNING</b>: Personally I'd try to avoid this feature as long as possible and only use it when there is
+	 * absolutely no other way.
+	 */
+	public IdentityService identity()
+	{
+		return identityService;
+	}
+
+	/**
 	 * Allows to assign custom categories (or tags) to entire types or selected
 	 * elements and properties.
 	 */
@@ -147,7 +167,7 @@ public class ObjectDifferBuilder
 				returnableNodeService,
 				comparisonService,
 				introspectionService));
-		differProvider.push(new CollectionDiffer(differDispatcher, comparisonService, comparisonService));
+		differProvider.push(new CollectionDiffer(differDispatcher, comparisonService, identityService));
 		differProvider.push(new MapDiffer(differDispatcher, comparisonService));
 		differProvider.push(new PrimitiveDiffer(comparisonService));
 		for (final DifferFactory differFactory : differFactories)

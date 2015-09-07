@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.danielbechler.diff.comparison;
+package de.danielbechler.diff.identity;
 
 public interface IdentityStrategyAware
 {

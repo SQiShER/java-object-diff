@@ -16,8 +16,8 @@
 
 package de.danielbechler.diff.access;
 
-import de.danielbechler.diff.comparison.EqualsIdentityStrategy;
-import de.danielbechler.diff.comparison.IdentityStrategy;
+import de.danielbechler.diff.identity.EqualsIdentityStrategy;
+import de.danielbechler.diff.identity.IdentityStrategy;
 import de.danielbechler.diff.selector.CollectionItemElementSelector;
 import de.danielbechler.diff.selector.ElementSelector;
 import de.danielbechler.util.Assert;

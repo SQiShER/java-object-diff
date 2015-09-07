@@ -18,7 +18,6 @@ package de.danielbechler.diff.identity
 
 import de.danielbechler.diff.ObjectDiffer
 import de.danielbechler.diff.ObjectDifferBuilder
-import de.danielbechler.diff.comparison.IdentityStrategy
 import de.danielbechler.diff.path.NodePath
 import spock.lang.Specification
 
@@ -28,7 +27,7 @@ class IdentityStrategyAT extends Specification {
 		List<?> collection = []
 	}
 
-	static class SimpleIdentityStrategy implements IdentityStrategy {
+	static class NonMatchingIdentityStrategy implements IdentityStrategy {
 
 		@Override
 		boolean equals(Object working, Object base) {
@@ -37,10 +36,9 @@ class IdentityStrategyAT extends Specification {
 	}
 
 	def 'configure IdentityStrategy for property of specific type'() {
-		def strategy = new SimpleIdentityStrategy()
+		def strategy = new NonMatchingIdentityStrategy()
 		ObjectDiffer objectDiffer = ObjectDifferBuilder.startBuilding()
-				.comparison()
-				.ofCollectionItems(ObjectWithListProperty, 'collection').toUse(strategy)
+				.identity().ofCollectionItems(ObjectWithListProperty, 'collection').via(strategy)
 				.and().build()
 
 		def working = new ObjectWithListProperty(collection: ['a'])
@@ -53,10 +51,10 @@ class IdentityStrategyAT extends Specification {
 	}
 
 	def 'configure IdentityStrategy for element at specific path'() {
-		def strategy = new SimpleIdentityStrategy()
+		def strategy = new NonMatchingIdentityStrategy()
 		ObjectDiffer objectDiffer = ObjectDifferBuilder.startBuilding()
-				.comparison()
-				.ofCollectionItems(NodePath.with('collection')).toUse(strategy)
+				.identity()
+				.ofCollectionItems(NodePath.with('collection')).via(strategy)
 				.and().build()
 
 		def working = new ObjectWithListProperty(collection: ['a'])

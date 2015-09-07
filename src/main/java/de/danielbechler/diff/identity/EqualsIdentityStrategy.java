@@ -1,4 +1,4 @@
-package de.danielbechler.diff.comparison;
+package de.danielbechler.diff.identity;
 
 import de.danielbechler.util.Objects;
 

@@ -16,6 +16,7 @@
 
 package de.danielbechler.diff.comparison
 
+import de.danielbechler.diff.identity.EqualsIdentityStrategy
 import spock.lang.Specification
 import spock.lang.Unroll
 

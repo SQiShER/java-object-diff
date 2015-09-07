@@ -1,4 +1,4 @@
-package de.danielbechler.diff.comparison;
+package de.danielbechler.diff.identity;
 
 /**
  * Allows to configure the way objects identities are established when comparing
