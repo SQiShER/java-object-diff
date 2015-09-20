@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.93
+
+- **Comparison:** The `ObjectDifferBuilder` now provides new configuration outlet called `identity`
+
+	This allows for providing a custom strategy to establish the identity of collection items base 
+	on something other than the equals method. That's especially useful when you have no control 
+	over the items equals and hashCode methods.
+	
+	However, it's a brand-new feature and there may be some corner-cases that have not yet been 
+	anticipated. If you run into any trouble using this feature, please feel free to open a ticket 
+	in the issue tracker.
+	 
+	Many thanks to @NagyGa1 for his help on this feature.
+
 ## 0.92.2
 
 - **ElementSelector:** `CollectionItemElementSelector` now returns a constant hashCode

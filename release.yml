@@ -65,10 +65,8 @@
         replace: "de.danielbechler:java-object-diff:{{ release_version }}"
       with_items: files_with_version_reference
     
-    # TODO: I'm not quite sure if the changes above need to be commited before performaing a mvn release
+    # TODO: I'm not quite sure if the changes above need to be commited before performing a mvn release
     # Guess I'll find out with the next release...
-    
-    - fail:
     
     # TODO Automate via command or shell module
     - pause:
