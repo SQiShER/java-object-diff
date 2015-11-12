@@ -3,7 +3,7 @@
 `java-object-diff` is a simple, yet powerful library to find differences between Java objects. It takes two objects and generates a tree structure that represents any differences between the objects and their children. This tree can then be traversed to extract more information or apply changes to the underlying data structures.
 
 [![Build Status](https://travis-ci.org/SQiShER/java-object-diff.svg?branch=master)](https://travis-ci.org/SQiShER/java-object-diff) 
-[![Coverage Status](https://coveralls.io/repos/SQiShER/java-object-diff/badge.png?branch=master)](https://coveralls.io/r/SQiShER/java-object-diff?branch=master)
+[![Coverage Status](https://coveralls.io/repos/SQiShER/java-object-diff/badge.svg?branch=master&service=github)](https://coveralls.io/github/SQiShER/java-object-diff?branch=master)
 [![Download](https://api.bintray.com/packages/sqisher/maven/java-object-diff/images/download.svg)](https://bintray.com/sqisher/maven/java-object-diff/_latestVersion)
 [![Documentation Status](https://readthedocs.org/projects/java-object-diff/badge/?version=latest)](https://readthedocs.org/projects/java-object-diff/?badge=latest)
 
