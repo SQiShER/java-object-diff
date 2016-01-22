@@ -48,8 +48,8 @@ public class DifferDispatcher
 	private final IsIgnoredResolver isIgnoredResolver;
 	private final IsReturnableResolver isReturnableResolver;
 	private final PropertyAccessExceptionHandlerResolver propertyAccessExceptionHandlerResolver;
-	CircularReferenceDetector workingCircularReferenceDetector;
-	CircularReferenceDetector baseCircularReferenceDetector;
+	private static final ThreadLocal<CircularReferenceDetector> workingThreadLocal = new ThreadLocal<CircularReferenceDetector>();
+	private static final ThreadLocal<CircularReferenceDetector> baseThreadLocal = new ThreadLocal<CircularReferenceDetector>();
 
 	public DifferDispatcher(final DifferProvider differProvider,
 							final CircularReferenceDetectorFactory circularReferenceDetectorFactory,
@@ -72,12 +72,18 @@ public class DifferDispatcher
 		resetInstanceMemory();
 	}
 
-	protected final void resetInstanceMemory()
+	public final void resetInstanceMemory()
 	{
-		workingCircularReferenceDetector = circularReferenceDetectorFactory.createCircularReferenceDetector();
-		baseCircularReferenceDetector = circularReferenceDetectorFactory.createCircularReferenceDetector();
+		workingThreadLocal.set(circularReferenceDetectorFactory.createCircularReferenceDetector());
+		baseThreadLocal.set(circularReferenceDetectorFactory.createCircularReferenceDetector());
 	}
 
+	public final void clearInstanceMemory()
+	{
+		workingThreadLocal.remove();
+		baseThreadLocal.remove();
+	}
+	   
 	/**
 	 * Delegates the call to an appropriate {@link Differ}.
 	 *
@@ -202,8 +208,8 @@ public class DifferDispatcher
 			nodePath = NodePath.withRoot();
 		}
 		logger.debug("[ {} ] Forgetting --- WORKING: {} <=> BASE: {}", nodePath, instances.getWorking(), instances.getBase());
-		workingCircularReferenceDetector.remove(instances.getWorking());
-		baseCircularReferenceDetector.remove(instances.getBase());
+		workingThreadLocal.get().remove(instances.getWorking());
+		baseThreadLocal.get().remove(instances.getBase());
 	}
 
 	protected void rememberInstances(final DiffNode parentNode, final Instances instances)
@@ -226,17 +232,17 @@ public class DifferDispatcher
 
 	private void transactionalPushToCircularReferenceDetectors(final NodePath nodePath, final Instances instances)
 	{
-		workingCircularReferenceDetector.push(instances.getWorking(), nodePath);
+		workingThreadLocal.get().push(instances.getWorking(), nodePath);
 
 		// TODO This needs to be solved more elegantly. If the push for one of these detectors fails,
 		// we need to make sure to revert the push to the other one, if it already happened.
 		try
 		{
-			baseCircularReferenceDetector.push(instances.getBase(), nodePath);
+			baseThreadLocal.get().push(instances.getBase(), nodePath);
 		}
 		catch (final CircularReferenceException e)
 		{
-			workingCircularReferenceDetector.remove(instances.getWorking()); // rollback
+			workingThreadLocal.get().remove(instances.getWorking()); // rollback
 			throw e;
 		}
 	}
