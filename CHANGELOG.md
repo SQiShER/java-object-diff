@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.93.1
+
+- **Comparison:** Fixed a concurrency issue when sharing the ObjectDiffer between multiple threads. Thanks [@tacoo](https://github.com/tacoo)
+
 ## 0.93
 
 - **Comparison:** The `ObjectDifferBuilder` now provides new configuration outlet called `identity`
