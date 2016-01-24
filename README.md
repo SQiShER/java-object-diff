@@ -43,14 +43,14 @@ To learn how to use **Java Object Diff** have a look at the [Getting Started Gui
 <dependency>
     <groupId>de.danielbechler</groupId>
     <artifactId>java-object-diff</artifactId>
-    <version>0.93</version>
+    <version>0.93.1</version>
 </dependency>
 ```
 
 ### Using with Gradle
 
 ```groovy
-compile 'de.danielbechler:java-object-diff:0.93'
+compile 'de.danielbechler:java-object-diff:0.93.1'
 ```
 
 ## Documentation
