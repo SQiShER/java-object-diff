@@ -47,8 +47,13 @@ public class ObjectDiffer
 	public <T> DiffNode compare(final T working, final T base)
 	{
 		dispatcher.resetInstanceMemory();
-		DiffNode diffNode = dispatcher.dispatch(DiffNode.ROOT, Instances.of(working, base), RootAccessor.getInstance());
-		dispatcher.clearInstanceMemory();
-		return diffNode;
+		try
+		{
+			return dispatcher.dispatch(DiffNode.ROOT, Instances.of(working, base), RootAccessor.getInstance());
+		}
+		finally
+		{
+			dispatcher.clearInstanceMemory();
+		}
 	}
 }
