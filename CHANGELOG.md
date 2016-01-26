@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.93.2
+
+- Fixes a memory leak when the `ObjectDiffer` throws an exception
+
 ## 0.93.1
 
 - **Comparison:** Fixed a concurrency issue when sharing the ObjectDiffer between multiple threads. Thanks [@tacoo](https://github.com/tacoo)
