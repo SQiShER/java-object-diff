@@ -20,7 +20,7 @@ import de.danielbechler.diff.ObjectDifferBuilder;
 
 /**
  * Allows to define how the circular reference detector compares object instances. By default it uses the equality
- * operator (`==`) which should be fine in mose cases.
+ * operator (`==`) which should be fine in most cases.
  * <p/>
  * When dealing with object models that return copies of its properties on every access, it's possible to end up in
  * infinite loops, because even though the objects may look the same, they would be different instances. In those cases
