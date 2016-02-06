@@ -5,6 +5,11 @@
 .idea/tasks.xml
 *.iml
 
+# Eclipse #
+.project
+.classpath
+.settings
+
 # Maven Generated Files #
 target
 
