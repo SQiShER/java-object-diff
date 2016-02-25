@@ -39,13 +39,22 @@ public class IntrospectionService implements IntrospectionConfigurer, IsIntrospe
 	private final NodePathValueHolder<Introspector> nodePathIntrospectorHolder = new NodePathValueHolder<Introspector>();
 	private final NodePathValueHolder<IntrospectionMode> nodePathIntrospectionModeHolder = new NodePathValueHolder<IntrospectionMode>();
 	private final ObjectDifferBuilder objectDifferBuilder;
-	private Introspector defaultIntrospector = new StandardIntrospector();
+	private Introspector defaultIntrospector;
 	private InstanceFactory instanceFactory = new PublicNoArgsConstructorInstanceFactory();
 	private PropertyAccessExceptionHandler defaultPropertyAccessExceptionHandler = new DefaultPropertyAccessExceptionHandler();
 
 	public IntrospectionService(final ObjectDifferBuilder objectDifferBuilder)
 	{
 		this.objectDifferBuilder = objectDifferBuilder;
+		try
+		{
+			Class.forName("java.beans.Introspector");
+			defaultIntrospector = new StandardIntrospector();
+		}
+		catch(final ClassNotFoundException e )
+		{
+			defaultIntrospector = new DummyIntrospector();
+		}
 	}
 
 	public boolean isIntrospectable(final DiffNode node)
