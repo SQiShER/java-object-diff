@@ -19,6 +19,7 @@ package de.danielbechler.diff.differ;
 import de.danielbechler.diff.access.Accessor;
 import de.danielbechler.diff.access.Instances;
 import de.danielbechler.diff.access.PropertyAwareAccessor;
+import de.danielbechler.diff.category.CategoryResolver;
 import de.danielbechler.diff.introspection.PropertyReadException;
 import de.danielbechler.diff.circular.CircularReferenceDetector;
 import de.danielbechler.diff.circular.CircularReferenceDetectorFactory;
@@ -34,6 +35,9 @@ import de.danielbechler.util.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Set;
+import java.util.TreeSet;
+
 import static de.danielbechler.diff.circular.CircularReferenceDetector.CircularReferenceException;
 
 /**
@@ -46,6 +50,7 @@ public class DifferDispatcher
 	private final CircularReferenceDetectorFactory circularReferenceDetectorFactory;
 	private final CircularReferenceExceptionHandler circularReferenceExceptionHandler;
 	private final IsIgnoredResolver isIgnoredResolver;
+	private final CategoryResolver categoryResolver;
 	private final IsReturnableResolver isReturnableResolver;
 	private final PropertyAccessExceptionHandlerResolver propertyAccessExceptionHandlerResolver;
 	private static final ThreadLocal<CircularReferenceDetector> workingThreadLocal = new ThreadLocal<CircularReferenceDetector>();
@@ -56,13 +61,17 @@ public class DifferDispatcher
 							final CircularReferenceExceptionHandler circularReferenceExceptionHandler,
 							final IsIgnoredResolver ignoredResolver,
 							final IsReturnableResolver returnableResolver,
-							final PropertyAccessExceptionHandlerResolver propertyAccessExceptionHandlerResolver)
+							final PropertyAccessExceptionHandlerResolver propertyAccessExceptionHandlerResolver,
+							final CategoryResolver categoryResolver)
 	{
 		Assert.notNull(differProvider, "differFactory");
 		this.differProvider = differProvider;
 
 		Assert.notNull(ignoredResolver, "ignoredResolver");
 		this.isIgnoredResolver = ignoredResolver;
+
+		Assert.notNull(categoryResolver, "categoryResolver");
+		this.categoryResolver = categoryResolver;
 
 		this.circularReferenceDetectorFactory = circularReferenceDetectorFactory;
 		this.circularReferenceExceptionHandler = circularReferenceExceptionHandler;
@@ -100,6 +109,9 @@ public class DifferDispatcher
 		if (parentNode != null && isReturnableResolver.isReturnable(node))
 		{
 			parentNode.addChild(node);
+		}
+		if(node != null) {
+			node.setCategoriesFromConfig(categoryResolver.resolveCategories(node));
 		}
 		return node;
 	}

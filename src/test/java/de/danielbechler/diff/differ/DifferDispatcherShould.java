@@ -19,6 +19,7 @@ package de.danielbechler.diff.differ;
 import de.danielbechler.diff.access.Accessor;
 import de.danielbechler.diff.access.Instances;
 import de.danielbechler.diff.access.RootAccessor;
+import de.danielbechler.diff.category.CategoryResolver;
 import de.danielbechler.diff.circular.CircularReferenceDetector;
 import de.danielbechler.diff.circular.CircularReferenceDetectorFactory;
 import de.danielbechler.diff.circular.CircularReferenceExceptionHandler;
@@ -62,6 +63,8 @@ public class DifferDispatcherShould
 	@Mock
 	private IsIgnoredResolver ignoredResolver;
 	@Mock
+	private CategoryResolver categoryResolver;
+	@Mock
 	private IsReturnableResolver returnableResolver;
 	@Mock
 	private Instances instances;
@@ -79,7 +82,7 @@ public class DifferDispatcherShould
 		when(instances.access(any(Accessor.class))).thenReturn(accessedInstances);
 		when(accessedInstances.getSourceAccessor()).thenReturn(accessor);
 
-		differDispatcher = new DifferDispatcher(differProvider, circularReferenceDetectorFactory, circularReferenceExceptionHandler, ignoredResolver, returnableResolver, propertyAccessExceptionHandlerResolver);
+		differDispatcher = new DifferDispatcher(differProvider, circularReferenceDetectorFactory, circularReferenceExceptionHandler, ignoredResolver, returnableResolver, propertyAccessExceptionHandlerResolver, categoryResolver);
 	}
 
 	@Test

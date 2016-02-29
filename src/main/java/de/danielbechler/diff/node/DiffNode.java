@@ -67,6 +67,7 @@ public class DiffNode
 	private Class<?> valueType;
 	private TypeInfo valueTypeInfo;
 	private IdentityStrategy childIdentityStrategy;
+	private Set<String> categoriesFromConfig;
 
 	public void setChildIdentityStrategy(final IdentityStrategy identityStrategy)
 	{
@@ -90,6 +91,7 @@ public class DiffNode
 		Assert.notNull(accessor, "accessor");
 		this.accessor = accessor;
 		this.valueType = valueType;
+		this.categoriesFromConfig = Collections.emptySet();
 		setParentNode(parentNode);
 	}
 
@@ -102,6 +104,7 @@ public class DiffNode
 	{
 		this.parentNode = ROOT;
 		this.accessor = RootAccessor.getInstance();
+		this.categoriesFromConfig = Collections.emptySet();
 	}
 
 	/**
@@ -573,7 +576,10 @@ public class DiffNode
 		return false;
 	}
 
-	// TODO These categories should also contain the ones configured via CategoryService
+	/**
+	 * Returns a {@link java.util.Set} of {@link java.lang.String}
+	 * @return
+     */
 	public final Set<String> getCategories()
 	{
 		final Set<String> categories = new TreeSet<String>();
@@ -589,6 +595,8 @@ public class DiffNode
 				categories.addAll(categoriesFromAccessor);
 			}
 		}
+		categories.addAll(categoriesFromConfig);
+
 		return categories;
 	}
 
@@ -730,6 +738,16 @@ public class DiffNode
 		sb.append(", accessed via ").append(accessor);
 		sb.append(')');
 		return sb.toString();
+	}
+
+	private Set<String> getCategoriesFromConfig() {
+
+		return categoriesFromConfig;
+	}
+
+	public void setCategoriesFromConfig(Set<String> categoriesFromConfig) {
+
+		this.categoriesFromConfig = categoriesFromConfig;
 	}
 
 	/**
