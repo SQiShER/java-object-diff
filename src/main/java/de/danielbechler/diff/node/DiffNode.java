@@ -32,12 +32,7 @@ import de.danielbechler.diff.selector.RootElementSelector;
 import de.danielbechler.util.Assert;
 
 import java.lang.annotation.Annotation;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.util.Collections.unmodifiableSet;
@@ -67,7 +62,7 @@ public class DiffNode
 	private Class<?> valueType;
 	private TypeInfo valueTypeInfo;
 	private IdentityStrategy childIdentityStrategy;
-	private Set<String> categoriesFromConfig;
+	private final Set<String> additionalCategories = new TreeSet<String>();
 
 	public void setChildIdentityStrategy(final IdentityStrategy identityStrategy)
 	{
@@ -91,7 +86,6 @@ public class DiffNode
 		Assert.notNull(accessor, "accessor");
 		this.accessor = accessor;
 		this.valueType = valueType;
-		this.categoriesFromConfig = Collections.emptySet();
 		setParentNode(parentNode);
 	}
 
@@ -104,7 +98,6 @@ public class DiffNode
 	{
 		this.parentNode = ROOT;
 		this.accessor = RootAccessor.getInstance();
-		this.categoriesFromConfig = Collections.emptySet();
 	}
 
 	/**
@@ -595,7 +588,7 @@ public class DiffNode
 				categories.addAll(categoriesFromAccessor);
 			}
 		}
-		categories.addAll(categoriesFromConfig);
+		categories.addAll(additionalCategories);
 
 		return categories;
 	}
@@ -740,14 +733,10 @@ public class DiffNode
 		return sb.toString();
 	}
 
-	private Set<String> getCategoriesFromConfig() {
-
-		return categoriesFromConfig;
-	}
-
-	public void setCategoriesFromConfig(Set<String> categoriesFromConfig) {
-
-		this.categoriesFromConfig = categoriesFromConfig;
+	public void addCategories(final Collection<String> additionalCategories)
+	{
+		Assert.notNull(additionalCategories, "additionalCategories");
+		this.additionalCategories.addAll(additionalCategories);
 	}
 
 	/**

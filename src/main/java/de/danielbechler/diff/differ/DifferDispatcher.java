@@ -35,9 +35,6 @@ import de.danielbechler.util.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Set;
-import java.util.TreeSet;
-
 import static de.danielbechler.diff.circular.CircularReferenceDetector.CircularReferenceException;
 
 /**
@@ -110,8 +107,9 @@ public class DifferDispatcher
 		{
 			parentNode.addChild(node);
 		}
-		if(node != null) {
-			node.setCategoriesFromConfig(categoryResolver.resolveCategories(node));
+		if(node != null)
+		{
+			node.addCategories(categoryResolver.resolveCategories(node));
 		}
 		return node;
 	}
