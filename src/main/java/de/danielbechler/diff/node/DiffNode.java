@@ -590,7 +590,7 @@ public class DiffNode
 		}
 		categories.addAll(additionalCategories);
 
-		return categories;
+		return Collections.unmodifiableSet(categories);
 	}
 
 	/**

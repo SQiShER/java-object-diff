@@ -61,22 +61,19 @@ class CategoriesTestIT extends Specification{
 
 	def "categories should not be modifiable by a client directly"(){
 
-		given:
-		node.visitChildren(new DiffNode.Visitor() {
-			@Override
-			void node(DiffNode node, Visit visit) {
+		when:
+			node.visitChildren(new DiffNode.Visitor() {
 
-				def cats =node.getCategories()
-				cats.removeAll()
-				cats.add("shouldNotBeFound")
-			}
-		})
-		node.visitChildren(categoriesMapVisitor)
+				@Override
+				void node(DiffNode node, Visit visit) {
 
-		expect :
-			categoriesMapVisitor.mapCategories.get("firstString") == ["cat1"] as Set
-			categoriesMapVisitor.mapCategories.get("secondString") == ["cat1"] as Set
-			categoriesMapVisitor.mapCategories.get("thirdString") == ["cat1", "catAnnotation"] as Set
+					def cats = node.getCategories()
+					cats.removeAll()
+				}
+			})
+
+		then :
+			thrown UnsupportedOperationException
 	}
 
 	def "should throw exception when added a null collection"(){
