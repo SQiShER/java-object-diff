@@ -281,8 +281,4 @@ public class InclusionService implements InclusionConfigurer, IsIgnoredResolver
 		return rootConfiguration;
 	}
 
-	public Set<String> resolveCategories(DiffNode node) {
-
-		return categoryResolver.resolveCategories(node);
-	}
 }
