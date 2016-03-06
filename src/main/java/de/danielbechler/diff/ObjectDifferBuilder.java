@@ -161,7 +161,7 @@ public class ObjectDifferBuilder
 				inclusionService,
 				returnableNodeService,
 				introspectionService,
-				inclusionService);
+				categoryService);
 		differProvider.push(new BeanDiffer(
 				differDispatcher,
 				introspectionService,

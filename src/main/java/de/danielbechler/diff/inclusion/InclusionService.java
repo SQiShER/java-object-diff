@@ -31,7 +31,7 @@ import static de.danielbechler.diff.inclusion.Inclusion.EXCLUDED;
 import static de.danielbechler.diff.inclusion.Inclusion.INCLUDED;
 
 @SuppressWarnings("OverlyComplexAnonymousInnerClass")
-public class InclusionService implements InclusionConfigurer, IsIgnoredResolver, CategoryResolver
+public class InclusionService implements InclusionConfigurer, IsIgnoredResolver
 {
 	private final ObjectDifferBuilder rootConfiguration;
 	private final CategoryResolver categoryResolver;
