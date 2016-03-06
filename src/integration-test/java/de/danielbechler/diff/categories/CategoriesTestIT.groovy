@@ -106,29 +106,9 @@ class CategoriesTestIT extends Specification{
 			this.thirdString = thirdString
 		}
 
-		def getFirstString() {
-			return firstString
-		}
-
-		void setFirstString(firstString) {
-			this.firstString = firstString
-		}
-
-		def getSecondString() {
-			return secondString
-		}
-
-		void setSecondString(secondString) {
-			this.secondString = secondString
-		}
-
         @ObjectDiffProperty(categories = ["catAnnotation"])
 		def getThirdString() {
 			return thirdString
-		}
-
-		void setThirdString(thirdString) {
-			this.thirdString = thirdString
 		}
 	}
 }
