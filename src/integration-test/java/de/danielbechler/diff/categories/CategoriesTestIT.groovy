@@ -1,5 +1,6 @@
-package de.danielbechler.diff
+package de.danielbechler.diff.categories
 
+import de.danielbechler.diff.ObjectDifferBuilder
 import de.danielbechler.diff.introspection.ObjectDiffProperty
 import de.danielbechler.diff.node.DiffNode
 import de.danielbechler.diff.node.Visit
