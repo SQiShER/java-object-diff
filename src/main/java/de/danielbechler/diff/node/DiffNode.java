@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.util.Collections.unmodifiableSet;
@@ -67,6 +68,7 @@ public class DiffNode
 	private Class<?> valueType;
 	private TypeInfo valueTypeInfo;
 	private IdentityStrategy childIdentityStrategy;
+	private final Set<String> additionalCategories = new TreeSet<String>();
 
 	public void setChildIdentityStrategy(final IdentityStrategy identityStrategy)
 	{
@@ -573,7 +575,11 @@ public class DiffNode
 		return false;
 	}
 
-	// TODO These categories should also contain the ones configured via CategoryService
+	/**
+	 * Returns an unmodifiable {@link java.util.Set} of {@link java.lang.String} with the categories of this node.
+	 *
+	 * @return an unmodifiable {@link java.util.Set} of {@link java.lang.String} with the categories of this node
+     */
 	public final Set<String> getCategories()
 	{
 		final Set<String> categories = new TreeSet<String>();
@@ -589,7 +595,9 @@ public class DiffNode
 				categories.addAll(categoriesFromAccessor);
 			}
 		}
-		return categories;
+		categories.addAll(additionalCategories);
+
+		return unmodifiableSet(categories);
 	}
 
 	/**
@@ -730,6 +738,12 @@ public class DiffNode
 		sb.append(", accessed via ").append(accessor);
 		sb.append(')');
 		return sb.toString();
+	}
+
+	public void addCategories(final Collection<String> additionalCategories)
+	{
+		Assert.notNull(additionalCategories, "additionalCategories");
+		this.additionalCategories.addAll(additionalCategories);
 	}
 
 	/**
