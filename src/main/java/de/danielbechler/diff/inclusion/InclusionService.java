@@ -24,7 +24,6 @@ import de.danielbechler.util.Assert;
 
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.Set;
 
 import static de.danielbechler.diff.inclusion.Inclusion.DEFAULT;
 import static de.danielbechler.diff.inclusion.Inclusion.EXCLUDED;

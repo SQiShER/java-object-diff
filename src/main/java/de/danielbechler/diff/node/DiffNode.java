@@ -32,7 +32,13 @@ import de.danielbechler.diff.selector.RootElementSelector;
 import de.danielbechler.util.Assert;
 
 import java.lang.annotation.Annotation;
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.util.Collections.unmodifiableSet;
@@ -570,8 +576,9 @@ public class DiffNode
 	}
 
 	/**
-	 * Returns a {@link java.util.Set} of {@link java.lang.String}
-	 * @return
+	 * Returns an unmodifiable {@link java.util.Set} of {@link java.lang.String} with the categories of this node.
+	 *
+	 * @return an unmodifiable {@link java.util.Set} of {@link java.lang.String} with the categories of this node
      */
 	public final Set<String> getCategories()
 	{
@@ -590,7 +597,7 @@ public class DiffNode
 		}
 		categories.addAll(additionalCategories);
 
-		return Collections.unmodifiableSet(categories);
+		return unmodifiableSet(categories);
 	}
 
 	/**

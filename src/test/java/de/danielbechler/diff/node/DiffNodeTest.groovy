@@ -246,7 +246,7 @@ class DiffNodeTest extends Specification {
 		  doesOrDoesNotImplement = expectedResult ? 'implements' : 'does not implement'
 	}
 
-	def "should return categories added when visiting"(){
+	def "should return added categories"(){
 		given:
 			def node = new DiffNode(null, Mock(Accessor), Object)
 			node.addCategories(["addedCategory"] as List)
