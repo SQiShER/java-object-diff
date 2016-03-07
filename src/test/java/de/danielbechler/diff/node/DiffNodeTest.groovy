@@ -246,31 +246,31 @@ class DiffNodeTest extends Specification {
 		  doesOrDoesNotImplement = expectedResult ? 'implements' : 'does not implement'
 	}
 
-	def "should return added categories"(){
+	def "should return added categories"() {
 		given:
-			def node = new DiffNode(null, Mock(Accessor), Object)
-			node.addCategories(["addedCategory"] as List)
-		expect :
-			node.getCategories() == ["addedCategory"] as Set
+		  def node = new DiffNode(null, Mock(Accessor), Object)
+		  node.addCategories(["addedCategory"] as List)
+		expect:
+		  node.getCategories() == ["addedCategory"] as Set
 	}
 
-	def "categories should not be modifiable by a client directly"(){
+	def "categories should not be modifiable by a client directly"() {
 
 		when:
-			def node = new DiffNode(null, Mock(Accessor), Object)
-			def cats = node.getCategories()
-			cats.removeAll()
-		then :
-			thrown UnsupportedOperationException
+		  def node = new DiffNode(null, Mock(Accessor), Object)
+		  def cats = node.getCategories()
+		  cats.removeAll()
+		then:
+		  thrown UnsupportedOperationException
 	}
 
-	def "should throw exception when added a null collection"(){
+	def "should throw exception when added a null collection"() {
 
 		when:
-			def node = new DiffNode(null, Mock(Accessor), Object)
-			node.addCategories(null)
-		then :
-			def ex = thrown(IllegalArgumentException)
-			ex.message == "'additionalCategories' must not be null"
+		  def node = new DiffNode(null, Mock(Accessor), Object)
+		  node.addCategories(null)
+		then:
+		  def ex = thrown(IllegalArgumentException)
+		  ex.message == "'additionalCategories' must not be null"
 	}
 }

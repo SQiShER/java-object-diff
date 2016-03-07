@@ -68,7 +68,7 @@ public class DiffNode
 	private Class<?> valueType;
 	private TypeInfo valueTypeInfo;
 	private IdentityStrategy childIdentityStrategy;
-	private final Set<String> additionalCategories = new TreeSet<String>();
+	private final Collection<String> additionalCategories = new TreeSet<String>();
 
 	public void setChildIdentityStrategy(final IdentityStrategy identityStrategy)
 	{
@@ -579,7 +579,7 @@ public class DiffNode
 	 * Returns an unmodifiable {@link java.util.Set} of {@link java.lang.String} with the categories of this node.
 	 *
 	 * @return an unmodifiable {@link java.util.Set} of {@link java.lang.String} with the categories of this node
-     */
+	 */
 	public final Set<String> getCategories()
 	{
 		final Set<String> categories = new TreeSet<String>();
@@ -785,7 +785,7 @@ public class DiffNode
 
 		private final String reason;
 
-		private State(final String reason)
+		State(final String reason)
 		{
 			this.reason = reason;
 		}
@@ -799,7 +799,7 @@ public class DiffNode
 	/**
 	 * Visitor to traverse a node graph.
 	 */
-	public static interface Visitor
+	public interface Visitor
 	{
 		void node(DiffNode node, Visit visit);
 	}

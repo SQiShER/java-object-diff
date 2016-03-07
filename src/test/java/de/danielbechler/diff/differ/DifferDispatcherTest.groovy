@@ -16,7 +16,8 @@
 
 package de.danielbechler.diff.differ
 
-import de.danielbechler.diff.access.*
+import de.danielbechler.diff.access.Instances
+import de.danielbechler.diff.access.PropertyAwareAccessor
 import de.danielbechler.diff.category.CategoryResolver
 import de.danielbechler.diff.circular.CircularReferenceDetector
 import de.danielbechler.diff.circular.CircularReferenceDetectorFactory
@@ -27,7 +28,6 @@ import de.danielbechler.diff.introspection.PropertyAccessExceptionHandler
 import de.danielbechler.diff.introspection.PropertyAccessExceptionHandlerResolver
 import de.danielbechler.diff.introspection.PropertyReadException
 import de.danielbechler.diff.node.DiffNode
-import spock.lang.Ignore
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -67,28 +67,28 @@ class DifferDispatcherTest extends Specification {
 			propertyAccessExceptionHandlerResolver,
 			categoryResolver)
 
-	@Ignore
-	def "when a circular reference is detected"() {
-		given:
-		  def accessor = Stub Accessor
-		  def accessedInstances = Mock Instances, {
-			  areNull() >> false
-			  getBase() >> new Object()
-			  getWorking() >> new Object()
-		  }
-		  def instances = Mock Instances, {
-			  access(_ as Accessor) >> accessedInstances
-			  getSourceAccessor() >> accessor
-		  }
-		  def node = DiffNode.newRootNode()
-
-		when:
-		  differDispatcher.dispatch(node, instances, accessor)
-
-		then:
-		  differDispatcher.workingCircularReferenceDetector.size() == 1
-		  differDispatcher.baseCircularReferenceDetector.size() == 1
-	}
+//	@Ignore
+//	def "when a circular reference is detected"() {
+//		given:
+//		  def accessor = Stub Accessor
+//		  def accessedInstances = Mock Instances, {
+//			  areNull() >> false
+//			  getBase() >> new Object()
+//			  getWorking() >> new Object()
+//		  }
+//		  def instances = Mock Instances, {
+//			  access(_ as Accessor) >> accessedInstances
+//			  getSourceAccessor() >> accessor
+//		  }
+//		  def node = DiffNode.newRootNode()
+//
+//		when:
+//		  differDispatcher.dispatch(node, instances, accessor)
+//
+//		then:
+//		  differDispatcher.workingCircularReferenceDetector.size() == 1
+//		  differDispatcher.baseCircularReferenceDetector.size() == 1
+//	}
 
 	def 'should delegate property read exception to exception handler'() {
 		def propertyExceptionHandler = Mock PropertyAccessExceptionHandler

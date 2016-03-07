@@ -89,7 +89,7 @@ public class DifferDispatcher
 		workingThreadLocal.remove();
 		baseThreadLocal.remove();
 	}
-	   
+
 	/**
 	 * Delegates the call to an appropriate {@link Differ}.
 	 *
@@ -107,7 +107,7 @@ public class DifferDispatcher
 		{
 			parentNode.addChild(node);
 		}
-		if(node != null)
+		if (node != null)
 		{
 			node.addCategories(categoryResolver.resolveCategories(node));
 		}
@@ -204,43 +204,36 @@ public class DifferDispatcher
 		return differ.compare(parentNode, instances);
 	}
 
-	protected void forgetInstances(final DiffNode parentNode, final Instances instances)
+	protected static void forgetInstances(final DiffNode parentNode, final Instances instances)
 	{
-		final NodePath nodePath;
-		if (parentNode != null)
-		{
-			final NodePath parentPath = parentNode.getPath();
-			final ElementSelector elementSelector = instances.getSourceAccessor().getElementSelector();
-			nodePath = NodePath.startBuildingFrom(parentPath).element(elementSelector).build();
-		}
-		else
-		{
-			nodePath = NodePath.withRoot();
-		}
+		final NodePath nodePath = getNodePath(parentNode, instances);
 		logger.debug("[ {} ] Forgetting --- WORKING: {} <=> BASE: {}", nodePath, instances.getWorking(), instances.getBase());
 		workingThreadLocal.get().remove(instances.getWorking());
 		baseThreadLocal.get().remove(instances.getBase());
 	}
 
-	protected void rememberInstances(final DiffNode parentNode, final Instances instances)
+	private static NodePath getNodePath(final DiffNode parentNode, final Instances instances)
 	{
-		final NodePath nodePath;
-		if (parentNode != null)
+		if (parentNode == null)
 		{
-			final NodePath parentPath = parentNode.getPath();
-			final ElementSelector elementSelector = instances.getSourceAccessor().getElementSelector();
-			nodePath = NodePath.startBuildingFrom(parentPath).element(elementSelector).build();
+			return NodePath.withRoot();
 		}
 		else
 		{
-			nodePath = NodePath.withRoot();
+			final NodePath parentPath = parentNode.getPath();
+			final ElementSelector elementSelector = instances.getSourceAccessor().getElementSelector();
+			return NodePath.startBuildingFrom(parentPath).element(elementSelector).build();
 		}
-		logger.debug("[ {} ] Remembering --- WORKING: {} <=> BASE: {}", nodePath, instances.getWorking(), instances.getBase());
+	}
 
+	protected static void rememberInstances(final DiffNode parentNode, final Instances instances)
+	{
+		final NodePath nodePath = getNodePath(parentNode, instances);
+		logger.debug("[ {} ] Remembering --- WORKING: {} <=> BASE: {}", nodePath, instances.getWorking(), instances.getBase());
 		transactionalPushToCircularReferenceDetectors(nodePath, instances);
 	}
 
-	private void transactionalPushToCircularReferenceDetectors(final NodePath nodePath, final Instances instances)
+	private static void transactionalPushToCircularReferenceDetectors(final NodePath nodePath, final Instances instances)
 	{
 		workingThreadLocal.get().push(instances.getWorking(), nodePath);
 
