@@ -279,4 +279,5 @@ public class InclusionService implements InclusionConfigurer, IsIgnoredResolver
 	{
 		return rootConfiguration;
 	}
+
 }

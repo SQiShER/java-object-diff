@@ -160,7 +160,8 @@ public class ObjectDifferBuilder
 				circularReferenceService,
 				inclusionService,
 				returnableNodeService,
-				introspectionService);
+				introspectionService,
+				categoryService);
 		differProvider.push(new BeanDiffer(
 				differDispatcher,
 				introspectionService,

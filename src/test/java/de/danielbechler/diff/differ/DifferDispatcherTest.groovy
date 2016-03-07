@@ -17,6 +17,7 @@
 package de.danielbechler.diff.differ
 
 import de.danielbechler.diff.access.*
+import de.danielbechler.diff.category.CategoryResolver
 import de.danielbechler.diff.circular.CircularReferenceDetector
 import de.danielbechler.diff.circular.CircularReferenceDetectorFactory
 import de.danielbechler.diff.circular.CircularReferenceExceptionHandler
@@ -53,6 +54,9 @@ class DifferDispatcherTest extends Specification {
 	def isReturnableResolver = Stub IsReturnableResolver, {
 		isReturnable(_ as DiffNode) >> true
 	}
+	def categoryResolver = Stub CategoryResolver, {
+		resolveCategories(_ as DiffNode) >> Collections.emptySet()
+	}
 	def propertyAccessExceptionHandlerResolver = Mock PropertyAccessExceptionHandlerResolver
 	def differDispatcher = new DifferDispatcher(
 			differProvider,
@@ -60,7 +64,8 @@ class DifferDispatcherTest extends Specification {
 			circularReferenceExceptionHandler,
 			isIgnoredResolver,
 			isReturnableResolver,
-			propertyAccessExceptionHandlerResolver)
+			propertyAccessExceptionHandlerResolver,
+			categoryResolver)
 
 	@Ignore
 	def "when a circular reference is detected"() {
