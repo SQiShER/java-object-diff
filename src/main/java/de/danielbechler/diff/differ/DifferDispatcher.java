@@ -114,9 +114,7 @@ public class DifferDispatcher
 		return node;
 	}
 
-	private DiffNode compare(final DiffNode parentNode,
-							 final Instances parentInstances,
-							 final Accessor accessor)
+	private DiffNode compare(final DiffNode parentNode, final Instances parentInstances, final Accessor accessor)
 	{
 		final DiffNode node = new DiffNode(parentNode, accessor, null);
 		if (isIgnoredResolver.isIgnored(node))
