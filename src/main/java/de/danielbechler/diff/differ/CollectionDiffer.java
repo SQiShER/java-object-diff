@@ -60,8 +60,7 @@ public final class CollectionDiffer implements Differ
 		return Collection.class.isAssignableFrom(type);
 	}
 
-	public final DiffNode compare(final DiffNode parentNode,
-								  final Instances collectionInstances)
+	public final DiffNode compare(final DiffNode parentNode, final Instances collectionInstances)
 	{
 		final DiffNode collectionNode = newNode(parentNode, collectionInstances);
 		final IdentityStrategy identityStrategy = identityStrategyResolver.resolveIdentityStrategy(collectionNode);
