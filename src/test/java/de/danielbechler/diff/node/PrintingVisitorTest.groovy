@@ -25,18 +25,7 @@ import spock.lang.Specification
  */
 public class PrintingVisitorTest extends Specification {
 
-	def 'prints_root_node_if_unchanged_and_without_children'() {
-		def visitor = new TestablePrintingVisitor("foo", "foo")
-
-		given:
-		  DiffNode rootNode = DiffNode.newRootNodeWithType(String)
-		when:
-		  rootNode.visit(visitor)
-		then:
-		  visitor.output == "Property at path '/' has not changed\n"
-	}
-
-	def 'omits_intermediate_nodes_with_changed_child_nodes'() {
+	def 'omits intermediate nodes with changed child nodes'() {
 		given:
 		  ObjectWithCircularReference a1 = new ObjectWithCircularReference("a")
 		  ObjectWithCircularReference b1 = new ObjectWithCircularReference("b")
@@ -55,6 +44,17 @@ public class PrintingVisitorTest extends Specification {
 		  rootNode.visit(visitor)
 		then:
 		  visitor.output == "Property at path '/reference/reference/id' has changed from [ d ] to [ c ]\n"
+	}
+
+	def 'prints root node if unchanged and without children'() {
+		def visitor = new TestablePrintingVisitor("foo", "foo")
+
+		given:
+		  DiffNode rootNode = DiffNode.newRootNodeWithType(String)
+		when:
+		  rootNode.visit(visitor)
+		then:
+		  visitor.output == "Property at path '/' has not changed\n"
 	}
 
 	private static class TestablePrintingVisitor extends PrintingVisitor {
