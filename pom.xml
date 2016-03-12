@@ -394,7 +394,6 @@
                             <exclude>**/*IT.class</exclude>
                             <exclude>**/*AT.class</exclude>
                             <exclude>**/*Example.class</exclude>
-                            <exclude>de/danielbechler/diff/mock/**/*.class</exclude>
                         </excludes>
                     </instrumentation>
                     <check/>
