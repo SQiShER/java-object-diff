@@ -21,7 +21,7 @@ import spock.lang.Specification
 /**
  * @author Daniel Bechler
  */
-class ComparablesSpec extends Specification {
+class ComparablesTest extends Specification {
 
 	def "isEqualByComparison: should return true when both parameters are null"() {
 		expect:

@@ -15,15 +15,17 @@
  */
 
 package de.danielbechler.diff.category
+
 import de.danielbechler.diff.access.PropertyAwareAccessor
 import de.danielbechler.diff.node.DiffNode
 import de.danielbechler.diff.path.NodePath
 import de.danielbechler.diff.selector.BeanPropertyElementSelector
 import spock.lang.Specification
+
 /**
  * @author Daniel Bechler
  */
-class CategoryServiceSpec extends Specification {
+class CategoryServiceTest extends Specification {
 	def categoryService = new CategoryService()
 	def accessor = Mock(PropertyAwareAccessor)
 	def nodePath = NodePath.with("foo")

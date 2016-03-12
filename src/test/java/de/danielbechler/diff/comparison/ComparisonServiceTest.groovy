@@ -25,7 +25,7 @@ import spock.lang.Unroll
 import java.sql.Time
 import java.sql.Timestamp
 
-class ComparisonServiceSpec extends Specification {
+class ComparisonServiceTest extends Specification {
 
 	def objectDifferBuilder = Stub(ObjectDifferBuilder)
 	ComparisonService comparisonService = new ComparisonService(objectDifferBuilder)

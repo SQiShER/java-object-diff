@@ -120,8 +120,6 @@
                     <enableAssertions>true</enableAssertions>
                     <includes>
                         <include>**/*Test.java</include>
-                        <include>**/*Should.java</include>
-                        <include>**/*Spec.java</include>
                         <include>**/*AT.java</include>
                         <include>**/*IT.java</include>
                     </includes>
@@ -396,6 +394,7 @@
                             <exclude>**/*IT.class</exclude>
                             <exclude>**/*AT.class</exclude>
                             <exclude>**/*Example.class</exclude>
+                            <exclude>de/danielbechler/diff/mock/**/*.class</exclude>
                         </excludes>
                     </instrumentation>
                     <check/>

@@ -19,7 +19,7 @@ package de.danielbechler.util
 import spock.lang.Specification
 import spock.lang.Unroll
 
-class CollectionsSpec extends Specification {
+class CollectionsTest extends Specification {
 
 	def "setOf: should create a new set from the given input"() {
 		given:

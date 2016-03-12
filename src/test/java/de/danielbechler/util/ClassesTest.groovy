@@ -27,7 +27,7 @@ import spock.lang.Unroll
 import java.text.Collator
 import java.util.concurrent.ConcurrentSkipListMap
 
-class ClassesSpec extends Specification {
+class ClassesTest extends Specification {
 
 	@Shared
 	static def PRIMITIVE_WRAPPER_TYPE = [Integer, Short, Character, Long, Boolean, Byte, Float, Double]
