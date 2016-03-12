@@ -31,6 +31,14 @@ public class DifferProvider
 		differs.add(0, differ);
 	}
 
+	public void pushAll(final Iterable<Differ> differs)
+	{
+		for (final Differ differ : differs)
+		{
+			push(differ);
+		}
+	}
+
 	public Differ retrieveDifferForType(final Class<?> type)
 	{
 		if (type == null)

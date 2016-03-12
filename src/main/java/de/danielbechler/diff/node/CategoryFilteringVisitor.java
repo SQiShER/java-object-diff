@@ -25,7 +25,7 @@ import java.util.TreeSet;
  * @author Daniel Bechler
  */
 @SuppressWarnings("UnusedDeclaration")
-public abstract class CategoryFilteringVisitor extends AbstractFilteringVisitor
+public class CategoryFilteringVisitor extends AbstractFilteringVisitor
 {
 	private final Collection<String> include = new TreeSet<String>();
 	private final Collection<String> exclude = new TreeSet<String>();
@@ -72,7 +72,13 @@ public abstract class CategoryFilteringVisitor extends AbstractFilteringVisitor
 		return this;
 	}
 
-	@SuppressWarnings({"UnusedDeclaration"})
+	/**
+	 * @deprecated This method is confusing. The name implies only nodes with the given category
+	 * will be included, but that's not the case. Instead every previously included category will
+	 * also be included. On top of that every excluded category will remain excluded. This method
+	 * will be removed in future versions until the feature is explicitly requested.
+	 */
+	@Deprecated
 	public final CategoryFilteringVisitor includeOnly(final String category)
 	{
 		include(category);
@@ -86,7 +92,6 @@ public abstract class CategoryFilteringVisitor extends AbstractFilteringVisitor
 		return this;
 	}
 
-	@SuppressWarnings({"UnusedDeclaration"})
 	public final CategoryFilteringVisitor exclude(final String category)
 	{
 		exclude.add(category);

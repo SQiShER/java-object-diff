@@ -22,14 +22,14 @@ import de.danielbechler.diff.circular.CircularReferenceConfigurer;
 import de.danielbechler.diff.circular.CircularReferenceService;
 import de.danielbechler.diff.comparison.ComparisonConfigurer;
 import de.danielbechler.diff.comparison.ComparisonService;
-import de.danielbechler.diff.comparison.ComparisonStrategy;
-import de.danielbechler.diff.comparison.PrimitiveDefaultValueMode;
 import de.danielbechler.diff.differ.BeanDiffer;
 import de.danielbechler.diff.differ.CollectionDiffer;
+import de.danielbechler.diff.differ.Differ;
 import de.danielbechler.diff.differ.DifferConfigurer;
 import de.danielbechler.diff.differ.DifferDispatcher;
 import de.danielbechler.diff.differ.DifferFactory;
 import de.danielbechler.diff.differ.DifferProvider;
+import de.danielbechler.diff.differ.DifferService;
 import de.danielbechler.diff.differ.MapDiffer;
 import de.danielbechler.diff.differ.PrimitiveDiffer;
 import de.danielbechler.diff.filtering.FilteringConfigurer;
@@ -39,11 +39,9 @@ import de.danielbechler.diff.inclusion.InclusionConfigurer;
 import de.danielbechler.diff.inclusion.InclusionService;
 import de.danielbechler.diff.introspection.IntrospectionConfigurer;
 import de.danielbechler.diff.introspection.IntrospectionService;
-import de.danielbechler.diff.node.DiffNode;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Set;
 
 /**
  * This is the entry point of every diffing operation. It acts as a factory to
@@ -61,12 +59,17 @@ public class ObjectDifferBuilder
 	private final IdentityService identityService = new IdentityService(this);
 	private final ReturnableNodeService returnableNodeService = new ReturnableNodeService(this);
 	private final CircularReferenceService circularReferenceService = new CircularReferenceService(this);
-	private final DifferConfigurer differConfigurer = new DifferConfigurerImpl();
-	private final NodeQueryService nodeQueryService = new NodeQueryServiceImpl();
-	private final Collection<DifferFactory> differFactories = new ArrayList<DifferFactory>();
+	private final DifferService differService = new DifferService(this);
+	private final NodeQueryService nodeQueryService;
 
 	private ObjectDifferBuilder()
 	{
+		nodeQueryService = new DefaultNodeQueryService(categoryService,
+				introspectionService,
+				inclusionService,
+				returnableNodeService,
+				comparisonService,
+				comparisonService);
 	}
 
 	/**
@@ -143,7 +146,7 @@ public class ObjectDifferBuilder
 
 	public DifferConfigurer differs()
 	{
-		return differConfigurer;
+		return differService;
 	}
 
 	public static ObjectDiffer buildDefault()
@@ -151,10 +154,26 @@ public class ObjectDifferBuilder
 		return startBuilding().build();
 	}
 
+	public static ObjectDifferBuilder startBuilding()
+	{
+		return new ObjectDifferBuilder();
+	}
+
 	public ObjectDiffer build()
 	{
 		final DifferProvider differProvider = new DifferProvider();
-		final DifferDispatcher differDispatcher = new DifferDispatcher(
+		final DifferDispatcher differDispatcher = newDifferDispatcher(differProvider);
+		differProvider.push(newBeanDiffer(differDispatcher));
+		differProvider.push(newCollectionDiffer(differDispatcher));
+		differProvider.push(newMapDiffer(differDispatcher));
+		differProvider.push(newPrimitiveDiffer());
+		differProvider.pushAll(createCustomDiffers(differDispatcher));
+		return new ObjectDiffer(differDispatcher);
+	}
+
+	private DifferDispatcher newDifferDispatcher(final DifferProvider differProvider)
+	{
+		return new DifferDispatcher(
 				differProvider,
 				circularReferenceService,
 				circularReferenceService,
@@ -162,68 +181,41 @@ public class ObjectDifferBuilder
 				returnableNodeService,
 				introspectionService,
 				categoryService);
-		differProvider.push(new BeanDiffer(
+	}
+
+	private Differ newBeanDiffer(final DifferDispatcher differDispatcher)
+	{
+		return new BeanDiffer(
 				differDispatcher,
 				introspectionService,
 				returnableNodeService,
 				comparisonService,
-				introspectionService));
-		differProvider.push(new CollectionDiffer(differDispatcher, comparisonService, identityService));
-		differProvider.push(new MapDiffer(differDispatcher, comparisonService));
-		differProvider.push(new PrimitiveDiffer(comparisonService));
+				introspectionService);
+	}
+
+	private Differ newCollectionDiffer(final DifferDispatcher differDispatcher)
+	{
+		return new CollectionDiffer(differDispatcher, comparisonService, identityService);
+	}
+
+	private Differ newMapDiffer(final DifferDispatcher differDispatcher)
+	{
+		return new MapDiffer(differDispatcher, comparisonService);
+	}
+
+	private Differ newPrimitiveDiffer()
+	{
+		return new PrimitiveDiffer(comparisonService);
+	}
+
+	private Iterable<Differ> createCustomDiffers(final DifferDispatcher differDispatcher)
+	{
+		final Collection<DifferFactory> differFactories = differService.getDifferFactories();
+		final Collection<Differ> differs = new ArrayList<Differ>(differFactories.size());
 		for (final DifferFactory differFactory : differFactories)
 		{
-			differProvider.push(differFactory.createDiffer(differDispatcher, nodeQueryService));
+			differs.add(differFactory.createDiffer(differDispatcher, nodeQueryService));
 		}
-		return new ObjectDiffer(differDispatcher);
-	}
-
-	public static ObjectDifferBuilder startBuilding()
-	{
-		return new ObjectDifferBuilder();
-	}
-
-	public class DifferConfigurerImpl implements DifferConfigurer
-	{
-		public ObjectDifferBuilder register(final DifferFactory differFactory)
-		{
-			differFactories.add(differFactory);
-			return ObjectDifferBuilder.this;
-		}
-
-	}
-
-	private class NodeQueryServiceImpl implements NodeQueryService
-	{
-		public Set<String> resolveCategories(final DiffNode node)
-		{
-			return categoryService.resolveCategories(node);
-		}
-
-		public boolean isIntrospectable(final DiffNode node)
-		{
-			return introspectionService.isIntrospectable(node);
-		}
-
-		public boolean isIgnored(final DiffNode node)
-		{
-			return inclusionService.isIgnored(node);
-		}
-
-		public boolean isReturnable(final DiffNode node)
-		{
-			return returnableNodeService.isReturnable(node);
-		}
-
-		public ComparisonStrategy resolveComparisonStrategy(final DiffNode node)
-		{
-			return comparisonService.resolveComparisonStrategy(node);
-		}
-
-		public PrimitiveDefaultValueMode resolvePrimitiveDefaultValueMode(
-				final DiffNode node)
-		{
-			return comparisonService.resolvePrimitiveDefaultValueMode(node);
-		}
+		return differs;
 	}
 }

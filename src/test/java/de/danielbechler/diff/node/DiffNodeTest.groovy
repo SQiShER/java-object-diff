@@ -273,4 +273,12 @@ class DiffNodeTest extends Specification {
 		  def ex = thrown(IllegalArgumentException)
 		  ex.message == "'additionalCategories' must not be null"
 	}
+
+	def 'toString should print a human-readable representation'() {
+		def accessor = Mock(Accessor)
+		given:
+		  def node = new DiffNode(null, accessor, TreeSet)
+		expect:
+		  node.toString() == 'DiffNode(state=UNTOUCHED, type=java.util.TreeSet, no children, accessed via ' + accessor + ')'
+	}
 }
