@@ -90,6 +90,11 @@ public class ComparisonService implements ComparisonConfigurer, ComparisonStrate
 			}
 		}
 
+		if (valueType == Object.class)
+		{
+			return EQUALS_ONLY_COMPARISON_STRATEGY;
+		}
+
 		return null;
 	}
 

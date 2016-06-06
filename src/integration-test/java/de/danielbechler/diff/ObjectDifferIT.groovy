@@ -229,10 +229,8 @@ public class ObjectDifferIT extends Specification {
 	}
 
 	def 'compare with different types'() {
-		when:
-		  ObjectDifferBuilder.buildDefault().compare('foo', 1337)
-		then:
-		  thrown IllegalArgumentException
+		expect:
+		  ObjectDifferBuilder.buildDefault().compare('foo', 1337).changed
 	}
 
 	def 'compare with ignored property'() {

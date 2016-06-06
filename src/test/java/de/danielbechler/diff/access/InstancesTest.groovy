@@ -21,15 +21,12 @@ import spock.lang.Unroll
 
 class InstancesTest extends Specification {
 
-	def "getType: throws IllegalArgumentException if base and working have incompatible types"() {
+	def "getType: returns Object.class if base and working have different types"() {
 		setup:
 		  def instances = new Instances(RootAccessor.instance, working, base, null)
 
-		when:
-		  instances.getType()
-
-		then:
-		  thrown(IllegalArgumentException)
+		expect:
+		  instances.getType() == Object.class
 
 		where:
 		  base                | working
