@@ -19,6 +19,8 @@ package de.danielbechler.diff.access;
 import de.danielbechler.util.Assert;
 import de.danielbechler.util.Classes;
 import de.danielbechler.util.Collections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Map;
@@ -28,6 +30,7 @@ import static de.danielbechler.util.Objects.isEqual;
 
 public class Instances
 {
+	private static final Logger logger = LoggerFactory.getLogger(Instances.class);
 	private final Accessor sourceAccessor;
 	private final Object working;
 	private final Object base;
@@ -225,6 +228,9 @@ public class Instances
 				// special handling for beans and arrays should go here
 			}
 		}
+
+		logger.info("Detected instances of different types " + types + ". " +
+								"Instances should normally either be null or have the exact same type.");
 		return Object.class;
 	}
 
