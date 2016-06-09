@@ -230,7 +230,7 @@ public class Instances
 		}
 
 		logger.info("Detected instances of different types " + types + ". " +
-								"Instances should normally either be null or have the exact same type.");
+			    "Instances should normally either be null or have the exact same type.");
 		return Object.class;
 	}
 
