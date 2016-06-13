@@ -16,8 +16,12 @@
 
 package de.danielbechler.diff
 
+import de.danielbechler.diff.comparison.PrimitiveDefaultValueMode;
 import de.danielbechler.diff.mock.*
 import de.danielbechler.diff.node.DiffNode
+import de.danielbechler.diff.node.DiffNode.State
+import de.danielbechler.diff.node.Visit
+import de.danielbechler.diff.node.DiffNode.Visitor
 import de.danielbechler.diff.path.NodePath
 import de.danielbechler.diff.selector.CollectionItemElementSelector
 import de.danielbechler.diff.selector.MapKeyElementSelector
@@ -362,4 +366,33 @@ public class ObjectDifferIT extends Specification {
 		  node.changed
 		  node.getChild('map').changed
 	}
+	
+	def "node should resolve State.REMOVED instead of State.ADDED"() {
+		given:
+			def differ = ObjectDifferBuilder.startBuilding().build()
+			def working = new ObjectWithCollectionOfComplexTypes()
+			def base = new ObjectWithCollectionOfComplexTypes()
+			def o = new ObjectWithPrimitivePropertyAndHashCodeAndEquals()
+			def visitor = new Visitor(){
+				def List<DiffNode> nodes = new ArrayList<>();
+				public void node(DiffNode node, Visit visit) {
+					if(node.hasChanges()){
+						nodes.add(node);
+					}
+				}
+			}		
+			base.getList().add(o)
+		when:
+			def node = differ.compare(working,base)
+			node.visit(visitor)
+			def list = visitor.getNodes();
+		then:
+		   node.hasChanges()
+		   !list.empty
+		   list.size() == 4
+		   list[0].state == State.CHANGED
+		   list[1].state == State.CHANGED
+		   list[2].state == State.REMOVED
+		   list[3].state == State.REMOVED					
+	}	
 }
