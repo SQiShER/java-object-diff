@@ -1,4 +1,13 @@
 # Changelog
+## 0.94
+- **Comparison:** Values of different types will now be compared via `equals` method instead of causing an exception. #162
+- **DiffNode:** DiffNodes now return all configured categories instead of just the ones fron the annotation. #160
+- **Introspection:** The `StandardIntrospector` will now only be created when needed, so platforms like Android (where `java.beans.Introspector` is not available) can easily provide alternative implementations. #158
+- **Maintenance:** Fully replaced TestNG, Mockito and FestAssert with Spock.
+- **Maintenance:** Added Eclipse files to .gitignore #153
+- **Maintenance:** Fixed typo in JavaDoc of CircularReferenceConfigurer #154
+
+Big thanks to @jlsalmon, @scompo, @simplysoft & @PascalSchumacher for your contributions!
 
 ## 0.93.2
 

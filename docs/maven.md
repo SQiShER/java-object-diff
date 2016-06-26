@@ -3,7 +3,7 @@ In order to use java-object-diff with Maven, all you need to do is to add this d
 	<dependency>
 		<groupId>de.danielbechler</groupId>
 		<artifactId>java-object-diff</artifactId>
-		<version>0.93.2</version>
+		<version>0.94</version>
 	</dependency>
 
 That's it! Now you're ready to go!
