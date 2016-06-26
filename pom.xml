@@ -15,14 +15,13 @@
   ~ limitations under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.danielbechler</groupId>
     <artifactId>java-object-diff</artifactId>
     <name>Java Object Diff</name>
-    <version>0.93.3-SNAPSHOT</version>
+    <version>0.94</version>
 
     <prerequisites>
         <maven>3.0</maven>
@@ -50,7 +49,7 @@
         <url>https://github.com/SQiShER/java-object-diff</url>
         <connection>scm:git:ssh://git@github.com/SQiShER/java-object-diff.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/SQiShER/java-object-diff.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>java-object-diff-0.94</tag>
     </scm>
 
     <issueManagement>
@@ -93,7 +92,7 @@
             <plugin>
                 <artifactId>maven-release-plugin</artifactId>
                 <configuration>
-                    <scmCommentPrefix/>
+                    <scmCommentPrefix />
                 </configuration>
             </plugin>
             <plugin>
@@ -223,7 +222,7 @@
                     <format>xml</format>
                     <maxmem>256m</maxmem>
                     <aggregate>true</aggregate>
-                    <check/>
+                    <check />
                 </configuration>
                 <executions>
                     <execution>
@@ -396,7 +395,7 @@
                             <exclude>**/*Example.class</exclude>
                         </excludes>
                     </instrumentation>
-                    <check/>
+                    <check />
                 </configuration>
             </plugin>
             <plugin>
