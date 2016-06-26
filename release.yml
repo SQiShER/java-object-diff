@@ -9,69 +9,51 @@
 - hosts: localhost
   connection: local
   vars_files:
-    
+
     - release_vars.yml
-    
+
   vars_prompt:
-    
+
     - name: "release_version"
       prompt: "Release version"
       private: no
-      
+
     - name: "release_description"
       prompt: "Description"
       private: no
-  
+
   vars:
-    
-    # TODO These body objects can be moved into the uri tasks, once this issue is resolved:
-    # https://github.com/ansible/ansible-modules-core/issues/265
-    #
-    create_version_body:
-      name: "{{ release_version }}"
-      desc: "{{ release_description }}"
-      github_release_notes_file: "CHANGELOG.md"
-      github_use_tag_release_notes: True
-      vcs_tag: "java-object-diff-{{ release_version }}"
-      _hack: null  # an extra key with null value, which fails `utils.safe_eval`
-    
-    maven_central_sync_body:
-      username: "{{ sonatype.user }}"
-      password: "{{ sonatype.token }}"
-      close: "1"
-      _hack: null  # an extra key with null value, which fails `utils.safe_eval`
-  
     files_with_version_reference:
       - "README.md"
       - "docs/maven.md"
-  
+
   tasks:
-    
+
     # TODO The versions could be easily updated via Ansible; changelog warning may be removed
     - pause:
         prompt: Make sure the changelog is up-to-date (Press ENTER to continue)
-    
+
     - name: replace maven version in readme and docs
       replace:
         dest: "{{ item }}"
         regexp: '<version>[0-9\.]+</version>'
         replace: "<version>{{ release_version }}</version>"
       with_items: files_with_version_reference
-    
+
     - name: replace gradle version in readme and docs
       replace:
         dest: "{{ item }}"
         regexp: 'de.danielbechler:java-object-diff:[0-9\.]+'
         replace: "de.danielbechler:java-object-diff:{{ release_version }}"
       with_items: files_with_version_reference
-    
+
     # TODO: I'm not quite sure if the changes above need to be commited before performing a mvn release
     # Guess I'll find out with the next release...
-    
+
     # TODO Automate via command or shell module
     - pause:
         prompt: Perform mvn release:prepare (Press ENTER to continue)
-    
+
     - name: create new version on bintray
       uri:
         url: "https://api.bintray.com/packages/sqisher/maven/java-object-diff/versions"
@@ -79,15 +61,20 @@
         user: "{{ bintray.user }}"
         password: "{{ bintray.password }}"
         force_basic_auth: yes
-        "HEADER_Content-Type": "application/json"
-        body: "{{ create_version_body | to_json }}"
+        body:
+          name: "{{ release_version }}"
+          desc: "{{ release_description }}"
+          github_release_notes_file: "CHANGELOG.md"
+          github_use_tag_release_notes: True
+          vcs_tag: "java-object-diff-{{ release_version }}"
+        body_format: json
         timeout: 120
         status_code: 201
-    
+
     # TODO Automate via command or shell module
     - pause:
         prompt: Perform mvn release:perform (Press ENTER to continue)
-    
+
     - name: sign version artifacts
       uri:
         url: "https://api.bintray.com/gpg/sqisher/maven/java-object-diff/versions/{{ release_version }}"
@@ -96,7 +83,7 @@
         password: "{{ bintray.password }}"
         force_basic_auth: yes
         "HEADER_X-GPG-PASSPHRASE": "{{ gpg.passphrase }}"
-    
+
     - name: publish artifacts
       uri:
         url: "https://api.bintray.com/content/sqisher/maven/java-object-diff/{{ release_version }}/publish"
@@ -104,7 +91,7 @@
         user: "{{ bintray.user }}"
         password: "{{ bintray.password }}"
         force_basic_auth: yes
-    
+
     - name: sync to maven central
       uri:
         url: "https://api.bintray.com/maven_central_sync/sqisher/maven/java-object-diff/versions/{{ release_version }}"
@@ -112,6 +99,9 @@
         user: "{{ bintray.user }}"
         password: "{{ bintray.password }}"
         force_basic_auth: yes
-        "HEADER_Content-Type": "application/json"
-        body: "{{ maven_central_sync_body | to_json }}"
+        body_format: json
+        body:
+          username: "{{ sonatype.user }}"
+          password: "{{ sonatype.token }}"
+          close: "1"
         timeout: 120
