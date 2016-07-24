@@ -40,6 +40,11 @@ public class IdentityService implements IdentityConfigurer, IdentityStrategyReso
 		return collectionItemIdentityService.ofCollectionItems(type, propertyName);
 	}
 
+	public IdentityConfigurer setDefaultCollectionItemIdentityStrategy(final IdentityStrategy identityStrategy)
+	{
+		return collectionItemIdentityService.setDefaultIdentityStrategy(identityStrategy);
+	}
+
 	public IdentityStrategy resolveIdentityStrategy(final DiffNode node)
 	{
 		return collectionItemIdentityService.resolveIdentityStrategy(node);

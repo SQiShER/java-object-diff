@@ -31,6 +31,8 @@ public interface IdentityConfigurer
 	 */
 	OfCollectionItems ofCollectionItems(Class<?> type, String propertyName);
 
+	IdentityConfigurer setDefaultCollectionItemIdentityStrategy(IdentityStrategy identityStrategy);
+
 	ObjectDifferBuilder and();
 
 	interface OfCollectionItems
