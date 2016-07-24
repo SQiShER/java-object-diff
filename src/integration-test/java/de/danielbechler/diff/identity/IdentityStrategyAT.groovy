@@ -65,4 +65,23 @@ class IdentityStrategyAT extends Specification {
 		then:
 		  node.untouched
 	}
+
+	def 'configure custom IdentityStrategyResolver'() {
+		given:
+		  def strategy = new IdentityStrategy() {
+
+			  boolean equals(Object working, Object base) {
+				  return working.getAt('id') == base.getAt('id')
+			  }
+		  }
+		  def objectDiffer = ObjectDifferBuilder.startBuilding()
+				  .identity()
+				  .setDefaultCollectionItemIdentityStrategy(strategy)
+				  .and()
+				  .build()
+		when:
+		  def node = objectDiffer.compare([[id: '1', value: 'original']], [[id: '1', value: 'changed']])
+		then:
+		  node.getChild(NodePath.startBuilding().collectionItem([id:'1']).build()).changed
+	}
 }

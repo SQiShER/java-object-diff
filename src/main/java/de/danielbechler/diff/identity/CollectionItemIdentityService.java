@@ -19,14 +19,16 @@ package de.danielbechler.diff.identity;
 import de.danielbechler.diff.inclusion.ValueNode;
 import de.danielbechler.diff.node.DiffNode;
 import de.danielbechler.diff.path.NodePath;
+import de.danielbechler.util.Assert;
 
 class CollectionItemIdentityService implements IdentityStrategyResolver
 {
 	private final ValueNode<IdentityStrategy> nodePathIdentityStrategies;
 	private final TypePropertyIdentityStrategyResolver typePropertyIdentityStrategyResolver;
 	private final IdentityConfigurer identityConfigurer;
+	private IdentityStrategy defaultIdentityStrategy = EqualsIdentityStrategy.getInstance();
 
-	public CollectionItemIdentityService(final IdentityConfigurer identityConfigurer)
+	CollectionItemIdentityService(final IdentityConfigurer identityConfigurer)
 	{
 		this.identityConfigurer = identityConfigurer;
 		this.nodePathIdentityStrategies = new ValueNode<IdentityStrategy>();
@@ -45,24 +47,31 @@ class CollectionItemIdentityService implements IdentityStrategyResolver
 		{
 			return identityStrategy;
 		}
-		return EqualsIdentityStrategy.getInstance();
+		return defaultIdentityStrategy;
 	}
 
-	public IdentityConfigurer.OfCollectionItems ofCollectionItems(final NodePath nodePath)
+	IdentityConfigurer.OfCollectionItems ofCollectionItems(final NodePath nodePath)
 	{
 		return new OfCollectionItemsByNodePath(nodePath);
 	}
 
-	public IdentityConfigurer.OfCollectionItems ofCollectionItems(final Class<?> type, final String propertyName)
+	IdentityConfigurer.OfCollectionItems ofCollectionItems(final Class<?> type, final String propertyName)
 	{
 		return new OfCollectionItemsByTypeProperty(type, propertyName);
+	}
+
+	IdentityConfigurer setDefaultIdentityStrategy(final IdentityStrategy identityStrategy)
+	{
+		Assert.notNull(identityStrategy, "identityStrategy");
+		this.defaultIdentityStrategy = identityStrategy;
+		return identityConfigurer;
 	}
 
 	private class OfCollectionItemsByNodePath implements IdentityConfigurer.OfCollectionItems
 	{
 		private final NodePath nodePath;
 
-		public OfCollectionItemsByNodePath(final NodePath nodePath)
+		OfCollectionItemsByNodePath(final NodePath nodePath)
 		{
 			this.nodePath = nodePath;
 		}
@@ -79,7 +88,7 @@ class CollectionItemIdentityService implements IdentityStrategyResolver
 		private final Class<?> type;
 		private final String propertyName;
 
-		public OfCollectionItemsByTypeProperty(final Class<?> type, final String propertyName)
+		OfCollectionItemsByTypeProperty(final Class<?> type, final String propertyName)
 		{
 			this.type = type;
 			this.propertyName = propertyName;
