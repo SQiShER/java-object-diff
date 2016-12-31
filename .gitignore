@@ -18,3 +18,7 @@ target
 *.war
 *.ear
 .idea
+
+build
+.gradle
+.DS_Store
