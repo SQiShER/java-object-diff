@@ -184,6 +184,7 @@ publishing {
 }
 
 release {
+    tagTemplate = '$name-$version'
     failOnCommitNeeded = false
     failOnPublishNeeded = false
 }
