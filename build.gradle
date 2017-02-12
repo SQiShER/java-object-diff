@@ -15,6 +15,7 @@ plugins {
     id 'net.saliman.cobertura' version '2.4.0'
     id 'com.github.kt3k.coveralls' version '2.7.1'
     id "com.jfrog.bintray" version "1.7.3"
+    id 'net.researchgate.release' version '2.4.0'
 }
 
 apply plugin: 'license-report'
@@ -22,7 +23,6 @@ apply plugin: 'ru.vyarus.animalsniffer'
 apply plugin: 'maven-publish'
 
 group = 'de.danielbechler'
-version = '0.95-RC1'
 
 description = """Java Object Diff"""
 
@@ -111,6 +111,7 @@ bintray {
     key = System.getenv('BINTRAY_KEY')
     publications = ['mavenJava']
     publish = true
+    override = true
     pkg {
         repo = 'maven'
         name = 'java-object-diff'
@@ -181,3 +182,10 @@ publishing {
         }
     }
 }
+
+release {
+    failOnCommitNeeded = false
+    failOnPublishNeeded = false
+}
+
+afterReleaseBuild.dependsOn bintrayUpload
