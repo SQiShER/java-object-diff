@@ -1,21 +1,21 @@
 buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'ru.vyarus:gradle-animalsniffer-plugin:1.2.0'
-        classpath "com.smokejumperit.gradle.license:Gradle-License-Report:0.0.2"
-    }
+	repositories {
+		jcenter()
+	}
+	dependencies {
+		classpath 'ru.vyarus:gradle-animalsniffer-plugin:1.2.0'
+		classpath "com.smokejumperit.gradle.license:Gradle-License-Report:0.0.2"
+	}
 }
 
 plugins {
-    id 'java'
-    id 'groovy'
-    id 'osgi'
-    id 'net.saliman.cobertura' version '2.4.0'
-    id 'com.github.kt3k.coveralls' version '2.7.1'
-    id "com.jfrog.bintray" version "1.7.3"
-    id 'net.researchgate.release' version '2.4.0'
+	id 'java'
+	id 'groovy'
+	id 'osgi'
+	id 'net.saliman.cobertura' version '2.4.0'
+	id 'com.github.kt3k.coveralls' version '2.7.1'
+	id "com.jfrog.bintray" version "1.7.3"
+	id 'net.researchgate.release' version '2.4.0'
 }
 
 apply plugin: 'license-report'
@@ -30,163 +30,182 @@ sourceCompatibility = 1.5
 targetCompatibility = 1.5
 
 tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
+	options.encoding = 'UTF-8'
 }
 
 repositories {
-    mavenCentral()
+	mavenCentral()
 }
 
 sourceSets {
-    main {
-        java {
-            srcDirs = ['src/main/java']
-        }
-        groovy {
-            srcDirs = []
-        }
-    }
-    test {
-        java {
-            srcDirs = []
-        }
-        groovy {
-            srcDirs = ['src/test/java']
-        }
-    }
-    intTest {
-        groovy {
-            compileClasspath += main.output + test.output
-            runtimeClasspath += main.output + test.output
-            srcDirs = ['src/integration-test/java']
-        }
-    }
+	main {
+		java {
+			srcDirs = ['src/main/java']
+		}
+		groovy {
+			srcDirs = []
+		}
+	}
+	test {
+		java {
+			srcDirs = []
+		}
+		groovy {
+			srcDirs = ['src/test/java']
+		}
+	}
+	intTest {
+		groovy {
+			compileClasspath += main.output + test.output
+			runtimeClasspath += main.output + test.output
+			srcDirs = ['src/integration-test/java']
+		}
+	}
 }
 
 configurations {
-    intTestCompile.extendsFrom testCompile
-    intTestRuntime.extendsFrom testRuntime
+	intTestCompile.extendsFrom testCompile
+	intTestRuntime.extendsFrom testRuntime
 }
 
 task intTest(type: Test) {
-    testClassesDir = sourceSets.intTest.output.classesDir
-    classpath = sourceSets.intTest.runtimeClasspath
+	testClassesDir = sourceSets.intTest.output.classesDir
+	classpath = sourceSets.intTest.runtimeClasspath
 }
 
 compileGroovy {
-    // somehow the groovy compile deletes the java compiled classes from the build directory
-    dependsOn = []
+	// somehow the groovy compile deletes the java compiled classes from the build directory
+	dependsOn = []
 }
 
 jar {
-    manifest {
-        instruction 'Bundle-Vendor', 'Daniel Bechler'
-        instruction 'Bundle-DocURL', 'https://github.com/SQiShER/java-object-diff'
-        instruction 'Export-Package', '{local-packages}'
-    }
+	manifest {
+		instruction 'Bundle-Vendor', 'Daniel Bechler'
+		instruction 'Bundle-DocURL', 'https://github.com/SQiShER/java-object-diff'
+		instruction 'Export-Package', '{local-packages}'
+	}
 }
 
 dependencies {
-    signature 'org.codehaus.mojo.signature:java15:1.0@signature'
-    signature 'org.codehaus.mojo.signature:java16:1.1@signature'
-    signature 'org.codehaus.mojo.signature:java17:1.0@signature'
-    // For Android support:
-    // signature 'net.sf.androidscents.signature:android-api-level-23:6.0_r3@signature'
-    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.18'
-    testCompile group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.4.7'
-    testCompile group: 'ch.qos.logback', name: 'logback-core', version: '1.1.6'
-    testCompile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.6'
-    testCompile group: 'org.spockframework', name: 'spock-core', version: '1.0-groovy-2.4'
-    testCompile group: 'cglib', name: 'cglib-nodep', version: '3.2.1'
-    testCompile group: 'org.objenesis', name: 'objenesis', version: '2.2'
+	signature 'org.codehaus.mojo.signature:java15:1.0@signature'
+	signature 'org.codehaus.mojo.signature:java16:1.1@signature'
+	signature 'org.codehaus.mojo.signature:java17:1.0@signature'
+	// For Android support:
+	// signature 'net.sf.androidscents.signature:android-api-level-23:6.0_r3@signature'
+	compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.18'
+	testCompile group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.4.7'
+	testCompile group: 'ch.qos.logback', name: 'logback-core', version: '1.1.6'
+	testCompile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.6'
+	testCompile group: 'org.spockframework', name: 'spock-core', version: '1.0-groovy-2.4'
+	testCompile group: 'cglib', name: 'cglib-nodep', version: '3.2.1'
+	testCompile group: 'org.objenesis', name: 'objenesis', version: '2.2'
 }
 
 cobertura {
-    coverageFormats = ['html', 'xml']
-    coverageIgnoreTrivial = true
+	coverageFormats = ['html', 'xml']
+	coverageIgnoreTrivial = true
 }
 
 bintray {
-    user = System.getenv('BINTRAY_USER')
-    key = System.getenv('BINTRAY_KEY')
-    publications = ['mavenJava']
-    publish = true
-    override = true
-    pkg {
-        repo = 'maven'
-        name = 'java-object-diff'
-        licenses = ['Apache-2.0']
-        vcsUrl = 'https://github.com/SQiShER/java-object-diff.git'
-        githubRepo = 'SQiShER/java-object-diff'
-        githubReleaseNotesFile = 'README.md'
-        version {
-            name = project.version
-            released = new Date()
-            vcsTag = rootProject.name + '-' + project.version
-            gpg {
-                sign = true
-                passphrase = System.getenv('BINTRAY_GPG_PASSPHRASE')
-            }
-        }
-    }
+	user = System.getenv('BINTRAY_USER')
+	key = System.getenv('BINTRAY_KEY')
+	publications = ['mavenJava']
+	publish = true
+	override = true
+	pkg {
+		repo = 'maven'
+		name = 'java-object-diff'
+		licenses = ['Apache-2.0']
+		vcsUrl = 'https://github.com/SQiShER/java-object-diff.git'
+		githubRepo = 'SQiShER/java-object-diff'
+		githubReleaseNotesFile = 'README.md'
+		version {
+			name = project.version
+			released = new Date()
+			vcsTag = rootProject.name + '-' + project.version
+			gpg {
+				sign = true
+				passphrase = System.getenv('BINTRAY_GPG_PASSPHRASE')
+			}
+		}
+	}
 }
 
 javadoc {
-    failOnError = false
+	failOnError = false
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
+	classifier = 'sources'
+	from sourceSets.main.allSource
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
+	classifier = 'javadoc'
+	from javadoc.destinationDir
 }
 
 artifacts {
-    archives sourcesJar, javadocJar
+	archives sourcesJar, javadocJar
 }
 
 def pomConfig = {
-    licenses {
-        license {
-            name "The Apache Software License, Version 2.0"
-            url "http://www.apache.org/licenses/LICENSE-2.0.txt"
-            distribution "repo"
-        }
-    }
-    developers {
-        developer {
-            id "sqisher"
-            name "Daniel Bechler"
-            url "https://github.com/SQiShER"
-        }
-    }
+	licenses {
+		license {
+			name "The Apache Software License, Version 2.0"
+			url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+			distribution "repo"
+		}
+	}
+	developers {
+		developer {
+			id "sqisher"
+			name "Daniel Bechler"
+			url "https://github.com/SQiShER"
+		}
+	}
 }
 
 publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-            artifact sourcesJar
-            artifact javadocJar
-            pom.withXml {
-                def root = asNode()
-                root.appendNode('description', 'Library to diff and merge Java objects with ease')
-                root.appendNode('name', 'java-object-diff')
-                root.appendNode('url', 'https://github.com/SQiShER/java-object-diff')
-                root.children().last() + pomConfig
-            }
-        }
-    }
+	publications {
+		mavenJava(MavenPublication) {
+			from components.java
+			artifact sourcesJar
+			artifact javadocJar
+			pom.withXml {
+				def root = asNode()
+				root.appendNode('description', 'Library to diff and merge Java objects with ease')
+				root.appendNode('name', 'java-object-diff')
+				root.appendNode('url', 'https://github.com/SQiShER/java-object-diff')
+				root.children().last() + pomConfig
+			}
+		}
+	}
 }
 
 release {
-    tagTemplate = '$name-$version'
-    failOnCommitNeeded = false
-    failOnPublishNeeded = false
+	tagTemplate = '$name-$version'
+	failOnCommitNeeded = false
+	failOnPublishNeeded = false
+}
+
+@SuppressWarnings("GroovyAssignabilityCheck")
+static processFileInplace(File file, Closure processText) {
+	String text = file.text
+	file.write(processText(text))
+}
+
+task updateDocs {
+	doLast {
+		def updateVersion = { String text ->
+			text = text.replaceAll('<version>[^<]+</version>', "<version>${version}</version>")
+			text = text.replaceAll('de\\.danielbechler:java-object-diff:[0-9-A-Z\\-.]+', "de.danielbechler:java-object-diff:${version}")
+			return text
+		}
+		processFileInplace(file('README.md'), updateVersion)
+		processFileInplace(file('docs/maven.md'), updateVersion)
+	}
 }
 
 afterReleaseBuild.dependsOn bintrayUpload
+afterReleaseBuild.dependsOn updateDocs
