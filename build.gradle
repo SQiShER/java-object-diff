@@ -111,7 +111,6 @@ bintray {
 	key = System.getenv('BINTRAY_KEY')
 	publications = ['mavenJava']
 	publish = true
-	override = true
 	pkg {
 		repo = 'maven'
 		name = 'java-object-diff'
@@ -185,8 +184,6 @@ publishing {
 
 release {
 	tagTemplate = '$name-$version'
-	failOnCommitNeeded = false
-	failOnPublishNeeded = false
 }
 
 @SuppressWarnings("GroovyAssignabilityCheck")
