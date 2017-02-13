@@ -206,3 +206,7 @@ task updateDocs {
 
 afterReleaseBuild.dependsOn bintrayUpload
 afterReleaseBuild.dependsOn updateDocs
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '3.3'
+}
