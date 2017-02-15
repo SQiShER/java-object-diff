@@ -15,11 +15,11 @@ plugins {
 	id 'net.saliman.cobertura' version '2.4.0'
 	id 'com.github.kt3k.coveralls' version '2.8.1'
 	id 'com.github.ben-manes.versions' version '0.14.0'
-	id "com.jfrog.bintray" version "1.7.3"
+	id 'com.jfrog.bintray' version '1.7.3'
 	id 'net.researchgate.release' version '2.5.0'
+	id 'com.github.jk1.dependency-license-report' version '0.3.8'
 }
 
-apply plugin: 'license-report'
 apply plugin: 'ru.vyarus.animalsniffer'
 apply plugin: 'maven-publish'
 
