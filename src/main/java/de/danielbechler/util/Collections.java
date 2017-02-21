@@ -88,18 +88,20 @@ public class Collections
 	public static <T> Collection<? extends T> filteredCopyOf(final Collection<? extends T> source,
 															 final Collection<? extends T> filter)
 	{
+		// Patched : Replaces collection and arrayList by HashSet to improve the removeAll performance using the
+		// implementation of contains() of the hashset
 		final Collection<T> copy;
 		if (source != null)
 		{
-			copy = new LinkedList<T>(source);
+			copy = new HashSet<T>(source);
 		}
 		else
 		{
-			copy = new LinkedList<T>();
+			copy = new HashSet<T>();
 		}
 		if (filter != null)
 		{
-			copy.removeAll(new ArrayList<T>(filter));
+			copy.removeAll(new HashSet<T>(filter));
 		}
 		return copy;
 	}
