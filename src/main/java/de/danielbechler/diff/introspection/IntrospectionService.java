@@ -46,6 +46,15 @@ public class IntrospectionService implements IntrospectionConfigurer, IsIntrospe
 	public IntrospectionService(final ObjectDifferBuilder objectDifferBuilder)
 	{
 		this.objectDifferBuilder = objectDifferBuilder;
+		try
+		{
+			Class.forName("java.beans.Introspector");
+			defaultIntrospector = new StandardIntrospector();
+		}
+		catch(final ClassNotFoundException e )
+		{
+			defaultIntrospector = new DummyIntrospector();
+		}
 	}
 
 	public boolean isIntrospectable(final DiffNode node)
