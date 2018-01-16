@@ -18,7 +18,7 @@ package de.danielbechler.diff.introspection
 
 import de.danielbechler.diff.access.PropertyAwareAccessor
 import de.danielbechler.diff.mock.ObjectWithString
-import spock.lang.Specification
+import spock.lang.Subject
 
 import java.beans.BeanInfo
 import java.beans.IntrospectionException
@@ -26,9 +26,10 @@ import java.beans.IntrospectionException
 /**
  * @author Daniel Bechler
  */
-public class StandardIntrospectorTest extends Specification {
+class StandardIntrospectorTest extends AbstractIntrospectorSpecification {
 
-	def introspector = new StandardIntrospector()
+	@Subject
+	StandardIntrospector introspector = new StandardIntrospector()
 
 	private Map<String, PropertyAwareAccessor> introspect(Class<?> type) {
 		introspector.introspect(type).accessors.collectEntries {
@@ -38,74 +39,74 @@ public class StandardIntrospectorTest extends Specification {
 
 	def 'should return proper accessor for property'() {
 		when:
-		  def accessor = introspect(TypeWithOnlyOneProperty).get('value')
+		def accessor = introspect(TypeWithOnlyOneProperty).get('value')
 		then:
-		  accessor.propertyName == 'value'
+		accessor.propertyName == 'value'
 		and:
-		  def target = new TypeWithOnlyOneProperty()
-		  accessor.get(target) == null
+		def target = new TypeWithOnlyOneProperty()
+		accessor.get(target) == null
 		and:
-		  accessor.set(target, 'bar')
-		  accessor.get(target) == 'bar'
+		accessor.set(target, 'bar')
+		accessor.get(target) == 'bar'
 		and:
-		  accessor.excludedByAnnotation == false
+		accessor.excludedByAnnotation == false
 		and:
-		  accessor.categoriesFromAnnotation.isEmpty()
+		accessor.categoriesFromAnnotation.isEmpty()
 	}
 
 	def 'should return PropertyAwareAccessors for each property of the given class'() {
 		when:
-		  def accessors = introspect(TypeWithTwoProperties)
+		def accessors = introspect(TypeWithTwoProperties)
 		then:
-		  accessors.size() == 2
-		  accessors.get('foo') != null
-		  accessors.get('bar') != null
+		accessors.size() == 2
+		accessors.get('foo') != null
+		accessors.get('bar') != null
 	}
 
 	def 'should apply categories of ObjectDiffProperty annotation to accessor'() {
 		when:
-		  def accessor = introspect(TypeWithPropertyAnnotation).get('value')
+		def accessor = introspect(TypeWithPropertyAnnotation).get('value')
 		then:
-		  accessor.categoriesFromAnnotation.size() == 2
-		  accessor.categoriesFromAnnotation.containsAll(['category1', 'category2'])
+		accessor.categoriesFromAnnotation.size() == 2
+		accessor.categoriesFromAnnotation.containsAll(['category1', 'category2'])
 	}
 
 	def 'should apply exclusion of ObjectDiffProperty annotation to accessor'() {
 		when:
-		  def accessor = introspect(TypeWithPropertyAnnotation).get('value')
+		def accessor = introspect(TypeWithPropertyAnnotation).get('value')
 		then:
-		  accessor.excludedByAnnotation == true
+		accessor.excludedByAnnotation == true
 	}
 
 	def 'should throw exception when invoked without type'() {
 		when:
-		  introspector.introspect(null)
+		introspector.introspect(null)
 		then:
-		  thrown(IllegalArgumentException)
+		thrown(IllegalArgumentException)
 	}
 
 	def 'should skip default class properties'() {
 		expect:
-		  introspect(TypeWithNothingButDefaultProperties).isEmpty()
+		introspect(TypeWithNothingButDefaultProperties).isEmpty()
 	}
 
 	def 'should skip properties without getter'() {
 		expect:
-		  introspect(TypeWithPropertyWithoutGetter).isEmpty()
+		introspect(TypeWithPropertyWithoutGetter).isEmpty()
 	}
 
 	def 'should wrap IntrospectionException with RuntimeException'() {
 		given:
-		  introspector = new StandardIntrospector() {
-			  @Override
-			  protected BeanInfo getBeanInfo(final Class<?> type) throws IntrospectionException {
-				  throw new IntrospectionException(type.getCanonicalName());
-			  }
-		  };
+		introspector = new StandardIntrospector() {
+			@Override
+			protected BeanInfo getBeanInfo(final Class<?> type) throws IntrospectionException {
+				throw new IntrospectionException(type.getCanonicalName());
+			}
+		};
 		when:
-		  introspector.introspect(ObjectWithString.class);
+		introspector.introspect(ObjectWithString.class);
 		then:
-		  thrown(RuntimeException)
+		thrown(RuntimeException)
 	}
 
 	private class TypeWithNothingButDefaultProperties {
