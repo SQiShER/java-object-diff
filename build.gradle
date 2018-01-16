@@ -129,6 +129,10 @@ bintray {
 				sign = true
 				passphrase = System.getenv('BINTRAY_GPG_PASSPHRASE')
 			}
+			mavenCentralSync {
+				user = System.getenv('MAVEN_CENTRAL_USER')
+				password = System.getenv('MAVEN_CENTRAL_PASSWORD')
+			}
 		}
 	}
 }
