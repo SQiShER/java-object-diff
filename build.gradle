@@ -170,6 +170,9 @@ def pomConfig = {
 			url "https://github.com/SQiShER"
 		}
 	}
+	scm {
+		url "https://github.com/SQiShER/java-object-diff"
+	}
 }
 
 publishing {
