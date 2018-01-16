@@ -63,6 +63,22 @@ public class TypeInfo
 		return accessors;
 	}
 
+	/**
+	 * @param name The property name to find an accessor for.
+	 * @return The accessor for the given property name or null if none is found.
+	 */
+	public PropertyAwareAccessor getAccessorByName(final String name)
+	{
+		for (PropertyAwareAccessor accessor : accessors)
+		{
+			if (accessor.getPropertyName().equals(name))
+			{
+				return accessor;
+			}
+		}
+		return null;
+	}
+
 	public void setInstanceFactory(final InstanceFactory instanceFactory)
 	{
 		this.instanceFactory = instanceFactory;

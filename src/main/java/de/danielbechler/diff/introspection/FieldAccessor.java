@@ -102,4 +102,12 @@ public class FieldAccessor implements PropertyAwareAccessor
 		ObjectDiffProperty annotation = getFieldAnnotation(ObjectDiffProperty.class);
 		return annotation != null && annotation.excluded();
 	}
+
+	@Override
+	public String toString()
+	{
+		return "FieldAccessor{" +
+				"field=" + field +
+				'}';
+	}
 }

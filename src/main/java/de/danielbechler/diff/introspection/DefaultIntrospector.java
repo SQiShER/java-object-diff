@@ -14,19 +14,26 @@ public class DefaultIntrospector implements Introspector
 	public TypeInfo introspect(final Class<?> type)
 	{
 		final TypeInfo typeInfo = new TypeInfo(type);
-		if (returnFields)
-		{
-			final Collection<PropertyAwareAccessor> fieldAccessors = fieldIntrospector.introspect(type).getAccessors();
-			for (final PropertyAwareAccessor fieldAccessor : fieldAccessors)
-			{
-				typeInfo.addPropertyAccessor(fieldAccessor);
-			}
-		}
+
 		final Collection<PropertyAwareAccessor> getterSetterAccessors = getterSetterIntrospector.introspect(type).getAccessors();
 		for (final PropertyAwareAccessor getterSetterAccessor : getterSetterAccessors)
 		{
 			typeInfo.addPropertyAccessor(getterSetterAccessor);
 		}
+
+		if (returnFields)
+		{
+			final Collection<PropertyAwareAccessor> fieldAccessors = fieldIntrospector.introspect(type).getAccessors();
+			for (final PropertyAwareAccessor fieldAccessor : fieldAccessors)
+			{
+				final String propertyName = fieldAccessor.getPropertyName();
+				if (typeInfo.getAccessorByName(propertyName) == null)
+				{
+					typeInfo.addPropertyAccessor(fieldAccessor);
+				}
+			}
+		}
+
 		return typeInfo;
 	}
 
