@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
  * @author Daniel Bechler
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
+@Target({ElementType.METHOD, ElementType.FIELD})
 @Inherited
 public @interface ObjectDiffProperty
 {

@@ -18,7 +18,7 @@ package de.danielbechler.diff.introspection
 
 import de.danielbechler.diff.access.PropertyAwareAccessor
 import de.danielbechler.diff.mock.ObjectWithString
-import spock.lang.Subject
+import spock.lang.Specification
 
 import java.beans.BeanInfo
 import java.beans.IntrospectionException
@@ -26,10 +26,9 @@ import java.beans.IntrospectionException
 /**
  * @author Daniel Bechler
  */
-class StandardIntrospectorTest extends AbstractIntrospectorSpecification {
+public class GetterSetterIntrospectorTest extends Specification {
 
-	@Subject
-	StandardIntrospector introspector = new StandardIntrospector()
+	def introspector = new GetterSetterIntrospector()
 
 	private Map<String, PropertyAwareAccessor> introspect(Class<?> type) {
 		introspector.introspect(type).accessors.collectEntries {
