@@ -22,14 +22,16 @@ import de.danielbechler.diff.selector.CollectionItemElementSelector;
 import de.danielbechler.diff.selector.ElementSelector;
 import de.danielbechler.util.Assert;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
 
 /**
  * @author Daniel Bechler
  */
-public class CollectionItemAccessor implements TypeAwareAccessor, Accessor
+public class CollectionItemAccessor implements TypeAwareAccessor, Accessor, Serializable
 {
+	private static final long serialVersionUID = -5817942646318163026L;
 	private final Object referenceItem;
 	private final IdentityStrategy identityStrategy;
 

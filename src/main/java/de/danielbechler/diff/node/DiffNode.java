@@ -31,6 +31,7 @@ import de.danielbechler.diff.selector.ElementSelector;
 import de.danielbechler.diff.selector.RootElementSelector;
 import de.danielbechler.util.Assert;
 
+import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -54,9 +55,10 @@ import static java.util.Collections.unmodifiableSet;
  */
 // TODO This thing is massive and needs to be broken down into subclasses
 @SuppressWarnings("UnusedDeclaration")
-public class DiffNode
+public class DiffNode implements Serializable
 {
 	public static final DiffNode ROOT = null;
+	private static final long serialVersionUID = 9085618940467194434L;
 
 	private final Accessor accessor;
 	private final Map<ElementSelector, DiffNode> children = new LinkedHashMap<ElementSelector, DiffNode>(10);

@@ -19,9 +19,12 @@ package de.danielbechler.diff.access;
 import de.danielbechler.diff.selector.ElementSelector;
 import de.danielbechler.diff.selector.RootElementSelector;
 
-public final class RootAccessor implements Accessor
+import java.io.Serializable;
+
+public final class RootAccessor implements Accessor, Serializable
 {
 	private static final RootAccessor instance = new RootAccessor();
+	private static final long serialVersionUID = 69877025138393021L;
 
 	public static RootAccessor getInstance()
 	{

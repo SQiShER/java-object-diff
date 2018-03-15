@@ -16,14 +16,18 @@
 
 package de.danielbechler.diff.selector;
 
+import java.io.Serializable;
+
 /**
  * Serves mainly as marker class and enforces the proper implementation of hashCode(), equals() and toString()
  * for all element selectors.
  *
  * @author Daniel Bechler
  */
-public abstract class ElementSelector
+public abstract class ElementSelector implements Serializable
 {
+	private static final long serialVersionUID = -3557741909234966580L;
+
 	public abstract String toHumanReadableString();
 
 	/**
