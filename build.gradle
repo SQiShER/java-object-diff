@@ -85,7 +85,6 @@ jar {
 	manifest {
 		instruction 'Bundle-Vendor', 'Daniel Bechler'
 		instruction 'Bundle-DocURL', 'https://github.com/SQiShER/java-object-diff'
-		instruction 'Export-Package', '{local-packages}'
 	}
 }
 
