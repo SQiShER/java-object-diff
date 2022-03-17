@@ -29,7 +29,7 @@ import static java.util.Collections.emptyList;
 /**
  * Created by Daniel Bechler.
  */
-class TypePropertyAnnotationInclusionResolver implements InclusionResolver
+public class TypePropertyAnnotationInclusionResolver implements InclusionResolver
 {
 	public boolean enablesStrictIncludeMode()
 	{

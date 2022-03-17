@@ -119,14 +119,14 @@ public class ObjectDifferBuilder
 
 	/**
 	 * <b>EXPERT FEATURE</b>: Allows to configure the way the identity of objects is determined in order to establish
-	 * the relationship between different versions. By default this is done via the <code>equals</code> method; but
+	 * the relationship between different versions. By default, this is done via the <code>equals</code> method; but
 	 * sometimes that's just not possible. For example when you are dealing with generated classes or you are dealing
 	 * with third-party code.
-	 * <p/>
+	 * <p>
 	 * Please keep in mind that this only alters the way this library establishes the connection between two objects.
 	 * This doesn't extend to the underlying collections. So keep what in mind when you start merging your collections
 	 * and weird things start to happen.
-	 * <p/>
+	 * <p>
 	 * <b>WARNING</b>: Personally I'd try to avoid this feature as long as possible and only use it when there is
 	 * absolutely no other way.
 	 */

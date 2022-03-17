@@ -22,7 +22,7 @@ import de.danielbechler.diff.node.DiffNode;
  * This can be used to implement custom inclusion mechanisms. Some objects may not be relevant or suitable for the
  * comparison process. Using an {@link de.danielbechler.diff.inclusion.InclusionResolver} is a powerful and flexible
  * way to detect and exclude those objects.
- * <p/>
+ * <p>
  * Keep in mind that every single node in the object graph will be checked against each and every registered {@link
  * de.danielbechler.diff.inclusion.InclusionResolver}. If performance is important to you, make sure that calling its
  * methods is as cheap as possible.

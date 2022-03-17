@@ -462,7 +462,7 @@ public class DiffNode
 
 	/**
 	 * If this node represents a bean property this method returns all annotations of its field.
-	 * <p/>
+	 * <p>
 	 * Only works for fields having a name that matches the name derived from the getter.
 	 *
 	 * @return The annotations of the field, or an empty set if there is no field with the name derived from the getter.
@@ -518,7 +518,7 @@ public class DiffNode
 	 * If this node represents a bean property, this method will simply return its name. Otherwise it will return the
 	 * property name of its closest bean property representing ancestor. This way intermediate nodes like those
 	 * representing collection, map or array items will be semantically tied to their container objects.
-	 * <p/>
+	 * <p>
 	 * That is especially useful for inclusion and exclusion rules. For example, when a List is explicitly included by
 	 * property name, it would be weird if the inclusion didn't also apply to its items.
 	 */
