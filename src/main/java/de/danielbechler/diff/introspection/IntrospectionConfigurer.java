@@ -34,14 +34,14 @@ public interface IntrospectionConfigurer
 {
 	/**
 	 * When assigning new values via {@link de.danielbechler.diff.node.DiffNode} (e.g. during merging) it will
-	 * implicitly create missing instances of its parent objects along the path to the root object. By default those
+	 * implicitly create missing instances of its parent objects along the path to the root object. By default, those
 	 * instances will be created via public non-arg constructor. If that fails a {@link
 	 * de.danielbechler.diff.instantiation.TypeInstantiationException} will be thrown.
-	 * <p/>
-	 * To add support for types that need to be instantiated differently you can overide the default behavior via
+	 * <p>
+	 * To add support for types that need to be instantiated differently you can override the default behavior via
 	 * custom {@link de.danielbechler.diff.instantiation.InstanceFactory}. When doing so, don't worry about types
 	 * actually that are suitable for the default behavior, as it will automatically kick in, whenever the custom
-	 * factroy returns {@code null}.
+	 * factory returns {@code null}.
 	 *
 	 * @param instanceFactory A custom instance factory
 	 * @throws java.lang.IllegalArgumentException when the instanceFactory is null

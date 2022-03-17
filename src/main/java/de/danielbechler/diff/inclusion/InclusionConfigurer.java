@@ -24,7 +24,7 @@ import de.danielbechler.diff.path.NodePath;
  * Excluded nodes will not be compared, to make sure their accessors won't get called. This is useful in cases where
  * getters could throw exceptions under certain conditions or when certain accessors are expensive to call or simply
  * not relevant for the use-case.
- * <p/>
+ * <p>
  * In combination with categories this allows to define sub-sets of properties, in order to compare only relevant parts
  * of an object (e.g. exclude all properties marked as _metadata_.)
  *
@@ -45,7 +45,7 @@ public interface InclusionConfigurer
 	 * Registers a custom {@link de.danielbechler.diff.inclusion.InclusionResolver}. Some objects may not be relevant
 	 * or suitable for the comparison process. Using an {@link de.danielbechler.diff.inclusion.InclusionResolver} is a
 	 * powerful and flexible way to detect and exclude those objects.
-	 * <p/>
+	 * <p>
 	 * Keep in mind that every single node in the object graph will be checked against each and every registered {@link
 	 * de.danielbechler.diff.inclusion.InclusionResolver}. If performance is important to you, make sure that calling
 	 * its methods is as cheap as possible.

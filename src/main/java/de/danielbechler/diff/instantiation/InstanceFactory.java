@@ -30,7 +30,7 @@ public interface InstanceFactory
 	 * the type. In case of the latter, the {@link de.danielbechler.diff.ObjectDiffer} will automatically fallback to
 	 * instantiation via public non-arg constructor. If that also fails, an {@link TypeInstantiationException}
 	 * will be thrown.
-	 * <p/>
+	 * <p>
 	 * <b>Note from the author:</b> it wasn't an easy decision, but in the end I favored an exception over
 	 * logging a warning, because this way it is much harder to accidentally end up with incomplete merges without
 	 * noticing. If this turns out to be a problem for you, please let me know in the issue tracker. We could probably
