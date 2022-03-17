@@ -3,7 +3,7 @@ buildscript {
 		jcenter()
 	}
 	dependencies {
-		classpath 'ru.vyarus:gradle-animalsniffer-plugin:1.2.0'
+		classpath 'ru.vyarus:gradle-animalsniffer-plugin:1.4.4'
 		classpath "com.smokejumperit.gradle.license:Gradle-License-Report:0.0.2"
 	}
 }
@@ -12,7 +12,7 @@ plugins {
 	id 'java'
 	id 'groovy'
 	id 'osgi'
-	id 'net.saliman.cobertura' version '2.4.0'
+	id 'net.saliman.cobertura' version '2.6.0'
 	id 'com.github.kt3k.coveralls' version '2.8.1'
 	id 'com.github.ben-manes.versions' version '0.14.0'
 	id 'com.jfrog.bintray' version '1.7.3'
@@ -70,7 +70,7 @@ configurations {
 }
 
 task intTest(type: Test) {
-	testClassesDir = sourceSets.intTest.output.classesDir
+	testClassesDirs = sourceSets.intTest.output.classesDirs
 	classpath = sourceSets.intTest.runtimeClasspath
 }
 
@@ -216,7 +216,3 @@ task updateDocs {
 
 afterReleaseBuild.dependsOn bintrayUpload
 afterReleaseBuild.dependsOn updateDocs
-
-task wrapper(type: Wrapper) {
-	gradleVersion = '3.3'
-}
